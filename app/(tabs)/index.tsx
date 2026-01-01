@@ -129,6 +129,31 @@ export default function HomeScreen() {
               <Text className="text-xs text-muted">Frag den Experten</Text>
             </TouchableOpacity>
           </View>
+          
+          {/* Second Row - Tools & Marketplace */}
+          <View className="flex-row gap-3 mt-3">
+            <TouchableOpacity 
+              className="flex-1 bg-surface rounded-2xl p-4 items-center gap-2 border border-border"
+              onPress={() => router.push("/tools")}
+            >
+              <View className="w-14 h-14 rounded-full bg-warning/20 items-center justify-center">
+                <IconSymbol name="wrench.fill" size={28} color={colors.warning} />
+              </View>
+              <Text className="text-base font-bold text-foreground">Tools</Text>
+              <Text className="text-xs text-muted">Rechner & Kalender</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              className="flex-1 bg-surface rounded-2xl p-4 items-center gap-2 border border-border"
+              onPress={() => router.push("/marketplace")}
+            >
+              <View className="w-14 h-14 rounded-full bg-success/20 items-center justify-center">
+                <IconSymbol name="cart.fill" size={28} color={colors.success} />
+              </View>
+              <Text className="text-base font-bold text-foreground">Shop</Text>
+              <Text className="text-xs text-muted">Seeds & Equipment</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Daily Usage Card */}

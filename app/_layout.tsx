@@ -98,6 +98,10 @@ export default function RootLayout() {
                 <Stack.Screen name="settings" options={{ presentation: "modal" }} />
                 <Stack.Screen name="achievements" options={{ presentation: "modal" }} />
                 <Stack.Screen name="admin" options={{ presentation: "modal" }} />
+                <Stack.Screen name="marketplace" options={{ presentation: "modal" }} />
+                <Stack.Screen name="vendor-portal" options={{ presentation: "modal" }} />
+                <Stack.Screen name="tools" options={{ presentation: "modal" }} />
+                <Stack.Screen name="messages" options={{ presentation: "modal" }} />
               </Stack>
               <StatusBar style="auto" />
             </SubscriptionProvider>

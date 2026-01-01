@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { ScrollView, Text, View, TouchableOpacity, FlatList, RefreshControl } from "react-native";
+import { ScrollView, Text, View, TouchableOpacity, RefreshControl, TextInput, Linking, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
 import { useGamification } from "@/lib/gamification-context";
+import { UpgradePrompt } from "@/components/upgrade-prompt";
+import { AdBanner } from "@/components/ad-banner";
 import { 
   MOCK_POSTS, 
   MOCK_CONTESTS, 
@@ -13,17 +15,36 @@ import {
   MOCK_AUCTIONS,
   MOCK_RAFFLES,
   MOCK_DEALS,
-  CommunityPost,
-  Contest,
-  LeaderboardEntry,
-  Auction,
-  Raffle,
-  EquipmentDeal,
   formatRelativeTime,
   formatTimeRemaining,
 } from "@/lib/community";
+import {
+  NEWS_ARTICLES,
+  LEGAL_INFO,
+  FAQ_DATA,
+  getCategoryLabel,
+  getCategoryColor,
+  formatNewsDate,
+} from "@/lib/news-data";
+import {
+  MOCK_SHOPS,
+  MOCK_CLUBS,
+  MOCK_NEARBY_MEMBERS,
+  TUTORIAL_VIDEOS,
+  formatViews,
+  getCategoryLabel as getTutorialCategory,
+} from "@/lib/locations-data";
+import {
+  STRAINS_DATABASE,
+  getDifficultyLabel,
+  getDifficultyColor,
+  getTypeLabel,
+  getTypeColor,
+} from "@/lib/strains-data";
 
-type TabType = "feed" | "contests" | "leaderboard" | "marketplace";
+const { width } = Dimensions.get("window");
+
+type TabType = "feed" | "news" | "radar" | "tutorials" | "strains" | "contests";
 
 export default function CommunityScreen() {
   const router = useRouter();
@@ -34,8 +55,11 @@ export default function CommunityScreen() {
   const [activeTab, setActiveTab] = useState<TabType>("feed");
   const [refreshing, setRefreshing] = useState(false);
   const [posts, setPosts] = useState(MOCK_POSTS);
-  const [contests, setContests] = useState(MOCK_CONTESTS);
-  const [leaderboard, setLeaderboard] = useState(MOCK_LEADERBOARD);
+  const [newsCategory, setNewsCategory] = useState<"all" | "law" | "tips">("all");
+  const [radarTab, setRadarTab] = useState<"members" | "shops" | "clubs">("shops");
+  const [tutorialCategory, setTutorialCategory] = useState<string>("all");
+  const [strainFilter, setStrainFilter] = useState<"all" | "beginner" | "indica" | "sativa">("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -46,269 +70,47 @@ export default function CommunityScreen() {
   const toggleLike = (postId: string) => {
     setPosts(prev => prev.map(post => {
       if (post.id === postId) {
-        return {
-          ...post,
-          isLiked: !post.isLiked,
-          likes: post.isLiked ? post.likes - 1 : post.likes + 1,
-        };
+        return { ...post, isLiked: !post.isLiked, likes: post.isLiked ? post.likes - 1 : post.likes + 1 };
       }
       return post;
     }));
   };
 
-  const joinContest = (contestId: string) => {
-    setContests(prev => prev.map(contest => {
-      if (contest.id === contestId) {
-        return {
-          ...contest,
-          isJoined: true,
-          participants: contest.participants + 1,
-        };
-      }
-      return contest;
-    }));
-  };
+  const tabs = [
+    { id: "feed" as TabType, label: "Feed", icon: "bubble.left.fill" },
+    { id: "news" as TabType, label: "News", icon: "newspaper.fill" },
+    { id: "radar" as TabType, label: "Radar", icon: "location.fill" },
+    { id: "tutorials" as TabType, label: "Tutorials", icon: "play.circle.fill" },
+    { id: "strains" as TabType, label: "Sorten", icon: "leaf.fill" },
+    { id: "contests" as TabType, label: "Events", icon: "trophy.fill" },
+  ];
 
-  const renderPost = (post: CommunityPost) => (
-    <View key={post.id} className="bg-surface rounded-2xl p-4 border border-border mb-3">
-      <View className="flex-row items-center gap-3 mb-3">
-        <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
-          <Text className="text-lg">{post.userBadge}</Text>
-        </View>
-        <View className="flex-1">
-          <View className="flex-row items-center gap-2">
-            <Text className="text-base font-semibold text-foreground">{post.userName}</Text>
-            <Text className="text-xs text-muted">Lv.{post.userLevel}</Text>
-          </View>
-          <Text className="text-xs text-muted">{formatRelativeTime(post.createdAt)}</Text>
-        </View>
-      </View>
-
-      <Text className="text-base text-foreground mb-3 leading-6">{post.content}</Text>
-
-      {post.tags && post.tags.length > 0 && (
-        <View className="flex-row flex-wrap gap-2 mb-3">
-          {post.tags.map(tag => (
-            <View key={tag} className="bg-primary/10 px-2 py-1 rounded-full">
-              <Text className="text-xs text-primary">#{tag}</Text>
-            </View>
-          ))}
-        </View>
-      )}
-
-      <View className="flex-row items-center gap-6 pt-2 border-t border-border">
-        <TouchableOpacity 
-          className="flex-row items-center gap-2"
-          onPress={() => toggleLike(post.id)}
-        >
-          <IconSymbol 
-            name={post.isLiked ? "heart.fill" : "heart"} 
-            size={20} 
-            color={post.isLiked ? colors.error : colors.muted} 
-          />
-          <Text className={`text-sm ${post.isLiked ? 'text-error' : 'text-muted'}`}>{post.likes}</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity className="flex-row items-center gap-2">
-          <IconSymbol name="bubble.left" size={20} color={colors.muted} />
-          <Text className="text-sm text-muted">{post.comments}</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity className="flex-row items-center gap-2">
-          <IconSymbol name="paperplane.fill" size={18} color={colors.muted} />
-          <Text className="text-sm text-muted">Teilen</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+  const filteredNews = NEWS_ARTICLES.filter(article => 
+    newsCategory === "all" || article.category === newsCategory
   );
 
-  const renderContest = (contest: Contest) => (
-    <View key={contest.id} className="bg-surface rounded-2xl p-4 border border-border mb-3">
-      <View className="flex-row items-center justify-between mb-3">
-        <View className={`px-3 py-1 rounded-full ${
-          contest.type === "yield" ? "bg-success/20" :
-          contest.type === "photo" ? "bg-primary/20" :
-          contest.type === "raffle" ? "bg-warning/20" : "bg-muted/20"
-        }`}>
-          <Text className={`text-xs font-medium ${
-            contest.type === "yield" ? "text-success" :
-            contest.type === "photo" ? "text-primary" :
-            contest.type === "raffle" ? "text-warning" : "text-muted"
-          }`}>
-            {contest.type === "yield" ? "🏆 Ernte" :
-             contest.type === "photo" ? "📸 Foto" :
-             contest.type === "raffle" ? "🎟️ Verlosung" : "Wettbewerb"}
-          </Text>
-        </View>
-        <Text className="text-xs text-muted">
-          Endet in {formatTimeRemaining(contest.endDate)}
-        </Text>
-      </View>
-
-      <Text className="text-lg font-bold text-foreground mb-1">{contest.title}</Text>
-      <Text className="text-sm text-muted mb-3">{contest.description}</Text>
-
-      <View className="bg-primary/10 rounded-xl p-3 mb-3">
-        <Text className="text-xs text-muted mb-1">Preis</Text>
-        <Text className="text-base font-semibold text-primary">{contest.prize}</Text>
-        {contest.sponsor && (
-          <Text className="text-xs text-muted mt-1">Gesponsert von {contest.sponsor}</Text>
-        )}
-      </View>
-
-      <View className="flex-row items-center justify-between">
-        <Text className="text-sm text-muted">{contest.participants} Teilnehmer</Text>
-        
-        <TouchableOpacity 
-          className={`px-4 py-2 rounded-full ${contest.isJoined ? 'bg-success/20' : 'bg-primary'}`}
-          onPress={() => !contest.isJoined && joinContest(contest.id)}
-          disabled={contest.isJoined}
-        >
-          <Text className={`text-sm font-medium ${contest.isJoined ? 'text-success' : 'text-white'}`}>
-            {contest.isJoined ? "✓ Teilgenommen" : "Teilnehmen"}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+  const filteredStrains = STRAINS_DATABASE.filter(strain => {
+    if (strainFilter === "beginner") return strain.difficulty === "beginner";
+    if (strainFilter === "indica") return strain.type === "indica";
+    if (strainFilter === "sativa") return strain.type === "sativa";
+    return true;
+  }).filter(strain => 
+    searchQuery === "" || strain.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const renderLeaderboardEntry = (entry: LeaderboardEntry, index: number) => (
-    <View 
-      key={entry.userId}
-      className={`flex-row items-center p-3 rounded-xl mb-2 ${
-        index < 3 ? 'bg-primary/10 border border-primary/30' : 'bg-surface border border-border'
-      }`}
-    >
-      <View className="w-10 items-center">
-        {index === 0 ? <Text className="text-2xl">🥇</Text> :
-         index === 1 ? <Text className="text-2xl">🥈</Text> :
-         index === 2 ? <Text className="text-2xl">🥉</Text> :
-         <Text className="text-lg font-bold text-muted">#{entry.rank}</Text>}
-      </View>
-
-      <View className="flex-row items-center gap-3 flex-1 ml-2">
-        <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
-          <Text className="text-lg">{entry.userBadge}</Text>
-        </View>
-        <View>
-          <Text className="text-base font-semibold text-foreground">{entry.userName}</Text>
-          <Text className="text-xs text-muted">Level {entry.userLevel}</Text>
-        </View>
-      </View>
-
-      <View className="items-end">
-        <Text className="text-base font-bold text-primary">{entry.totalYield.toLocaleString()}g</Text>
-        <Text className="text-xs text-muted">{entry.points.toLocaleString()} Punkte</Text>
-      </View>
-    </View>
-  );
-
-  const renderAuction = (auction: Auction) => (
-    <View key={auction.id} className="bg-surface rounded-2xl p-4 border border-border mb-3">
-      <View className="flex-row items-center gap-3 mb-3">
-        <View className="w-14 h-14 rounded-xl bg-warning/20 items-center justify-center">
-          <Text className="text-2xl">{auction.vendorLogo}</Text>
-        </View>
-        <View className="flex-1">
-          <Text className="text-base font-bold text-foreground">{auction.title}</Text>
-          <Text className="text-xs text-muted">von {auction.vendorName}</Text>
-        </View>
-      </View>
-      <Text className="text-sm text-muted mb-3">{auction.description}</Text>
-      <View className="flex-row items-center justify-between">
-        <View>
-          <Text className="text-xs text-muted">Aktuelles Gebot</Text>
-          <Text className="text-xl font-bold text-warning">€{auction.currentBid}</Text>
-          <Text className="text-xs text-muted">{auction.bids} Gebote</Text>
-        </View>
-        <View className="items-end">
-          <Text className="text-xs text-muted">Endet in</Text>
-          <Text className="text-base font-semibold text-foreground">{formatTimeRemaining(auction.endDate)}</Text>
-          <TouchableOpacity className="bg-warning px-4 py-2 rounded-full mt-2">
-            <Text className="text-sm font-semibold text-white">Bieten</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-  );
-
-  const renderRaffle = (raffle: Raffle) => (
-    <View key={raffle.id} className="bg-surface rounded-2xl p-4 border border-border mb-3">
-      <View className="flex-row items-center gap-3 mb-3">
-        <View className="w-14 h-14 rounded-xl bg-primary/20 items-center justify-center">
-          <Text className="text-2xl">{raffle.vendorLogo}</Text>
-        </View>
-        <View className="flex-1">
-          <Text className="text-base font-bold text-foreground">{raffle.title}</Text>
-          <Text className="text-xs text-muted">von {raffle.vendorName}</Text>
-        </View>
-      </View>
-      <Text className="text-sm text-muted mb-3">{raffle.description}</Text>
-      
-      <View className="bg-primary/10 rounded-xl p-3 mb-3">
-        <Text className="text-xs text-muted">Preis</Text>
-        <Text className="text-base font-semibold text-primary">{raffle.prize}</Text>
-      </View>
-      
-      <View className="h-2 bg-background rounded-full overflow-hidden mb-2">
-        <View 
-          className="h-full bg-primary rounded-full"
-          style={{ width: `${(raffle.soldTickets / raffle.totalTickets) * 100}%` }}
-        />
-      </View>
-      <Text className="text-xs text-muted text-center mb-3">
-        {raffle.soldTickets} / {raffle.totalTickets} Tickets verkauft
-      </Text>
-      
-      <View className="flex-row items-center justify-between">
-        <View>
-          <Text className="text-xs text-muted">Ticket-Preis</Text>
-          <Text className="text-lg font-bold text-primary">€{raffle.ticketPrice}</Text>
-        </View>
-        <TouchableOpacity className="bg-primary px-4 py-2 rounded-full">
-          <Text className="text-sm font-semibold text-white">
-            {raffle.userTickets > 0 ? `${raffle.userTickets} Tickets` : "Ticket kaufen"}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-
-  const renderDeal = (deal: EquipmentDeal) => (
-    <View key={deal.id} className="bg-surface rounded-2xl p-4 border border-border mb-3">
-      <View className="flex-row items-center gap-3 mb-3">
-        <View className="w-14 h-14 rounded-xl bg-success/20 items-center justify-center">
-          <Text className="text-2xl">{deal.vendorLogo}</Text>
-        </View>
-        <View className="flex-1">
-          <Text className="text-base font-bold text-foreground">{deal.title}</Text>
-          <Text className="text-xs text-muted">von {deal.vendorName}</Text>
-        </View>
-        <View className="bg-error/20 px-2 py-1 rounded-full">
-          <Text className="text-xs font-bold text-error">-{deal.discount}%</Text>
-        </View>
-      </View>
-      <Text className="text-sm text-muted mb-3">{deal.description}</Text>
-      <View className="flex-row items-center justify-between">
-        <View>
-          <View className="flex-row items-center gap-2">
-            <Text className="text-xl font-bold text-success">€{deal.salePrice}</Text>
-            <Text className="text-sm text-muted line-through">€{deal.originalPrice}</Text>
-          </View>
-          <Text className="text-xs text-muted">Noch {deal.stock} verfügbar</Text>
-        </View>
-        <TouchableOpacity className="bg-success px-4 py-2 rounded-full">
-          <Text className="text-sm font-semibold text-white">Kaufen</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+  const filteredTutorials = TUTORIAL_VIDEOS.filter(video =>
+    tutorialCategory === "all" || video.category === tutorialCategory
   );
 
   return (
     <ScreenContainer>
-      <View className="px-4 pb-4 border-b border-border">
-        <View className="flex-row items-center justify-between mb-4">
-          <Text className="text-2xl font-bold text-foreground">Community</Text>
+      {/* Header */}
+      <View className="px-4 pb-3">
+        <View className="flex-row items-center justify-between">
+          <View>
+            <Text className="text-2xl font-bold text-foreground">Community</Text>
+            <Text className="text-sm text-muted">Entdecken, Lernen, Vernetzen</Text>
+          </View>
           <TouchableOpacity 
             className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center"
             onPress={() => router.push("/achievements")}
@@ -316,119 +118,628 @@ export default function CommunityScreen() {
             <Text className="text-lg">{level.badge}</Text>
           </TouchableOpacity>
         </View>
-
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4">
-          <View className="flex-row gap-2">
-            {[
-              { id: "feed" as TabType, label: "Feed", icon: "bubble.left.and.bubble.right.fill" },
-              { id: "contests" as TabType, label: "Gewinnspiele", icon: "trophy.fill" },
-              { id: "leaderboard" as TabType, label: "Rangliste", icon: "chart.bar.fill" },
-              { id: "marketplace" as TabType, label: "Marktplatz", icon: "bag.fill" },
-            ].map(tab => (
-              <TouchableOpacity 
-                key={tab.id}
-                className={`flex-row items-center gap-1 px-3 py-2 rounded-full ${
-                  activeTab === tab.id ? 'bg-primary' : 'bg-surface'
-                }`}
-                onPress={() => setActiveTab(tab.id)}
-              >
-                <IconSymbol 
-                  name={tab.icon as any} 
-                  size={16} 
-                  color={activeTab === tab.id ? "#fff" : colors.muted} 
-                />
-                <Text className={`text-sm font-medium ${activeTab === tab.id ? 'text-white' : 'text-muted'}`}>
-                  {tab.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </ScrollView>
       </View>
 
+      {/* Tab Bar */}
       <ScrollView 
-        className="flex-1 px-4 pt-4"
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
-        }
+        horizontal 
+        showsHorizontalScrollIndicator={false}
+        className="px-4 mb-4"
+        contentContainerStyle={{ gap: 8 }}
       >
+        {tabs.map(tab => (
+          <TouchableOpacity
+            key={tab.id}
+            className={`flex-row items-center gap-1.5 px-3 py-2 rounded-full ${
+              activeTab === tab.id ? 'bg-primary' : 'bg-surface'
+            }`}
+            onPress={() => setActiveTab(tab.id)}
+          >
+            <IconSymbol 
+              name={tab.icon as any} 
+              size={16} 
+              color={activeTab === tab.id ? "#fff" : colors.muted} 
+            />
+            <Text className={`text-sm font-medium ${
+              activeTab === tab.id ? 'text-white' : 'text-muted'
+            }`}>
+              {tab.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      <ScrollView 
+        className="flex-1" 
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+      >
+        {/* Feed Tab */}
         {activeTab === "feed" && (
-          <>
-            <TouchableOpacity className="bg-surface rounded-2xl p-4 border border-border mb-4 flex-row items-center gap-3">
+          <View className="px-4 gap-4">
+            {/* Create Post */}
+            <TouchableOpacity className="bg-surface rounded-xl p-4 border border-border flex-row items-center gap-3">
               <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
                 <Text className="text-lg">{level.badge}</Text>
               </View>
-              <Text className="text-base text-muted flex-1">Was gibt es Neues bei dir?</Text>
+              <Text className="text-muted flex-1">Teile deinen Grow...</Text>
               <IconSymbol name="camera.fill" size={20} color={colors.primary} />
             </TouchableOpacity>
-            {posts.map(renderPost)}
-          </>
-        )}
 
-        {activeTab === "contests" && (
-          <>
-            <Text className="text-lg font-semibold text-foreground mb-3">Aktive Gewinnspiele</Text>
-            {contests.map(renderContest)}
-            
-            {tier === "free" && (
-              <View className="bg-warning/10 rounded-2xl p-4 border border-warning/30 mt-2 mb-4">
-                <View className="flex-row items-center gap-2 mb-2">
-                  <IconSymbol name="star.fill" size={20} color={colors.warning} />
-                  <Text className="text-base font-semibold text-foreground">Premium Vorteile</Text>
-                </View>
-                <Text className="text-sm text-muted">
-                  Mit Premium oder Pro hast du Zugang zu exklusiven Gewinnspielen!
-                </Text>
-                <TouchableOpacity 
-                  className="bg-warning mt-3 py-2 rounded-full"
-                  onPress={() => router.push("/paywall")}
-                >
-                  <Text className="text-center text-sm font-semibold text-white">Jetzt upgraden</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </>
-        )}
-
-        {activeTab === "leaderboard" && (
-          <>
-            <View className="bg-primary/10 rounded-2xl p-4 border border-primary/30 mb-4">
-              <Text className="text-sm text-muted mb-1">Deine Position</Text>
-              <View className="flex-row items-center justify-between">
-                <View className="flex-row items-center gap-3">
-                  <Text className="text-2xl font-bold text-primary">#42</Text>
-                  <View>
-                    <Text className="text-base font-semibold text-foreground">Du</Text>
-                    <Text className="text-xs text-muted">Level {level.level}</Text>
+            {/* Posts */}
+            {posts.map(post => (
+              <View key={post.id} className="bg-surface rounded-xl border border-border overflow-hidden">
+                <View className="p-4">
+                  <View className="flex-row items-center gap-3 mb-3">
+                    <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
+                      <Text className="text-lg">{post.userBadge || "🌱"}</Text>
+                    </View>
+                    <View className="flex-1">
+                      <View className="flex-row items-center gap-2">
+                        <Text className="text-base font-semibold text-foreground">{post.userName}</Text>
+                        <Text className="text-xs text-muted">Lv.{post.userLevel}</Text>
+                      </View>
+                      <Text className="text-xs text-muted">{formatRelativeTime(post.createdAt)}</Text>
+                    </View>
+                  </View>
+                  <Text className="text-base text-foreground mb-3">{post.content}</Text>
+                  {post.tags && post.tags.length > 0 && (
+                    <View className="flex-row flex-wrap gap-2 mb-3">
+                      {post.tags.map(tag => (
+                        <View key={tag} className="bg-primary/10 px-2 py-1 rounded-full">
+                          <Text className="text-xs text-primary">#{tag}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+                  <View className="flex-row items-center gap-4 pt-3 border-t border-border">
+                    <TouchableOpacity className="flex-row items-center gap-1" onPress={() => toggleLike(post.id)}>
+                      <IconSymbol name={post.isLiked ? "heart.fill" : "heart"} size={18} color={post.isLiked ? colors.error : colors.muted} />
+                      <Text className={`text-sm ${post.isLiked ? 'text-error' : 'text-muted'}`}>{post.likes}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity className="flex-row items-center gap-1">
+                      <IconSymbol name="bubble.left.fill" size={18} color={colors.muted} />
+                      <Text className="text-sm text-muted">{post.comments}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity className="flex-row items-center gap-1">
+                      <IconSymbol name="paperplane.fill" size={18} color={colors.muted} />
+                    </TouchableOpacity>
                   </View>
                 </View>
-                <View className="items-end">
-                  <Text className="text-base font-bold text-primary">{points} Punkte</Text>
-                  <Text className="text-xs text-muted">0g Ertrag</Text>
+              </View>
+            ))}
+
+            {/* Leaderboard Preview */}
+            <View className="bg-surface rounded-xl p-4 border border-border">
+              <View className="flex-row items-center justify-between mb-3">
+                <Text className="text-lg font-semibold text-foreground">🏆 Top Grower</Text>
+                <TouchableOpacity onPress={() => setActiveTab("contests")}>
+                  <Text className="text-sm text-primary">Alle anzeigen</Text>
+                </TouchableOpacity>
+              </View>
+              {MOCK_LEADERBOARD.slice(0, 3).map((entry, index) => (
+                <View key={entry.rank} className="flex-row items-center gap-3 py-2">
+                  <Text className="text-lg font-bold w-6" style={{ 
+                    color: index === 0 ? "#FFD700" : index === 1 ? "#C0C0C0" : "#CD7F32" 
+                  }}>
+                    {entry.rank}
+                  </Text>
+                  <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
+                    <Text>{entry.userBadge || "🌱"}</Text>
+                  </View>
+                  <Text className="text-base text-foreground flex-1">{entry.userName}</Text>
+                  <Text className="text-sm text-primary font-medium">{entry.totalYield}g</Text>
                 </View>
+              ))}
+            </View>
+
+            <AdBanner position="community" variant="medium" />
+          </View>
+        )}
+
+        {/* News Tab */}
+        {activeTab === "news" && (
+          <View className="px-4 gap-4">
+            {/* Category Filter */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4">
+              <View className="flex-row gap-2">
+                {[
+                  { id: "all", label: "Alle" },
+                  { id: "law", label: "Gesetzgebung" },
+                  { id: "tips", label: "Tipps" },
+                ].map(cat => (
+                  <TouchableOpacity
+                    key={cat.id}
+                    className={`px-4 py-2 rounded-full ${newsCategory === cat.id ? 'bg-primary' : 'bg-surface'}`}
+                    onPress={() => setNewsCategory(cat.id as any)}
+                  >
+                    <Text className={newsCategory === cat.id ? 'text-white' : 'text-muted'}>{cat.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+
+            {/* Legal Info Card */}
+            <View className="bg-error/10 rounded-xl p-4 border border-error/30">
+              <View className="flex-row items-center gap-2 mb-3">
+                <IconSymbol name="exclamationmark.triangle.fill" size={20} color={colors.error} />
+                <Text className="text-lg font-semibold text-foreground">Aktuelle Rechtslage DE</Text>
+              </View>
+              <View className="gap-2">
+                {LEGAL_INFO.slice(0, 4).map(info => (
+                  <TouchableOpacity key={info.id} className="flex-row items-center gap-2">
+                    <View className="w-2 h-2 rounded-full bg-error" />
+                    <Text className="text-sm text-foreground flex-1">{info.title}: {info.details[0]}</Text>
+                  </TouchableOpacity>
+                ))}
               </View>
             </View>
 
-            <Text className="text-lg font-semibold text-foreground mb-3">Top Grower</Text>
-            {leaderboard.map((entry, index) => renderLeaderboardEntry(entry, index))}
-          </>
+            {/* News Articles */}
+            {filteredNews.map(article => (
+              <TouchableOpacity key={article.id} className="bg-surface rounded-xl border border-border overflow-hidden">
+                {article.isPinned && (
+                  <View className="bg-primary px-3 py-1">
+                    <Text className="text-xs font-medium text-white">📌 Wichtig</Text>
+                  </View>
+                )}
+                <View className="p-4">
+                  <View className="flex-row items-center gap-2 mb-2">
+                    <View className="px-2 py-0.5 rounded-full" style={{ backgroundColor: getCategoryColor(article.category) + "20" }}>
+                      <Text className="text-xs font-medium" style={{ color: getCategoryColor(article.category) }}>{getCategoryLabel(article.category)}</Text>
+                    </View>
+                    <Text className="text-xs text-muted">{formatNewsDate(article.publishedAt)}</Text>
+                  </View>
+                  <Text className="text-base font-semibold text-foreground mb-1">{article.title}</Text>
+                  <Text className="text-sm text-muted mb-2">{article.summary}</Text>
+                  <Text className="text-xs text-primary">Quelle: {article.source}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+
+            {/* FAQ Section */}
+            <View className="bg-surface rounded-xl p-4 border border-border">
+              <Text className="text-lg font-semibold text-foreground mb-3">❓ Häufige Fragen</Text>
+              {FAQ_DATA.slice(0, 4).map(faq => (
+                <TouchableOpacity key={faq.id} className="py-3 border-b border-border last:border-0">
+                  <Text className="text-sm font-medium text-foreground mb-1">{faq.question}</Text>
+                  <Text className="text-xs text-muted" numberOfLines={2}>{faq.answer}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
         )}
 
-        {activeTab === "marketplace" && (
-          <>
-            <Text className="text-lg font-semibold text-foreground mb-3">🔨 Auktionen</Text>
-            {MOCK_AUCTIONS.map(renderAuction)}
-            
-            <Text className="text-lg font-semibold text-foreground mb-3 mt-4">🎟️ Verlosungen</Text>
-            {MOCK_RAFFLES.map(renderRaffle)}
-            
-            <Text className="text-lg font-semibold text-foreground mb-3 mt-4">💰 Equipment Deals</Text>
-            {MOCK_DEALS.map(renderDeal)}
-          </>
+        {/* Radar Tab */}
+        {activeTab === "radar" && (
+          <View className="px-4 gap-4">
+            {/* Radar Sub-Tabs */}
+            <View className="flex-row gap-2">
+              {[
+                { id: "shops", label: "Shops", icon: "cart.fill" },
+                { id: "clubs", label: "Clubs", icon: "person.3.fill" },
+                { id: "members", label: "Grower", icon: "person.fill" },
+              ].map(tab => (
+                <TouchableOpacity
+                  key={tab.id}
+                  className={`flex-1 flex-row items-center justify-center gap-1 py-3 rounded-xl ${radarTab === tab.id ? 'bg-primary' : 'bg-surface'}`}
+                  onPress={() => setRadarTab(tab.id as any)}
+                >
+                  <IconSymbol name={tab.icon as any} size={16} color={radarTab === tab.id ? "#fff" : colors.muted} />
+                  <Text className={radarTab === tab.id ? 'text-white font-medium' : 'text-muted'}>{tab.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            {/* Map Placeholder */}
+            <View className="h-48 bg-surface rounded-xl border border-border items-center justify-center">
+              <IconSymbol name="map.fill" size={48} color={colors.muted} />
+              <Text className="text-sm text-muted mt-2">Karte wird geladen...</Text>
+              <Text className="text-xs text-muted">Standortfreigabe erforderlich</Text>
+            </View>
+
+            {/* Shops List */}
+            {radarTab === "shops" && MOCK_SHOPS.map(shop => (
+              <TouchableOpacity key={shop.id} className="bg-surface rounded-xl p-4 border border-border">
+                <View className="flex-row items-start gap-3">
+                  <View className="w-12 h-12 rounded-xl bg-primary/20 items-center justify-center">
+                    <IconSymbol name={shop.type === "headshop" ? "bag.fill" : "leaf.fill"} size={24} color={colors.primary} />
+                  </View>
+                  <View className="flex-1">
+                    <View className="flex-row items-center gap-2">
+                      <Text className="text-base font-semibold text-foreground">{shop.name}</Text>
+                      {shop.isVerified && <IconSymbol name="checkmark.seal.fill" size={14} color={colors.primary} />}
+                    </View>
+                    <Text className="text-xs text-muted">{shop.address}, {shop.city}</Text>
+                    <View className="flex-row items-center gap-1 mt-1">
+                      <IconSymbol name="star.fill" size={12} color={colors.warning} />
+                      <Text className="text-xs text-foreground">{shop.rating}</Text>
+                      <Text className="text-xs text-muted">({shop.reviewCount})</Text>
+                    </View>
+                  </View>
+                  <Text className="text-xs text-primary font-medium">{shop.type === "headshop" ? "Headshop" : "Growshop"}</Text>
+                </View>
+                {shop.features && (
+                  <View className="flex-row flex-wrap gap-1 mt-3">
+                    {shop.features.slice(0, 4).map(feature => (
+                      <View key={feature} className="bg-background px-2 py-0.5 rounded-full">
+                        <Text className="text-xs text-muted">{feature}</Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </TouchableOpacity>
+            ))}
+
+            {/* Clubs List */}
+            {radarTab === "clubs" && MOCK_CLUBS.map(club => (
+              <TouchableOpacity key={club.id} className="bg-surface rounded-xl p-4 border border-border">
+                <View className="flex-row items-start gap-3">
+                  <View className="w-12 h-12 rounded-xl bg-success/20 items-center justify-center">
+                    <IconSymbol name="person.3.fill" size={24} color={colors.success} />
+                  </View>
+                  <View className="flex-1">
+                    <View className="flex-row items-center gap-2">
+                      <Text className="text-base font-semibold text-foreground">{club.name}</Text>
+                      {club.isVerified && <IconSymbol name="checkmark.seal.fill" size={14} color={colors.success} />}
+                    </View>
+                    <Text className="text-xs text-muted">{club.city}</Text>
+                    <View className="flex-row items-center gap-1 mt-1">
+                      <IconSymbol name="star.fill" size={12} color={colors.warning} />
+                      <Text className="text-xs text-foreground">{club.rating}</Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity className="bg-success/20 px-3 py-1 rounded-full">
+                    <Text className="text-xs font-medium text-success">Anfragen</Text>
+                  </TouchableOpacity>
+                </View>
+                <Text className="text-sm text-muted mt-2">{club.description}</Text>
+              </TouchableOpacity>
+            ))}
+
+            {/* Members List */}
+            {radarTab === "members" && (
+              <>
+                {tier === "free" ? (
+                  <UpgradePrompt feature="Member Radar" />
+                ) : (
+                  MOCK_NEARBY_MEMBERS.map(member => (
+                    <TouchableOpacity key={member.id} className="bg-surface rounded-xl p-4 border border-border">
+                      <View className="flex-row items-center gap-3">
+                        <View className="w-12 h-12 rounded-full bg-primary/20 items-center justify-center">
+                          <Text className="text-2xl">{member.badge}</Text>
+                        </View>
+                        <View className="flex-1">
+                          <View className="flex-row items-center gap-2">
+                            <Text className="text-base font-semibold text-foreground">{member.userName}</Text>
+                            {member.isOnline && <View className="w-2 h-2 rounded-full bg-success" />}
+                          </View>
+                          <Text className="text-xs text-muted">Level {member.level} • {member.experienceYears} Jahre Erfahrung</Text>
+                        </View>
+                        <Text className="text-sm text-primary font-medium">{member.distance} km</Text>
+                      </View>
+                      <View className="flex-row flex-wrap gap-1 mt-2">
+                        {member.specialties.map(spec => (
+                          <View key={spec} className="bg-primary/10 px-2 py-0.5 rounded-full">
+                            <Text className="text-xs text-primary">{spec}</Text>
+                          </View>
+                        ))}
+                      </View>
+                      {member.bio && <Text className="text-sm text-muted mt-2">{member.bio}</Text>}
+                    </TouchableOpacity>
+                  ))
+                )}
+              </>
+            )}
+          </View>
         )}
 
-        <View className="h-8" />
+        {/* Tutorials Tab */}
+        {activeTab === "tutorials" && (
+          <View className="px-4 gap-4">
+            {/* Category Filter */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4">
+              <View className="flex-row gap-2">
+                {[
+                  { id: "all", label: "Alle" },
+                  { id: "basics", label: "Grundlagen" },
+                  { id: "problems", label: "Probleme" },
+                  { id: "harvest", label: "Ernte" },
+                  { id: "equipment", label: "Equipment" },
+                ].map(cat => (
+                  <TouchableOpacity
+                    key={cat.id}
+                    className={`px-4 py-2 rounded-full ${tutorialCategory === cat.id ? 'bg-primary' : 'bg-surface'}`}
+                    onPress={() => setTutorialCategory(cat.id)}
+                  >
+                    <Text className={tutorialCategory === cat.id ? 'text-white' : 'text-muted'}>{cat.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+
+            {/* Video List */}
+            {filteredTutorials.map(video => (
+              <TouchableOpacity key={video.id} className="bg-surface rounded-xl border border-border overflow-hidden">
+                <View className="h-40 bg-background items-center justify-center relative">
+                  <IconSymbol name="play.circle.fill" size={48} color={colors.primary} />
+                  <View className="absolute bottom-2 right-2 bg-black/70 px-2 py-0.5 rounded">
+                    <Text className="text-xs text-white">{video.duration}</Text>
+                  </View>
+                  {video.isPremium && tier === "free" && (
+                    <View className="absolute inset-0 bg-black/50 items-center justify-center">
+                      <IconSymbol name="lock.fill" size={32} color="#fff" />
+                      <Text className="text-white text-sm mt-1">Premium</Text>
+                    </View>
+                  )}
+                </View>
+                <View className="p-3">
+                  <Text className="text-base font-semibold text-foreground mb-1" numberOfLines={2}>{video.title}</Text>
+                  <Text className="text-xs text-muted mb-2">{video.channel}</Text>
+                  <View className="flex-row items-center gap-2">
+                    <Text className="text-xs text-muted">{formatViews(video.views)} Aufrufe</Text>
+                    <View className={`px-2 py-0.5 rounded-full ${
+                      video.difficulty === "beginner" ? "bg-success/20" :
+                      video.difficulty === "intermediate" ? "bg-warning/20" : "bg-error/20"
+                    }`}>
+                      <Text className={`text-xs ${
+                        video.difficulty === "beginner" ? "text-success" :
+                        video.difficulty === "intermediate" ? "text-warning" : "text-error"
+                      }`}>
+                        {video.difficulty === "beginner" ? "Anfänger" : video.difficulty === "intermediate" ? "Mittel" : "Fortgeschritten"}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+
+        {/* Strains Tab */}
+        {activeTab === "strains" && (
+          <View className="px-4 gap-4">
+            {/* Search */}
+            <View className="bg-surface rounded-xl px-4 py-3 flex-row items-center gap-2 border border-border">
+              <IconSymbol name="magnifyingglass" size={18} color={colors.muted} />
+              <TextInput
+                className="flex-1 text-foreground"
+                placeholder="Sorte suchen..."
+                placeholderTextColor={colors.muted}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
+            </View>
+
+            {/* Filter */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4">
+              <View className="flex-row gap-2">
+                {[
+                  { id: "all", label: "Alle" },
+                  { id: "beginner", label: "Anfänger" },
+                  { id: "indica", label: "Indica" },
+                  { id: "sativa", label: "Sativa" },
+                ].map(filter => (
+                  <TouchableOpacity
+                    key={filter.id}
+                    className={`px-4 py-2 rounded-full ${strainFilter === filter.id ? 'bg-primary' : 'bg-surface'}`}
+                    onPress={() => setStrainFilter(filter.id as any)}
+                  >
+                    <Text className={strainFilter === filter.id ? 'text-white' : 'text-muted'}>{filter.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+
+            {/* Strain List */}
+            {filteredStrains.map(strain => (
+              <TouchableOpacity key={strain.id} className="bg-surface rounded-xl p-4 border border-border">
+                <View className="flex-row items-start gap-3">
+                  <View className="w-14 h-14 rounded-xl items-center justify-center" style={{ backgroundColor: getTypeColor(strain.type) + "20" }}>
+                    <Text className="text-2xl">🌿</Text>
+                  </View>
+                  <View className="flex-1">
+                    <View className="flex-row items-center gap-2">
+                      <Text className="text-base font-semibold text-foreground">{strain.name}</Text>
+                      {strain.isPremium && (
+                        <View className="bg-warning/20 px-1.5 py-0.5 rounded">
+                          <Text className="text-xs text-warning">⭐</Text>
+                        </View>
+                      )}
+                    </View>
+                    <View className="flex-row items-center gap-2 mt-1">
+                      <View className="px-2 py-0.5 rounded-full" style={{ backgroundColor: getTypeColor(strain.type) + "20" }}>
+                        <Text className="text-xs" style={{ color: getTypeColor(strain.type) }}>{getTypeLabel(strain.type)}</Text>
+                      </View>
+                      <View className="px-2 py-0.5 rounded-full" style={{ backgroundColor: getDifficultyColor(strain.difficulty) + "20" }}>
+                        <Text className="text-xs" style={{ color: getDifficultyColor(strain.difficulty) }}>{getDifficultyLabel(strain.difficulty)}</Text>
+                      </View>
+                    </View>
+                  </View>
+                  <View className="items-end">
+                    <View className="flex-row items-center gap-1">
+                      <IconSymbol name="star.fill" size={14} color={colors.warning} />
+                      <Text className="text-sm font-medium text-foreground">{strain.rating}</Text>
+                    </View>
+                    <Text className="text-xs text-muted">{strain.reviewCount} Reviews</Text>
+                  </View>
+                </View>
+                
+                <View className="flex-row items-center gap-4 mt-3 pt-3 border-t border-border">
+                  <View>
+                    <Text className="text-xs text-muted">THC</Text>
+                    <Text className="text-sm font-medium text-foreground">{strain.thcMin}-{strain.thcMax}%</Text>
+                  </View>
+                  <View>
+                    <Text className="text-xs text-muted">Blüte</Text>
+                    <Text className="text-sm font-medium text-foreground">{strain.floweringWeeks} Wo.</Text>
+                  </View>
+                  <View>
+                    <Text className="text-xs text-muted">Ertrag</Text>
+                    <Text className="text-sm font-medium text-foreground">{strain.yieldIndoor}g/m²</Text>
+                  </View>
+                </View>
+
+                {/* Affiliate Links */}
+                {strain.affiliateLinks.length > 0 && (
+                  <View className="mt-3 pt-3 border-t border-border">
+                    <Text className="text-xs text-muted mb-2">🛒 Samen kaufen:</Text>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                      <View className="flex-row gap-2">
+                        {strain.affiliateLinks.map((link, index) => (
+                          <TouchableOpacity 
+                            key={index}
+                            className="bg-primary/10 px-3 py-2 rounded-lg flex-row items-center gap-2"
+                            onPress={() => Linking.openURL(link.url)}
+                          >
+                            <Text className="text-sm font-medium text-primary">{link.shop}</Text>
+                            <Text className="text-xs text-muted">€{link.price}</Text>
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    </ScrollView>
+                  </View>
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+
+        {/* Contests Tab */}
+        {activeTab === "contests" && (
+          <View className="px-4 gap-4">
+            {/* Active Contests */}
+            <Text className="text-lg font-semibold text-foreground">🏆 Aktive Gewinnspiele</Text>
+            {MOCK_CONTESTS.map(contest => (
+              <TouchableOpacity key={contest.id} className="bg-surface rounded-xl border border-border overflow-hidden">
+                <View className="h-32 bg-gradient-to-br from-primary/20 to-success/20 items-center justify-center">
+                  <Text className="text-4xl">{contest.type === "yield" ? "🌿" : contest.type === "photo" ? "📸" : "🎰"}</Text>
+                </View>
+                <View className="p-4">
+                  <Text className="text-base font-semibold text-foreground">{contest.title}</Text>
+                  <Text className="text-sm text-muted mt-1">{contest.description}</Text>
+                  <View className="flex-row items-center justify-between mt-3">
+                    <View>
+                      <Text className="text-xs text-muted">Preis</Text>
+                      <Text className="text-sm font-medium text-primary">{contest.prize}</Text>
+                    </View>
+                    <View>
+                      <Text className="text-xs text-muted">Teilnehmer</Text>
+                      <Text className="text-sm font-medium text-foreground">{contest.participants}</Text>
+                    </View>
+                    <View>
+                      <Text className="text-xs text-muted">Endet in</Text>
+                      <Text className="text-sm font-medium text-warning">{formatTimeRemaining(contest.endDate)}</Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity className={`mt-3 py-2 rounded-lg ${contest.isJoined ? 'bg-success/20' : 'bg-primary'}`}>
+                    <Text className={`text-center text-sm font-semibold ${contest.isJoined ? 'text-success' : 'text-white'}`}>
+                      {contest.isJoined ? "✓ Teilgenommen" : "Teilnehmen"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            ))}
+
+            {/* Leaderboard */}
+            <Text className="text-lg font-semibold text-foreground mt-4">📊 Rangliste</Text>
+            {MOCK_LEADERBOARD.map((entry, index) => (
+              <View key={entry.rank} className={`flex-row items-center p-3 rounded-xl ${index < 3 ? 'bg-primary/10 border border-primary/30' : 'bg-surface border border-border'}`}>
+                <View className="w-10 items-center">
+                  {index === 0 ? <Text className="text-2xl">🥇</Text> :
+                   index === 1 ? <Text className="text-2xl">🥈</Text> :
+                   index === 2 ? <Text className="text-2xl">🥉</Text> :
+                   <Text className="text-lg font-bold text-muted">#{entry.rank}</Text>}
+                </View>
+                <View className="flex-row items-center gap-3 flex-1 ml-2">
+                  <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
+                    <Text className="text-lg">{entry.userBadge}</Text>
+                  </View>
+                  <View>
+                    <Text className="text-base font-semibold text-foreground">{entry.userName}</Text>
+                    <Text className="text-xs text-muted">Level {entry.userLevel}</Text>
+                  </View>
+                </View>
+                <View className="items-end">
+                  <Text className="text-base font-bold text-primary">{entry.totalYield.toLocaleString()}g</Text>
+                  <Text className="text-xs text-muted">{entry.points.toLocaleString()} Punkte</Text>
+                </View>
+              </View>
+            ))}
+
+            {/* Auctions */}
+            <Text className="text-lg font-semibold text-foreground mt-4">🔨 Auktionen</Text>
+            {MOCK_AUCTIONS.slice(0, 2).map(auction => (
+              <TouchableOpacity key={auction.id} className="bg-surface rounded-xl p-4 border border-border">
+                <View className="flex-row items-center gap-3">
+                  <View className="w-16 h-16 rounded-xl bg-warning/20 items-center justify-center">
+                    <Text className="text-2xl">{auction.vendorLogo}</Text>
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-base font-semibold text-foreground">{auction.title}</Text>
+                    <Text className="text-xs text-muted">{auction.vendorName}</Text>
+                    <View className="flex-row items-center gap-2 mt-1">
+                      <Text className="text-sm font-bold text-warning">€{auction.currentBid}</Text>
+                      <Text className="text-xs text-muted">{auction.bids} Gebote</Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity className="bg-warning/20 px-3 py-2 rounded-lg">
+                    <Text className="text-sm font-medium text-warning">Bieten</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            ))}
+
+            {/* Raffles */}
+            <Text className="text-lg font-semibold text-foreground mt-4">🎰 Verlosungen</Text>
+            {MOCK_RAFFLES.slice(0, 2).map(raffle => (
+              <TouchableOpacity key={raffle.id} className="bg-surface rounded-xl p-4 border border-border">
+                <View className="flex-row items-center gap-3">
+                  <View className="w-16 h-16 rounded-xl bg-success/20 items-center justify-center">
+                    <Text className="text-2xl">{raffle.vendorLogo}</Text>
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-base font-semibold text-foreground">{raffle.title}</Text>
+                    <Text className="text-xs text-muted">{raffle.vendorName}</Text>
+                    <Text className="text-sm text-muted mt-1">{raffle.soldTickets}/{raffle.totalTickets} Tickets</Text>
+                  </View>
+                  <View className="items-end">
+                    <Text className="text-lg font-bold text-success">€{raffle.ticketPrice}</Text>
+                    <Text className="text-xs text-muted">pro Los</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
+
+            {/* Deals */}
+            <Text className="text-lg font-semibold text-foreground mt-4">💰 Equipment Deals</Text>
+            {MOCK_DEALS.slice(0, 2).map(deal => (
+              <TouchableOpacity key={deal.id} className="bg-surface rounded-xl p-4 border border-border">
+                <View className="flex-row items-center gap-3">
+                  <View className="w-16 h-16 rounded-xl bg-primary/20 items-center justify-center">
+                    <Text className="text-2xl">{deal.vendorLogo}</Text>
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-base font-semibold text-foreground">{deal.title}</Text>
+                    <Text className="text-xs text-muted">{deal.vendorName}</Text>
+                    <View className="flex-row items-center gap-2 mt-1">
+                      <Text className="text-sm font-bold text-success">€{deal.salePrice}</Text>
+                      <Text className="text-xs text-muted line-through">€{deal.originalPrice}</Text>
+                      <View className="bg-error/20 px-1.5 py-0.5 rounded">
+                        <Text className="text-xs font-bold text-error">-{deal.discount}%</Text>
+                      </View>
+                    </View>
+                  </View>
+                  <TouchableOpacity className="bg-success px-3 py-2 rounded-lg">
+                    <Text className="text-sm font-medium text-white">Kaufen</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+
+        <View className="h-24" />
       </ScrollView>
     </ScreenContainer>
   );

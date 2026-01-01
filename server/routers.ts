@@ -106,6 +106,182 @@ Wenn die Pflanze gesund aussieht, beschreibe ihren guten Zustand und gib allgeme
       }),
   }),
 
+  // Gender Detection AI
+  gender: router({
+    detect: publicProcedure
+      .input(z.object({
+        image: z.string(), // Base64 encoded image
+      }))
+      .mutation(async ({ input }) => {
+        const result = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: `Du bist ein Experte für Cannabis-Geschlechtsbestimmung. Analysiere das Bild und bestimme das Geschlecht der Pflanze.
+
+Antworte IMMER auf Deutsch und im folgenden JSON-Format:
+{
+  "gender": "male" | "female" | "hermaphrodite" | "unknown",
+  "confidence": 0-100,
+  "indicators": ["Indikator 1", "Indikator 2"],
+  "explanation": "Erklärung der Bestimmung",
+  "recommendation": "Empfehlung was zu tun ist"
+}
+
+Weiblich: Weiße Härchen (Stigmen) an den Nodien
+Männlich: Kleine runde Pollensäcke an den Nodien
+Zwitter: Beide Merkmale vorhanden`,
+            },
+            {
+              role: "user",
+              content: [
+                { type: "text" as const, text: "Bestimme das Geschlecht dieser Cannabis-Pflanze." },
+                {
+                  type: "image_url" as const,
+                  image_url: {
+                    url: input.image.startsWith("data:") ? input.image : `data:image/jpeg;base64,${input.image}`,
+                    detail: "high" as const,
+                  },
+                },
+              ],
+            },
+          ],
+          responseFormat: { type: "json_object" },
+        });
+
+        const content = result.choices[0]?.message?.content;
+        if (typeof content === "string") {
+          try {
+            return JSON.parse(content);
+          } catch {
+            return { gender: "unknown", confidence: 0, indicators: [], explanation: content, recommendation: "Bitte versuche es mit einem besseren Bild." };
+          }
+        }
+        return { gender: "unknown", confidence: 0, indicators: [], explanation: "Analyse fehlgeschlagen", recommendation: "Bitte versuche es erneut." };
+      }),
+  }),
+
+  // Strain Identification AI
+  strain: router({
+    identify: publicProcedure
+      .input(z.object({
+        image: z.string(),
+        additionalInfo: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const result = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: `Du bist ein Experte für Cannabis-Sorten-Identifikation. Analysiere das Bild und versuche die Sorte zu identifizieren.
+
+Antworte IMMER auf Deutsch und im folgenden JSON-Format:
+{
+  "possibleStrains": [
+    { "name": "Sortenname", "confidence": 0-100, "type": "indica" | "sativa" | "hybrid" }
+  ],
+  "characteristics": {
+    "leafShape": "Beschreibung der Blattform",
+    "color": "Farbmerkmale",
+    "structure": "Wuchsstruktur",
+    "trichomes": "Trichom-Beschreibung"
+  },
+  "growthStage": "Aktuelles Wachstumsstadium",
+  "healthAssessment": "Kurze Gesundheitseinschätzung",
+  "tips": ["Tipp 1", "Tipp 2"]
+}
+
+Gib bis zu 3 mögliche Sorten an, sortiert nach Wahrscheinlichkeit.`,
+            },
+            {
+              role: "user",
+              content: [
+                { type: "text" as const, text: input.additionalInfo ? `Identifiziere diese Cannabis-Sorte. Zusätzliche Info: ${input.additionalInfo}` : "Identifiziere diese Cannabis-Sorte." },
+                {
+                  type: "image_url" as const,
+                  image_url: {
+                    url: input.image.startsWith("data:") ? input.image : `data:image/jpeg;base64,${input.image}`,
+                    detail: "high" as const,
+                  },
+                },
+              ],
+            },
+          ],
+          responseFormat: { type: "json_object" },
+        });
+
+        const content = result.choices[0]?.message?.content;
+        if (typeof content === "string") {
+          try {
+            return JSON.parse(content);
+          } catch {
+            return { possibleStrains: [], characteristics: {}, growthStage: "Unbekannt", healthAssessment: content, tips: [] };
+          }
+        }
+        return { possibleStrains: [], characteristics: {}, growthStage: "Unbekannt", healthAssessment: "Analyse fehlgeschlagen", tips: [] };
+      }),
+  }),
+
+  // Harvest Readiness AI
+  harvest: router({
+    checkReadiness: publicProcedure
+      .input(z.object({
+        image: z.string(),
+        strainInfo: z.string().optional(),
+        floweringWeek: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const result = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: `Du bist ein Experte für Cannabis-Erntezeitpunkt-Bestimmung. Analysiere die Trichome und bestimme den optimalen Erntezeitpunkt.
+
+Antworte IMMER auf Deutsch und im folgenden JSON-Format:
+{
+  "readiness": 0-100,
+  "trichomeAnalysis": {
+    "clear": 0-100,
+    "milky": 0-100,
+    "amber": 0-100
+  },
+  "recommendation": "Empfehlung zum Erntezeitpunkt",
+  "expectedEffect": "Erwartete Wirkung bei Ernte jetzt",
+  "optimalHarvestWindow": "Optimales Erntefenster",
+  "tips": ["Tipp 1", "Tipp 2"]
+}
+
+Klar = zu früh, Milchig = THC-Peak, Bernstein = mehr CBD/CBN, entspannender`,
+            },
+            {
+              role: "user",
+              content: [
+                { type: "text" as const, text: `Analysiere die Erntereife dieser Cannabis-Pflanze.${input.strainInfo ? ` Sorte: ${input.strainInfo}` : ""}${input.floweringWeek ? ` Blütewoche: ${input.floweringWeek}` : ""}` },
+                {
+                  type: "image_url" as const,
+                  image_url: {
+                    url: input.image.startsWith("data:") ? input.image : `data:image/jpeg;base64,${input.image}`,
+                    detail: "high" as const,
+                  },
+                },
+              ],
+            },
+          ],
+          responseFormat: { type: "json_object" },
+        });
+
+        const content = result.choices[0]?.message?.content;
+        if (typeof content === "string") {
+          try {
+            return JSON.parse(content);
+          } catch {
+            return { readiness: 0, trichomeAnalysis: { clear: 0, milky: 0, amber: 0 }, recommendation: content, expectedEffect: "", optimalHarvestWindow: "", tips: [] };
+          }
+        }
+        return { readiness: 0, trichomeAnalysis: { clear: 0, milky: 0, amber: 0 }, recommendation: "Analyse fehlgeschlagen", expectedEffect: "", optimalHarvestWindow: "", tips: [] };
+      }),
+  }),
+
   // Grow Coach AI Chat
   coach: router({
     ask: publicProcedure
