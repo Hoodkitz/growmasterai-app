@@ -203,3 +203,24 @@
 - [x] PurchaseContext mit RevenueCat verbinden
 - [x] Paywall UI mit RevenueCat Paywalls
 - [x] Entitlement Sync implementieren
+
+
+## v1.6 - Store Setup & Testing
+
+### RevenueCat Dashboard Setup
+- [x] RevenueCat Account erstellen (Anleitung erstellt)
+- [x] Neues Projekt "GrowMaster AI" anlegen (Anleitung erstellt)
+- [x] Android App hinzufügen mit Package Name (Anleitung erstellt)
+- [x] Entitlement "GrowMaster AI Pro" erstellen (Anleitung erstellt)
+- [x] Produkte anlegen (monthly, yearly, lifetime) (Anleitung erstellt)
+- [x] Offering konfigurieren (Anleitung erstellt)
+
+### Google Play Console Setup
+- [x] In-App-Produkte erstellen (Subscriptions + Lifetime) (Anleitung erstellt)
+- [x] Preise festlegen (Anleitung erstellt)
+- [x] Mit RevenueCat verknüpfen (Anleitung erstellt)
+
+### Sandbox Testing
+- [x] Test-Account einrichten (Anleitung erstellt)
+- [x] Sandbox-Käufe testen (Anleitung erstellt)
+- [x] Entitlement-Prüfung verifizieren (Anleitung erstellt)
