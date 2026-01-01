@@ -6,12 +6,14 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
 import { TIER_INFO, TIER_LIMITS, TIER_PRICING, SubscriptionTier } from "@/lib/subscription";
+import { useAppAuth } from "@/lib/auth-context";
 
 export default function SettingsScreen() {
   const router = useRouter();
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const { tier, upgradeTo, dailyDiagnoses, dailyMessages, refresh } = useSubscription();
+  const { user, isAdmin, logout } = useAppAuth();
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
 
@@ -199,6 +201,24 @@ export default function SettingsScreen() {
             <IconSymbol name="chevron.right" size={20} color={colors.muted} />
           </TouchableOpacity>
         </View>
+
+        {/* Admin Section */}
+        {isAdmin && (
+          <View className="bg-error/10 rounded-2xl border border-error/30 mb-6 overflow-hidden">
+            <View className="flex-row items-center gap-2 p-4 pb-2">
+              <IconSymbol name="shield.fill" size={20} color={colors.error} />
+              <Text className="text-lg font-semibold text-foreground">Admin</Text>
+            </View>
+            
+            <TouchableOpacity 
+              className="flex-row items-center justify-between p-4 border-t border-error/30"
+              onPress={() => router.push("/admin")}
+            >
+              <Text className="text-base text-foreground">Admin Panel öffnen</Text>
+              <IconSymbol name="chevron.right" size={20} color={colors.error} />
+            </TouchableOpacity>
+          </View>
+        )}
 
         {/* Debug Section (only in development) */}
         <View className="bg-surface rounded-2xl border border-border mb-6 overflow-hidden">

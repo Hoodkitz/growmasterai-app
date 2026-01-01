@@ -24,3 +24,50 @@
 - [x] Einstellungen-Screen mit Abo-Verwaltung
 - [x] Upgrade-Prompts in limitierten Features
 - [x] Premium/Pro Badge im UI anzeigen
+
+
+## v1.2 - Major Update
+
+### UI/UX Optimierung
+- [x] Visuelles Redesign der Oberfläche
+- [x] Verbesserte Animationen und Übergänge
+- [x] Dark Mode Optimierung
+
+### Live-Kamera Analyse
+- [x] Live-Kamera-View mit Echtzeit-Overlay
+- [x] KI-Markierungen für Schnitt-Empfehlungen
+- [x] Ertrags-Optimierungs-Hinweise in Echtzeit
+
+### Authentifizierung
+- [x] Google Sign-In Integration
+- [x] Apple Sign-In Integration
+- [x] Email/Passwort Authentifizierung
+- [x] Admin Account für support@growmaster.app
+
+### Gamification System
+- [x] Achievements/Erfolge System
+- [x] Punkte und Level System
+- [x] Belohnungen für Meilensteine
+- [x] Tägliche Challenges (Login-Streak)
+
+### Community Bereich
+- [x] Community Feed/Timeline
+- [x] Gewinnspiele für höchsten Ertrag
+- [x] Nutzer-Rankings/Leaderboard
+- [x] Community Posts und Kommentare
+
+### Anbieter-Marktplatz
+- [x] Auktionshaus für seltene Strains
+- [x] Equipment-Verlosungen
+- [x] Anbieter-Panel für Sonderangebote
+- [x] Teilnahme-System für Verlosungen
+
+### Werbung und Monetarisierung
+- [x] Banner-Werbeflächen
+- [x] Anbieter-Werbe-Buchungssystem
+- [x] Automatisierte Anbieter-Anfragen
+
+### Admin Features
+- [x] Admin Dashboard
+- [x] Anbieter-Verwaltung
+- [x] Gewinnspiel-Management

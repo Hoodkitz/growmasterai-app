@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View } from "react-native";
 
 import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
@@ -10,7 +11,7 @@ export default function TabLayout() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const bottomPadding = Platform.OS === "web" ? 12 : Math.max(insets.bottom, 8);
-  const tabBarHeight = 56 + bottomPadding;
+  const tabBarHeight = 64 + bottomPadding;
 
   return (
     <Tabs
@@ -20,12 +21,19 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
-          paddingTop: 8,
+          paddingTop: 10,
           paddingBottom: bottomPadding,
           height: tabBarHeight,
-          backgroundColor: colors.surface,
+          backgroundColor: colors.background,
           borderTopColor: colors.border,
-          borderTopWidth: 0.5,
+          borderTopWidth: 1,
+          elevation: 0,
+          shadowOpacity: 0,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: "600",
+          marginTop: 2,
         },
       }}
     >
@@ -33,35 +41,106 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <View style={{ alignItems: "center" }}>
+              <IconSymbol size={26} name="house.fill" color={color} />
+              {focused && (
+                <View style={{ 
+                  width: 4, 
+                  height: 4, 
+                  borderRadius: 2, 
+                  backgroundColor: colors.primary,
+                  marginTop: 4,
+                }} />
+              )}
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
         name="diagnose"
         options={{
-          title: "Diagnose",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="camera.fill" color={color} />,
+          title: "Scan",
+          tabBarIcon: ({ color, focused }) => (
+            <View style={{ alignItems: "center" }}>
+              <IconSymbol size={26} name="camera.fill" color={color} />
+              {focused && (
+                <View style={{ 
+                  width: 4, 
+                  height: 4, 
+                  borderRadius: 2, 
+                  backgroundColor: colors.primary,
+                  marginTop: 4,
+                }} />
+              )}
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
         name="coach"
         options={{
           title: "Coach",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="message.fill" color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <View style={{ alignItems: "center" }}>
+              <IconSymbol size={26} name="message.fill" color={color} />
+              {focused && (
+                <View style={{ 
+                  width: 4, 
+                  height: 4, 
+                  borderRadius: 2, 
+                  backgroundColor: colors.primary,
+                  marginTop: 4,
+                }} />
+              )}
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="community"
+        options={{
+          title: "Community",
+          tabBarIcon: ({ color, focused }) => (
+            <View style={{ alignItems: "center" }}>
+              <IconSymbol size={26} name="person.3.fill" color={color} />
+              {focused && (
+                <View style={{ 
+                  width: 4, 
+                  height: 4, 
+                  borderRadius: 2, 
+                  backgroundColor: colors.primary,
+                  marginTop: 4,
+                }} />
+              )}
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
         name="plants"
         options={{
           title: "Pflanzen",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="leaf.fill" color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <View style={{ alignItems: "center" }}>
+              <IconSymbol size={26} name="leaf.fill" color={color} />
+              {focused && (
+                <View style={{ 
+                  width: 4, 
+                  height: 4, 
+                  borderRadius: 2, 
+                  backgroundColor: colors.primary,
+                  marginTop: 4,
+                }} />
+              )}
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
         name="journal"
         options={{
-          title: "Journal",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="book.fill" color={color} />,
+          href: null, // Hide from tab bar, accessible via plants
         }}
       />
     </Tabs>
