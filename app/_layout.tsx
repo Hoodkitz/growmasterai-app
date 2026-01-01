@@ -102,6 +102,7 @@ export default function RootLayout() {
                 <Stack.Screen name="vendor-portal" options={{ presentation: "modal" }} />
                 <Stack.Screen name="tools" options={{ presentation: "modal" }} />
                 <Stack.Screen name="messages" options={{ presentation: "modal" }} />
+                <Stack.Screen name="legal" options={{ presentation: "modal" }} />
               </Stack>
               <StatusBar style="auto" />
             </SubscriptionProvider>

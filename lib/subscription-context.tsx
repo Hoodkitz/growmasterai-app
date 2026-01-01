@@ -23,6 +23,9 @@ interface SubscriptionContextType {
   dailyMessages: number;
   loading: boolean;
   
+  // Tier setter (for external sync like RevenueCat)
+  setTier: (tier: SubscriptionTier) => void;
+  
   // Upgrade functions
   upgradeTo: (tier: SubscriptionTier) => Promise<void>;
   
@@ -124,6 +127,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         dailyDiagnoses,
         dailyMessages,
         loading,
+        setTier,
         upgradeTo,
         canDiagnose,
         canMessage,

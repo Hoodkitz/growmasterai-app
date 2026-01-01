@@ -139,3 +139,48 @@
 - [x] Grow-Gruppen erstellen (Community)
 - [x] Mentoring-System (Experte hilft Anfänger)
 - [x] Live-Streams für Pro-User (Community)
+
+
+## v1.4 - Monetarisierung Final
+
+### RevenueCat In-App-Purchases
+- [x] RevenueCat SDK Integration
+- [x] Produkt-IDs für Premium und Pro Abos konfigurieren
+- [x] Paywall mit echten Kaufoptionen verbinden
+- [x] Restore Purchases Funktion
+- [x] Subscription Status Sync mit RevenueCat
+
+### Affiliate-Programme
+- [x] Zamnesia Affiliate-Links integrieren
+- [x] Sensiseeds Affiliate-Links integrieren
+- [x] Dutch-Headshop Affiliate-Links integrieren
+- [x] RQS (Royal Queen Seeds) Affiliate-Links
+- [x] Seedsman Affiliate-Links
+- [x] Affiliate-Tracking und Analytics
+
+### Backend & Datenbank
+- [x] Drizzle Schema für alle Entitäten erstellen
+- [x] User-Tabelle mit Auth-Integration
+- [x] Pflanzen-Tabelle mit User-Relation
+- [x] Journal-Einträge Tabelle
+- [x] Community-Posts Tabelle
+- [x] Nachrichten-Tabelle
+- [x] Achievements-Tabelle
+- [x] API-Endpunkte für CRUD-Operationen
+- [x] Daten-Migration von AsyncStorage zu DB
+
+### Anbieter-Akquise
+- [x] Email-Templates für Anbieter-Anfragen
+- [x] Automatisierte Outreach-Funktion
+- [x] Anbieter-Onboarding-Flow
+- [x] Anbieter-Dashboard mit Analytics
+- [x] Rechnungsstellung für Anbieter
+
+### Rechtliche Dokumente
+- [x] Impressum erstellen
+- [x] Datenschutzerklärung (DSGVO-konform)
+- [x] AGB für Premium-Abos
+- [x] AGB für Marktplatz/Anbieter
+- [x] Nutzungsbedingungen
+- [x] Cookie-Richtlinie
+- [x] Rechtliche Screens in App integrieren

@@ -257,6 +257,19 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Legal Section */}
+        <View className="bg-surface rounded-2xl border border-border mb-6 overflow-hidden">
+          <Text className="text-lg font-semibold text-foreground p-4 pb-2">Rechtliches</Text>
+          
+          <TouchableOpacity 
+            className="flex-row items-center justify-between p-4 border-t border-border"
+            onPress={() => router.push("/legal")}
+          >
+            <Text className="text-base text-foreground">Impressum, Datenschutz & AGB</Text>
+            <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+          </TouchableOpacity>
+        </View>
+
         {/* App Info */}
         <View className="items-center gap-2 py-4">
           <Text className="text-sm text-muted">GrowMaster AI v1.0.0</Text>

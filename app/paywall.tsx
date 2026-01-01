@@ -1,16 +1,18 @@
 import { useState } from "react";
-import { ScrollView, Text, View, TouchableOpacity, Alert } from "react-native";
+import { ScrollView, Text, View, TouchableOpacity, Alert, ActivityIndicator, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
+import { usePurchases, useOfferings } from "@/lib/purchase-context";
 import { 
   SubscriptionTier, 
   TIER_INFO, 
   TIER_PRICING,
   TIER_LIMITS 
 } from "@/lib/subscription";
+import { formatPrice, calculateYearlySavings } from "@/lib/purchases";
 
 type BillingPeriod = "monthly" | "yearly";
 
@@ -19,11 +21,37 @@ export default function PaywallScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const { tier: currentTier, upgradeTo } = useSubscription();
+  const { purchase, restore, isLoading } = usePurchases();
+  const { premiumMonthly, premiumYearly, proMonthly, proYearly } = useOfferings();
+  
   const [selectedTier, setSelectedTier] = useState<"premium" | "pro">("premium");
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("yearly");
+  const [restoring, setRestoring] = useState(false);
+
+  const isWeb = Platform.OS === "web";
+
+  // Hole das ausgewählte Paket für RevenueCat
+  const getSelectedPackage = () => {
+    if (selectedTier === "premium") {
+      return billingPeriod === "yearly" ? premiumYearly : premiumMonthly;
+    } else {
+      return billingPeriod === "yearly" ? proYearly : proMonthly;
+    }
+  };
 
   const handlePurchase = async () => {
-    // In a real app, this would integrate with App Store / Google Play
+    const pkg = getSelectedPackage();
+    
+    // Wenn RevenueCat-Paket verfügbar, nutze echten Kauf
+    if (pkg && !isWeb) {
+      const success = await purchase(pkg);
+      if (success) {
+        router.back();
+      }
+      return;
+    }
+    
+    // Fallback für Web oder wenn keine Pakete geladen
     Alert.alert(
       "Upgrade bestätigen",
       `Möchtest du auf ${TIER_INFO[selectedTier].name} upgraden?`,
@@ -44,8 +72,28 @@ export default function PaywallScreen() {
     );
   };
 
+  const handleRestore = async () => {
+    if (isWeb) {
+      Alert.alert("Nicht verfügbar", "Käufe können nur in der mobilen App wiederhergestellt werden.");
+      return;
+    }
+    setRestoring(true);
+    await restore();
+    setRestoring(false);
+  };
+
   const pricing = TIER_PRICING[selectedTier];
-  const price = billingPeriod === "monthly" ? pricing.monthly : pricing.yearly;
+  
+  // Preis: Nutze RevenueCat wenn verfügbar, sonst Fallback
+  const getDisplayPrice = () => {
+    const pkg = getSelectedPackage();
+    if (pkg) {
+      return formatPrice(pkg);
+    }
+    const price = billingPeriod === "monthly" ? pricing.monthly : pricing.yearly;
+    return `€${price.toFixed(2)}`;
+  };
+
   const monthlyPrice = billingPeriod === "monthly" ? pricing.monthly : pricing.yearlyMonthly;
 
   return (
@@ -56,7 +104,13 @@ export default function PaywallScreen() {
           <IconSymbol name="xmark.circle.fill" size={28} color={colors.muted} />
         </TouchableOpacity>
         <Text className="text-lg font-semibold text-foreground">Upgrade</Text>
-        <View className="w-10" />
+        <TouchableOpacity onPress={handleRestore} disabled={restoring} className="p-2">
+          {restoring ? (
+            <ActivityIndicator size="small" color={colors.muted} />
+          ) : (
+            <Text className="text-sm text-primary">Wiederherstellen</Text>
+          )}
+        </TouchableOpacity>
       </View>
 
       <ScrollView 
@@ -256,13 +310,34 @@ export default function PaywallScreen() {
         </View>
 
         {/* Guarantee */}
-        <View className="bg-primary/10 rounded-xl p-4 flex-row items-center gap-3">
+        <View className="bg-primary/10 rounded-xl p-4 flex-row items-center gap-3 mb-6">
           <IconSymbol name="checkmark.circle.fill" size={24} color={colors.primary} />
           <View className="flex-1">
             <Text className="text-foreground font-medium">7 Tage Geld-zurück-Garantie</Text>
             <Text className="text-sm text-muted">Nicht zufrieden? Volle Erstattung, keine Fragen.</Text>
           </View>
         </View>
+
+        {/* Legal Links */}
+        <View className="flex-row justify-center gap-4 mb-4">
+          <TouchableOpacity onPress={() => router.push("/legal")}>
+            <Text className="text-sm text-primary">AGB</Text>
+          </TouchableOpacity>
+          <Text className="text-muted">•</Text>
+          <TouchableOpacity onPress={() => router.push("/legal")}>
+            <Text className="text-sm text-primary">Datenschutz</Text>
+          </TouchableOpacity>
+          <Text className="text-muted">•</Text>
+          <TouchableOpacity onPress={() => router.push("/legal")}>
+            <Text className="text-sm text-primary">Impressum</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Legal Text */}
+        <Text className="text-xs text-muted text-center leading-5">
+          Die Zahlung wird über deinen {Platform.OS === "ios" ? "Apple" : Platform.OS === "android" ? "Google" : "App Store"} Account abgerechnet. 
+          Das Abo verlängert sich automatisch, wenn es nicht mindestens 24 Stunden vor Ablauf gekündigt wird.
+        </Text>
       </ScrollView>
 
       {/* Purchase Button */}
@@ -271,16 +346,23 @@ export default function PaywallScreen() {
         style={{ paddingBottom: insets.bottom + 16 }}
       >
         <TouchableOpacity
-          className="rounded-xl p-4 items-center"
+          className="rounded-xl p-4 items-center flex-row justify-center gap-2"
           style={{ backgroundColor: selectedTier === "pro" ? colors.warning : colors.primary }}
           onPress={handlePurchase}
+          disabled={isLoading}
         >
-          <Text className="text-lg font-bold text-background">
-            {selectedTier === "premium" ? "Premium" : "Pro"} für €{price.toFixed(2)}{billingPeriod === "yearly" ? "/Jahr" : "/Monat"}
-          </Text>
-          <Text className="text-sm text-background/80">
-            Jederzeit kündbar
-          </Text>
+          {isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <>
+              <Text className="text-lg font-bold text-background">
+                {selectedTier === "premium" ? "Premium" : "Pro"} starten
+              </Text>
+              <Text className="text-sm text-background/80">
+                {getDisplayPrice()}{billingPeriod === "yearly" ? "/Jahr" : "/Monat"}
+              </Text>
+            </>
+          )}
         </TouchableOpacity>
       </View>
     </View>
