@@ -6,6 +6,9 @@ import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { trpc } from "@/lib/trpc";
+import { useSubscription } from "@/lib/subscription-context";
+import { UpgradePrompt, UsageIndicator } from "@/components/upgrade-prompt";
+import { TIER_LIMITS } from "@/lib/subscription";
 
 interface DiagnosisResult {
   problem: string;
@@ -19,6 +22,9 @@ export default function DiagnoseScreen() {
   const [images, setImages] = useState<string[]>([]);
   const [notes, setNotes] = useState("");
   const [diagnosis, setDiagnosis] = useState<DiagnosisResult | null>(null);
+  
+  const { tier, dailyDiagnoses, canDiagnose, useDiagnosis, remainingDiagnoses } = useSubscription();
+  const limits = TIER_LIMITS[tier];
 
   const diagnosisMutation = trpc.diagnosis.analyze.useMutation({
     onSuccess: (data) => {
@@ -69,6 +75,12 @@ export default function DiagnoseScreen() {
   const startDiagnosis = async () => {
     if (images.length === 0) return;
     
+    // Check if user can use diagnosis
+    const canUse = await useDiagnosis();
+    if (!canUse) {
+      return; // Limit reached, UpgradePrompt will be shown
+    }
+    
     // Convert images to base64
     const base64Images = await Promise.all(
       images.map(async (uri) => {
@@ -111,6 +123,8 @@ export default function DiagnoseScreen() {
     }
   };
 
+  const canStartDiagnosis = canDiagnose();
+
   return (
     <ScreenContainer className="p-4">
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
@@ -122,6 +136,26 @@ export default function DiagnoseScreen() {
               Lade Fotos hoch für eine KI-gestützte Analyse
             </Text>
           </View>
+
+          {/* Usage Indicator */}
+          {limits.diagnosesPerDay !== -1 && (
+            <View className="bg-surface rounded-xl p-3 border border-border">
+              <UsageIndicator 
+                used={dailyDiagnoses} 
+                limit={limits.diagnosesPerDay} 
+                label="Diagnosen heute"
+              />
+            </View>
+          )}
+
+          {/* Limit Reached Warning */}
+          {!canStartDiagnosis && (
+            <UpgradePrompt 
+              feature="Diagnosen" 
+              limit={limits.diagnosesPerDay}
+              remaining={remainingDiagnoses}
+            />
+          )}
 
           {!diagnosis ? (
             <>
@@ -185,9 +219,9 @@ export default function DiagnoseScreen() {
 
               {/* Start Button */}
               <TouchableOpacity 
-                className={`rounded-xl p-4 items-center ${images.length > 0 ? 'bg-primary' : 'bg-muted/30'}`}
+                className={`rounded-xl p-4 items-center ${images.length > 0 && canStartDiagnosis ? 'bg-primary' : 'bg-muted/30'}`}
                 onPress={startDiagnosis}
-                disabled={images.length === 0 || diagnosisMutation.isPending}
+                disabled={images.length === 0 || diagnosisMutation.isPending || !canStartDiagnosis}
               >
                 {diagnosisMutation.isPending ? (
                   <View className="flex-row items-center gap-2">
@@ -195,8 +229,8 @@ export default function DiagnoseScreen() {
                     <Text className="text-base font-semibold text-background">Analysiere...</Text>
                   </View>
                 ) : (
-                  <Text className={`text-base font-semibold ${images.length > 0 ? 'text-background' : 'text-muted'}`}>
-                    Diagnose starten
+                  <Text className={`text-base font-semibold ${images.length > 0 && canStartDiagnosis ? 'text-background' : 'text-muted'}`}>
+                    {canStartDiagnosis ? "Diagnose starten" : "Limit erreicht"}
                   </Text>
                 )}
               </TouchableOpacity>

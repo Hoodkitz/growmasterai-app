@@ -3,6 +3,9 @@ import { ScrollView, Text, View, TouchableOpacity, TextInput, Modal, FlatList } 
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
+import { useSubscription } from "@/lib/subscription-context";
+import { UpgradePrompt } from "@/components/upgrade-prompt";
+import { TIER_LIMITS } from "@/lib/subscription";
 
 interface Plant {
   id: string;
@@ -31,8 +34,13 @@ export default function PlantsScreen() {
     notes: "",
   });
 
+  const { tier, canAddNewPlant } = useSubscription();
+  const limits = TIER_LIMITS[tier];
+  const canAdd = canAddNewPlant(plants.length);
+
   const addPlant = () => {
     if (!newPlant.name.trim()) return;
+    if (!canAdd) return;
     
     const plant: Plant = {
       id: Date.now().toString(),
@@ -57,6 +65,12 @@ export default function PlantsScreen() {
     const now = new Date();
     const diff = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
     return diff;
+  };
+
+  const handleAddPress = () => {
+    if (canAdd) {
+      setShowModal(true);
+    }
   };
 
   const renderPlant = ({ item }: { item: Plant }) => (
@@ -99,18 +113,28 @@ export default function PlantsScreen() {
   return (
     <ScreenContainer className="p-4">
       {/* Header */}
-      <View className="flex-row justify-between items-center mb-6">
+      <View className="flex-row justify-between items-center mb-4">
         <View>
           <Text className="text-2xl font-bold text-foreground">Meine Pflanzen</Text>
-          <Text className="text-base text-muted">{plants.length} Pflanze{plants.length !== 1 ? "n" : ""}</Text>
+          <Text className="text-base text-muted">
+            {plants.length}{limits.maxPlants !== -1 ? `/${limits.maxPlants}` : ""} Pflanze{plants.length !== 1 ? "n" : ""}
+          </Text>
         </View>
         <TouchableOpacity 
-          className="w-12 h-12 rounded-full bg-primary items-center justify-center"
-          onPress={() => setShowModal(true)}
+          className={`w-12 h-12 rounded-full items-center justify-center ${canAdd ? "bg-primary" : "bg-muted/30"}`}
+          onPress={handleAddPress}
+          disabled={!canAdd}
         >
-          <IconSymbol name="plus.circle.fill" size={24} color="#fff" />
+          <IconSymbol name="plus.circle.fill" size={24} color={canAdd ? "#fff" : colors.muted} />
         </TouchableOpacity>
       </View>
+
+      {/* Limit Warning */}
+      {!canAdd && plants.length > 0 && (
+        <View className="mb-4">
+          <UpgradePrompt feature="Pflanzen" limit={limits.maxPlants} />
+        </View>
+      )}
 
       {plants.length === 0 ? (
         <View className="flex-1 items-center justify-center gap-4">

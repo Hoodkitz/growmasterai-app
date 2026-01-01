@@ -4,6 +4,9 @@ import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { trpc } from "@/lib/trpc";
+import { useSubscription } from "@/lib/subscription-context";
+import { UpgradePrompt, UsageIndicator } from "@/components/upgrade-prompt";
+import { TIER_LIMITS } from "@/lib/subscription";
 
 interface Message {
   id: string;
@@ -23,6 +26,9 @@ export default function CoachScreen() {
     }
   ]);
   const [input, setInput] = useState("");
+
+  const { tier, dailyMessages, canMessage, useMessage, remainingMessages } = useSubscription();
+  const limits = TIER_LIMITS[tier];
 
   const coachMutation = trpc.coach.ask.useMutation({
     onSuccess: (data) => {
@@ -49,6 +55,12 @@ export default function CoachScreen() {
   const sendMessage = async () => {
     if (!input.trim() || coachMutation.isPending) return;
 
+    // Check if user can send message
+    const canSend = await useMessage();
+    if (!canSend) {
+      return; // Limit reached
+    }
+
     const userMessage: Message = {
       id: Date.now().toString(),
       role: "user",
@@ -65,6 +77,8 @@ export default function CoachScreen() {
     coachMutation.mutate({ question });
   };
 
+  const canSendMessage = canMessage();
+
   return (
     <ScreenContainer>
       <KeyboardAvoidingView 
@@ -76,7 +90,29 @@ export default function CoachScreen() {
         <View className="p-4 border-b border-border">
           <Text className="text-2xl font-bold text-foreground">Grow Coach</Text>
           <Text className="text-base text-muted">Dein persönlicher Anbau-Experte</Text>
+          
+          {/* Usage Indicator */}
+          {limits.coachMessagesPerDay !== -1 && (
+            <View className="mt-3">
+              <UsageIndicator 
+                used={dailyMessages} 
+                limit={limits.coachMessagesPerDay} 
+                label="Nachrichten heute"
+              />
+            </View>
+          )}
         </View>
+
+        {/* Limit Reached Warning */}
+        {!canSendMessage && (
+          <View className="p-4">
+            <UpgradePrompt 
+              feature="Nachrichten" 
+              limit={limits.coachMessagesPerDay}
+              remaining={remainingMessages}
+            />
+          </View>
+        )}
 
         {/* Messages */}
         <ScrollView 
@@ -125,25 +161,29 @@ export default function CoachScreen() {
 
         {/* Input */}
         <View className="p-4 border-t border-border bg-background">
-          <View className="flex-row gap-3 items-end">
-            <TextInput
-              className="flex-1 bg-surface rounded-2xl px-4 py-3 text-foreground border border-border min-h-[48px] max-h-[120px]"
-              placeholder="Stelle eine Frage..."
-              placeholderTextColor={colors.muted}
-              value={input}
-              onChangeText={setInput}
-              multiline
-              returnKeyType="send"
-              onSubmitEditing={sendMessage}
-            />
-            <TouchableOpacity 
-              className={`w-12 h-12 rounded-full items-center justify-center ${input.trim() ? 'bg-primary' : 'bg-muted/30'}`}
-              onPress={sendMessage}
-              disabled={!input.trim() || coachMutation.isPending}
-            >
-              <IconSymbol name="paperplane.fill" size={20} color={input.trim() ? "#fff" : colors.muted} />
-            </TouchableOpacity>
-          </View>
+          {!canSendMessage ? (
+            <UpgradePrompt feature="Nachrichten" compact />
+          ) : (
+            <View className="flex-row gap-3 items-end">
+              <TextInput
+                className="flex-1 bg-surface rounded-2xl px-4 py-3 text-foreground border border-border min-h-[48px] max-h-[120px]"
+                placeholder="Stelle eine Frage..."
+                placeholderTextColor={colors.muted}
+                value={input}
+                onChangeText={setInput}
+                multiline
+                returnKeyType="send"
+                onSubmitEditing={sendMessage}
+              />
+              <TouchableOpacity 
+                className={`w-12 h-12 rounded-full items-center justify-center ${input.trim() ? 'bg-primary' : 'bg-muted/30'}`}
+                onPress={sendMessage}
+                disabled={!input.trim() || coachMutation.isPending}
+              >
+                <IconSymbol name="paperplane.fill" size={20} color={input.trim() ? "#fff" : colors.muted} />
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </KeyboardAvoidingView>
     </ScreenContainer>

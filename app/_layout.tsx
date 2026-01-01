@@ -8,6 +8,7 @@ import "react-native-reanimated";
 import { Platform } from "react-native";
 import "@/lib/_core/nativewind-pressable";
 import { ThemeProvider } from "@/lib/theme-provider";
+import { SubscriptionProvider } from "@/lib/subscription-context";
 import {
   SafeAreaFrameContext,
   SafeAreaInsetsContext,
@@ -82,13 +83,17 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
-          {/* Default to hiding native headers so raw route segments don't appear (e.g. "(tabs)", "products/[id]"). */}
-          {/* If a screen needs the native header, explicitly enable it and set a human title via Stack.Screen options. */}
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="oauth/callback" />
-          </Stack>
-          <StatusBar style="auto" />
+          <SubscriptionProvider>
+            {/* Default to hiding native headers so raw route segments don't appear (e.g. "(tabs)", "products/[id]"). */}
+            {/* If a screen needs the native header, explicitly enable it and set a human title via Stack.Screen options. */}
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="oauth/callback" />
+              <Stack.Screen name="paywall" options={{ presentation: "modal" }} />
+              <Stack.Screen name="settings" options={{ presentation: "modal" }} />
+            </Stack>
+            <StatusBar style="auto" />
+          </SubscriptionProvider>
         </QueryClientProvider>
       </trpc.Provider>
     </GestureHandlerRootView>
