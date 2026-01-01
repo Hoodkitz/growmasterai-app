@@ -42,6 +42,7 @@ export function PurchaseProvider({ children }: { children: ReactNode }) {
     expirationDate: null,
     willRenew: false,
     productId: null,
+    isLifetime: false,
   });
   
   const { setTier } = useSubscription();
@@ -213,6 +214,7 @@ export function PurchaseProvider({ children }: { children: ReactNode }) {
         expirationDate: null,
         willRenew: false,
         productId: null,
+        isLifetime: false,
       });
       setTier("free");
     } catch (error) {
@@ -251,25 +253,27 @@ export function usePurchases() {
 export function useOfferings() {
   const { offerings, isLoading } = usePurchases();
   
-  const premiumMonthly = offerings?.availablePackages.find(
-    p => p.product.identifier === PRODUCT_IDS.PREMIUM_MONTHLY
+  // Neue Produkt-IDs: monthly, yearly, lifetime
+  const monthly = offerings?.availablePackages.find(
+    p => p.product.identifier === PRODUCT_IDS.MONTHLY || p.identifier === "$rc_monthly"
   );
-  const premiumYearly = offerings?.availablePackages.find(
-    p => p.product.identifier === PRODUCT_IDS.PREMIUM_YEARLY
+  const yearly = offerings?.availablePackages.find(
+    p => p.product.identifier === PRODUCT_IDS.YEARLY || p.identifier === "$rc_annual"
   );
-  const proMonthly = offerings?.availablePackages.find(
-    p => p.product.identifier === PRODUCT_IDS.PRO_MONTHLY
-  );
-  const proYearly = offerings?.availablePackages.find(
-    p => p.product.identifier === PRODUCT_IDS.PRO_YEARLY
+  const lifetime = offerings?.availablePackages.find(
+    p => p.product.identifier === PRODUCT_IDS.LIFETIME || p.identifier === "$rc_lifetime"
   );
   
   return {
     isLoading,
-    premiumMonthly,
-    premiumYearly,
-    proMonthly,
-    proYearly,
+    monthly,
+    yearly,
+    lifetime,
+    // Backwards compatibility
+    premiumMonthly: monthly,
+    premiumYearly: yearly,
+    proMonthly: monthly,
+    proYearly: yearly,
     allPackages: offerings?.availablePackages || [],
   };
 }

@@ -184,3 +184,22 @@
 - [x] Nutzungsbedingungen
 - [x] Cookie-Richtlinie
 - [x] Rechtliche Screens in App integrieren
+
+
+## v1.5 - RevenueCat SDK Integration
+
+### Android (Kotlin) Native Integration
+- [x] Gradle Dependency hinzufügen (purchases:9.18.1)
+- [x] RevenueCat SDK Konfiguration mit API Key
+- [x] Subscription Funktionalität implementieren
+- [x] Entitlement Checking für "GrowMaster AI Pro"
+- [x] Customer Info und Purchases Handling
+- [x] Produkt-Konfiguration (Monthly, Yearly, Lifetime)
+- [x] RevenueCat Paywall Integration
+- [x] Customer Center Support
+
+### React Native Integration
+- [x] purchases-react-native SDK aktualisieren
+- [x] PurchaseContext mit RevenueCat verbinden
+- [x] Paywall UI mit RevenueCat Paywalls
+- [x] Entitlement Sync implementieren
