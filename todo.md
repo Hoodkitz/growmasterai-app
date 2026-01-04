@@ -224,3 +224,11 @@
 - [x] Test-Account einrichten (Anleitung erstellt)
 - [x] Sandbox-Käufe testen (Anleitung erstellt)
 - [x] Entitlement-Prüfung verifizieren (Anleitung erstellt)
+
+
+## Bug Fixes
+
+### Backend Publishing Issue
+- [x] Backend-Publishing-Fehler diagnostizieren (ESM Module Warning)
+- [x] Fehler beheben (type: module in package.json hinzugefügt)
+- [ ] Publishing erneut testen
