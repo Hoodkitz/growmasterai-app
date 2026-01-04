@@ -232,3 +232,9 @@
 - [x] Backend-Publishing-Fehler diagnostizieren (ESM Module Warning)
 - [x] Fehler beheben (type: module in package.json hinzugefügt)
 - [ ] Publishing erneut testen
+
+### APK Build Issue
+- [x] Gradle Build-Fehler analysieren (fehlende Camera/ImagePicker Plugins)
+- [x] Build-Konfiguration korrigieren (expo-camera und expo-image-picker Plugins hinzugefügt)
+- [x] type: module entfernt (verursachte Konflikte mit Android-Build)
+- [ ] APK-Erstellung testen
