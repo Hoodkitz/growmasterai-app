@@ -44,26 +44,36 @@ export default function PaywallScreen() {
     
     // Wenn RevenueCat-Paket verfügbar, nutze echten Kauf
     if (pkg && !isWeb) {
-      const success = await purchase(pkg);
-      if (success) {
-        router.back();
+      try {
+        const success = await purchase(pkg);
+        if (success) {
+          router.back();
+        }
+      } catch (error) {
+        // Fallback wenn RevenueCat fehlschlägt
+        console.log("[Paywall] RevenueCat failed, using demo mode");
+        showDemoUpgrade();
       }
       return;
     }
     
     // Fallback für Web oder wenn keine Pakete geladen
+    showDemoUpgrade();
+  };
+
+  const showDemoUpgrade = () => {
     Alert.alert(
-      "Upgrade bestätigen",
-      `Möchtest du auf ${TIER_INFO[selectedTier].name} upgraden?`,
+      "Demo-Modus",
+      `In-App-Käufe sind noch nicht mit dem App Store verbunden.\n\nMöchtest du ${TIER_INFO[selectedTier].name} im Demo-Modus testen?`,
       [
         { text: "Abbrechen", style: "cancel" },
         {
-          text: "Bestätigen",
+          text: "Demo aktivieren",
           onPress: async () => {
             await upgradeTo(selectedTier);
             Alert.alert(
-              "Erfolgreich!",
-              `Du bist jetzt ${TIER_INFO[selectedTier].name} Mitglied!`,
+              "Demo aktiviert!",
+              `Du testest jetzt ${TIER_INFO[selectedTier].name} Features.\n\nHinweis: Dies ist nur eine Demo. Für echte Käufe muss die App mit dem App Store verbunden werden.`,
               [{ text: "OK", onPress: () => router.back() }]
             );
           },

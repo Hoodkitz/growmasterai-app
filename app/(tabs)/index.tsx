@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { ScrollView, Text, View, TouchableOpacity, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
@@ -7,6 +8,7 @@ import { useSubscription } from "@/lib/subscription-context";
 import { SubscriptionBadge, UsageIndicator } from "@/components/upgrade-prompt";
 import { TIER_INFO, TIER_LIMITS } from "@/lib/subscription";
 import { AdBanner } from "@/components/ad-banner";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
 
@@ -16,6 +18,21 @@ export default function HomeScreen() {
   const { tier, dailyDiagnoses, dailyMessages, remainingDiagnoses, remainingMessages } = useSubscription();
   const limits = TIER_LIMITS[tier];
   const tierInfo = TIER_INFO[tier];
+
+  // Check if onboarding is complete
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      try {
+        const onboardingComplete = await AsyncStorage.getItem("onboardingComplete");
+        if (!onboardingComplete) {
+          router.replace("/onboarding");
+        }
+      } catch (error) {
+        console.log("Error checking onboarding status");
+      }
+    };
+    checkOnboarding();
+  }, []);
 
   // Mock achievements data
   const achievements = {

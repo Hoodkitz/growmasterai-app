@@ -159,6 +159,12 @@ export async function purchasePackage(pkg: PurchasesPackage): Promise<{
   if (Platform.OS === "web") {
     return { success: false, error: "Purchases not available on web" };
   }
+
+  // Prüfe ob pkg gültig ist
+  if (!pkg || !pkg.identifier) {
+    console.error("[Purchases] Invalid package provided");
+    return { success: false, error: "Invalid package" };
+  }
   
   try {
     console.log("[Purchases] Attempting purchase:", pkg.identifier);
@@ -175,6 +181,13 @@ export async function purchasePackage(pkg: PurchasesPackage): Promise<{
       console.log("[Purchases] User cancelled purchase");
       return { success: false, error: "cancelled", userCancelled: true };
     }
+    
+    // RevenueCat nicht konfiguriert oder Produkte nicht eingerichtet
+    if (error.code === "CONFIGURATION_ERROR" || error.message?.includes("not configured")) {
+      console.log("[Purchases] RevenueCat not configured - using demo mode");
+      return { success: false, error: "not_configured" };
+    }
+    
     console.error("[Purchases] Purchase failed:", error);
     return { success: false, error: error.message || "Purchase failed" };
   }

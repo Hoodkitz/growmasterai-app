@@ -238,3 +238,9 @@
 - [x] Build-Konfiguration korrigieren (expo-camera und expo-image-picker Plugins hinzugefügt)
 - [x] type: module entfernt (verursachte Konflikte mit Android-Build)
 - [ ] APK-Erstellung testen
+
+### Onboarding Flow
+- [x] Onboarding-Screen beim ersten App-Start
+- [x] Anmeldung (Google/Apple/Email) im Onboarding
+- [x] Pflanzenauswahl oder neue Pflanze anlegen
+- [x] Premium-Upgrade Absturz mit Fallback behandeln (Demo-Modus)
