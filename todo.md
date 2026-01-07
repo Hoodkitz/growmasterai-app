@@ -244,3 +244,8 @@
 - [x] Anmeldung (Google/Apple/Email) im Onboarding
 - [x] Pflanzenauswahl oder neue Pflanze anlegen
 - [x] Premium-Upgrade Absturz mit Fallback behandeln (Demo-Modus)
+
+### Backend Publishing Issue #2
+- [x] Backend-Publishing-Fehler erneut diagnostizieren (ESM-Warnung)
+- [x] Fehler beheben (Build-Format auf CJS geändert: dist/index.cjs)
+- [ ] Publishing testen
