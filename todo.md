@@ -262,3 +262,8 @@
 ### Backend Deployment Issue #4
 - [x] CJS Loader Fehler endgültig beheben (Build auf CJS mit .js Extension)
 - [x] Alternative Build-Strategie implementieren
+
+### Backend Deployment Issue #5 (APK Build)
+- [x] Backend published nicht beim APK-Build
+- [x] Deployment-Konfiguration analysieren (dist/ war in .gitignore)
+- [x] Build-Format und Einstiegspunkt korrigieren (dist/ aus .gitignore entfernt)
