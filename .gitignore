@@ -59,3 +59,4 @@ Thumbs.db
 *.tgz
 *.tar.gz
 .cache/
+# Rollback zu v1.7.1 - Wed Jan  7 17:05:27 EST 2026
