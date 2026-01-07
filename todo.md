@@ -249,3 +249,8 @@
 - [x] Backend-Publishing-Fehler erneut diagnostizieren (ESM-Warnung)
 - [x] Fehler beheben (Build-Format auf CJS geändert: dist/index.cjs)
 - [ ] Publishing testen
+
+### Backend Deployment Issue #3 (CJS Loader)
+- [x] CJS Loader Fehler analysieren (CJS-Format verursachte Probleme im Deployment)
+- [x] Build-Konfiguration korrigieren (ESM mit .mjs Extension: dist/index.mjs)
+- [ ] Deployment testen
