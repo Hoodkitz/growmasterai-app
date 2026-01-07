@@ -59,3 +59,6 @@ Thumbs.db
 *.tgz
 *.tar.gz
 .cache/
+
+# Store assets (too large for git, provided separately)
+assets/store/
