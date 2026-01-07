@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { ScrollView, Text, View, TouchableOpacity, TextInput, Modal, FlatList } from "react-native";
+import { useState, useEffect, useCallback } from "react";
+import { Text, View, TouchableOpacity, TextInput, Modal, FlatList, RefreshControl } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
@@ -13,7 +15,9 @@ interface Plant {
   strain: string;
   phase: "seedling" | "vegetative" | "flowering" | "harvest";
   startDate: string;
-  notes: string;
+  notes?: string;
+  growType?: "indoor" | "outdoor" | "greenhouse";
+  createdAt?: string;
 }
 
 const PHASES = {
@@ -23,9 +27,13 @@ const PHASES = {
   harvest: { label: "Ernte", color: "#16A34A" },
 };
 
+const STORAGE_KEY = "plants";
+
 export default function PlantsScreen() {
   const colors = useColors();
   const [plants, setPlants] = useState<Plant[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [newPlant, setNewPlant] = useState({
     name: "",
@@ -38,7 +46,58 @@ export default function PlantsScreen() {
   const limits = TIER_LIMITS[tier];
   const canAdd = canAddNewPlant(plants.length);
 
-  const addPlant = () => {
+  // Load plants from AsyncStorage
+  const loadPlants = useCallback(async () => {
+    try {
+      const storedPlants = await AsyncStorage.getItem(STORAGE_KEY);
+      if (storedPlants) {
+        const parsed = JSON.parse(storedPlants);
+        // Ensure notes field exists for all plants
+        const normalizedPlants = parsed.map((p: Plant) => ({
+          ...p,
+          notes: p.notes || "",
+        }));
+        setPlants(normalizedPlants);
+      } else {
+        setPlants([]);
+      }
+    } catch (error) {
+      console.error("Failed to load plants:", error);
+      setPlants([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Save plants to AsyncStorage
+  const savePlants = useCallback(async (updatedPlants: Plant[]) => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedPlants));
+    } catch (error) {
+      console.error("Failed to save plants:", error);
+    }
+  }, []);
+
+  // Load plants on mount
+  useEffect(() => {
+    loadPlants();
+  }, [loadPlants]);
+
+  // Reload plants when screen comes into focus (e.g., after onboarding)
+  useFocusEffect(
+    useCallback(() => {
+      loadPlants();
+    }, [loadPlants])
+  );
+
+  // Pull to refresh
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadPlants();
+    setRefreshing(false);
+  }, [loadPlants]);
+
+  const addPlant = async () => {
     if (!newPlant.name.trim()) return;
     if (!canAdd) return;
     
@@ -49,15 +108,21 @@ export default function PlantsScreen() {
       phase: newPlant.phase,
       startDate: new Date().toISOString(),
       notes: newPlant.notes.trim(),
+      createdAt: new Date().toISOString(),
     };
     
-    setPlants(prev => [...prev, plant]);
+    const updatedPlants = [...plants, plant];
+    setPlants(updatedPlants);
+    await savePlants(updatedPlants);
+    
     setNewPlant({ name: "", strain: "", phase: "seedling", notes: "" });
     setShowModal(false);
   };
 
-  const deletePlant = (id: string) => {
-    setPlants(prev => prev.filter(p => p.id !== id));
+  const deletePlant = async (id: string) => {
+    const updatedPlants = plants.filter(p => p.id !== id);
+    setPlants(updatedPlants);
+    await savePlants(updatedPlants);
   };
 
   const getDaysSinceStart = (startDate: string) => {
@@ -102,6 +167,11 @@ export default function PlantsScreen() {
             Tag {getDaysSinceStart(item.startDate)}
           </Text>
         </View>
+        {item.growType && (
+          <View className="px-3 py-1 rounded-full bg-surface border border-border">
+            <Text className="text-sm text-muted capitalize">{item.growType}</Text>
+          </View>
+        )}
       </View>
       
       {item.notes && (
@@ -109,6 +179,16 @@ export default function PlantsScreen() {
       )}
     </View>
   );
+
+  if (isLoading) {
+    return (
+      <ScreenContainer className="p-4">
+        <View className="flex-1 items-center justify-center">
+          <Text className="text-muted">Lade Pflanzen...</Text>
+        </View>
+      </ScreenContainer>
+    );
+  }
 
   return (
     <ScreenContainer className="p-4">
@@ -158,6 +238,14 @@ export default function PlantsScreen() {
           renderItem={renderPlant}
           keyExtractor={item => item.id}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={colors.primary}
+              colors={[colors.primary]}
+            />
+          }
         />
       )}
 

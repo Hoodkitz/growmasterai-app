@@ -254,3 +254,11 @@
 - [x] CJS Loader Fehler analysieren (CJS-Format verursachte Probleme im Deployment)
 - [x] Build-Konfiguration korrigieren (ESM mit .mjs Extension: dist/index.mjs)
 - [ ] Deployment testen
+
+### Bug: Pflanzen-Synchronisation
+- [x] Pflanze aus Onboarding wird nicht im Plants-Tab angezeigt (AsyncStorage + useFocusEffect)
+- [x] Gemeinsamen State zwischen Onboarding und Plants-Tab implementieren
+
+### Backend Deployment Issue #4
+- [x] CJS Loader Fehler endgültig beheben (Build auf CJS mit .js Extension)
+- [x] Alternative Build-Strategie implementieren
