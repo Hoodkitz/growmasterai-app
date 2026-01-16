@@ -1,6 +1,5 @@
-// Load environment variables with proper priority (system > .env)
-import "./scripts/load-env.js";
 import type { ExpoConfig } from "expo/config";
+// Environment variables are loaded automatically by Expo
 
 // Bundle ID format: space.manus.<project_name_dots>.<timestamp>
 // e.g., "my-app" created at 2024-01-15 10:30:45 -> "space.manus.my.app.t20240115103045"
@@ -31,6 +30,12 @@ const config: ExpoConfig = {
   scheme: env.scheme,
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
+  owner: "growmasterai",
+  extra: {
+    eas: {
+      projectId: "107675ed-cb12-4ace-a851-8113f28add85"
+    }
+  },
   ios: {
     supportsTablet: true,
     bundleIdentifier: env.iosBundleId,
@@ -110,6 +115,9 @@ const config: ExpoConfig = {
       {
         android: {
           buildArchs: ["armeabi-v7a", "arm64-v8a"],
+          compileSdkVersion: 34,
+          targetSdkVersion: 34,
+          minSdkVersion: 23,
         },
       },
     ],

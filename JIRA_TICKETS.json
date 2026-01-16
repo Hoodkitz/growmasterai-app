@@ -1,0 +1,164 @@
+{
+  "metadata": {
+    "created": "2026-01-14",
+    "project": "GrowMaster AI",
+    "total_tickets": 15,
+    "priority_breakdown": {
+      "high": 4,
+      "medium": 6,
+      "low": 5
+    }
+  },
+  "tickets": [
+    {
+      "id": "TICKET-001",
+      "type": "Task",
+      "priority": "High",
+      "summary": "Google Play Store Submission",
+      "description": "# Google Play Store Submission\n\n## Status\nAlle Assets sind bereit für den Upload.\n\n## Aufgaben\n- [ ] App in Google Play Console hochladen\n- [ ] Store-Listing veröffentlichen (Texte sind fertig)\n- [ ] Screenshots hochladen (8 Stück vorhanden)\n- [ ] Feature-Grafik hochladen (1024x500px)\n- [ ] Content-Rating durchführen\n- [ ] APK/AAB hochladen\n- [ ] Release-Track konfigurieren (Internal/Alpha/Beta/Production)\n\n## Dokumentation\n- `GOOGLE_PLAY_SETUP_GUIDE.md`\n- `STORE_LISTING.md`\n- `APP_STORE_SUBMISSION_CHECKLIST.md`\n\n## Abhängigkeiten\n- APK-Build ist funktionsfähig ✅\n- RevenueCat ist konfiguriert ✅\n- Alle 110 Tests bestehen ✅",
+      "labels": ["store", "deployment", "release"],
+      "story_points": 8
+    },
+    {
+      "id": "TICKET-002",
+      "type": "Task",
+      "priority": "High",
+      "summary": "Backend Publishing nach Git-Optimierung testen",
+      "description": "# Backend Publishing Test\n\n## Kontext\nDas Backend wurde mehrfach optimiert:\n- Git-Repository von 58MB auf 4MB reduziert\n- Build-Format auf CommonJS (.js) gewechselt\n- dist/ Verzeichnis aus .gitignore entfernt\n\n## Aufgaben\n- [ ] Backend-Deployment durchführen\n- [ ] Server-Start verifizieren\n- [ ] Keine ESM/CJS Warnungen prüfen\n- [ ] API-Endpunkte testen\n- [ ] Performance-Check nach Deployment\n\n## Erfolgs-Kriterien\n- Server startet ohne Fehler\n- Alle tRPC-Routen sind erreichbar\n- Keine Module-Format-Warnungen\n- Response-Zeit < 500ms\n\n## Commits\n- `48f582c` - Rollback zu v1.7.2\n- `e570d41` - Git-Optimierung Final",
+      "labels": ["backend", "deployment", "testing"],
+      "story_points": 5
+    },
+    {
+      "id": "TICKET-003",
+      "type": "Task",
+      "priority": "High",
+      "summary": "APK-Build End-to-End Test",
+      "description": "# APK-Build Vollständiger Test\n\n## Kontext\nAPK-Build sollte funktionieren nach:\n- expo-camera Plugin hinzugefügt ✅\n- expo-image-picker Plugin hinzugefügt ✅\n- type: module aus package.json entfernt ✅\n\n## Aufgaben\n- [ ] EAS Build lokal durchführen\n- [ ] APK auf physischem Android-Gerät installieren\n- [ ] Alle Features testen (Kamera, Bildauswahl, etc.)\n- [ ] RevenueCat In-App-Purchases testen\n- [ ] Performance-Check auf Low-End-Gerät\n- [ ] Crash-Logs prüfen\n\n## Test-Checkliste\n- [ ] Kamera-Diagnose funktioniert\n- [ ] Galerie-Upload funktioniert\n- [ ] Google Sign-In funktioniert\n- [ ] RevenueCat Paywall öffnet sich\n- [ ] Pflanzen-Persistenz funktioniert\n- [ ] Offline-Modus funktioniert\n\n## Build-Befehl\n```bash\neas build --platform android --profile preview\n```",
+      "labels": ["build", "testing", "android"],
+      "story_points": 8
+    },
+    {
+      "id": "TICKET-004",
+      "type": "Story",
+      "priority": "High",
+      "summary": "iOS App Store Vorbereitung",
+      "description": "# iOS App Store Submission\n\n## Status\nAndroid-Version ist bereit, iOS noch nicht vorbereitet.\n\n## Aufgaben\n- [ ] Apple Developer Account einrichten\n- [ ] iOS Build-Konfiguration in eas.json\n- [ ] iOS-spezifische Icons erstellen\n- [ ] Apple Sign-In konfigurieren\n- [ ] RevenueCat iOS-Integration testen\n- [ ] App Store Connect Setup\n- [ ] iOS Screenshots erstellen (verschiedene Geräte)\n- [ ] App Store Review Guidelines prüfen\n- [ ] TestFlight Beta-Test\n\n## Besonderheiten iOS\n- Apple Sign-In ist Pflicht (bereits implementiert)\n- Privacy Manifest erforderlich\n- App Tracking Transparency (ATT)\n\n## Dokumentation\n- `APP_STORE_SUBMISSION_CHECKLIST.md` erstellen",
+      "labels": ["ios", "store", "deployment"],
+      "story_points": 13
+    },
+    {
+      "id": "TICKET-005",
+      "type": "Story",
+      "priority": "Medium",
+      "summary": "Push-Benachrichtigungen implementieren",
+      "description": "# Push-Benachrichtigungen\n\n## Use Cases\n- Erinnerungen für Pflegemaßnahmen (Gießen, Düngen)\n- News zu Cannabis-Gesetzgebung\n- Gewinnspiel-Benachrichtigungen\n- Community-Interaktionen (Likes, Kommentare)\n- Admin-Nachrichten\n\n## Technologie\n- Expo Notifications\n- Firebase Cloud Messaging (FCM)\n\n## Aufgaben\n- [ ] Expo Notifications SDK integrieren\n- [ ] FCM konfigurieren (Android & iOS)\n- [ ] Backend-Endpunkt für Push-Tokens\n- [ ] Notification-Scheduler implementieren\n- [ ] User-Preferences für Notifications\n- [ ] Deep-Linking für Notifications\n- [ ] Testing auf beiden Plattformen\n\n## Datenbank\n- Tabelle für Notification-Tokens\n- Tabelle für Notification-History\n- User-Preferences-Spalten",
+      "labels": ["feature", "notifications", "backend"],
+      "story_points": 13
+    },
+    {
+      "id": "TICKET-006",
+      "type": "Task",
+      "priority": "Medium",
+      "summary": "API Rate Limiting implementieren",
+      "description": "# API Rate Limiting\n\n## Problem\nAktuell gibt es keine Rate Limits auf API-Endpunkten.\n\n## Risiken\n- DDoS-Angriffe\n- Gemini API Kosten explodieren\n- Datenbank-Überlastung\n\n## Aufgaben\n- [ ] Rate-Limiting-Middleware für tRPC\n- [ ] Redis für Rate-Limit-Counter (oder In-Memory)\n- [ ] Limits pro Tier definieren:\n  - Free: 100 requests/hour\n  - Premium: 500 requests/hour\n  - Pro: 2000 requests/hour\n- [ ] Error-Handling für Rate-Limit-Exceeded\n- [ ] User-Feedback im Frontend\n- [ ] Admin-Dashboard für Rate-Limit-Monitoring\n\n## Libraries\n- `express-rate-limit`\n- `redis` (optional)\n\n## Tests\n- Unit-Tests für Rate-Limiter\n- Integration-Tests mit verschiedenen Tiers",
+      "labels": ["backend", "security", "performance"],
+      "story_points": 5
+    },
+    {
+      "id": "TICKET-007",
+      "type": "Task",
+      "priority": "Medium",
+      "summary": "CORS Whitelist für Production konfigurieren",
+      "description": "# CORS Production Setup\n\n## Aktueller Status\nCORS ist aktuell offen (development mode).\n\n## Aufgaben\n- [ ] Whitelist definieren für erlaubte Origins\n- [ ] Environment-spezifische CORS-Konfiguration\n- [ ] Preflight-Request-Handling optimieren\n- [ ] Credentials-Support konfigurieren\n- [ ] Testing mit verschiedenen Origins\n\n## Whitelist\n```javascript\nconst allowedOrigins = [\n  'https://growmaster.app',\n  'https://www.growmaster.app',\n  'https://admin.growmaster.app',\n  // Expo development\n  /^exp:\\/\\//,\n  /^http:\\/\\/localhost:8081$/\n];\n```\n\n## Datei\n- `server/index.ts` oder `server/_core/index.ts`",
+      "labels": ["backend", "security", "production"],
+      "story_points": 3
+    },
+    {
+      "id": "TICKET-008",
+      "type": "Story",
+      "priority": "Medium",
+      "summary": "Analytics Integration (Firebase/Mixpanel)",
+      "description": "# Analytics Integration\n\n## Ziele\n- User-Behavior tracken\n- Feature-Usage verstehen\n- Conversion-Funnel analysieren\n- Retention messen\n\n## Events\n- `app_opened`\n- `plant_created`\n- `diagnosis_performed`\n- `coach_message_sent`\n- `paywall_viewed`\n- `subscription_started`\n- `subscription_cancelled`\n- `achievement_unlocked`\n- `community_post_created`\n\n## Plattformen\n**Option 1: Firebase Analytics**\n- Kostenlos\n- Google-Integration\n- BigQuery Export\n\n**Option 2: Mixpanel**\n- Bessere UX für Analysen\n- Retention-Reports out-of-the-box\n- Free Tier: 20M events/month\n\n## Aufgaben\n- [ ] Analytics-Provider auswählen\n- [ ] SDK integrieren\n- [ ] Event-Tracking implementieren\n- [ ] User-Properties setzen (tier, signup_date)\n- [ ] Privacy-konform machen (DSGVO)\n- [ ] Dashboard für Team einrichten",
+      "labels": ["analytics", "feature", "business"],
+      "story_points": 8
+    },
+    {
+      "id": "TICKET-009",
+      "type": "Story",
+      "priority": "Medium",
+      "summary": "Certificate Pinning implementieren",
+      "description": "# SSL Certificate Pinning\n\n## Zweck\nMan-in-the-Middle Angriffe verhindern.\n\n## Aufgaben\n- [ ] SSL-Certificate für Backend abrufen\n- [ ] Public Key Pinning in expo-constants konfigurieren\n- [ ] Native Module für Pinning (Android/iOS)\n- [ ] Fallback-Strategie bei Cert-Rotation\n- [ ] Testing mit ungültigem Cert\n- [ ] Monitoring für Pinning-Failures\n\n## Implementation\n**React Native:**\n```javascript\nimport { Platform } from 'react-native';\n\nconst certificatePinning = {\n  'api.growmaster.app': {\n    includeSubdomains: true,\n    publicKeyHashes: [\n      'sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',\n      'sha256/BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=' // Backup\n    ]\n  }\n};\n```\n\n## Risiko\nFalsch konfiguriert = App funktioniert nicht mehr!\n\n## Testing\n- Staging-Environment zuerst\n- Gradual Rollout",
+      "labels": ["security", "backend", "infrastructure"],
+      "story_points": 8
+    },
+    {
+      "id": "TICKET-010",
+      "type": "Story",
+      "priority": "Medium",
+      "summary": "Admin Moderation Tools erweitern",
+      "description": "# Admin Moderation Dashboard\n\n## Aktuell vorhanden\n- Admin-Screen existiert\n- Basic Anbieter-Verwaltung\n\n## Erweitern um\n- [ ] User-Management (Ban, Suspend, Delete)\n- [ ] Content-Moderation für Community-Posts\n- [ ] Reported Content Review\n- [ ] Gewinnspiel-Management (Winner auswählen)\n- [ ] Analytics-Dashboard\n- [ ] Anbieter-Freischaltung\n- [ ] Push-Notification-Versand\n- [ ] Support-Ticket-System\n\n## Features\n**User-Moderation:**\n- User suchen\n- Profil ansehen\n- Aktivität-Log\n- Actions: Warnen, Suspendieren, Bannen\n\n**Content-Moderation:**\n- Reported Posts Queue\n- Quick-Actions: Approve, Delete, Ban User\n- Bulk-Actions\n\n**Analytics:**\n- DAU/MAU\n- Conversion-Rate\n- Churn-Rate\n- Revenue-Metrics",
+      "labels": ["admin", "feature", "moderation"],
+      "story_points": 13
+    },
+    {
+      "id": "TICKET-011",
+      "type": "Story",
+      "priority": "Low",
+      "summary": "Offline-Modus Support",
+      "description": "# Offline-Modus\n\n## Anforderungen\n- App sollte ohne Internet grundlegend funktionieren\n- Lokale Daten vorhalten\n- Sync bei Reconnect\n\n## Offline-Features\n- Pflanzen ansehen (aus Cache)\n- Journal-Einträge erstellen (lokal speichern)\n- Bereits geladene Daten anzeigen\n- Offline-Indicator in UI\n\n## Sync-Strategie\n- Queue für ausstehende Aktionen\n- Background-Sync bei Reconnect\n- Conflict-Resolution bei Daten-Divergenz\n\n## Aufgaben\n- [ ] Offline-Detection implementieren\n- [ ] AsyncStorage-Caching erweitern\n- [ ] Sync-Queue implementieren\n- [ ] UI-Feedback für Offline-Status\n- [ ] Testing mit NetInfo Mock\n- [ ] Sync-Konflikte behandeln\n\n## Libraries\n- `@react-native-community/netinfo`\n- `redux-offline` (optional)\n\n## Premium-Feature?\nOffline-Modus könnte Premium/Pro-Feature sein.",
+      "labels": ["feature", "offline", "premium"],
+      "story_points": 13
+    },
+    {
+      "id": "TICKET-012",
+      "type": "Story",
+      "priority": "Low",
+      "summary": "i18n/Lokalisierung für weitere Sprachen",
+      "description": "# Internationalisierung\n\n## Aktuell\n- App ist auf Deutsch\n- Englische Übersetzungen teilweise vorhanden\n\n## Ziel-Sprachen\n1. **Englisch** (Priorität 1)\n2. **Niederländisch** (Cannabis-Markt)\n3. **Spanisch** (großer Markt)\n4. **Französisch** (EU-Markt)\n5. **Italienisch** (EU-Markt)\n\n## Aufgaben\n- [ ] i18next oder react-i18next integrieren\n- [ ] Translation-Files erstellen (JSON)\n- [ ] Alle UI-Texte extrahieren\n- [ ] Sprach-Auswahl in Settings\n- [ ] System-Sprache als Default\n- [ ] RTL-Support (Arabisch?) später\n- [ ] Datums-/Zahlenformate lokalisieren\n\n## Struktur\n```\nlocales/\n  de/\n    common.json\n    screens.json\n    errors.json\n  en/\n    common.json\n    ...\n```\n\n## Content\n- UI-Texte\n- Fehlermeldungen\n- Tutorial-Texte\n- Store-Beschreibungen",
+      "labels": ["feature", "i18n", "localization"],
+      "story_points": 13
+    },
+    {
+      "id": "TICKET-013",
+      "type": "Task",
+      "priority": "Low",
+      "summary": "Dark Mode Toggle hinzufügen",
+      "description": "# Dark Mode Toggle\n\n## Aktuell\n- App ist immer im Dark Mode\n- Theme ist fest auf \"dark\" gesetzt\n\n## Aufgaben\n- [ ] Theme-Toggle in Settings-Screen\n- [ ] Theme-Persistenz (AsyncStorage)\n- [ ] System-Theme-Detection (Auto-Modus)\n- [ ] Light Mode Theme erstellen\n- [ ] Alle Screens im Light Mode testen\n- [ ] Smooth Theme-Transition\n\n## Modi\n1. **Auto** - Folgt System-Einstellung\n2. **Light** - Immer hell\n3. **Dark** - Immer dunkel (aktuell)\n\n## Theme-Farben\n**Dark Mode (existiert):**\n- Background: #0a0a0a\n- Primary: #22c55e (Grün)\n\n**Light Mode (neu):**\n- Background: #ffffff\n- Primary: #16a34a (Dunkleres Grün)\n- Text: #1a1a1a\n\n## Testing\n- iOS Dark/Light Mode\n- Android Dark/Light Mode\n- Theme-Wechsel während App läuft",
+      "labels": ["ui", "theme", "feature"],
+      "story_points": 5
+    },
+    {
+      "id": "TICKET-014",
+      "type": "Story",
+      "priority": "Low",
+      "summary": "Onboarding Tutorial erweitern",
+      "description": "# Erweiterte Onboarding-Experience\n\n## Aktuell\n- Basic Onboarding vorhanden (Login + Pflanze anlegen)\n\n## Erweitern um\n- [ ] Feature-Tour nach erstem Login\n- [ ] Interactive Walkthrough\n- [ ] Video-Tutorial (optional)\n- [ ] Tooltips für wichtige Features\n- [ ] Progress-Indicator\n- [ ] Skip-Option\n- [ ] \"Später anzeigen\" für Premium-Features\n\n## Tour-Stops\n1. **Home-Dashboard** - Übersicht erklären\n2. **Diagnose** - Kamera zeigen\n3. **Coach** - AI-Chat vorstellen\n4. **Pflanzen** - Pflanzenverwaltung\n5. **Journal** - Dokumentation erklären\n6. **Community** - Social Features zeigen\n\n## Libraries\n- `react-native-copilot` (Tutorial Overlays)\n- `react-native-onboarding-swiper`\n\n## Analytics\n- Track: Tour gestartet, abgeschlossen, abgebrochen\n- A/B-Test: Mit/Ohne Tutorial",
+      "labels": ["ux", "onboarding", "feature"],
+      "story_points": 8
+    },
+    {
+      "id": "TICKET-015",
+      "type": "Story",
+      "priority": "Low",
+      "summary": "CI/CD Pipeline einrichten",
+      "description": "# CI/CD Pipeline\n\n## Ziele\n- Automatisierte Tests bei jedem Push\n- Automatische Builds\n- Automated Deployment\n- Code-Quality-Checks\n\n## Pipeline-Stages\n\n### 1. Test\n- [ ] Vitest Tests laufen\n- [ ] TypeScript Check\n- [ ] ESLint\n- [ ] Coverage-Report\n\n### 2. Build\n- [ ] Server-Build (CommonJS)\n- [ ] Android APK (EAS Build)\n- [ ] iOS IPA (später)\n\n### 3. Deploy\n- [ ] Backend zu Production deployen\n- [ ] APK zu Internal Testing (Google Play)\n- [ ] Beta-Deployment\n\n## Plattform-Optionen\n**Option 1: GitHub Actions**\n- Kostenlos für Open Source\n- Native GitHub-Integration\n\n**Option 2: GitLab CI**\n- Self-hosted möglich\n\n**Option 3: Circle CI**\n- Gute React Native Support\n\n## Configuration\n```yaml\n# .github/workflows/ci.yml\nname: CI/CD\non: [push, pull_request]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v3\n      - run: pnpm install\n      - run: pnpm test\n      - run: pnpm check\n  build:\n    needs: test\n    runs-on: ubuntu-latest\n    steps:\n      - run: pnpm build\n      - run: eas build --platform android --non-interactive\n```",
+      "labels": ["devops", "ci-cd", "automation"],
+      "story_points": 13
+    }
+  ],
+  "usage_instructions": {
+    "manual_import": "Du kannst diese Tickets manuell in Jira erstellen, indem du die Informationen aus diesem JSON-File kopierst.",
+    "bulk_import": "Jira unterstützt CSV-Import. Erstelle eine CSV-Datei aus diesem JSON für Bulk-Import.",
+    "api_import": "Mit Jira REST API kannst du diese Tickets automatisch importieren (siehe JIRA_IMPORT_GUIDE.md)."
+  },
+  "summary": {
+    "total_story_points": 139,
+    "estimated_sprints": "5-7 Sprints (à 2 Wochen bei Team von 2-3 Entwicklern)",
+    "next_priorities": [
+      "TICKET-001: Google Play Store Submission",
+      "TICKET-002: Backend Publishing testen",
+      "TICKET-003: APK-Build End-to-End Test",
+      "TICKET-004: iOS Vorbereitung"
+    ]
+  }
+}

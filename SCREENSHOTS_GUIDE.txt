@@ -1,0 +1,266 @@
+===============================================================================
+APP SCREENSHOTS ERSTELLEN - 3 METHODEN
+===============================================================================
+
+Google Play verlangt MINDESTENS 2 Screenshots (empfohlen: 5-8)
+
+Requirements:
+• JPEG oder 24-bit PNG
+• Min: 320px
+• Max: 3840px
+• Empfohlen: 1080 x 1920 (Full HD Portrait)
+• Alle Screenshots GLEICHE Auflösung!
+
+===============================================================================
+METHODE 1: ANDROID EMULATOR (SCHNELLSTE METHODE) ⭐
+===============================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SCHRITT 1: Emulator starten
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Im Terminal:
+
+npm start
+
+→ Drücke 'a' für Android Emulator
+→ App öffnet sich im Emulator
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SCHRITT 2: Zu verschiedenen Screens navigieren
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Navigiere in der App zu diesen Screens:
+
+BENÖTIGTE SCREENSHOTS (Minimum 5):
+
+1. ✅ Home/Dashboard
+   - Zeigt Overview
+   - Aktuelle Pflanzen
+   - Quick Actions
+
+2. ✅ Plant Doctor
+   - Am besten: Während einer Diagnose
+   - Oder: Diagnose-Ergebnis Screen
+   - Zeigt KI in Action
+
+3. ✅ Grow Journal
+   - Mit mindestens einer Pflanze
+   - Timeline oder Detail View
+   - Zeigt Tracking-Features
+
+4. ✅ Strain Database
+   - Liste von Strains
+   - Oder: Detail-View einer Strain
+   - Zeigt Info-Reichtum
+
+5. ✅ Community/Achievements
+   - Community Feed
+   - Oder: Achievements Screen
+   - Zeigt Social Features
+
+
+OPTIONAL (für bessere Präsentation):
+
+6. ⭐ Premium Features
+   - Paywall oder Premium-Feature-Übersicht
+   - Zeigt Value Proposition
+
+7. ⭐ Settings/Profile
+   - User Profile
+   - Zeigt Personalisierung
+
+8. ⭐ Marketplace
+   - Equipment Recommendations
+   - Zeigt Utility
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SCHRITT 3: Screenshots machen
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Option A - Emulator Screenshot Button:
+1. Im Emulator-Fenster rechts: "..." (More) klicken
+2. "Screenshot" wählen
+3. Datei wird gespeichert
+
+Option B - Windows Snipping Tool:
+1. Windows + Shift + S
+2. Bereich auswählen (nur Emulator-Screen)
+3. Screenshot wird in Clipboard gespeichert
+4. Einfügen in Paint/Editor → Speichern
+
+Option C - Emulator Camera Button:
+1. Rechte Sidebar im Emulator
+2. Camera Icon klicken
+3. Screenshot wird automatisch gespeichert
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SCHRITT 4: Screenshots finden
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Standard Speicherort (Windows):
+C:\Users\[USERNAME]\Pictures\Screenshots
+
+Oder im Emulator:
+→ More (...) → Screenshot location anzeigen
+
+
+===============================================================================
+METHODE 2: PHYSICAL DEVICE (Falls vorhanden)
+===============================================================================
+
+1. Installiere Development Build auf deinem Android Handy:
+   npm start → Scan QR Code mit Expo Go
+
+2. Öffne App auf dem Handy
+
+3. Navigiere zu verschiedenen Screens
+
+4. Mache Screenshots:
+   - Power Button + Volume Down (gleichzeitig)
+   - Screenshots → Gallery
+
+5. Transfer zu PC:
+   - USB Kabel
+   - Oder: Google Photos
+   - Oder: Email an dich selbst
+
+
+===============================================================================
+METHODE 3: SCREENSHOT-FRAMES MIT MOCKUP-TOOL (Optional, später)
+===============================================================================
+
+Für professionellere Screenshots mit Device-Frame:
+
+Tools:
+• https://mockuphone.com/
+• https://www.screely.com/
+• https://mockups-design.com/
+
+1. Upload deine Screenshots
+2. Wähle Device-Frame (z.B. Samsung Galaxy)
+3. Download geframte Screenshots
+
+ABER: Nicht nötig für ersten Launch! Plain Screenshots reichen!
+
+
+===============================================================================
+OPTIMIERUNG FÜR BESSERE CONVERSION (Optional, später)
+===============================================================================
+
+Nach Launch kannst du Screenshots optimieren mit Text-Overlays:
+
+Tools:
+• Canva: https://www.canva.com/
+• Figma: https://www.figma.com/
+
+Beispiel-Overlay:
+┌─────────────────────────────┐
+│                             │
+│   [Screenshot]              │
+│                             │
+│   "KI erkennt Probleme      │
+│    in Sekunden 🤖"          │
+│                             │
+└─────────────────────────────┘
+
+Siehe auch: DIAMANT_OPTIMIERUNGEN.md → ASO Section
+
+
+===============================================================================
+SCREENSHOT BEST PRACTICES
+===============================================================================
+
+✅ DO's:
+• Zeige echte App-Features
+• Nutze Dark Mode (sieht moderner aus)
+• Zeige Daten/Pflanzen (nicht leere Screens)
+• Alle Screenshots gleiche Auflösung
+• High Quality (keine Blur)
+
+❌ DON'Ts:
+• Keine persönlichen Daten zeigen
+• Keine Copyright-Bilder
+• Keine zu kleinen Screenshots
+• Keine unterschiedlichen Aspect Ratios
+• Kein Lorem Ipsum Text
+
+
+===============================================================================
+QUICK CHECKLIST
+===============================================================================
+
+Minimum für ersten Launch:
+
+□ 2 Screenshots (PFLICHT)
+□ Gleiche Auflösung
+□ Mindestens 320px
+□ JPEG oder PNG
+□ Zeigen echte App Features
+
+Empfohlen:
+
+□ 5-8 Screenshots
+□ 1080 x 1920 (Full HD)
+□ Dark Mode Screenshots
+□ Verschiedene Key Features
+□ Hochqualität
+
+
+===============================================================================
+UPLOAD ZU GOOGLE PLAY
+===============================================================================
+
+Google Play Console → Store presence → Main store listing
+→ Scrolle zu "Graphics"
+→ "Phone screenshots"
+→ Upload/Drag & Drop
+
+Reihenfolge wichtig!
+1. Screenshot = Wird als erstes angezeigt im Store
+→ Wähle deinen besten Screenshot (z.B. Plant Doctor)
+
+
+===============================================================================
+TROUBLESHOOTING
+===============================================================================
+
+Problem: "Emulator startet nicht"
+→ Lösung: Android Studio → AVD Manager → Cold Boot
+
+Problem: "Screenshots zu klein"
+→ Lösung: Vergrößere Emulator-Fenster vor Screenshot
+
+Problem: "Screenshots haben verschiedene Größen"
+→ Lösung: Resize alle auf gleiche Größe mit:
+  https://www.iloveimg.com/resize-image
+
+Problem: "App sieht leer aus"
+→ Lösung: Füge Test-Daten hinzu (Pflanzen, Journal-Einträge)
+
+
+===============================================================================
+TIMING
+===============================================================================
+
+Screenshots erstellen: 5-10 Minuten
+Upload zu Play Console: 2 Minuten
+TOTAL: ~15 Minuten
+
+Parallel zum Build möglich! ✅
+
+
+===============================================================================
+ZUSAMMENFASSUNG
+===============================================================================
+
+1. npm start → 'a' für Android Emulator
+2. Navigiere zu 5 verschiedenen Screens
+3. Mache Screenshots (Windows + Shift + S)
+4. Speichere alle Screenshots
+5. Upload zu Google Play Console → Graphics → Phone screenshots
+
+FERTIG! ✅

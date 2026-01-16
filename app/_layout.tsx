@@ -11,6 +11,7 @@ import { ThemeProvider } from "@/lib/theme-provider";
 import { SubscriptionProvider } from "@/lib/subscription-context";
 import { AuthProvider } from "@/lib/auth-context";
 import { GamificationProvider } from "@/lib/gamification-context";
+import { ErrorBoundary } from "@/components/error-boundary";
 import {
   SafeAreaFrameContext,
   SafeAreaInsetsContext,
@@ -81,13 +82,35 @@ export default function RootLayout() {
     };
   }, [initialInsets, initialFrame]);
 
+  // Check onboarding status
+  const [onboardingComplete, setOnboardingComplete] = React.useState<boolean | null>(null);
+
+  React.useEffect(() => {
+    import('@/components/onboarding/onboarding-flow').then(({ hasCompletedOnboarding }) => {
+      hasCompletedOnboarding().then(setOnboardingComplete);
+    });
+  }, []);
+
+  // Show nothing while checking
+  if (onboardingComplete === null) {
+    return null;
+  }
+
+  // Redirect to onboarding if not completed
+  React.useEffect(() => {
+    if (onboardingComplete === false) {
+      router.replace('/onboarding');
+    }
+  }, [onboardingComplete]);
+
   const content = (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <GamificationProvider>
-              <SubscriptionProvider>
+      <ErrorBoundary>
+        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+              <GamificationProvider>
+                <SubscriptionProvider>
               {/* Default to hiding native headers so raw route segments don't appear (e.g. "(tabs)", "products/[id]"). */}
               {/* If a screen needs the native header, explicitly enable it and set a human title via Stack.Screen options. */}
               <Stack screenOptions={{ headerShown: false }}>
@@ -106,11 +129,12 @@ export default function RootLayout() {
                 <Stack.Screen name="onboarding" options={{ presentation: "fullScreenModal", gestureEnabled: false }} />
               </Stack>
               <StatusBar style="auto" />
-            </SubscriptionProvider>
+              </SubscriptionProvider>
               </GamificationProvider>
-          </AuthProvider>
-        </QueryClientProvider>
-      </trpc.Provider>
+            </AuthProvider>
+          </QueryClientProvider>
+        </trpc.Provider>
+      </ErrorBoundary>
     </GestureHandlerRootView>
   );
 

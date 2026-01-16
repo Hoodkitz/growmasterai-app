@@ -8,8 +8,8 @@ import Purchases, {
 } from "react-native-purchases";
 
 // RevenueCat API Keys
-// Der bereitgestellte Test-Key funktioniert für beide Plattformen
-const REVENUECAT_API_KEY = "test_tEDiRPvpJterHZOUuSHVMqocEXE";
+// SDK API Key (Google Play)
+const REVENUECAT_API_KEY = process.env.REVENUECAT_API_KEY || "goog_KaRWjmufAmhheobtrxzlqQKNyjC";
 
 // Produkt-IDs für die Abos (wie angefordert)
 export const PRODUCT_IDS = {
@@ -57,8 +57,10 @@ export async function initializePurchases(userId?: string): Promise<void> {
   }
 
   try {
-    // Debug-Logs aktivieren (für Entwicklung)
-    Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+    // Debug-Logs aktivieren (nur für Entwicklung)
+    if (process.env.NODE_ENV === 'development') {
+      Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+    }
     
     // SDK konfigurieren
     if (userId) {

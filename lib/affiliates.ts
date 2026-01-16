@@ -13,9 +13,10 @@ const AFFILIATE_IDS = {
   DUTCH_HEADSHOP: process.env.EXPO_PUBLIC_AFFILIATE_DUTCH_HEADSHOP || "growmaster",
   RQS: process.env.EXPO_PUBLIC_AFFILIATE_RQS || "growmaster",
   SEEDSMAN: process.env.EXPO_PUBLIC_AFFILIATE_SEEDSMAN || "growmaster",
-  AMAZON: process.env.EXPO_PUBLIC_AFFILIATE_AMAZON || "growmaster-21",
+  AMAZON: process.env.EXPO_PUBLIC_AFFILIATE_AMAZON || "plantdoctor-21",
   GROWLAND: process.env.EXPO_PUBLIC_AFFILIATE_GROWLAND || "growmaster",
   CANNACONNECTION: process.env.EXPO_PUBLIC_AFFILIATE_CANNACONNECTION || "growmaster",
+  GROW_GURU: process.env.EXPO_PUBLIC_AFFILIATE_GROW_GURU || "087442201",
 };
 
 export interface AffiliatePartner {
@@ -138,6 +139,19 @@ export const AFFILIATE_PARTNERS: AffiliatePartner[] = [
     signupUrl: "https://www.cannaconnection.com/affiliate",
     featured: false,
   },
+  {
+    id: "grow-guru",
+    name: "Grow-Guru.com",
+    description: "Premium Growshop für Equipment, Dünger und Zubehör",
+    category: "equipment",
+    baseUrl: "https://www.grow-guru.com",
+    affiliateParam: "partner",
+    affiliateId: AFFILIATE_IDS.GROW_GURU,
+    commission: "5-10%",
+    cookieDuration: "30 Tage",
+    signupUrl: "https://www.grow-guru.com/partner",
+    featured: true,
+  },
 ];
 
 /**
@@ -217,11 +231,22 @@ export function generateStrainAffiliateLink(
  */
 export function generateEquipmentAffiliateLink(
   productName: string,
-  category?: "lights" | "tents" | "nutrients" | "ventilation" | "general"
+  category?: "lights" | "tents" | "nutrients" | "ventilation" | "general",
+  preferredPartner?: "amazon" | "grow-guru"
 ): { url: string; partner: AffiliatePartner } | null {
-  // Amazon für Equipment bevorzugen
-  const partner = AFFILIATE_PARTNERS.find(p => p.id === "amazon") 
-    || AFFILIATE_PARTNERS.find(p => p.category === "equipment");
+  // Partner-Auswahl: Bevorzugter Partner oder Featured Equipment Partner
+  let partner: AffiliatePartner | undefined;
+  
+  if (preferredPartner) {
+    partner = AFFILIATE_PARTNERS.find(p => p.id === preferredPartner);
+  }
+  
+  // Fallback: Grow-Guru bevorzugen (featured), dann Amazon, dann irgendein Equipment-Partner
+  if (!partner) {
+    partner = AFFILIATE_PARTNERS.find(p => p.id === "grow-guru" && p.featured)
+      || AFFILIATE_PARTNERS.find(p => p.id === "amazon")
+      || AFFILIATE_PARTNERS.find(p => p.category === "equipment");
+  }
   
   if (!partner) return null;
 
@@ -233,6 +258,8 @@ export function generateEquipmentAffiliateLink(
     if (category === "lights") {
       searchPath += "&rh=n%3A2165813031"; // Beleuchtung Kategorie
     }
+  } else if (partner.id === "grow-guru") {
+    searchPath = `/search?q=${searchQuery}`;
   } else {
     searchPath = `/search?q=${searchQuery}`;
   }

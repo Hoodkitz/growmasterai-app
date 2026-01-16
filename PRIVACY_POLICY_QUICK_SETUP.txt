@@ -1,0 +1,313 @@
+===============================================================================
+PRIVACY POLICY - 5-MINUTEN QUICK SETUP MIT GITHUB PAGES
+===============================================================================
+
+Google Play verlangt eine Privacy Policy URL für Apps die User-Daten sammeln.
+GrowMaster AI sammelt: Email, Photos, App-Nutzung → Privacy Policy PFLICHT!
+
+===============================================================================
+OPTION 1: GITHUB PAGES (KOSTENLOS & SCHNELL) ⭐ EMPFOHLEN
+===============================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SCHRITT 1: GitHub Repository erstellen
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Öffne: https://github.com/new
+
+2. Erstelle neues Repository:
+   
+   Repository name: growmaster-privacy
+   
+   Description: Privacy Policy for GrowMaster AI
+   
+   ○ Public ← MUSS PUBLIC SEIN
+   
+   ☑ Add a README file ← ANKREUZEN
+   
+   → Klicke "Create repository"
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SCHRITT 2: Privacy Policy Text hinzufügen
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Im Repository: Klicke auf "README.md" (zum Editieren)
+
+2. Klicke "Edit this file" (Stift-Icon)
+
+3. ERSETZE den ganzen Content mit dem Privacy Policy Text
+   (Siehe unten: "PRIVACY POLICY TEXT ZUM KOPIEREN")
+
+4. Klicke "Commit changes"
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SCHRITT 3: GitHub Pages aktivieren
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Gehe zu: Settings (im Repository)
+
+2. Scrolle links zu: "Pages"
+
+3. Under "Source":
+   Branch: main
+   Folder: / (root)
+   
+4. Klicke "Save"
+
+5. Warte 1-2 Minuten
+
+6. Deine Privacy Policy URL ist:
+   
+   https://[DEIN-GITHUB-USERNAME].github.io/growmaster-privacy/
+   
+   Beispiel: https://maxmustermann.github.io/growmaster-privacy/
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SCHRITT 4: URL in Google Play Console eintragen
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Google Play Console → Dashboard → Policy → App content → Privacy Policy
+
+Privacy Policy URL: https://[username].github.io/growmaster-privacy/
+
+→ Save
+
+
+===============================================================================
+PRIVACY POLICY TEXT ZUM KOPIEREN
+===============================================================================
+
+Kopiere diesen kompletten Text in dein GitHub README.md:
+
+───────────────────────────────────────────────────────────────────────────────
+
+# Privacy Policy for GrowMaster AI
+
+**Effective Date:** January 8, 2025  
+**Last Updated:** January 8, 2025
+
+## 1. Introduction
+
+Welcome to GrowMaster AI ("we," "our," or "us"). We respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, and safeguard your information when you use our mobile application.
+
+## 2. Information We Collect
+
+### 2.1 Personal Information
+- **Name:** For personalization
+- **Email Address:** For account creation and communication
+- **User ID:** For account management
+
+### 2.2 Photos and Media
+- **Plant Photos:** Photos you take for plant diagnosis
+- **Grow Journal Photos:** Photos you add to your grow journal
+- **Note:** Photos are stored locally on your device and optionally in our secure cloud storage if you enable cloud backup
+
+### 2.3 App Activity
+- **App Interactions:** Features you use, buttons you click
+- **Usage Statistics:** Time spent in app, features accessed
+- **Grow Data:** Plant information, journal entries, harvest data
+
+### 2.4 Technical Information
+- **Device Information:** Device type, OS version
+- **App Version:** Version of GrowMaster AI you're using
+- **Crash Reports:** Automatic crash reports to improve app stability
+
+## 3. How We Use Your Information
+
+We use your information to:
+- **Provide App Functionality:** Enable plant diagnosis, journal features, and community access
+- **Personalization:** Customize your experience and recommendations
+- **Communication:** Send important updates, notifications, and support
+- **Improvement:** Analyze usage to improve features and fix bugs
+- **Security:** Prevent fraud and maintain app security
+
+## 4. Data Storage and Security
+
+### 4.1 Storage
+- **Local Storage:** Most data is stored locally on your device
+- **Cloud Backup:** Optional cloud backup using secure servers
+- **Encryption:** All data transmission is encrypted using industry-standard SSL/TLS
+
+### 4.2 Security Measures
+- Secure authentication
+- Encrypted data transmission
+- Regular security audits
+- Access controls and monitoring
+
+## 5. Data Sharing
+
+### 5.1 We DO NOT sell your personal data
+
+### 5.2 We may share data with:
+- **Service Providers:** Cloud storage providers, analytics tools (Google Analytics, Firebase)
+- **Payment Processors:** RevenueCat for subscription management
+- **Legal Requirements:** If required by law or legal process
+
+### 5.3 Community Features
+- If you use community features, your public posts, username, and profile information may be visible to other users
+- You control what information you share publicly
+
+## 6. Your Rights
+
+You have the right to:
+- **Access:** Request a copy of your personal data
+- **Correction:** Update or correct your information
+- **Deletion:** Request deletion of your account and data
+- **Opt-Out:** Disable optional features like analytics or cloud backup
+- **Data Portability:** Export your grow data
+
+### How to Exercise Your Rights
+Contact us at: support@growmaster.ai
+
+## 7. Children's Privacy
+
+GrowMaster AI is intended for users aged 18 and above. We do not knowingly collect personal information from users under 18. If we become aware of such data, we will delete it immediately.
+
+## 8. International Data Transfers
+
+Your data may be transferred and stored in countries outside your residence. We ensure appropriate safeguards are in place to protect your data in accordance with GDPR and other applicable laws.
+
+## 9. Cookies and Tracking
+
+We use:
+- **Essential Cookies:** For app functionality
+- **Analytics:** To understand app usage (can be disabled in settings)
+- **Preferences:** To remember your settings
+
+## 10. Third-Party Services
+
+We use the following third-party services:
+- **Google Analytics:** Usage analytics
+- **Firebase:** Crash reporting and analytics
+- **RevenueCat:** Subscription management
+- **Affiliate Partners:** Amazon, Grow-Guru, seed banks (for affiliate links)
+
+Each service has its own privacy policy. We recommend reviewing them.
+
+## 11. Data Retention
+
+We retain your data:
+- **Active Accounts:** As long as your account is active
+- **Deleted Accounts:** Data is deleted within 30 days of account deletion
+- **Legal Requirements:** Some data may be retained longer if required by law
+
+## 12. Cannabis-Related Content
+
+GrowMaster AI provides educational information about cannabis cultivation. This information is intended for legal use in jurisdictions where cannabis cultivation is permitted. We do not encourage or support illegal activities.
+
+## 13. Changes to This Privacy Policy
+
+We may update this Privacy Policy from time to time. We will notify you of significant changes via:
+- In-app notification
+- Email notification
+- Updated "Last Updated" date
+
+## 14. Contact Us
+
+If you have questions or concerns about this Privacy Policy:
+
+**Email:** support@growmaster.ai  
+**Website:** [Your website if available]  
+**Address:** [Your address if required]
+
+## 15. Legal Compliance
+
+This Privacy Policy complies with:
+- **GDPR** (European Union)
+- **CCPA** (California, USA)
+- **Google Play Developer Program Policies**
+- **Apple App Store Guidelines**
+
+## 16. Consent
+
+By using GrowMaster AI, you consent to this Privacy Policy and agree to its terms.
+
+───────────────────────────────────────────────────────────────────────────────
+
+===============================================================================
+OPTION 2: PRIVACY POLICY GENERATOR (Alternative)
+===============================================================================
+
+Falls du keinen GitHub Account hast:
+
+1. Gehe zu: https://www.privacypolicygenerator.info/
+
+2. Fülle Formular aus:
+   - App Name: GrowMaster AI
+   - Website/App URL: [Deine URL oder Play Store Link]
+   - Email: [Deine Email]
+   
+3. Wähle Daten die du sammelst:
+   - Personal Information (Name, Email)
+   - Photos
+   - Usage Data
+   
+4. Generate Privacy Policy
+
+5. Kopiere den Text
+
+6. Hoste auf:
+   - GitHub Pages (wie oben)
+   - Eigene Website
+   - Oder: https://www.termsfeed.com/ (Free Hosting)
+
+
+===============================================================================
+OPTION 3: EIGENE DOMAIN (Falls vorhanden)
+===============================================================================
+
+Falls du bereits eine Website hast:
+
+1. Erstelle Seite: https://deine-domain.com/privacy
+
+2. Füge Privacy Policy Text ein (von oben)
+
+3. URL in Google Play Console eintragen
+
+
+===============================================================================
+WICHTIGE HINWEISE
+===============================================================================
+
+✅ Privacy Policy MUSS:
+• Öffentlich zugänglich sein (nicht hinter Login)
+• HTTPS nutzen (sicher)
+• Auf Deutsch oder Englisch (oder beides)
+• Alle gesammelten Daten auflisten
+• User-Rechte erklären (GDPR)
+
+❌ Privacy Policy NICHT:
+• Nur PDF (muss Webpage sein)
+• Hinter Paywall
+• Nur in App (braucht externe URL)
+• Generisch ohne App-Name
+
+
+===============================================================================
+NACH SETUP
+===============================================================================
+
+✅ GitHub Pages erstellt
+✅ Privacy Policy Text eingefügt
+✅ URL aktiv (z.B. https://username.github.io/growmaster-privacy/)
+✅ URL in Google Play Console eingetragen
+
+→ Fertig! ✅
+
+Deine Privacy Policy ist jetzt live und compliant! 🎉
+
+
+===============================================================================
+SUPPORT EMAIL
+===============================================================================
+
+WICHTIG: In der Privacy Policy steht "support@growmaster.ai"
+
+Du solltest entweder:
+1. Diese Email erstellen
+2. Oder: Ersetze mit deiner echten Email im Text
+
+Beispiel: support@deine-domain.com oder deine@email.com

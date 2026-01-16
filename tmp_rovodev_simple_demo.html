@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrowMaster AI - Designer Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0A0F0D 0%, #1a2520 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            color: #94a3b8;
+        }
+        
+        .info-box {
+            background: rgba(74, 222, 128, 0.1);
+            border: 2px solid #4ade80;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .info-box h2 {
+            color: #4ade80;
+            margin-bottom: 15px;
+        }
+        
+        .links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .link-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .link-card:hover {
+            transform: translateY(-5px);
+            border-color: #4ade80;
+            box-shadow: 0 10px 30px rgba(74, 222, 128, 0.2);
+        }
+        
+        .link-card h3 {
+            color: #4ade80;
+            margin-bottom: 10px;
+        }
+        
+        .link-card p {
+            color: #94a3b8;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: #0A0F0D;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(74, 222, 128, 0.4);
+        }
+        
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            color: #4ade80;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .status.ready {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+        
+        .status.building {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌱 GrowMaster AI</h1>
+            <p>Designer Preview & Documentation</p>
+        </div>
+        
+        <div class="info-box">
+            <h2>👋 Hey Designer!</h2>
+            <p>Willkommen beim GrowMaster AI Projekt. Hier findest du alle Links und Infos, um mit dem UI/UX-Design zu starten.</p>
+            <p><strong>Deine Aufgabe:</strong> Optimiere das Design basierend auf dem <strong>9-6-3 Prinzip</strong></p>
+        </div>
+        
+        <div class="links">
+            <div class="link-card">
+                <h3>📱 Live App Preview</h3>
+                <span class="status building">Building...</span>
+                <p>Die vollständige App läuft lokal. Um sie zu öffnen:</p>
+                <div class="code-block">
+                    cd C:\Users\Administrator\GrowMaster<br>
+                    pnpm dev<br>
+                    # Dann: http://localhost:8081
+                </div>
+            </div>
+            
+            <div class="link-card">
+                <h3>🎨 Design System</h3>
+                <span class="status ready">Ready</span>
+                <p>Farben, Typography, Spacing - alle Design-Token:</p>
+                <ul style="color: #94a3b8; margin: 10px 0 15px 20px;">
+                    <li>Primary: #4ade80 (Green)</li>
+                    <li>Background: #0A0F0D (Dark)</li>
+                    <li>Font: System Default</li>
+                </ul>
+            </div>
+            
+            <div class="link-card">
+                <h3>📐 9-6-3 Design-Prinzip</h3>
+                <span class="status ready">Ready</span>
+                <p>Das Kernprinzip für die Optimierung:</p>
+                <ul style="color: #94a3b8; margin: 10px 0 15px 20px;">
+                    <li><strong>9:</strong> Sekunden bis zur ersten Interaktion</li>
+                    <li><strong>6:</strong> Schritte max. zur Hauptfunktion</li>
+                    <li><strong>3:</strong> Klicks bis zum Ziel</li>
+                </ul>
+            </div>
+            
+            <div class="link-card">
+                <h3>📄 Dokumentation</h3>
+                <span class="status ready">Ready</span>
+                <p>Alle wichtigen Dokumente im Projekt:</p>
+                <ul style="color: #94a3b8; margin: 10px 0 15px 20px;">
+                    <li>DESIGN_EVOLUTION_UX_REVIEW.md</li>
+                    <li>UI_UX_BRIEFING.md</li>
+                    <li>GEMINI_UI_UX_PROMPT.md</li>
+                </ul>
+            </div>
+            
+            <div class="link-card">
+                <h3>🚀 Quick Start</h3>
+                <span class="status ready">Ready</span>
+                <p>Starte die App lokal in 2 Minuten:</p>
+                <div class="code-block">
+                    # 1. Dependencies installieren<br>
+                    pnpm install<br><br>
+                    # 2. Dev Server starten<br>
+                    pnpm dev<br><br>
+                    # 3. Browser öffnen<br>
+                    http://localhost:8081
+                </div>
+            </div>
+            
+            <div class="link-card">
+                <h3>🔗 Permanenter Link</h3>
+                <span class="status building">Coming Soon</span>
+                <p>Vercel-Deployment für dauerhaften Zugriff:</p>
+                <div class="code-block">
+                    npx expo export --platform web<br>
+                    cd dist<br>
+                    vercel --prod
+                </div>
+                <p style="margin-top: 10px; font-size: 0.9em;">Link wird hier erscheinen sobald deployed.</p>
+            </div>
+        </div>
+        
+        <div class="info-box" style="background: rgba(251, 191, 36, 0.1); border-color: #fbbf24;">
+            <h2 style="color: #fbbf24;">⚠️ Wichtig</h2>
+            <p>Die App ist eine React Native / Expo App. Im Browser siehst du die Web-Version, die zu 95% identisch mit der Mobile-App ist.</p>
+            <p style="margin-top: 10px;"><strong>Was funktioniert im Web:</strong> Navigation, UI/UX, alle Screens, Design-System</p>
+            <p><strong>Was NICHT funktioniert:</strong> Kamera, Push-Notifications, Native Animationen</p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 50px; padding: 30px; opacity: 0.5;">
+            <p>GrowMaster AI © 2026 | Designer Preview v1.0</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,327 @@
+===============================================================================
+9 PFLICHT-DEKLARATIONEN - ALLE ANTWORTEN
+===============================================================================
+
+Diese Deklarationen müssen ausgefüllt werden bevor du submitten kannst.
+Hier sind die Antworten für jede:
+
+===============================================================================
+1. DATENSCHUTZERKLÄRUNG (Privacy Policy)
+===============================================================================
+
+STATUS: ⚠️ Muss ausgefüllt werden
+
+ANTWORT:
+Falls du noch keine Privacy Policy URL hast:
+
+OPTION A: Temporär überspringen
+→ Du kannst später eine URL hinzufügen
+
+OPTION B: GitHub Pages (5 Min)
+→ Siehe: PRIVACY_POLICY_QUICK_SETUP.txt
+→ URL: https://[username].github.io/growmaster-privacy/
+
+EINTRAGEN:
+Richtlinien → App-Inhalte → Datenschutzerklärung
+→ URL eingeben
+
+EMPFEHLUNG: Später machen, erstmal überspringen
+
+
+===============================================================================
+2. ANZEIGEN (Ads)
+===============================================================================
+
+STATUS: ✅ Einfach!
+
+NAVIGATION:
+Richtlinien → App-Inhalte → Anzeigen
+
+FRAGE:
+"Enthält deine App Werbung?"
+
+ANTWORT:
+○ Nein
+
+(Falls du Ads hast: Ja wählen und Typen angeben)
+
+FERTIG! ✅
+
+
+===============================================================================
+3. APP-ZUGRIFF
+===============================================================================
+
+STATUS: ✅ Einfach!
+
+NAVIGATION:
+Richtlinien → App-Inhalte → App-Zugriff
+
+FRAGE:
+"Beschränkt deine App den Zugriff auf Inhalte oder Funktionen?"
+
+ANTWORT:
+○ Nein, die gesamte Funktionalität ist ohne Einschränkungen verfügbar
+
+(Bedeutet: Jeder kann App nutzen, kein spezieller Zugang nötig)
+
+FERTIG! ✅
+
+
+===============================================================================
+4. ZIELGRUPPE UND INHALTE
+===============================================================================
+
+STATUS: ✅ Einfach!
+
+NAVIGATION:
+Richtlinien → App-Inhalte → Zielgruppe und Inhalte
+
+FRAGE:
+"Welche Altersgruppe ist die Zielgruppe deiner App?"
+
+ANTWORT:
+☑ Nur 18 Jahre und älter
+
+(Wegen Cannabis-Inhalt)
+
+FERTIG! ✅
+
+
+===============================================================================
+5. DATENSICHERHEIT
+===============================================================================
+
+STATUS: ⚠️ Muss ausgefüllt werden (5 Min)
+
+NAVIGATION:
+Richtlinien → App-Inhalte → Datensicherheit
+
+FRAGE 1:
+"Werden Nutzerdaten erfasst oder geteilt?"
+
+ANTWORT: ○ Ja
+
+───────────────────────────────────────────────────────────────────────────────
+
+FRAGE 2:
+"Welche Datentypen erfasst deine App?"
+
+ANTWORTEN:
+☑ Persönliche Informationen
+  ☑ Name
+  ☑ E-Mail-Adresse
+  ☑ Nutzer-IDs
+
+☑ Fotos und Videos
+  ☑ Fotos
+
+☑ App-Aktivität
+  ☑ App-Interaktionen
+  ☑ In-App-Suchverlauf
+
+☐ App-Informationen und -Leistung (falls keine Analytics)
+☐ Geräte- oder andere IDs (falls keine)
+
+───────────────────────────────────────────────────────────────────────────────
+
+FRAGE 3:
+"Wie werden diese Daten verwendet?"
+
+ANTWORTEN:
+☑ App-Funktionalität
+☑ Personalisierung
+☐ Analytics (nur falls du Analytics nutzt)
+
+───────────────────────────────────────────────────────────────────────────────
+
+FRAGE 4:
+"Werden diese Daten an Dritte weitergegeben?"
+
+ANTWORT:
+○ Nein, es werden keine Nutzerdaten an Dritte weitergegeben
+
+ODER (falls du Analytics nutzt):
+○ Ja
+→ Dritte auflisten: RevenueCat, Google Analytics (falls vorhanden)
+
+───────────────────────────────────────────────────────────────────────────────
+
+FRAGE 5:
+"Datensicherheitsmaßnahmen"
+
+ANTWORTEN:
+☑ Daten werden bei der Übertragung verschlüsselt
+☑ Nutzer können die Löschung ihrer Daten anfordern
+☐ Daten können nicht gelöscht werden (NICHT ankreuzen)
+
+───────────────────────────────────────────────────────────────────────────────
+
+SPEICHERN → FERTIG! ✅
+
+
+===============================================================================
+6. WERBE-ID
+===============================================================================
+
+STATUS: ✅ Einfach!
+
+NAVIGATION:
+Richtlinien → App-Inhalte → Werbe-ID
+
+FRAGE:
+"Verwendet deine App eine Werbe-ID?"
+
+ANTWORT:
+○ Nein
+
+(Falls du Ads oder Ad-Networks nutzt: Ja)
+
+FERTIG! ✅
+
+
+===============================================================================
+7. BEHÖRDEN-APPS
+===============================================================================
+
+STATUS: ✅ Sehr einfach!
+
+NAVIGATION:
+Richtlinien → App-Inhalte → Behörden-Apps
+
+FRAGE:
+"Ist deine App für die Nutzung durch Behörden vorgesehen?"
+
+ANTWORT:
+○ Nein
+
+(Weil GrowMaster AI ist keine Behörden-App)
+
+FERTIG! ✅
+
+
+===============================================================================
+8. FINANZFUNKTIONEN
+===============================================================================
+
+STATUS: ✅ Einfach!
+
+NAVIGATION:
+Richtlinien → App-Inhalte → Finanzfunktionen
+
+FRAGE:
+"Bietet deine App Finanzfunktionen?"
+
+ANTWORTEN:
+
+☐ Zahlungen ermöglichen oder anfordern
+☐ Bankkonten verwalten
+☐ Kryptowährungen kaufen, verkaufen oder verwalten
+☐ Kredite anbieten
+☐ Keine der oben genannten Optionen ← WÄHLE DIES
+
+ODER einfacher:
+○ Nein, meine App bietet keine Finanzfunktionen
+
+HINWEIS:
+In-App Purchases (Premium Subscription) zählen NICHT als Finanzfunktion!
+
+FERTIG! ✅
+
+
+===============================================================================
+9. GESUNDHEITS-APPS
+===============================================================================
+
+STATUS: ✅ Einfach!
+
+NAVIGATION:
+Richtlinien → App-Inhalte → Gesundheits-Apps
+
+FRAGE:
+"Bietet deine App Gesundheitsfunktionen?"
+
+ANTWORTEN:
+
+☐ Erfasst oder teilt Gesundheitsdaten
+☐ Forschungsstudien im Gesundheitsbereich
+☐ Symptomprüfung oder Gesundheitsinformationen
+☐ Keine der oben genannten Optionen ← WÄHLE DIES
+
+ODER einfacher:
+○ Nein, meine App ist keine Gesundheits-App
+
+HINWEIS:
+Pflanzen-Gesundheit ≠ Menschen-Gesundheit! 
+GrowMaster AI ist keine Gesundheits-App.
+
+FERTIG! ✅
+
+
+===============================================================================
+ZUSAMMENFASSUNG - ALLE 9 DEKLARATIONEN
+===============================================================================
+
+1. Datenschutzerklärung       → URL eintragen (oder später)
+2. Anzeigen                   → NEIN
+3. App-Zugriff                → NEIN (keine Beschränkungen)
+4. Zielgruppe                 → 18+ Jahre
+5. Datensicherheit            → Detailliertes Formular (5 Min)
+6. Werbe-ID                   → NEIN
+7. Behörden-Apps              → NEIN
+8. Finanzfunktionen           → KEINE
+9. Gesundheits-Apps           → NEIN
+
+
+===============================================================================
+REIHENFOLGE (Empfohlen)
+===============================================================================
+
+ZUERST (Schnell):
+1. Anzeigen (30 Sek)
+2. App-Zugriff (30 Sek)
+3. Zielgruppe (30 Sek)
+4. Werbe-ID (30 Sek)
+5. Behörden-Apps (30 Sek)
+6. Finanzfunktionen (30 Sek)
+7. Gesundheits-Apps (30 Sek)
+
+DANN (Länger):
+8. Datensicherheit (5 Min)
+
+SPÄTER (Optional):
+9. Datenschutzerklärung (URL)
+
+
+===============================================================================
+ZEITAUFWAND
+===============================================================================
+
+Schnelle Deklarationen (1-7): ~5 Minuten
+Datensicherheit (8):          ~5 Minuten
+Datenschutzerklärung (9):     Optional/später
+
+TOTAL: ~10 Minuten
+
+Danach kannst du submitten! ✅
+
+
+===============================================================================
+NACH ALLEN DEKLARATIONEN
+===============================================================================
+
+Wenn alle 9 ausgefüllt sind:
+→ Kein roter Hinweis mehr
+→ Du kannst Internes Test-Release erstellen
+→ AAB hochladen
+→ Submit!
+
+
+===============================================================================
+TIPPS
+===============================================================================
+
+✅ Sei ehrlich bei allen Antworten
+✅ Datenschutzerklärung kann später nachgetragen werden
+✅ Bei Unsicherheit: Wähle konservative/sichere Antwort
+✅ Alle Antworten können später geändert werden

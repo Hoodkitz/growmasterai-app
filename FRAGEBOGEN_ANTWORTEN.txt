@@ -1,0 +1,238 @@
+===============================================================================
+GOOGLE PLAY CONTENT RATING - FRAGEBOGEN ANTWORTEN
+===============================================================================
+
+Hier sind die KORREKTEN Antworten für GrowMaster AI:
+
+===============================================================================
+
+Alle anderen App-Typen
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Heruntergeladene App
+Enthält die App freigaberelevante Inhalte (z. B. Sex, Gewalt, Sprache), 
+die als Teil des App-Pakets (Code, Assets) heruntergeladen wurden?
+
+ANTWORT: ○ Ja  ← WÄHLE DIES
+
+(Weil: App enthält Cannabis-bezogene Inhalte im Code/Assets)
+
+───────────────────────────────────────────────────────────────────────────────
+
+Teilen von Benutzerinhalten
+Verfügt die App über ein natives Feature, durch das Nutzer per Sprache 
+oder Text mit anderen kommunizieren oder Bilder/Audiodaten teilen können?
+
+ANTWORT: ○ Ja  ← WÄHLE DIES
+
+(Weil: Community-Feature erlaubt Text-Posts und Pflanzenfotos teilen)
+
+───────────────────────────────────────────────────────────────────────────────
+
+Online-Inhalte
+Bietet oder bewirbt die App Inhalte, die nicht Teil des ursprünglichen 
+App-Downloads sind?
+
+ANTWORT: ○ Nein  ← WÄHLE DIES
+
+(Weil: Alle Hauptinhalte sind im App-Download enthalten, 
+keine externen Inhalts-Streams wie Netflix/Spotify)
+
+───────────────────────────────────────────────────────────────────────────────
+
+Gewalt
+Enthält die App eventuell gewalttätige Inhalte?
+
+ANTWORT: ○ Nein  ← WÄHLE DIES
+
+───────────────────────────────────────────────────────────────────────────────
+
+Sexualität
+Enthält die App eventuell sexuelle Inhalte oder Darstellungen von Nacktheit?
+
+ANTWORT: ○ Nein  ← WÄHLE DIES
+
+───────────────────────────────────────────────────────────────────────────────
+
+Vulgärsprache
+Enthält die App eventuell potenziell anstößige Sprache?
+
+ANTWORT: ○ Nein  ← WÄHLE DIES
+
+───────────────────────────────────────────────────────────────────────────────
+
+Betäubungsmittel ⚠️ WICHTIG!
+Enthält die App eventuell Darstellungen von illegalen Drogen oder 
+Sucht- und Rauschmitteln oder Verweise auf diese?
+
+ANTWORT: ○ Ja  ← WÄHLE DIES
+
+  └→ FOLGEFRAGE 1:
+     Liegt der Schwerpunkt der App auf diesen Inhalten?
+     
+     ANTWORT: ○ Ja  ← WÄHLE DIES
+     
+     (Weil: Cannabis Growing ist der Hauptzweck der App)
+
+  └→ FOLGEFRAGE 2:
+     Enthält die App eventuell visuelle Darstellungen von illegalen Drogen 
+     oder Sucht- und Rauschmitteln?
+     
+     ANTWORT: ○ Ja  ← WÄHLE DIES
+     
+     (Weil: Pflanzenfotos = visuelle Darstellungen von Cannabis)
+
+  └→ FOLGEFRAGE 3:
+     Gibt es eventuell schriftliche Hinweise auf illegale Drogen oder 
+     Sucht- und Rauschmittel oder wird darüber gesprochen?
+     
+     ANTWORT: ○ Ja  ← WÄHLE DIES
+     
+     (Weil: Strain-Infos, Growing-Anleitungen = schriftliche Hinweise)
+
+───────────────────────────────────────────────────────────────────────────────
+
+Bewerbung oder Verkauf von Produkten oder Aktivitäten mit Altersbeschränkung
+Liegt der Schwerpunkt der App auf dem Bewerben oder Verkaufen von Artikeln 
+oder Aktivitäten, die in der Regel einer Altersbeschränkung unterliegen?
+
+ANTWORT: ○ Nein  ← WÄHLE DIES
+
+(Weil: App verkauft nicht direkt Cannabis/Seeds, nur Affiliate-Links 
+zu Equipment. Hauptfokus ist Education/Tracking)
+
+───────────────────────────────────────────────────────────────────────────────
+
+Sonstiges
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Teilt die App den aktuellen und exakten physischen Standort eines Benutzers 
+mit anderen Benutzern?
+
+ANTWORT: ○ Nein  ← WÄHLE DIES
+
+───────────────────────────────────────────────────────────────────────────────
+
+Können Nutzer in der App digitale Produkte kaufen?
+
+ANTWORT: ○ Ja  ← WÄHLE DIES
+
+(Weil: In-App Käufe / Premium Subscription via RevenueCat)
+
+───────────────────────────────────────────────────────────────────────────────
+
+Sind in der App Geldauszahlungen, Geschenkgutscheine, Play-to-Earn-Funktionen, 
+konvertierbaren Krypto-Prämien oder die Ausstellung von übertragbaren digitalen 
+Objekten (z. B. NFTs) integriert?
+
+ANTWORT: ○ Nein  ← WÄHLE DIES
+
+───────────────────────────────────────────────────────────────────────────────
+
+Ist die App ein Webbrowser oder eine Suchmaschine?
+
+ANTWORT: ○ Nein  ← WÄHLE DIES
+
+───────────────────────────────────────────────────────────────────────────────
+
+Ist die App hauptsächlich ein Produkt in der Kategorie "Nachrichten oder Bildung"?
+
+ANTWORT: ○ Ja  ← WÄHLE DIES
+
+(Weil: Educational App für Cannabis Growing, Kategorie ist "Bildung")
+
+───────────────────────────────────────────────────────────────────────────────
+
+
+===============================================================================
+ZUSAMMENFASSUNG DER ANTWORTEN
+===============================================================================
+
+Heruntergeladene App: JA
+Teilen von Benutzerinhalten: JA
+Online-Inhalte: NEIN
+Gewalt: NEIN
+Sexualität: NEIN
+Vulgärsprache: NEIN
+Betäubungsmittel: JA
+  └→ Schwerpunkt: JA
+  └→ Visuelle Darstellungen: JA
+  └→ Schriftliche Hinweise: JA
+Bewerbung von Altersbeschränkten Produkten: NEIN
+Standort teilen: NEIN
+Digitale Produkte kaufen: JA
+Geldauszahlungen/NFTs: NEIN
+Webbrowser: NEIN
+Nachrichten oder Bildung: JA
+
+
+===============================================================================
+ERWARTETES RATING
+===============================================================================
+
+Nach diesen Antworten wird deine App bewertet mit:
+
+🇩🇪 USK: 18
+🇪🇺 PEGI: 18
+🇺🇸 ESRB: Mature 17+
+🇦🇺 ACB: M (Mature)
+🇧🇷 ClassInd: 18
+
+Das ist KORREKT und ERWARTET für eine Cannabis Growing App! ✅
+
+
+===============================================================================
+WICHTIGE HINWEISE
+===============================================================================
+
+✅ Sei EHRLICH bei den Antworten!
+• Cannabis-Bezug NICHT verschweigen
+• Educational Context wird durch andere Antworten klar
+• Rating 18+ ist NORMAL und RICHTIG für Cannabis-Apps
+• Schützt dich rechtlich
+
+❌ NICHT versuchen Rating niedriger zu bekommen durch falsche Angaben!
+• Google prüft Apps manuell
+• Falsche Angaben → Ablehnung oder Löschung
+• Ehrlichkeit = Schnellere Approval
+
+
+===============================================================================
+NACH DEM FRAGEBOGEN
+===============================================================================
+
+Button: "Bewertung berechnen"
+
+→ Du siehst dann die Ratings für alle Länder
+
+Button: "Bewertung anwenden"
+
+→ Fertig! ✅
+
+Content Rating ist jetzt abgeschlossen!
+
+
+===============================================================================
+NÄCHSTE SCHRITTE
+===============================================================================
+
+Nach Content Rating:
+
+1. ✅ Zielgruppe festlegen (18+)
+   → Richtlinien → App-Inhalte → Zielgruppe
+
+2. ✅ Datenschutzerklärung URL
+   → Richtlinien → App-Inhalte → Datenschutzerklärung
+   → GitHub Pages URL eintragen
+
+3. ✅ Datensicherheit ausfüllen
+   → Richtlinien → App-Inhalte → Datensicherheit
+
+4. ✅ Screenshots hochladen
+   → Store-Präsenz → Haupteintrag für den Store → Grafiken
+
+5. ✅ Warten auf Build
+   → Check: https://expo.dev
+
+6. ✅ AAB hochladen & Submit!
+   → Release → Production → Neues Release erstellen

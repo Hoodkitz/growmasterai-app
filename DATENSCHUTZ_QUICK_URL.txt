@@ -1,0 +1,201 @@
+===============================================================================
+DATENSCHUTZERKLÄRUNG - SCHNELLSTE LÖSUNG (2 MINUTEN!)
+===============================================================================
+
+Google Play braucht eine öffentlich erreichbare URL für die Datenschutzerklärung.
+
+===============================================================================
+OPTION 1: TERMSFEED FREE HOSTING ⭐ SCHNELLSTE (2 MIN)
+===============================================================================
+
+1. Gehe zu: https://www.termsfeed.com/privacy-policy-generator/
+
+2. Fülle aus:
+   Business Name: GrowMaster AI
+   Website/App: GrowMaster AI Mobile App
+   Type: Mobile Application
+   
+3. Bei "What information do you collect?":
+   ☑ Personal information (name, email)
+   ☑ Usage data
+   ☑ Photos
+   
+4. Generate Policy
+
+5. KOSTENLOS HOSTEN:
+   • TermsFeed bietet FREE HOSTING!
+   • Du bekommst eine URL wie:
+     https://www.termsfeed.com/live/xxxxx
+   
+6. Diese URL in Play Console eintragen
+
+VORTEIL: 
+  ✅ In 2 Minuten fertig
+  ✅ Kostenlos gehostet
+  ✅ Professionell
+  ✅ DSGVO-konform
+
+
+===============================================================================
+OPTION 2: GITHUB PAGES (5 MIN)
+===============================================================================
+
+1. Gehe zu: https://github.com/new
+
+2. Erstelle Repo: growmaster-privacy
+   ☑ Public
+   ☑ Add README
+
+3. Klicke README.md → Edit
+
+4. Kopiere diesen MINIMALEN Privacy Policy Text:
+   (Siehe unten)
+
+5. Settings → Pages → Enable Pages (Source: main)
+
+6. Deine URL:
+   https://[dein-username].github.io/growmaster-privacy/
+
+7. In Play Console eintragen
+
+
+===============================================================================
+MINIMALER PRIVACY POLICY TEXT (Falls GitHub Pages)
+===============================================================================
+
+# Privacy Policy for GrowMaster AI
+
+**Effective Date:** January 8, 2025
+**Last Updated:** January 8, 2025
+
+## 1. Introduction
+
+This Privacy Policy describes how GrowMaster AI ("we," "our," or "us") collects, uses, and protects your information when you use our mobile application.
+
+## 2. Information We Collect
+
+We collect the following types of information:
+
+**Personal Information:**
+- Name
+- Email address
+- User ID
+
+**Photos:**
+- Plant photos you upload for diagnosis
+
+**Usage Data:**
+- App interactions
+- Features you use
+- Search history within the app
+
+## 3. How We Use Your Information
+
+We use your information to:
+- Provide app functionality
+- Personalize your experience
+- Improve our services
+- Communicate with you
+
+## 4. Data Storage and Security
+
+- All data transmission is encrypted using SSL/TLS
+- We implement industry-standard security measures
+- Your data is stored securely
+
+## 5. Data Sharing
+
+We do NOT sell your personal data.
+
+We may share data with:
+- Service providers (RevenueCat for subscriptions)
+- Only as required by law
+
+## 6. Your Rights
+
+You have the right to:
+- Access your personal data
+- Request correction of your data
+- Request deletion of your data
+- Opt-out of optional features
+
+To exercise your rights, contact us at: [DEINE EMAIL]
+
+## 7. Children's Privacy
+
+This app is intended for users aged 18 and above. We do not knowingly collect data from users under 18.
+
+## 8. Changes to This Policy
+
+We may update this Privacy Policy from time to time. We will notify you of significant changes via in-app notification or email.
+
+## 9. Contact Us
+
+For questions about this Privacy Policy, contact us at:
+
+**Email:** [DEINE EMAIL]
+
+## 10. Legal Compliance
+
+This Privacy Policy complies with:
+- GDPR (European Union)
+- CCPA (California, USA)
+- Google Play Developer Program Policies
+
+## 11. Consent
+
+By using GrowMaster AI, you consent to this Privacy Policy.
+
+---
+GrowMaster AI © 2025
+
+
+===============================================================================
+OPTION 3: GOOGLE SITES (3 MIN) - Auch gut!
+===============================================================================
+
+1. Gehe zu: https://sites.google.com/
+
+2. Erstelle neue Site: "GrowMaster Privacy Policy"
+
+3. Kopiere Privacy Policy Text (von oben)
+
+4. Publish
+
+5. Du bekommst URL wie:
+   https://sites.google.com/view/growmaster-privacy
+
+6. In Play Console eintragen
+
+
+===============================================================================
+🎯 MEINE EMPFEHLUNG:
+===============================================================================
+
+TERMSFEED (Option 1) - AM SCHNELLSTEN! ⭐
+
+Warum?
+  • 2 Minuten
+  • Komplett automatisch
+  • Kostenlos gehostet
+  • Professionell
+  • Sofort fertige URL
+
+Alternative: Google Sites (Option 3) - auch sehr schnell!
+
+
+===============================================================================
+QUICK ACTION:
+===============================================================================
+
+Gehe JETZT zu:
+  https://www.termsfeed.com/privacy-policy-generator/
+
+Oder:
+  https://sites.google.com/
+
+Erstelle Privacy Policy (2-3 Min)
+Kopiere URL
+Trage in Play Console ein
+
+FERTIG! ✅
