@@ -478,8 +478,16 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         const limit = input.limit;
         const offset = input.cursor || 0;
 
-        const posts = await db.select()
+        const posts = await db.select({
+          post: communityPosts,
+          user: {
+            name: users.name,
+            avatarUrl: users.avatarUrl,
+            level: users.level,
+          }
+        })
           .from(communityPosts)
+          .leftJoin(users, eq(communityPosts.userId, users.id))
           .where(eq(communityPosts.isApproved, true))
           .orderBy(desc(communityPosts.createdAt))
           .limit(limit + 1)
