@@ -1,8 +1,8 @@
 import "@/global.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Stack } from "expo-router";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Stack, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useCallback, useEffect, useMemo, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 import { Platform } from "react-native";
@@ -111,25 +111,25 @@ export default function RootLayout() {
             <AuthProvider>
               <GamificationProvider>
                 <SubscriptionProvider>
-              {/* Default to hiding native headers so raw route segments don't appear (e.g. "(tabs)", "products/[id]"). */}
-              {/* If a screen needs the native header, explicitly enable it and set a human title via Stack.Screen options. */}
-              <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="(tabs)" />
-                <Stack.Screen name="oauth/callback" />
-                <Stack.Screen name="login" options={{ presentation: "modal" }} />
-                <Stack.Screen name="paywall" options={{ presentation: "modal" }} />
-                <Stack.Screen name="settings" options={{ presentation: "modal" }} />
-                <Stack.Screen name="achievements" options={{ presentation: "modal" }} />
-                <Stack.Screen name="admin" options={{ presentation: "modal" }} />
-                <Stack.Screen name="marketplace" options={{ presentation: "modal" }} />
-                <Stack.Screen name="vendor-portal" options={{ presentation: "modal" }} />
-                <Stack.Screen name="tools" options={{ presentation: "modal" }} />
-                <Stack.Screen name="messages" options={{ presentation: "modal" }} />
-                <Stack.Screen name="legal" options={{ presentation: "modal" }} />
-                <Stack.Screen name="onboarding" options={{ presentation: "fullScreenModal", gestureEnabled: false }} />
-              </Stack>
-              <StatusBar style="auto" />
-              </SubscriptionProvider>
+                  {/* Default to hiding native headers so raw route segments don't appear (e.g. "(tabs)", "products/[id]"). */}
+                  {/* If a screen needs the native header, explicitly enable it and set a human title via Stack.Screen options. */}
+                  <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="(tabs)" />
+                    <Stack.Screen name="oauth/callback" />
+                    <Stack.Screen name="login" options={{ presentation: "modal" }} />
+                    <Stack.Screen name="paywall" options={{ presentation: "modal" }} />
+                    <Stack.Screen name="settings" options={{ presentation: "modal" }} />
+                    <Stack.Screen name="achievements" options={{ presentation: "modal" }} />
+                    <Stack.Screen name="admin" options={{ presentation: "modal" }} />
+                    <Stack.Screen name="marketplace" options={{ presentation: "modal" }} />
+                    <Stack.Screen name="vendor-portal" options={{ presentation: "modal" }} />
+                    <Stack.Screen name="tools" options={{ presentation: "modal" }} />
+                    <Stack.Screen name="messages" options={{ presentation: "modal" }} />
+                    <Stack.Screen name="legal" options={{ presentation: "modal" }} />
+                    <Stack.Screen name="onboarding" options={{ presentation: "fullScreenModal", gestureEnabled: false }} />
+                  </Stack>
+                  <StatusBar style="auto" />
+                </SubscriptionProvider>
               </GamificationProvider>
             </AuthProvider>
           </QueryClientProvider>

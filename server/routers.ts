@@ -1,8 +1,10 @@
 import { z } from "zod";
 import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
+import { getDb } from "./db";
+import { plants } from "../drizzle/schema";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
+import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
 
 // Diagnosis response schema
@@ -69,7 +71,7 @@ Wenn die Pflanze gesund aussieht, beschreibe ihren guten Zustand und gib allgeme
               content: [
                 {
                   type: "text" as const,
-                  text: input.notes 
+                  text: input.notes
                     ? `Analysiere diese Cannabis-Pflanze. Zusätzliche Notizen vom Nutzer: ${input.notes}`
                     : "Analysiere diese Cannabis-Pflanze und identifiziere alle Probleme oder Auffälligkeiten.",
                 },
@@ -316,9 +318,9 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
               role: "user",
               content: imageContents.length > 0
                 ? [
-                    { type: "text" as const, text: input.question },
-                    ...imageContents,
-                  ]
+                  { type: "text" as const, text: input.question },
+                  ...imageContents,
+                ]
                 : input.question,
             },
           ],
@@ -344,6 +346,33 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
           answer: "Entschuldigung, ich konnte deine Frage nicht verarbeiten. Bitte versuche es erneut.",
           tips: [],
         };
+      }),
+  }),
+
+  // Plants Management
+  plants: router({
+    create: protectedProcedure
+      .input(z.object({
+        name: z.string().min(1),
+        strain: z.string().optional(),
+        growthStage: z.enum(['seedling', 'vegetative', 'flowering']),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) {
+          throw new Error("Database connection failed");
+        }
+
+        const [result] = await db.insert(plants).values({
+          userId: ctx.user.id,
+          name: input.name,
+          strain: input.strain,
+          phase: input.growthStage,
+          startDate: new Date(),
+          growType: "indoor", // Default
+        });
+
+        return { success: true, plantId: result.insertId };
       }),
   }),
 });

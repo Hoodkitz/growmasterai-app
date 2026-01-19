@@ -12,7 +12,7 @@ export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null;
+  let timeout: ReturnType<typeof setTimeout> | null = null;
 
   return function executedFunction(...args: Parameters<T>) {
     const later = () => {
@@ -167,13 +167,11 @@ export const ListOptimization = {
   getItemLayout: (itemHeight: number) => (
     data: any[] | null | undefined,
     index: number
-  ) => ({ length: number; offset: number; index: number }) => {
-    return (data, index) => ({
-      length: itemHeight,
-      offset: itemHeight * index,
-      index,
-    });
-  },
+  ) => ({
+    length: itemHeight,
+    offset: itemHeight * index,
+    index,
+  }),
 };
 
 /**
@@ -230,11 +228,11 @@ export const PerformanceMonitor = {
     const start = Date.now();
     const result = fn();
     const duration = Date.now() - start;
-    
+
     if (process.env.NODE_ENV === 'development') {
       console.log(`[Performance] ${name}: ${duration}ms`);
     }
-    
+
     return result;
   },
 
@@ -245,11 +243,11 @@ export const PerformanceMonitor = {
     const start = Date.now();
     const result = await fn();
     const duration = Date.now() - start;
-    
+
     if (process.env.NODE_ENV === 'development') {
       console.log(`[Performance] ${name}: ${duration}ms`);
     }
-    
+
     return result;
   },
 };

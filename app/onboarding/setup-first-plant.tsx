@@ -94,15 +94,13 @@ export default function SetupFirstPlantScreen() {
                 <TouchableOpacity
                   key={stage}
                   onPress={() => setGrowthStage(stage as any)}
-                  className={`flex-1 py-3 rounded-xl border-2 ${
-                    growthStage === stage
+                  className={`flex-1 py-3 rounded-xl border-2 ${growthStage === stage
                       ? 'bg-primary border-primary'
                       : 'bg-surface border-border'
-                  }`}
+                    }`}
                 >
-                  <Text className={`text-center font-semibold capitalize ${
-                    growthStage === stage ? 'text-white' : 'text-foreground'
-                  }`}>
+                  <Text className={`text-center font-semibold capitalize ${growthStage === stage ? 'text-white' : 'text-foreground'
+                    }`}>
                     {stage}
                   </Text>
                 </TouchableOpacity>
@@ -113,7 +111,7 @@ export default function SetupFirstPlantScreen() {
           {/* Info Box */}
           <View className="bg-primary/10 border border-primary/20 rounded-xl p-4">
             <Text className="text-sm text-foreground">
-              💡 <Text className="font-semibold">Tip:</Text> You can add photos, notes, 
+              💡 <Text className="font-semibold">Tip:</Text> You can add photos, notes,
               and track progress in your grow journal after creating your plant.
             </Text>
           </View>
@@ -122,11 +120,11 @@ export default function SetupFirstPlantScreen() {
           <View className="space-y-3 mt-8">
             <TouchableOpacity
               onPress={handleCreatePlant}
-              disabled={createPlantMutation.isLoading}
+              disabled={createPlantMutation.isPending}
               className="bg-primary rounded-xl py-4 shadow-lg"
             >
               <Text className="text-white text-center text-lg font-bold">
-                {createPlantMutation.isLoading ? 'Creating...' : 'Create Plant 🌱'}
+                {createPlantMutation.isPending ? 'Creating...' : 'Create Plant 🌱'}
               </Text>
             </TouchableOpacity>
 

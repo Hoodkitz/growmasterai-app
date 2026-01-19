@@ -50,7 +50,7 @@ export async function exportToCSV(plantData: PlantData): Promise<string> {
   ].join('\n');
 
   const fileName = `${plantData.name}_journal_${format(new Date(), 'yyyy-MM-dd')}.csv`;
-  const filePath = `${FileSystem.documentDirectory}${fileName}`;
+  const filePath = `${(FileSystem as any).documentDirectory}${fileName}`;
 
   await FileSystem.writeAsStringAsync(filePath, csvContent);
   return filePath;
@@ -180,11 +180,11 @@ export function generateHTMLReport(plantData: PlantData): string {
  */
 export async function exportToPDF(plantData: PlantData): Promise<string> {
   const html = generateHTMLReport(plantData);
-  
+
   // For now, save as HTML
   // In production, use react-native-html-to-pdf or expo-print
   const fileName = `${plantData.name}_report_${format(new Date(), 'yyyy-MM-dd')}.html`;
-  const filePath = `${FileSystem.documentDirectory}${fileName}`;
+  const filePath = `${(FileSystem as any).documentDirectory}${fileName}`;
 
   await FileSystem.writeAsStringAsync(filePath, html);
   return filePath;
@@ -195,7 +195,7 @@ export async function exportToPDF(plantData: PlantData): Promise<string> {
  */
 export async function shareFile(filePath: string): Promise<void> {
   const canShare = await Sharing.isAvailableAsync();
-  
+
   if (canShare) {
     await Sharing.shareAsync(filePath);
   } else {
@@ -214,7 +214,7 @@ export async function createBackup(userData: any): Promise<string> {
   };
 
   const fileName = `growmaster_backup_${format(new Date(), 'yyyy-MM-dd')}.json`;
-  const filePath = `${FileSystem.documentDirectory}${fileName}`;
+  const filePath = `${(FileSystem as any).documentDirectory}${fileName}`;
 
   await FileSystem.writeAsStringAsync(filePath, JSON.stringify(backup, null, 2));
   return filePath;

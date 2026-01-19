@@ -13,6 +13,8 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -150,7 +152,7 @@ export async function createWateringReminder(
   preferredTime: Date = new Date()
 ): Promise<PlantReminder> {
   const daysUntilNextWatering = calculateNextWatering(growthStage);
-  
+
   const scheduledTime = new Date(preferredTime);
   scheduledTime.setDate(scheduledTime.getDate() + daysUntilNextWatering);
 
@@ -185,7 +187,7 @@ export async function createFeedingReminder(
   preferredTime: Date = new Date()
 ): Promise<PlantReminder> {
   const daysUntilNextFeeding = calculateNextFeeding(growthStage);
-  
+
   const scheduledTime = new Date(preferredTime);
   scheduledTime.setDate(scheduledTime.getDate() + daysUntilNextFeeding);
 
@@ -230,7 +232,7 @@ export async function getAllReminders(): Promise<PlantReminder[]> {
   try {
     const data = await AsyncStorage.getItem(REMINDERS_KEY);
     if (!data) return [];
-    
+
     const reminders = JSON.parse(data);
     // Convert date strings back to Date objects
     return reminders.map((r: any) => ({
@@ -258,7 +260,7 @@ export async function completeReminder(reminderId: string): Promise<void> {
   try {
     const reminders = await getAllReminders();
     const reminder = reminders.find(r => r.id === reminderId);
-    
+
     if (!reminder) return;
 
     // Cancel old notification
@@ -270,7 +272,7 @@ export async function completeReminder(reminderId: string): Promise<void> {
     if (reminder.repeatDays) {
       const nextTime = new Date();
       nextTime.setDate(nextTime.getDate() + reminder.repeatDays);
-      
+
       const updatedReminder: PlantReminder = {
         ...reminder,
         scheduledTime: nextTime,
@@ -298,7 +300,7 @@ export async function snoozeReminder(reminderId: string, hours: number = 1): Pro
   try {
     const reminders = await getAllReminders();
     const reminder = reminders.find(r => r.id === reminderId);
-    
+
     if (!reminder) return;
 
     // Cancel old notification
@@ -333,7 +335,7 @@ export async function deleteReminder(reminderId: string): Promise<void> {
   try {
     const reminders = await getAllReminders();
     const reminder = reminders.find(r => r.id === reminderId);
-    
+
     if (reminder?.notificationId) {
       await Notifications.cancelScheduledNotificationAsync(reminder.notificationId);
     }
@@ -352,7 +354,7 @@ export async function toggleReminder(reminderId: string): Promise<void> {
   try {
     const reminders = await getAllReminders();
     const reminder = reminders.find(r => r.id === reminderId);
-    
+
     if (!reminder) return;
 
     if (reminder.enabled) {
@@ -383,10 +385,10 @@ export async function updatePlantReminders(
   newGrowthStage: 'seedling' | 'vegetative' | 'flowering' | 'harvest'
 ): Promise<void> {
   const reminders = await getPlantReminders(plantId);
-  
+
   for (const reminder of reminders) {
     let newDays: number;
-    
+
     if (reminder.type === 'watering') {
       newDays = calculateNextWatering(newGrowthStage);
     } else if (reminder.type === 'feeding') {
@@ -432,7 +434,7 @@ export async function setupDefaultReminders(
   defaultTime.setHours(9, 0, 0, 0);
 
   await createWateringReminder(plantId, plantName, growthStage, defaultTime);
-  
+
   // Feeding reminder at 10 AM
   const feedingTime = new Date(defaultTime);
   feedingTime.setHours(10, 0, 0, 0);
