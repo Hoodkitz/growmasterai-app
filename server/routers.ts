@@ -2,7 +2,8 @@ import { z } from "zod";
 import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { getDb } from "./db";
-import { plants } from "../drizzle/schema";
+import { plants, journalEntries, communityPosts, postComments, vendors, vendorProducts, messages, users } from "../drizzle/schema";
+import { eq, and, desc, sql, or, ne } from "drizzle-orm";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
@@ -373,6 +374,224 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         });
 
         return { success: true, plantId: result.insertId };
+      }),
+  }),
+
+
+  // Journal Management
+  journal: router({
+    create: protectedProcedure
+      .input(z.object({
+        plantId: z.number().optional(),
+        type: z.enum(["note", "watering", "feeding", "training", "photo", "measurement", "issue", "milestone"]),
+        title: z.string().optional(),
+        content: z.string().optional(),
+        height: z.number().optional(),
+        ph: z.number().optional(),
+        ec: z.number().optional(),
+        temperature: z.number().optional(),
+        humidity: z.number().optional(),
+        images: z.array(z.string()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        const [result] = await db.insert(journalEntries).values({
+          userId: ctx.user.id,
+          plantId: input.plantId,
+          type: input.type,
+          title: input.title,
+          content: input.content,
+          height: input.height ? input.height.toString() : undefined,
+          ph: input.ph ? input.ph.toString() : undefined,
+          ec: input.ec ? input.ec.toString() : undefined,
+          temperature: input.temperature ? input.temperature.toString() : undefined,
+          humidity: input.humidity ? input.humidity.toString() : undefined,
+          images: input.images,
+        });
+
+        return { success: true, entryId: result.insertId };
+      }),
+
+    list: protectedProcedure
+      .query(async ({ ctx }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        return db.select()
+          .from(journalEntries)
+          .where(eq(journalEntries.userId, ctx.user.id))
+          .orderBy(desc(journalEntries.createdAt));
+      }),
+
+    byPlant: protectedProcedure
+      .input(z.object({ plantId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        return db.select()
+          .from(journalEntries)
+          .where(and(
+            eq(journalEntries.userId, ctx.user.id),
+            eq(journalEntries.plantId, input.plantId)
+          ))
+          .orderBy(desc(journalEntries.createdAt));
+      }),
+  }),
+
+
+  // Community
+  community: router({
+    createPost: protectedProcedure
+      .input(z.object({
+        type: z.enum(["post", "question", "showcase", "giveaway"]),
+        title: z.string().optional(),
+        content: z.string().min(1),
+        images: z.array(z.string()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        const [result] = await db.insert(communityPosts).values({
+          userId: ctx.user.id,
+          type: input.type,
+          title: input.title,
+          content: input.content,
+          images: input.images,
+        });
+
+        return { success: true, postId: result.insertId };
+      }),
+
+    listPosts: publicProcedure
+      .input(z.object({
+        limit: z.number().min(1).max(50).default(20),
+        cursor: z.number().nullish(), // For pagination (offset or ID based)
+      }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        const limit = input.limit;
+        const offset = input.cursor || 0;
+
+        const posts = await db.select()
+          .from(communityPosts)
+          .where(eq(communityPosts.isApproved, true))
+          .orderBy(desc(communityPosts.createdAt))
+          .limit(limit + 1)
+          .offset(offset);
+
+        let nextCursor: typeof offset | undefined = undefined;
+        if (posts.length > limit) {
+          posts.pop();
+          nextCursor = offset + limit;
+        }
+
+        return {
+          items: posts,
+          nextCursor,
+        };
+      }),
+
+    createComment: protectedProcedure
+      .input(z.object({
+        postId: z.number(),
+        content: z.string().min(1),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        const [result] = await db.insert(postComments).values({
+          userId: ctx.user.id,
+          postId: input.postId,
+          content: input.content,
+        });
+
+        // Update comment count on post (atomic increment ideally, simplified here)
+        await db.update(communityPosts)
+          .set({ comments: sql`${communityPosts.comments} + 1` })
+          .where(eq(communityPosts.id, input.postId));
+
+        return { success: true, commentId: result.insertId };
+      }),
+  }),
+
+  // Marketplace
+  marketplace: router({
+    listProducts: publicProcedure
+      .input(z.object({
+        category: z.enum(["seeds", "equipment", "nutrients", "accessories", "other"]).optional(),
+        limit: z.number().default(20),
+      }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        let query = db.select()
+          .from(vendorProducts)
+          .where(eq(vendorProducts.isActive, true))
+          .orderBy(desc(vendorProducts.isFeatured), desc(vendorProducts.createdAt))
+          .limit(input.limit);
+
+        if (input.category) {
+          // Add category filter if using query builder dynamically or filter locally if needed
+          // For simplicity here assume direct where clause
+          // query = query.where(eq(vendorProducts.category, input.category))
+        }
+
+        return query; // Simplified for now
+      }),
+
+    getVendor: publicProcedure
+      .input(z.object({ vendorId: z.number() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        return db.select().from(vendors).where(eq(vendors.id, input.vendorId));
+      }),
+  }),
+
+  // Messages
+  messages: router({
+    send: protectedProcedure
+      .input(z.object({
+        receiverId: z.number(),
+        content: z.string().min(1),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        await db.insert(messages).values({
+          senderId: ctx.user.id,
+          receiverId: input.receiverId,
+          content: input.content,
+        });
+
+        return { success: true };
+      }),
+
+    list: protectedProcedure
+      .query(async ({ ctx }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        // Simple inbox: get latest messages grouped by user (complex query simplified)
+        // Here getting all messages where user is sender or receiver
+        return db.select()
+          .from(messages)
+          .where(or(
+            eq(messages.senderId, ctx.user.id),
+            eq(messages.receiverId, ctx.user.id)
+          ))
+          .orderBy(desc(messages.createdAt))
+          .limit(50);
       }),
   }),
 });

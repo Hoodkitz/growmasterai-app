@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { ScrollView, Text, View, TouchableOpacity, TextInput, Modal, FlatList } from "react-native";
+import { ScrollView, Text, View, TouchableOpacity, TextInput, Modal, FlatList, ActivityIndicator, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { trpc } from "@/lib/trpc";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
@@ -76,12 +77,26 @@ export default function JournalScreen() {
   const colors = useColors();
   const { tier } = useSubscription();
   const { incrementStat, checkForNewAchievements } = useGamification();
-  
+
   const [viewMode, setViewMode] = useState<ViewMode>("guide");
   const [currentPhase, setCurrentPhase] = useState<GrowPhase>("germination");
   const [steps, setSteps] = useState<GrowStep[]>(GROW_GUIDE);
-  const [entries, setEntries] = useState<JournalEntry[]>([]);
+  // const [entries, setEntries] = useState<JournalEntry[]>([]); // Replaced by trpc query
   const [showModal, setShowModal] = useState(false);
+
+  const utils = trpc.useUtils();
+  const entriesQuery = trpc.journal.list.useQuery();
+  const createEntryMutation = trpc.journal.create.useMutation({
+    onSuccess: () => {
+      utils.journal.list.invalidate();
+      setShowModal(false);
+      setNewEntry({ week: newEntry.week + 1, phase: newEntry.phase, notes: "", checklist: { watered: false, fertilized: false, checked: false } });
+      incrementStat("journalEntries", 1);
+    },
+    onError: (err) => {
+      Alert.alert("Fehler", "Eintrag konnte nicht gespeichert werden: " + err.message);
+    }
+  });
   const [newEntry, setNewEntry] = useState({
     week: 1,
     phase: "vegetative" as GrowPhase,
@@ -99,7 +114,7 @@ export default function JournalScreen() {
       if (saved) {
         const data = JSON.parse(saved);
         if (data.steps) setSteps(data.steps);
-        if (data.entries) setEntries(data.entries);
+        // if (data.entries) setEntries(data.entries); // Don't load local entries
         if (data.currentPhase) setCurrentPhase(data.currentPhase);
       }
     } catch (e) {
@@ -107,9 +122,9 @@ export default function JournalScreen() {
     }
   };
 
-  const saveData = async (newSteps: GrowStep[], newEntries: JournalEntry[], phase: GrowPhase) => {
+  const saveData = async (newSteps: GrowStep[], phase: GrowPhase) => {
     try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ steps: newSteps, entries: newEntries, currentPhase: phase }));
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ steps: newSteps, currentPhase: phase }));
     } catch (e) {
       console.error("Save error:", e);
     }
@@ -133,24 +148,23 @@ export default function JournalScreen() {
       return step;
     });
     setSteps(newSteps);
-    saveData(newSteps, entries, currentPhase);
+    saveData(newSteps, currentPhase);
   };
 
   const addEntry = () => {
-    const entry: JournalEntry = {
-      id: Date.now().toString(),
-      date: new Date().toISOString(),
-      week: newEntry.week,
-      phase: newEntry.phase,
-      notes: newEntry.notes.trim(),
-      checklist: newEntry.checklist,
-    };
-    const newEntries = [entry, ...entries];
-    setEntries(newEntries);
-    setNewEntry({ week: newEntry.week + 1, phase: newEntry.phase, notes: "", checklist: { watered: false, fertilized: false, checked: false } });
-    setShowModal(false);
-    incrementStat("journalEntries", 1);
-    saveData(steps, newEntries, currentPhase);
+    // Determine type based on checklist or default to "note"
+    let type: "note" | "watering" | "feeding" | "measurement" = "note";
+    if (newEntry.checklist.fertilized) type = "feeding";
+    else if (newEntry.checklist.watered) type = "watering";
+    else if (newEntry.checklist.checked) type = "measurement";
+
+    createEntryMutation.mutate({
+      type,
+      title: `Woche ${newEntry.week} - ${PHASE_INFO[newEntry.phase].name}`,
+      content: newEntry.notes,
+      // Mapping checklist logic to content or implementing separate structure later
+      // For now we persist the week/phase in title
+    });
   };
 
   const getPhaseProgress = (phase: GrowPhase) => {
@@ -276,30 +290,27 @@ export default function JournalScreen() {
         {/* Entries View */}
         {viewMode === "entries" && (
           <View className="gap-3">
-            {entries.length === 0 ? (
+            {entriesQuery.isLoading ? (
+              <ActivityIndicator size="large" color={colors.primary} />
+            ) : entriesQuery.data?.length === 0 ? (
               <View className="bg-surface rounded-xl p-8 border border-border items-center">
                 <Text className="text-4xl mb-3">📝</Text>
                 <Text className="text-base font-semibold text-foreground mb-1">Keine Einträge</Text>
                 <Text className="text-sm text-muted text-center">Dokumentiere deinen Grow mit Einträgen.</Text>
               </View>
             ) : (
-              entries.map(entry => (
+              entriesQuery.data?.map(entry => (
                 <View key={entry.id} className="bg-surface rounded-xl p-4 border border-border">
                   <View className="flex-row justify-between items-start mb-2">
                     <View>
-                      <Text className="text-lg font-semibold text-foreground">Woche {entry.week}</Text>
-                      <Text className="text-sm text-muted">{formatDate(entry.date)}</Text>
+                      <Text className="text-lg font-semibold text-foreground">{entry.title || "Eintrag"}</Text>
+                      <Text className="text-sm text-muted">{formatDate(entry.createdAt.toString())}</Text>
                     </View>
-                    <View className="px-2 py-1 rounded-full" style={{ backgroundColor: PHASE_INFO[entry.phase].color + "30" }}>
-                      <Text className="text-xs font-medium" style={{ color: PHASE_INFO[entry.phase].color }}>{PHASE_INFO[entry.phase].name}</Text>
+                    <View className="px-2 py-1 rounded-full bg-primary/20">
+                      <Text className="text-xs font-medium text-primary capitalize">{entry.type}</Text>
                     </View>
                   </View>
-                  {entry.notes && <Text className="text-sm text-foreground mb-2">{entry.notes}</Text>}
-                  <View className="flex-row gap-2">
-                    {entry.checklist.watered && <View className="flex-row items-center gap-1 bg-primary/20 px-2 py-1 rounded-full"><IconSymbol name="checkmark.circle.fill" size={12} color={colors.primary} /><Text className="text-xs text-primary">Gegossen</Text></View>}
-                    {entry.checklist.fertilized && <View className="flex-row items-center gap-1 bg-primary/20 px-2 py-1 rounded-full"><IconSymbol name="checkmark.circle.fill" size={12} color={colors.primary} /><Text className="text-xs text-primary">Gedüngt</Text></View>}
-                    {entry.checklist.checked && <View className="flex-row items-center gap-1 bg-primary/20 px-2 py-1 rounded-full"><IconSymbol name="checkmark.circle.fill" size={12} color={colors.primary} /><Text className="text-xs text-primary">Kontrolliert</Text></View>}
-                  </View>
+                  {entry.content && <Text className="text-sm text-foreground mb-2">{entry.content}</Text>}
                 </View>
               ))
             )}
