@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { 
-  Achievement, 
-  UserStats, 
-  UserLevel, 
-  ACHIEVEMENTS, 
-  getLevelFromPoints, 
+import { trpc } from "@/lib/trpc";
+import { useAppAuth } from "@/lib/auth-context";
+import {
+  Achievement,
+  UserStats,
+  UserLevel,
+  ACHIEVEMENTS,
+  getLevelFromPoints,
   getProgressToNextLevel,
   checkAchievements,
 } from "./gamification";
@@ -16,17 +17,17 @@ interface GamificationContextType {
   points: number;
   level: UserLevel;
   levelProgress: number;
-  
+
   // Achievements
   unlockedAchievements: Achievement[];
   lockedAchievements: Achievement[];
   recentAchievement: Achievement | null;
-  
+
   // Actions
   incrementStat: (stat: keyof UserStats, amount?: number) => Promise<void>;
   checkForNewAchievements: () => Promise<Achievement[]>;
   dismissRecentAchievement: () => void;
-  
+
   // Leaderboard
   updateLoginStreak: () => Promise<void>;
 }
@@ -48,140 +49,75 @@ const DEFAULT_STATS: UserStats = {
   communityPosts: 0,
   helpfulAnswers: 0,
   contestsWon: 0,
+  xp: 0,
+  level: 1,
 };
 
 export function GamificationProvider({ children }: { children: ReactNode }) {
-  const [stats, setStats] = useState<UserStats>(DEFAULT_STATS);
-  const [points, setPoints] = useState(0);
-  const [unlockedIds, setUnlockedIds] = useState<string[]>([]);
+  const { user } = useAppAuth();
+  const utils = trpc.useContext();
+
   const [recentAchievement, setRecentAchievement] = useState<Achievement | null>(null);
 
-  // Load saved data
+  const statsQuery = trpc.achievements.getStats.useQuery(undefined, {
+    enabled: !!user,
+  });
+
+  const unlockMutation = trpc.achievements.unlock.useMutation({
+    onSuccess: (data) => {
+      if (data.new) {
+        utils.achievements.getStats.invalidate();
+      }
+    },
+  });
+
+  const streakMutation = trpc.achievements.updateStreak.useMutation({
+    onSuccess: () => {
+      utils.achievements.getStats.invalidate();
+    },
+  });
+
+  // Derived state
+  const stats = statsQuery.data?.stats || DEFAULT_STATS;
+  const unlockedAchievementsList = statsQuery.data?.unlockedAchievements || [];
+  const unlockedIds = unlockedAchievementsList.map((a: { achievementId: string }) => a.achievementId);
+  const points = stats.xp;
+
+  // Initial load
   useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      const [statsData, achievementsData] = await Promise.all([
-        AsyncStorage.getItem(STATS_STORAGE_KEY),
-        AsyncStorage.getItem(ACHIEVEMENTS_STORAGE_KEY),
-      ]);
-
-      if (statsData) {
-        setStats(JSON.parse(statsData));
-      }
-
-      if (achievementsData) {
-        const parsed = JSON.parse(achievementsData);
-        setUnlockedIds(parsed.ids || []);
-        setPoints(parsed.points || 0);
-      }
-    } catch (error) {
-      console.error("Error loading gamification data:", error);
+    if (user) {
+      streakMutation.mutate();
     }
-  };
-
-  const saveData = async (newStats: UserStats, newUnlockedIds: string[], newPoints: number) => {
-    try {
-      await Promise.all([
-        AsyncStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(newStats)),
-        AsyncStorage.setItem(ACHIEVEMENTS_STORAGE_KEY, JSON.stringify({ 
-          ids: newUnlockedIds, 
-          points: newPoints 
-        })),
-      ]);
-    } catch (error) {
-      console.error("Error saving gamification data:", error);
-    }
-  };
-
-  const incrementStat = useCallback(async (stat: keyof UserStats, amount: number = 1) => {
-    const newStats = {
-      ...stats,
-      [stat]: (stats[stat] as number) + amount,
-    };
-    setStats(newStats);
-    
-    // Check for new achievements
-    const newAchievements = checkAchievements(newStats, unlockedIds);
-    
-    if (newAchievements.length > 0) {
-      const newIds = [...unlockedIds, ...newAchievements.map(a => a.id)];
-      const earnedPoints = newAchievements.reduce((sum, a) => sum + a.points, 0);
-      const newPoints = points + earnedPoints;
-      
-      setUnlockedIds(newIds);
-      setPoints(newPoints);
-      setRecentAchievement(newAchievements[0]);
-      
-      await saveData(newStats, newIds, newPoints);
-    } else {
-      await AsyncStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(newStats));
-    }
-  }, [stats, unlockedIds, points]);
+  }, [user]);
 
   const checkForNewAchievements = useCallback(async (): Promise<Achievement[]> => {
+    if (!user || !statsQuery.data) return [];
+
     const newAchievements = checkAchievements(stats, unlockedIds);
-    
+
     if (newAchievements.length > 0) {
-      const newIds = [...unlockedIds, ...newAchievements.map(a => a.id)];
-      const earnedPoints = newAchievements.reduce((sum, a) => sum + a.points, 0);
-      const newPoints = points + earnedPoints;
-      
-      setUnlockedIds(newIds);
-      setPoints(newPoints);
-      setRecentAchievement(newAchievements[0]);
-      
-      await saveData(stats, newIds, newPoints);
+      // Unlock first one on server (limit 1 per check to avoid spam?) or loop
+      // For simplicity, just unlock first
+      const first = newAchievements[0];
+      unlockMutation.mutate({ achievementId: first.id });
+      setRecentAchievement(first);
     }
-    
+
     return newAchievements;
-  }, [stats, unlockedIds, points]);
+  }, [stats, unlockedIds, user]);
+
+  // Compatibility shim for incrementStat (most stats are server managed now)
+  const incrementStat = useCallback(async (stat: keyof UserStats, amount: number = 1) => {
+    // If we were offline-first, we'd update local state.
+    // For now, assume server tracks actions (createPost, createDiagnosis)
+    // We could invalidate queries here if we knew what changed.
+    utils.achievements.getStats.invalidate();
+    checkForNewAchievements();
+  }, [utils, checkForNewAchievements]);
 
   const updateLoginStreak = useCallback(async () => {
-    try {
-      const lastLogin = await AsyncStorage.getItem(LAST_LOGIN_KEY);
-      const today = new Date().toDateString();
-      
-      if (lastLogin === today) return;
-      
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      
-      let newStreak = 1;
-      if (lastLogin === yesterday.toDateString()) {
-        newStreak = stats.loginStreak + 1;
-      }
-      
-      const newStats = {
-        ...stats,
-        loginStreak: newStreak,
-        longestStreak: Math.max(stats.longestStreak, newStreak),
-      };
-      
-      setStats(newStats);
-      await AsyncStorage.setItem(LAST_LOGIN_KEY, today);
-      
-      // Check for streak achievements
-      const newAchievements = checkAchievements(newStats, unlockedIds);
-      if (newAchievements.length > 0) {
-        const newIds = [...unlockedIds, ...newAchievements.map(a => a.id)];
-        const earnedPoints = newAchievements.reduce((sum, a) => sum + a.points, 0);
-        const newPoints = points + earnedPoints;
-        
-        setUnlockedIds(newIds);
-        setPoints(newPoints);
-        setRecentAchievement(newAchievements[0]);
-        
-        await saveData(newStats, newIds, newPoints);
-      } else {
-        await AsyncStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(newStats));
-      }
-    } catch (error) {
-      console.error("Error updating login streak:", error);
-    }
-  }, [stats, unlockedIds, points]);
+    streakMutation.mutate();
+  }, [streakMutation]);
 
   const dismissRecentAchievement = useCallback(() => {
     setRecentAchievement(null);

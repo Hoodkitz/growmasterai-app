@@ -2,8 +2,9 @@ import { z } from "zod";
 import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { getDb } from "./db";
-import { plants, journalEntries, communityPosts, postComments, vendors, vendorProducts, messages, users } from "../drizzle/schema";
-import { eq, and, desc, sql, or, ne } from "drizzle-orm";
+import { plants, journalEntries, communityPosts, postComments, vendors, vendorProducts, messages, users, auctions, giveaways, diagnoses, userAchievements, vendorLeads, adBanners } from "../drizzle/schema";
+import { eq, and, desc, sql, or, ne, gt, count } from "drizzle-orm";
+import { alias } from "drizzle-orm/mysql-core";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
@@ -563,6 +564,144 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
 
         return db.select().from(vendors).where(eq(vendors.id, input.vendorId));
       }),
+
+    listAuctions: publicProcedure
+      .query(async () => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        return db.select()
+          .from(auctions)
+          .where(eq(auctions.status, "active"))
+          .orderBy(desc(auctions.endsAt))
+          .limit(20);
+      }),
+
+    listRaffles: publicProcedure
+      .query(async () => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        return db.select()
+          .from(giveaways)
+          .where(eq(giveaways.status, "active"))
+          .orderBy(desc(giveaways.endsAt))
+          .limit(20);
+      }),
+  }),
+
+  // Vendor Portal
+  vendor: router({
+    getProfile: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
+      return db.query.vendors.findFirst({
+        where: eq(vendors.userId, ctx.user.id),
+      });
+    }),
+
+    getDashboard: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
+
+      const vendor = await db.query.vendors.findFirst({
+        where: eq(vendors.userId, ctx.user.id),
+      });
+
+      if (!vendor) return null;
+
+      const activeProducts = await db
+        .select({ count: count() })
+        .from(vendorProducts)
+        .where(and(eq(vendorProducts.vendorId, vendor.id), eq(vendorProducts.isActive, true)));
+
+      const recentLeads = await db
+        .select()
+        .from(vendorLeads)
+        .where(eq(vendorLeads.vendorId, vendor.id))
+        .orderBy(desc(vendorLeads.createdAt))
+        .limit(5);
+
+      return {
+        revenue: 0, // Placeholder: requires Order system
+        sales: vendor.totalSales || 0,
+        activeListings: activeProducts[0]?.count || 0,
+        rating: parseFloat(vendor.rating || "0"),
+        recentLeads,
+      };
+    }),
+
+    getProducts: protectedProcedure
+      .input(z.object({
+        limit: z.number().default(50),
+      }))
+      .query(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        const vendor = await db.query.vendors.findFirst({
+          where: eq(vendors.userId, ctx.user.id),
+        });
+        if (!vendor) throw new Error("Vendor profile not found");
+
+        return db.select()
+          .from(vendorProducts)
+          .where(eq(vendorProducts.vendorId, vendor.id))
+          .orderBy(desc(vendorProducts.createdAt))
+          .limit(input.limit);
+      }),
+
+    getCampaigns: protectedProcedure
+      .query(async ({ ctx }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        const vendor = await db.query.vendors.findFirst({
+          where: eq(vendors.userId, ctx.user.id),
+        });
+        if (!vendor) throw new Error("Vendor profile not found");
+
+        return db.select()
+          .from(adBanners)
+          .where(eq(adBanners.vendorId, vendor.id));
+      }),
+
+    getLeads: protectedProcedure
+      .query(async ({ ctx }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        const vendor = await db.query.vendors.findFirst({
+          where: eq(vendors.userId, ctx.user.id),
+        });
+        if (!vendor) throw new Error("Vendor profile not found");
+
+        return db.select()
+          .from(vendorLeads)
+          .where(eq(vendorLeads.vendorId, vendor.id))
+          .orderBy(desc(vendorLeads.createdAt));
+      }),
+
+    updateSettings: protectedProcedure
+      .input(z.object({
+        name: z.string().min(1),
+        description: z.string().optional(),
+        website: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        await db.update(vendors)
+          .set({
+            name: input.name,
+            description: input.description,
+            website: input.website,
+          })
+          .where(eq(vendors.userId, ctx.user.id));
+
+        return { success: true };
+      }),
   }),
 
   // Messages
@@ -590,16 +729,125 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
 
-        // Simple inbox: get latest messages grouped by user (complex query simplified)
-        // Here getting all messages where user is sender or receiver
-        return db.select()
+        const sender = alias(users, "sender");
+        const receiver = alias(users, "receiver");
+
+        return db.select({
+          message: messages,
+          sender: {
+            id: sender.id,
+            openId: sender.openId,
+            name: sender.name,
+            avatarUrl: sender.avatarUrl,
+          },
+          receiver: {
+            id: receiver.id,
+            openId: receiver.openId,
+            name: receiver.name,
+            avatarUrl: receiver.avatarUrl,
+          },
+        })
           .from(messages)
+          .leftJoin(sender, eq(messages.senderId, sender.id))
+          .leftJoin(receiver, eq(messages.receiverId, receiver.id))
           .where(or(
             eq(messages.senderId, ctx.user.id),
             eq(messages.receiverId, ctx.user.id)
           ))
           .orderBy(desc(messages.createdAt))
           .limit(50);
+      }),
+  }),
+
+  achievements: router({
+    getStats: protectedProcedure
+      .query(async ({ ctx }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        const [user] = await db.select().from(users).where(eq(users.id, ctx.user.id));
+
+        // Count related items
+        const [diagnosesCount] = await db.select({ value: count() }).from(diagnoses).where(eq(diagnoses.userId, ctx.user.id));
+        const [journalCount] = await db.select({ value: count() }).from(journalEntries).where(eq(journalEntries.userId, ctx.user.id));
+        const [postsCount] = await db.select({ value: count() }).from(communityPosts).where(eq(communityPosts.userId, ctx.user.id));
+
+        const unlocked = await db.select().from(userAchievements).where(eq(userAchievements.userId, ctx.user.id));
+
+        return {
+          stats: {
+            totalDiagnoses: diagnosesCount?.value || 0,
+            totalPlants: user.totalPlants,
+            totalHarvests: user.totalHarvests,
+            totalYield: parseFloat(user.totalYield || "0"),
+            journalEntries: journalCount?.value || 0,
+            loginStreak: user.streak,
+            longestStreak: user.streak, // Default to current streak for MVP
+            communityPosts: postsCount?.value || 0,
+            helpfulAnswers: 0,
+            contestsWon: 0,
+            xp: user.xp,
+            level: user.level,
+          },
+          unlockedAchievements: unlocked,
+        };
+      }),
+
+    unlock: protectedProcedure
+      .input(z.object({ achievementId: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        // Check if already unlocked
+        const [existing] = await db.select()
+          .from(userAchievements)
+          .where(and(
+            eq(userAchievements.userId, ctx.user.id),
+            eq(userAchievements.achievementId, input.achievementId)
+          ));
+
+        if (existing) return { success: true, new: false };
+
+        await db.insert(userAchievements).values({
+          userId: ctx.user.id,
+          achievementId: input.achievementId,
+        });
+
+        return { success: true, new: true };
+      }),
+
+    updateStreak: protectedProcedure
+      .mutation(async ({ ctx }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        const [user] = await db.select().from(users).where(eq(users.id, ctx.user.id));
+        if (!user) throw new Error("User not found");
+
+        const now = new Date();
+        const lastActive = user.lastActiveAt || new Date(0);
+
+        // Check if same day
+        const isSameDay = now.toDateString() === lastActive.toDateString();
+        if (isSameDay) return { streak: user.streak };
+
+        // Check if consecutive day
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const isConsecutive = yesterday.toDateString() === lastActive.toDateString();
+
+        let newStreak = isConsecutive ? user.streak + 1 : 1;
+
+        await db.update(users)
+          .set({
+            streak: newStreak,
+            lastActiveAt: now,
+            lastSignedIn: now,
+          })
+          .where(eq(users.id, ctx.user.id));
+
+        return { streak: newStreak };
       }),
   }),
 });

@@ -5,13 +5,16 @@ import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
+import { useAppAuth } from "@/lib/auth-context";
+import { trpc } from "@/lib/trpc";
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 
 interface Message {
   id: string;
   senderId: string;
   text: string;
   timestamp: Date;
-  read: boolean;
 }
 
 interface Conversation {
@@ -26,61 +29,93 @@ interface Conversation {
   online: boolean;
 }
 
-// Mock data
-const MOCK_CONVERSATIONS: Conversation[] = [
-  {
-    id: "1",
-    participantId: "user1",
-    participantName: "GreenThumb420",
-    participantAvatar: "🌿",
-    participantLevel: 12,
-    lastMessage: "Hey, wie läuft dein Grow?",
-    lastMessageTime: new Date(Date.now() - 1000 * 60 * 5),
-    unreadCount: 2,
-    online: true,
-  },
-  {
-    id: "2",
-    participantId: "user2",
-    participantName: "CannabisMaster",
-    participantAvatar: "🌱",
-    participantLevel: 25,
-    lastMessage: "Die Tipps haben super geholfen, danke!",
-    lastMessageTime: new Date(Date.now() - 1000 * 60 * 60 * 2),
-    unreadCount: 0,
-    online: false,
-  },
-  {
-    id: "3",
-    participantId: "user3",
-    participantName: "OrganicGrower",
-    participantAvatar: "🍃",
-    participantLevel: 8,
-    lastMessage: "Welchen Dünger verwendest du?",
-    lastMessageTime: new Date(Date.now() - 1000 * 60 * 60 * 24),
-    unreadCount: 0,
-    online: true,
-  },
-];
 
-const MOCK_MESSAGES: Message[] = [
-  { id: "1", senderId: "user1", text: "Hey! Ich hab gesehen, dass du auch mit Northern Lights arbeitest.", timestamp: new Date(Date.now() - 1000 * 60 * 30), read: true },
-  { id: "2", senderId: "me", text: "Ja genau! Bin in Woche 4 der Blüte jetzt.", timestamp: new Date(Date.now() - 1000 * 60 * 25), read: true },
-  { id: "3", senderId: "user1", text: "Nice! Wie sind die Trichome? Hast du schon gecheckt?", timestamp: new Date(Date.now() - 1000 * 60 * 20), read: true },
-  { id: "4", senderId: "me", text: "Noch hauptsächlich klar, aber ein paar werden schon milchig.", timestamp: new Date(Date.now() - 1000 * 60 * 15), read: true },
-  { id: "5", senderId: "user1", text: "Perfekt! Noch 2-3 Wochen würde ich sagen.", timestamp: new Date(Date.now() - 1000 * 60 * 10), read: true },
-  { id: "6", senderId: "user1", text: "Hey, wie läuft dein Grow?", timestamp: new Date(Date.now() - 1000 * 60 * 5), read: false },
-];
+
+
 
 export default function MessagesScreen() {
   const router = useRouter();
   const colors = useColors();
   const { tier } = useSubscription();
-  
+
+  const { user } = useAppAuth();
+
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
-  const [messages, setMessages] = useState<Message[]>(MOCK_MESSAGES);
   const [newMessage, setNewMessage] = useState("");
-  const [conversations] = useState<Conversation[]>(MOCK_CONVERSATIONS);
+
+  const messagesQuery = trpc.messages.list.useQuery(undefined, {
+    enabled: !!user,
+    refetchInterval: 5000, // Poll every 5s for new messages
+  });
+
+  const sendMutation = trpc.messages.send.useMutation({
+    onSuccess: () => {
+      setNewMessage("");
+      messagesQuery.refetch();
+    },
+  });
+
+  useFocusEffect(
+    useCallback(() => {
+      messagesQuery.refetch();
+    }, [])
+  );
+
+  // Group messages into conversations
+  const conversations: Conversation[] = [];
+  const conversationMessages: Record<string, Message[]> = {};
+
+  if (messagesQuery.data && user) {
+    const sortedMessages = [...messagesQuery.data].sort((a, b) =>
+      new Date(a.message.createdAt).getTime() - new Date(b.message.createdAt).getTime()
+    );
+
+    sortedMessages.forEach(({ message, sender, receiver }) => {
+      // Handle potential null users (e.g. deleted accounts)
+      if (!sender || !receiver) return;
+
+      const isMe = sender.openId === user.id;
+      const otherUser = isMe ? receiver : sender;
+      const otherUserId = otherUser.id.toString(); // Use int ID as string key
+
+      if (!conversationMessages[otherUserId]) {
+        conversationMessages[otherUserId] = [];
+
+        conversations.push({
+          id: otherUserId,
+          participantId: otherUserId,
+          participantName: otherUser.name || "Unknown",
+          participantAvatar: otherUser.avatarUrl || "👤",
+          participantLevel: 1, // Need to add level to user query if needed
+          lastMessage: message.content,
+          lastMessageTime: new Date(message.createdAt),
+          unreadCount: (!message.isRead && !isMe) ? 1 : 0,
+          online: false, // Need online status system
+        });
+      } else {
+        const conv = conversations.find(c => c.id === otherUserId);
+        if (conv) {
+          conv.lastMessage = message.content;
+          conv.lastMessageTime = new Date(message.createdAt);
+          if (!message.isRead && !isMe) conv.unreadCount++;
+        }
+      }
+
+      conversationMessages[otherUserId].push({
+        id: message.id.toString(),
+        senderId: isMe ? "me" : otherUser.id.toString(),
+        text: message.content,
+        timestamp: new Date(message.createdAt),
+      });
+    });
+  }
+
+  // Sort conversations by last message
+  conversations.sort((a, b) => b.lastMessageTime.getTime() - a.lastMessageTime.getTime());
+
+  const currentMessages = selectedConversation
+    ? conversationMessages[selectedConversation.id] || []
+    : [];
 
   const isPremium = tier !== "free";
 
@@ -90,25 +125,21 @@ export default function MessagesScreen() {
     const minutes = Math.floor(diff / (1000 * 60));
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    
+
     if (minutes < 60) return `${minutes}m`;
     if (hours < 24) return `${hours}h`;
     return `${days}d`;
   };
 
   const sendMessage = () => {
-    if (!newMessage.trim()) return;
-    
-    const message: Message = {
-      id: Date.now().toString(),
-      senderId: "me",
-      text: newMessage,
-      timestamp: new Date(),
-      read: true,
-    };
-    
-    setMessages([...messages, message]);
-    setNewMessage("");
+    if (!newMessage.trim() || !selectedConversation) return;
+
+    // Optimistic update could go here
+
+    sendMutation.mutate({
+      receiverId: parseInt(selectedConversation.id),
+      content: newMessage,
+    });
   };
 
   // Conversation List View
@@ -134,7 +165,7 @@ export default function MessagesScreen() {
             <Text className="text-base text-muted text-center mb-6">
               Direktnachrichten sind nur für Premium und Pro Mitglieder verfügbar.
             </Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               className="bg-primary px-6 py-3 rounded-full"
               onPress={() => router.push("/paywall")}
             >
@@ -160,7 +191,7 @@ export default function MessagesScreen() {
                     <View className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-success border-2 border-surface" />
                   )}
                 </View>
-                
+
                 <View className="flex-1">
                   <View className="flex-row items-center gap-2">
                     <Text className="text-base font-semibold text-foreground">{item.participantName}</Text>
@@ -170,7 +201,7 @@ export default function MessagesScreen() {
                   </View>
                   <Text className="text-sm text-muted" numberOfLines={1}>{item.lastMessage}</Text>
                 </View>
-                
+
                 <View className="items-end gap-1">
                   <Text className="text-xs text-muted">{formatTime(item.lastMessageTime)}</Text>
                   {item.unreadCount > 0 && (
@@ -199,7 +230,7 @@ export default function MessagesScreen() {
   // Chat View
   return (
     <ScreenContainer edges={["top", "left", "right"]}>
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
         keyboardVerticalOffset={0}
@@ -209,7 +240,7 @@ export default function MessagesScreen() {
           <TouchableOpacity onPress={() => setSelectedConversation(null)}>
             <IconSymbol name="chevron.left" size={24} color={colors.foreground} />
           </TouchableOpacity>
-          
+
           <View className="relative">
             <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
               <Text className="text-lg">{selectedConversation.participantAvatar}</Text>
@@ -218,14 +249,14 @@ export default function MessagesScreen() {
               <View className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-success border-2 border-background" />
             )}
           </View>
-          
+
           <View className="flex-1">
             <Text className="text-base font-semibold text-foreground">{selectedConversation.participantName}</Text>
             <Text className="text-xs text-muted">
               {selectedConversation.online ? "Online" : "Offline"}
             </Text>
           </View>
-          
+
           <TouchableOpacity className="p-2">
             <IconSymbol name="ellipsis" size={20} color={colors.muted} />
           </TouchableOpacity>
@@ -233,7 +264,7 @@ export default function MessagesScreen() {
 
         {/* Messages */}
         <FlatList
-          data={messages}
+          data={currentMessages}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ padding: 16, paddingBottom: 8 }}
           inverted={false}
@@ -241,10 +272,9 @@ export default function MessagesScreen() {
             const isMe = item.senderId === "me";
             return (
               <View className={`mb-3 ${isMe ? 'items-end' : 'items-start'}`}>
-                <View 
-                  className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                    isMe ? 'bg-primary rounded-br-sm' : 'bg-surface border border-border rounded-bl-sm'
-                  }`}
+                <View
+                  className={`max-w-[80%] rounded-2xl px-4 py-3 ${isMe ? 'bg-primary rounded-br-sm' : 'bg-surface border border-border rounded-bl-sm'
+                    }`}
                 >
                   <Text className={`text-base ${isMe ? 'text-white' : 'text-foreground'}`}>
                     {item.text}
@@ -263,7 +293,7 @@ export default function MessagesScreen() {
           <TouchableOpacity className="p-2">
             <IconSymbol name="camera.fill" size={24} color={colors.muted} />
           </TouchableOpacity>
-          
+
           <View className="flex-1 bg-surface rounded-full px-4 py-2 border border-border">
             <TextInput
               className="text-base text-foreground"
@@ -275,8 +305,8 @@ export default function MessagesScreen() {
               onSubmitEditing={sendMessage}
             />
           </View>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             className={`p-2 rounded-full ${newMessage.trim() ? 'bg-primary' : 'bg-surface'}`}
             onPress={sendMessage}
             disabled={!newMessage.trim()}

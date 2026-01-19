@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { ScrollView, Text, View, TouchableOpacity, RefreshControl, TextInput, Linking, Dimensions } from "react-native";
+import { ScrollView, Text, View, TouchableOpacity, RefreshControl, TextInput, Linking, Dimensions, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
+import { trpc } from "@/lib/trpc";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
@@ -8,9 +9,9 @@ import { useSubscription } from "@/lib/subscription-context";
 import { useGamification } from "@/lib/gamification-context";
 import { UpgradePrompt } from "@/components/upgrade-prompt";
 import { AdBanner } from "@/components/ad-banner";
-import { 
-  MOCK_POSTS, 
-  MOCK_CONTESTS, 
+import {
+  MOCK_POSTS,
+  MOCK_CONTESTS,
   MOCK_LEADERBOARD,
   MOCK_AUCTIONS,
   MOCK_RAFFLES,
@@ -51,30 +52,29 @@ export default function CommunityScreen() {
   const colors = useColors();
   const { tier } = useSubscription();
   const { level, points } = useGamification();
-  
+
   const [activeTab, setActiveTab] = useState<TabType>("feed");
-  const [refreshing, setRefreshing] = useState(false);
-  const [posts, setPosts] = useState(MOCK_POSTS);
   const [newsCategory, setNewsCategory] = useState<"all" | "law" | "tips">("all");
+
+  const postsQuery = trpc.community.listPosts.useQuery({ limit: 20 });
+  const posts = postsQuery.data?.items || [];
+
+  const onRefresh = async () => {
+    await postsQuery.refetch();
+  };
+
+  const likeMutation = trpc.community.createComment.useMutation(); // TODO: Implement real like mutation
+
+  const toggleLike = (postId: number) => {
+    // Optimistic update or real mutation
+    // For now just placeholder
+  };
   const [radarTab, setRadarTab] = useState<"members" | "shops" | "clubs">("shops");
   const [tutorialCategory, setTutorialCategory] = useState<string>("all");
   const [strainFilter, setStrainFilter] = useState<"all" | "beginner" | "indica" | "sativa">("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setRefreshing(false);
-  };
 
-  const toggleLike = (postId: string) => {
-    setPosts(prev => prev.map(post => {
-      if (post.id === postId) {
-        return { ...post, isLiked: !post.isLiked, likes: post.isLiked ? post.likes - 1 : post.likes + 1 };
-      }
-      return post;
-    }));
-  };
 
   const tabs = [
     { id: "feed" as TabType, label: "Feed", icon: "bubble.left.fill" },
@@ -85,7 +85,7 @@ export default function CommunityScreen() {
     { id: "contests" as TabType, label: "Events", icon: "trophy.fill" },
   ];
 
-  const filteredNews = NEWS_ARTICLES.filter(article => 
+  const filteredNews = NEWS_ARTICLES.filter(article =>
     newsCategory === "all" || article.category === newsCategory
   );
 
@@ -94,7 +94,7 @@ export default function CommunityScreen() {
     if (strainFilter === "indica") return strain.type === "indica";
     if (strainFilter === "sativa") return strain.type === "sativa";
     return true;
-  }).filter(strain => 
+  }).filter(strain =>
     searchQuery === "" || strain.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -111,7 +111,7 @@ export default function CommunityScreen() {
             <Text className="text-2xl font-bold text-foreground">Community</Text>
             <Text className="text-sm text-muted">Entdecken, Lernen, Vernetzen</Text>
           </View>
-          <TouchableOpacity 
+          <TouchableOpacity
             className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center"
             onPress={() => router.push("/achievements")}
           >
@@ -121,8 +121,8 @@ export default function CommunityScreen() {
       </View>
 
       {/* Tab Bar */}
-      <ScrollView 
-        horizontal 
+      <ScrollView
+        horizontal
         showsHorizontalScrollIndicator={false}
         className="px-4 mb-4"
         contentContainerStyle={{ gap: 8 }}
@@ -130,29 +130,27 @@ export default function CommunityScreen() {
         {tabs.map(tab => (
           <TouchableOpacity
             key={tab.id}
-            className={`flex-row items-center gap-1.5 px-3 py-2 rounded-full ${
-              activeTab === tab.id ? 'bg-primary' : 'bg-surface'
-            }`}
+            className={`flex-row items-center gap-1.5 px-3 py-2 rounded-full ${activeTab === tab.id ? 'bg-primary' : 'bg-surface'
+              }`}
             onPress={() => setActiveTab(tab.id)}
           >
-            <IconSymbol 
-              name={tab.icon as any} 
-              size={16} 
-              color={activeTab === tab.id ? "#fff" : colors.muted} 
+            <IconSymbol
+              name={tab.icon as any}
+              size={16}
+              color={activeTab === tab.id ? "#fff" : colors.muted}
             />
-            <Text className={`text-sm font-medium ${
-              activeTab === tab.id ? 'text-white' : 'text-muted'
-            }`}>
+            <Text className={`text-sm font-medium ${activeTab === tab.id ? 'text-white' : 'text-muted'
+              }`}>
               {tab.label}
             </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
 
-      <ScrollView 
-        className="flex-1" 
+      <ScrollView
+        className="flex-1"
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+        refreshControl={<RefreshControl refreshing={postsQuery.isRefetching} onRefresh={onRefresh} tintColor={colors.primary} />}
       >
         {/* Feed Tab */}
         {activeTab === "feed" && (
@@ -167,47 +165,44 @@ export default function CommunityScreen() {
             </TouchableOpacity>
 
             {/* Posts */}
-            {posts.map(post => (
-              <View key={post.id} className="bg-surface rounded-xl border border-border overflow-hidden">
-                <View className="p-4">
-                  <View className="flex-row items-center gap-3 mb-3">
-                    <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
-                      <Text className="text-lg">{post.userBadge || "🌱"}</Text>
-                    </View>
-                    <View className="flex-1">
-                      <View className="flex-row items-center gap-2">
-                        <Text className="text-base font-semibold text-foreground">{post.userName}</Text>
-                        <Text className="text-xs text-muted">Lv.{post.userLevel}</Text>
+            {postsQuery.isLoading ? (
+              <ActivityIndicator size="large" color={colors.primary} />
+            ) : (
+              posts.map(({ post, user }) => (
+                <View key={post.id} className="bg-surface rounded-xl border border-border overflow-hidden">
+                  <View className="p-4">
+                    <View className="flex-row items-center gap-3 mb-3">
+                      <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
+                        {/* Placeholder for badge/avatar */}
+                        <Text className="text-lg">{(user?.name || "?").charAt(0).toUpperCase()}</Text>
                       </View>
-                      <Text className="text-xs text-muted">{formatRelativeTime(post.createdAt)}</Text>
-                    </View>
-                  </View>
-                  <Text className="text-base text-foreground mb-3">{post.content}</Text>
-                  {post.tags && post.tags.length > 0 && (
-                    <View className="flex-row flex-wrap gap-2 mb-3">
-                      {post.tags.map(tag => (
-                        <View key={tag} className="bg-primary/10 px-2 py-1 rounded-full">
-                          <Text className="text-xs text-primary">#{tag}</Text>
+                      <View className="flex-1">
+                        <View className="flex-row items-center gap-2">
+                          <Text className="text-base font-semibold text-foreground">{user?.name || "Unknown"}</Text>
+                          <Text className="text-xs text-muted">Lv.{user?.level || 1}</Text>
                         </View>
-                      ))}
+                        <Text className="text-xs text-muted">{formatRelativeTime(new Date(post.createdAt))}</Text>
+                      </View>
                     </View>
-                  )}
-                  <View className="flex-row items-center gap-4 pt-3 border-t border-border">
-                    <TouchableOpacity className="flex-row items-center gap-1" onPress={() => toggleLike(post.id)}>
-                      <IconSymbol name={post.isLiked ? "heart.fill" : "heart"} size={18} color={post.isLiked ? colors.error : colors.muted} />
-                      <Text className={`text-sm ${post.isLiked ? 'text-error' : 'text-muted'}`}>{post.likes}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="flex-row items-center gap-1">
-                      <IconSymbol name="bubble.left.fill" size={18} color={colors.muted} />
-                      <Text className="text-sm text-muted">{post.comments}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="flex-row items-center gap-1">
-                      <IconSymbol name="paperplane.fill" size={18} color={colors.muted} />
-                    </TouchableOpacity>
+                    <Text className="text-base text-foreground mb-3">{post.content}</Text>
+                    {/* Images handled here if present */}
+
+                    <View className="flex-row items-center gap-4 pt-3 border-t border-border">
+                      <TouchableOpacity className="flex-row items-center gap-1" onPress={() => toggleLike(post.id)}>
+                        <IconSymbol name={"heart"} size={18} color={colors.muted} />
+                        <Text className={`text-sm text-muted`}>{post.likes}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity className="flex-row items-center gap-1">
+                        <IconSymbol name="bubble.left.fill" size={18} color={colors.muted} />
+                        <Text className="text-sm text-muted">{post.comments}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity className="flex-row items-center gap-1">
+                        <IconSymbol name="paperplane.fill" size={18} color={colors.muted} />
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </View>
-              </View>
-            ))}
+              )))}
 
             {/* Leaderboard Preview */}
             <View className="bg-surface rounded-xl p-4 border border-border">
@@ -219,8 +214,8 @@ export default function CommunityScreen() {
               </View>
               {MOCK_LEADERBOARD.slice(0, 3).map((entry, index) => (
                 <View key={entry.rank} className="flex-row items-center gap-3 py-2">
-                  <Text className="text-lg font-bold w-6" style={{ 
-                    color: index === 0 ? "#FFD700" : index === 1 ? "#C0C0C0" : "#CD7F32" 
+                  <Text className="text-lg font-bold w-6" style={{
+                    color: index === 0 ? "#FFD700" : index === 1 ? "#C0C0C0" : "#CD7F32"
                   }}>
                     {entry.rank}
                   </Text>
@@ -478,14 +473,12 @@ export default function CommunityScreen() {
                   <Text className="text-xs text-muted mb-2">{video.channel}</Text>
                   <View className="flex-row items-center gap-2">
                     <Text className="text-xs text-muted">{formatViews(video.views)} Aufrufe</Text>
-                    <View className={`px-2 py-0.5 rounded-full ${
-                      video.difficulty === "beginner" ? "bg-success/20" :
+                    <View className={`px-2 py-0.5 rounded-full ${video.difficulty === "beginner" ? "bg-success/20" :
                       video.difficulty === "intermediate" ? "bg-warning/20" : "bg-error/20"
-                    }`}>
-                      <Text className={`text-xs ${
-                        video.difficulty === "beginner" ? "text-success" :
-                        video.difficulty === "intermediate" ? "text-warning" : "text-error"
                       }`}>
+                      <Text className={`text-xs ${video.difficulty === "beginner" ? "text-success" :
+                        video.difficulty === "intermediate" ? "text-warning" : "text-error"
+                        }`}>
                         {video.difficulty === "beginner" ? "Anfänger" : video.difficulty === "intermediate" ? "Mittel" : "Fortgeschritten"}
                       </Text>
                     </View>
@@ -564,7 +557,7 @@ export default function CommunityScreen() {
                     <Text className="text-xs text-muted">{strain.reviewCount} Reviews</Text>
                   </View>
                 </View>
-                
+
                 <View className="flex-row items-center gap-4 mt-3 pt-3 border-t border-border">
                   <View>
                     <Text className="text-xs text-muted">THC</Text>
@@ -587,7 +580,7 @@ export default function CommunityScreen() {
                     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                       <View className="flex-row gap-2">
                         {strain.affiliateLinks.map((link, index) => (
-                          <TouchableOpacity 
+                          <TouchableOpacity
                             key={index}
                             className="bg-primary/10 px-3 py-2 rounded-lg flex-row items-center gap-2"
                             onPress={() => Linking.openURL(link.url)}
@@ -647,9 +640,9 @@ export default function CommunityScreen() {
               <View key={entry.rank} className={`flex-row items-center p-3 rounded-xl ${index < 3 ? 'bg-primary/10 border border-primary/30' : 'bg-surface border border-border'}`}>
                 <View className="w-10 items-center">
                   {index === 0 ? <Text className="text-2xl">🥇</Text> :
-                   index === 1 ? <Text className="text-2xl">🥈</Text> :
-                   index === 2 ? <Text className="text-2xl">🥉</Text> :
-                   <Text className="text-lg font-bold text-muted">#{entry.rank}</Text>}
+                    index === 1 ? <Text className="text-2xl">🥈</Text> :
+                      index === 2 ? <Text className="text-2xl">🥉</Text> :
+                        <Text className="text-lg font-bold text-muted">#{entry.rank}</Text>}
                 </View>
                 <View className="flex-row items-center gap-3 flex-1 ml-2">
                   <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">

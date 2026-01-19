@@ -26,6 +26,8 @@ export interface UserStats {
   communityPosts: number;
   helpfulAnswers: number;
   contestsWon: number;
+  xp: number;
+  level: number;
 }
 
 export interface UserLevel {
@@ -81,7 +83,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     requirement: { type: "journal", count: 1 },
     rarity: "common",
   },
-  
+
   // Grower Achievements
   {
     id: "diagnose_10",
@@ -153,7 +155,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     requirement: { type: "harvests", count: 10 },
     rarity: "rare",
   },
-  
+
   // Expert Achievements
   {
     id: "yield_100g",
@@ -215,7 +217,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     requirement: { type: "streak", count: 100 },
     rarity: "epic",
   },
-  
+
   // Community Achievements
   {
     id: "community_first_post",
@@ -247,7 +249,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     requirement: { type: "community", count: 50 },
     rarity: "rare",
   },
-  
+
   // Special Achievements
   {
     id: "early_adopter",
@@ -283,24 +285,24 @@ export function getLevelFromPoints(points: number): UserLevel {
 export function getProgressToNextLevel(points: number): number {
   const currentLevel = getLevelFromPoints(points);
   const nextLevelIndex = LEVELS.findIndex(l => l.level === currentLevel.level) + 1;
-  
+
   if (nextLevelIndex >= LEVELS.length) return 100;
-  
+
   const nextLevel = LEVELS[nextLevelIndex];
   const pointsInCurrentLevel = points - currentLevel.minPoints;
   const pointsNeededForNextLevel = nextLevel.minPoints - currentLevel.minPoints;
-  
+
   return Math.min(100, Math.round((pointsInCurrentLevel / pointsNeededForNextLevel) * 100));
 }
 
 export function checkAchievements(stats: UserStats, unlockedIds: string[]): Achievement[] {
   const newlyUnlocked: Achievement[] = [];
-  
+
   for (const achievement of ACHIEVEMENTS) {
     if (unlockedIds.includes(achievement.id)) continue;
-    
+
     let isUnlocked = false;
-    
+
     switch (achievement.requirement.type) {
       case "diagnoses":
         isUnlocked = stats.totalDiagnoses >= achievement.requirement.count;
@@ -318,19 +320,19 @@ export function checkAchievements(stats: UserStats, unlockedIds: string[]): Achi
         isUnlocked = stats.journalEntries >= achievement.requirement.count;
         break;
       case "streak":
-        isUnlocked = stats.loginStreak >= achievement.requirement.count || 
-                     stats.longestStreak >= achievement.requirement.count;
+        isUnlocked = stats.loginStreak >= achievement.requirement.count ||
+          stats.longestStreak >= achievement.requirement.count;
         break;
       case "community":
         isUnlocked = stats.communityPosts >= achievement.requirement.count;
         break;
     }
-    
+
     if (isUnlocked) {
       newlyUnlocked.push({ ...achievement, unlockedAt: new Date() });
     }
   }
-  
+
   return newlyUnlocked;
 }
 

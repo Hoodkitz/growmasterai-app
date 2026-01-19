@@ -1,39 +1,90 @@
 import { useState } from "react";
-import { ScrollView, Text, View, TouchableOpacity, TextInput, Linking } from "react-native";
+import { ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Image, Linking } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useAppAuth } from "@/lib/auth-context";
+import { trpc } from "@/lib/trpc";
 import {
   VENDOR_SUBSCRIPTIONS,
   AD_PRICING,
   LEAD_PACKAGES,
-  MOCK_VENDOR_ANALYTICS,
-  MOCK_MARKETPLACE_PRODUCTS,
   VendorTier,
 } from "@/lib/marketplace";
+import { formatDistanceToNow } from "date-fns";
+import { de } from "date-fns/locale";
 
-type TabType = "dashboard" | "products" | "campaigns" | "leads" | "analytics" | "settings";
+type TabType = "dashboard" | "products" | "campaigns" | "leads" | "settings";
 
 export default function VendorPortalScreen() {
   const router = useRouter();
   const colors = useColors();
   const { user } = useAppAuth();
-  
+
   const [activeTab, setActiveTab] = useState<TabType>("dashboard");
-  const [vendorTier, setVendorTier] = useState<VendorTier>("pro");
   const [showUpgrade, setShowUpgrade] = useState(false);
 
+  // Queries
+  const { data: vendorProfile, isLoading: isLoadingProfile } = trpc.vendor.getProfile.useQuery();
+  const { data: dashboardStats, isLoading: isLoadingStats } = trpc.vendor.getDashboard.useQuery(undefined, {
+    enabled: !!vendorProfile,
+  });
+  const { data: products, isLoading: isLoadingProducts } = trpc.vendor.getProducts.useQuery({ limit: 50 }, {
+    enabled: activeTab === "products" && !!vendorProfile,
+  });
+  const { data: campaigns, isLoading: isLoadingCampaigns } = trpc.vendor.getCampaigns.useQuery(undefined, {
+    enabled: activeTab === "campaigns" && !!vendorProfile,
+  });
+  const { data: leads, isLoading: isLoadingLeads } = trpc.vendor.getLeads.useQuery(undefined, {
+    enabled: activeTab === "leads" && !!vendorProfile,
+  });
+
+  const updateSettingsMutation = trpc.vendor.updateSettings.useMutation();
+
+  if (isLoadingProfile) {
+    return (
+      <ScreenContainer>
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      </ScreenContainer>
+    );
+  }
+
+  if (!vendorProfile) {
+    return (
+      <ScreenContainer>
+        <View className="flex-1 px-6 items-center justify-center">
+          <View className="w-20 h-20 bg-primary/20 rounded-full items-center justify-center mb-6">
+            <IconSymbol name="storefront.fill" size={40} color={colors.primary} />
+          </View>
+          <Text className="text-2xl font-bold text-foreground text-center mb-2">
+            Werde Partner
+          </Text>
+          <Text className="text-base text-muted text-center mb-8">
+            Verkaufe deine Produkte, schalte Werbung und generiere Leads mit dem GrowMaster Vendor Portal.
+          </Text>
+          <TouchableOpacity
+            className="bg-primary px-8 py-4 rounded-xl w-full"
+            onPress={() => Linking.openURL("mailto:partners@growmaster.app")}
+          >
+            <Text className="text-white text-center font-bold text-lg">Partner werden</Text>
+          </TouchableOpacity>
+        </View>
+      </ScreenContainer>
+    );
+  }
+
+  const vendorTier = (vendorProfile.plan as VendorTier) || "basic";
   const subscription = VENDOR_SUBSCRIPTIONS[vendorTier];
-  const analytics = MOCK_VENDOR_ANALYTICS;
+  const stats = dashboardStats || { revenue: 0, sales: 0, activeListings: 0, rating: 0, recentLeads: [] };
 
   const tabs = [
     { id: "dashboard" as TabType, label: "Dashboard", icon: "chart.bar.fill" },
     { id: "products" as TabType, label: "Produkte", icon: "bag.fill" },
     { id: "campaigns" as TabType, label: "Werbung", icon: "megaphone.fill" },
     { id: "leads" as TabType, label: "Leads", icon: "person.2.fill" },
-    { id: "analytics" as TabType, label: "Analytics", icon: "chart.pie.fill" },
     { id: "settings" as TabType, label: "Einstellungen", icon: "gearshape.fill" },
   ];
 
@@ -48,30 +99,34 @@ export default function VendorPortalScreen() {
           <Text className="text-xl font-bold text-foreground">Vendor Portal</Text>
           <View className="w-6" />
         </View>
-        
+
         {/* Vendor Info */}
         <View className="flex-row items-center gap-3 mt-3">
           <View className="w-12 h-12 rounded-xl bg-primary/20 items-center justify-center">
-            <Text className="text-2xl">🏪</Text>
+            {vendorProfile.logoUrl ? (
+              <Image source={{ uri: vendorProfile.logoUrl }} className="w-full h-full rounded-xl" />
+            ) : (
+              <Text className="text-2xl">🏪</Text>
+            )}
           </View>
           <View className="flex-1">
-            <Text className="text-base font-semibold text-foreground">Mein Shop</Text>
+            <Text className="text-base font-semibold text-foreground">{vendorProfile.name}</Text>
             <View className="flex-row items-center gap-2">
-              <View className={`px-2 py-0.5 rounded-full ${
-                vendorTier === "enterprise" ? "bg-warning/20" : 
+              <View className={`px-2 py-0.5 rounded-full ${vendorTier === "enterprise" ? "bg-warning/20" :
                 vendorTier === "pro" ? "bg-primary/20" : "bg-muted/20"
-              }`}>
-                <Text className={`text-xs font-medium ${
-                  vendorTier === "enterprise" ? "text-warning" : 
-                  vendorTier === "pro" ? "text-primary" : "text-muted"
                 }`}>
+                <Text className={`text-xs font-medium ${vendorTier === "enterprise" ? "text-warning" :
+                  vendorTier === "pro" ? "text-primary" : "text-muted"
+                  }`}>
                   {subscription.name}
                 </Text>
               </View>
-              <IconSymbol name="checkmark.seal.fill" size={14} color={colors.success} />
+              {vendorProfile.isVerified && (
+                <IconSymbol name="checkmark.seal.fill" size={14} color={colors.success} />
+              )}
             </View>
           </View>
-          <TouchableOpacity 
+          <TouchableOpacity
             className="bg-primary px-3 py-1.5 rounded-full"
             onPress={() => setShowUpgrade(true)}
           >
@@ -81,8 +136,8 @@ export default function VendorPortalScreen() {
       </View>
 
       {/* Tab Bar */}
-      <ScrollView 
-        horizontal 
+      <ScrollView
+        horizontal
         showsHorizontalScrollIndicator={false}
         className="px-4 py-3 border-b border-border"
       >
@@ -90,19 +145,17 @@ export default function VendorPortalScreen() {
           {tabs.map(tab => (
             <TouchableOpacity
               key={tab.id}
-              className={`flex-row items-center gap-1.5 px-3 py-2 rounded-full ${
-                activeTab === tab.id ? 'bg-primary' : 'bg-surface'
-              }`}
+              className={`flex-row items-center gap-1.5 px-3 py-2 rounded-full ${activeTab === tab.id ? 'bg-primary' : 'bg-surface'
+                }`}
               onPress={() => setActiveTab(tab.id)}
             >
-              <IconSymbol 
-                name={tab.icon as any} 
-                size={16} 
-                color={activeTab === tab.id ? "#fff" : colors.muted} 
+              <IconSymbol
+                name={tab.icon as any}
+                size={16}
+                color={activeTab === tab.id ? "#fff" : colors.muted}
               />
-              <Text className={`text-sm font-medium ${
-                activeTab === tab.id ? 'text-white' : 'text-muted'
-              }`}>
+              <Text className={`text-sm font-medium ${activeTab === tab.id ? 'text-white' : 'text-muted'
+                }`}>
                 {tab.label}
               </Text>
             </TouchableOpacity>
@@ -114,111 +167,52 @@ export default function VendorPortalScreen() {
         {/* Dashboard Tab */}
         {activeTab === "dashboard" && (
           <View className="gap-4">
-            {/* Revenue Overview */}
-            <View className="bg-surface rounded-xl p-4 border border-border">
-              <Text className="text-lg font-semibold text-foreground mb-3">💰 Umsatz diesen Monat</Text>
-              <Text className="text-3xl font-bold text-primary mb-2">€{analytics.revenue.total.toLocaleString()}</Text>
-              <View className="flex-row items-center gap-2">
-                <IconSymbol name="arrow.up.right" size={14} color={colors.success} />
-                <Text className="text-sm text-success">+23% vs. letzter Monat</Text>
-              </View>
-              
-              <View className="flex-row gap-3 mt-4">
-                <View className="flex-1 bg-background rounded-lg p-3">
-                  <Text className="text-xs text-muted">Produkte</Text>
-                  <Text className="text-lg font-bold text-foreground">€{analytics.revenue.products}</Text>
+            {isLoadingStats ? (
+              <ActivityIndicator color={colors.primary} />
+            ) : (
+              <>
+                {/* Revenue Overview */}
+                <View className="bg-surface rounded-xl p-4 border border-border">
+                  <Text className="text-lg font-semibold text-foreground mb-3">💰 Gesamtumsatz</Text>
+                  <Text className="text-3xl font-bold text-primary mb-2">€{stats.sales.toLocaleString()}</Text>
+                  <Text className="text-sm text-muted">Aus {stats.sales} Verkäufen</Text>
                 </View>
-                <View className="flex-1 bg-background rounded-lg p-3">
-                  <Text className="text-xs text-muted">Auktionen</Text>
-                  <Text className="text-lg font-bold text-foreground">€{analytics.revenue.auctions}</Text>
-                </View>
-                <View className="flex-1 bg-background rounded-lg p-3">
-                  <Text className="text-xs text-muted">Verlosungen</Text>
-                  <Text className="text-lg font-bold text-foreground">€{analytics.revenue.raffles}</Text>
-                </View>
-              </View>
-            </View>
 
-            {/* Fees Overview */}
-            <View className="bg-surface rounded-xl p-4 border border-border">
-              <Text className="text-lg font-semibold text-foreground mb-3">📊 Gebühren & Netto</Text>
-              <View className="gap-2">
-                <View className="flex-row justify-between">
-                  <Text className="text-sm text-muted">Transaktionsgebühren ({subscription.transactionFee}%)</Text>
-                  <Text className="text-sm text-foreground">-€{analytics.fees.transactionFees}</Text>
-                </View>
-                <View className="flex-row justify-between">
-                  <Text className="text-sm text-muted">Abo-Gebühr</Text>
-                  <Text className="text-sm text-foreground">-€{analytics.fees.subscriptionFee}</Text>
-                </View>
-                <View className="flex-row justify-between">
-                  <Text className="text-sm text-muted">Werbeausgaben</Text>
-                  <Text className="text-sm text-foreground">-€{analytics.fees.adSpend}</Text>
-                </View>
-                <View className="h-px bg-border my-2" />
-                <View className="flex-row justify-between">
-                  <Text className="text-base font-semibold text-foreground">Netto-Umsatz</Text>
-                  <Text className="text-base font-bold text-success">€{analytics.netRevenue.toLocaleString()}</Text>
-                </View>
-              </View>
-            </View>
-
-            {/* Quick Stats */}
-            <View className="flex-row gap-3">
-              <View className="flex-1 bg-surface rounded-xl p-4 border border-border">
-                <IconSymbol name="eye.fill" size={24} color={colors.primary} />
-                <Text className="text-2xl font-bold text-foreground mt-2">{(analytics.metrics.impressions / 1000).toFixed(1)}K</Text>
-                <Text className="text-xs text-muted">Impressionen</Text>
-              </View>
-              <View className="flex-1 bg-surface rounded-xl p-4 border border-border">
-                <IconSymbol name="hand.tap.fill" size={24} color={colors.warning} />
-                <Text className="text-2xl font-bold text-foreground mt-2">{analytics.metrics.clicks}</Text>
-                <Text className="text-xs text-muted">Klicks</Text>
-              </View>
-              <View className="flex-1 bg-surface rounded-xl p-4 border border-border">
-                <IconSymbol name="cart.fill" size={24} color={colors.success} />
-                <Text className="text-2xl font-bold text-foreground mt-2">{analytics.metrics.conversions}</Text>
-                <Text className="text-xs text-muted">Verkäufe</Text>
-              </View>
-            </View>
-
-            {/* Top Products */}
-            <View className="bg-surface rounded-xl p-4 border border-border">
-              <Text className="text-lg font-semibold text-foreground mb-3">🏆 Top Produkte</Text>
-              {analytics.topProducts.map((product, index) => (
-                <View key={product.productId} className="flex-row items-center gap-3 py-2 border-b border-border last:border-0">
-                  <Text className="text-lg font-bold text-muted w-6">#{index + 1}</Text>
-                  <View className="flex-1">
-                    <Text className="text-sm font-medium text-foreground">{product.name}</Text>
-                    <Text className="text-xs text-muted">{product.units} verkauft</Text>
+                {/* Quick Stats */}
+                <View className="flex-row gap-3">
+                  <View className="flex-1 bg-surface rounded-xl p-4 border border-border">
+                    <IconSymbol name="tag.fill" size={24} color={colors.primary} />
+                    <Text className="text-2xl font-bold text-foreground mt-2">{stats.activeListings}</Text>
+                    <Text className="text-xs text-muted">Produkte</Text>
                   </View>
-                  <Text className="text-sm font-bold text-primary">€{product.revenue}</Text>
+                  <View className="flex-1 bg-surface rounded-xl p-4 border border-border">
+                    <IconSymbol name="star.fill" size={24} color={colors.warning} />
+                    <Text className="text-2xl font-bold text-foreground mt-2">{stats.rating.toFixed(1)}</Text>
+                    <Text className="text-xs text-muted">Bewertung</Text>
+                  </View>
+                  <View className="flex-1 bg-surface rounded-xl p-4 border border-border">
+                    <IconSymbol name="person.2.fill" size={24} color={colors.success} />
+                    <Text className="text-2xl font-bold text-foreground mt-2">{stats.recentLeads.length}</Text>
+                    <Text className="text-xs text-muted">Neue Leads</Text>
+                  </View>
                 </View>
-              ))}
-            </View>
 
-            {/* Quick Actions */}
-            <View className="bg-surface rounded-xl p-4 border border-border">
-              <Text className="text-lg font-semibold text-foreground mb-3">⚡ Schnellaktionen</Text>
-              <View className="gap-2">
-                <TouchableOpacity className="flex-row items-center gap-3 p-3 bg-primary/10 rounded-lg">
-                  <IconSymbol name="plus.circle.fill" size={24} color={colors.primary} />
-                  <Text className="text-base font-medium text-primary">Neues Produkt hinzufügen</Text>
-                </TouchableOpacity>
-                <TouchableOpacity className="flex-row items-center gap-3 p-3 bg-warning/10 rounded-lg">
-                  <IconSymbol name="gavel.fill" size={24} color={colors.warning} />
-                  <Text className="text-base font-medium text-warning">Auktion erstellen</Text>
-                </TouchableOpacity>
-                <TouchableOpacity className="flex-row items-center gap-3 p-3 bg-success/10 rounded-lg">
-                  <IconSymbol name="gift.fill" size={24} color={colors.success} />
-                  <Text className="text-base font-medium text-success">Verlosung starten</Text>
-                </TouchableOpacity>
-                <TouchableOpacity className="flex-row items-center gap-3 p-3 bg-error/10 rounded-lg">
-                  <IconSymbol name="megaphone.fill" size={24} color={colors.error} />
-                  <Text className="text-base font-medium text-error">Werbekampagne starten</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+                {/* Quick Actions */}
+                <View className="bg-surface rounded-xl p-4 border border-border">
+                  <Text className="text-lg font-semibold text-foreground mb-3">⚡ Schnellaktionen</Text>
+                  <View className="gap-2">
+                    <TouchableOpacity className="flex-row items-center gap-3 p-3 bg-primary/10 rounded-lg" onPress={() => setActiveTab("products")}>
+                      <IconSymbol name="plus.circle.fill" size={24} color={colors.primary} />
+                      <Text className="text-base font-medium text-primary">Neues Produkt hinzufügen</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity className="flex-row items-center gap-3 p-3 bg-error/10 rounded-lg" onPress={() => setActiveTab("campaigns")}>
+                      <IconSymbol name="megaphone.fill" size={24} color={colors.error} />
+                      <Text className="text-base font-medium text-error">Werbekampagne starten</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </>
+            )}
           </View>
         )}
 
@@ -233,51 +227,42 @@ export default function VendorPortalScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* Product Stats */}
-            <View className="flex-row gap-3">
-              <View className="flex-1 bg-surface rounded-xl p-3 border border-border items-center">
-                <Text className="text-2xl font-bold text-foreground">24</Text>
-                <Text className="text-xs text-muted">Aktiv</Text>
-              </View>
-              <View className="flex-1 bg-surface rounded-xl p-3 border border-border items-center">
-                <Text className="text-2xl font-bold text-foreground">3</Text>
-                <Text className="text-xs text-muted">Featured</Text>
-              </View>
-              <View className="flex-1 bg-surface rounded-xl p-3 border border-border items-center">
-                <Text className="text-2xl font-bold text-warning">2</Text>
-                <Text className="text-xs text-muted">Niedrig</Text>
-              </View>
-            </View>
-
-            {/* Product List */}
-            {MOCK_MARKETPLACE_PRODUCTS.map(product => (
-              <TouchableOpacity key={product.id} className="bg-surface rounded-xl p-4 border border-border">
-                <View className="flex-row items-start gap-3">
-                  <View className="w-16 h-16 rounded-lg bg-background items-center justify-center">
-                    <Text className="text-2xl">🌱</Text>
-                  </View>
-                  <View className="flex-1">
-                    <View className="flex-row items-center gap-2">
-                      <Text className="text-base font-semibold text-foreground flex-1" numberOfLines={1}>
-                        {product.name}
-                      </Text>
-                      {product.featured && (
-                        <View className="bg-primary/20 px-2 py-0.5 rounded">
-                          <Text className="text-xs text-primary">Featured</Text>
-                        </View>
+            {isLoadingProducts ? (
+              <ActivityIndicator color={colors.primary} />
+            ) : products?.length === 0 ? (
+              <Text className="text-muted text-center py-8">Keine Produkte gefunden.</Text>
+            ) : (
+              products?.map((product: any) => (
+                <TouchableOpacity key={product.id} className="bg-surface rounded-xl p-4 border border-border">
+                  <View className="flex-row items-start gap-3">
+                    <View className="w-16 h-16 rounded-lg bg-background items-center justify-center">
+                      {product.imageUrl ? (
+                        <Image source={{ uri: product.imageUrl }} className="w-full h-full rounded-lg" />
+                      ) : (
+                        <Text className="text-2xl">🌱</Text>
                       )}
                     </View>
-                    <Text className="text-sm text-muted">{product.category}</Text>
-                    <View className="flex-row items-center gap-4 mt-2">
-                      <Text className="text-base font-bold text-primary">€{product.price}</Text>
-                      <Text className="text-xs text-muted">Stock: {product.stock}</Text>
-                      <Text className="text-xs text-success">{product.sold} verkauft</Text>
+                    <View className="flex-1">
+                      <View className="flex-row items-center gap-2">
+                        <Text className="text-base font-semibold text-foreground flex-1" numberOfLines={1}>
+                          {product.name}
+                        </Text>
+                        {product.isFeatured && (
+                          <View className="bg-primary/20 px-2 py-0.5 rounded">
+                            <Text className="text-xs text-primary">Featured</Text>
+                          </View>
+                        )}
+                      </View>
+                      <Text className="text-sm text-muted">{product.category}</Text>
+                      <View className="flex-row items-center gap-4 mt-2">
+                        <Text className="text-base font-bold text-primary">€{product.price}</Text>
+                      </View>
                     </View>
+                    <IconSymbol name="chevron.right" size={20} color={colors.muted} />
                   </View>
-                  <IconSymbol name="chevron.right" size={20} color={colors.muted} />
-                </View>
-              </TouchableOpacity>
-            ))}
+                </TouchableOpacity>
+              ))
+            )}
           </View>
         )}
 
@@ -292,18 +277,54 @@ export default function VendorPortalScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* Ad Placements */}
-            <Text className="text-base font-medium text-foreground">Verfügbare Platzierungen</Text>
+            {/* Active Campaigns */}
+            <Text className="text-base font-medium text-foreground mt-4">Aktive Kampagnen</Text>
+            {isLoadingCampaigns ? (
+              <ActivityIndicator color={colors.primary} />
+            ) : campaigns?.length === 0 ? (
+              <Text className="text-muted text-center py-4">Keine aktiven Kampagnen.</Text>
+            ) : (
+              campaigns?.map((campaign: any) => (
+                <View key={campaign.id} className="bg-surface rounded-xl p-4 border border-border mb-3">
+                  <View className="flex-row items-center justify-between mb-3">
+                    <View>
+                      <Text className="text-base font-semibold text-foreground">{campaign.title}</Text>
+                      <Text className="text-xs text-muted">{campaign.placement}</Text>
+                    </View>
+                    <View className="bg-success/20 px-2 py-1 rounded-full">
+                      <Text className="text-xs font-medium text-success">Aktiv</Text>
+                    </View>
+                  </View>
+                  <View className="flex-row gap-4">
+                    <View>
+                      <Text className="text-xs text-muted">Ausgegeben</Text>
+                      <Text className="text-sm font-medium text-warning">€{campaign.totalSpent || 0}</Text>
+                    </View>
+                    <View>
+                      <Text className="text-xs text-muted">Klicks</Text>
+                      <Text className="text-sm font-medium text-foreground">{campaign.clicks || 0}</Text>
+                    </View>
+                    <View>
+                      <Text className="text-xs text-muted">Impressions</Text>
+                      <Text className="text-sm font-medium text-foreground">{campaign.impressions || 0}</Text>
+                    </View>
+                  </View>
+                </View>
+              ))
+            )}
+
+            {/* Ad Placements Info */}
+            <Text className="text-base font-medium text-foreground mt-8">Verfügbare Platzierungen</Text>
             {Object.entries(AD_PRICING).map(([placement, pricing]) => (
-              <TouchableOpacity key={placement} className="bg-surface rounded-xl p-4 border border-border">
+              <View key={placement} className="bg-surface rounded-xl p-4 border border-border mb-2">
                 <View className="flex-row items-center justify-between mb-2">
                   <Text className="text-base font-semibold text-foreground">
                     {placement === "home_banner" ? "🏠 Home Banner" :
-                     placement === "feed_native" ? "📱 Feed Native" :
-                     placement === "search_top" ? "🔍 Suche Top" :
-                     placement === "category_featured" ? "📂 Kategorie Featured" :
-                     placement === "checkout_upsell" ? "🛒 Checkout Upsell" :
-                     "🔔 Push Notification"}
+                      placement === "feed_native" ? "📱 Feed Native" :
+                        placement === "search_top" ? "🔍 Suche Top" :
+                          placement === "category_featured" ? "📂 Kategorie Featured" :
+                            placement === "checkout_upsell" ? "🛒 Checkout Upsell" :
+                              "🔔 Push Notification"}
                   </Text>
                   <View className="bg-primary/20 px-2 py-1 rounded">
                     <Text className="text-xs font-medium text-primary">Ab €{pricing.minBudget}</Text>
@@ -319,40 +340,8 @@ export default function VendorPortalScreen() {
                     <Text className="text-sm font-medium text-foreground">€{pricing.cpc}</Text>
                   </View>
                 </View>
-              </TouchableOpacity>
+              </View>
             ))}
-
-            {/* Active Campaigns */}
-            <Text className="text-base font-medium text-foreground mt-4">Aktive Kampagnen</Text>
-            <View className="bg-surface rounded-xl p-4 border border-border">
-              <View className="flex-row items-center justify-between mb-3">
-                <View>
-                  <Text className="text-base font-semibold text-foreground">Frühlings-Sale Banner</Text>
-                  <Text className="text-xs text-muted">Home Banner • CPC</Text>
-                </View>
-                <View className="bg-success/20 px-2 py-1 rounded-full">
-                  <Text className="text-xs font-medium text-success">Aktiv</Text>
-                </View>
-              </View>
-              <View className="flex-row gap-4">
-                <View>
-                  <Text className="text-xs text-muted">Budget</Text>
-                  <Text className="text-sm font-medium text-foreground">€500</Text>
-                </View>
-                <View>
-                  <Text className="text-xs text-muted">Ausgegeben</Text>
-                  <Text className="text-sm font-medium text-warning">€234</Text>
-                </View>
-                <View>
-                  <Text className="text-xs text-muted">Klicks</Text>
-                  <Text className="text-sm font-medium text-foreground">468</Text>
-                </View>
-                <View>
-                  <Text className="text-xs text-muted">Conversions</Text>
-                  <Text className="text-sm font-medium text-success">23</Text>
-                </View>
-              </View>
-            </View>
           </View>
         )}
 
@@ -360,11 +349,45 @@ export default function VendorPortalScreen() {
         {activeTab === "leads" && (
           <View className="gap-4">
             <Text className="text-lg font-semibold text-foreground">Lead-Generierung</Text>
-            
-            {/* Lead Packages */}
-            <Text className="text-base font-medium text-foreground">Lead-Pakete</Text>
+
+            {/* Recent Leads */}
+            <Text className="text-base font-medium text-foreground mt-4">Meine Leads</Text>
+            {isLoadingLeads ? (
+              <ActivityIndicator color={colors.primary} />
+            ) : leads?.length === 0 ? (
+              <Text className="text-muted text-center py-4">Keine Leads vorhanden.</Text>
+            ) : (
+              leads?.map((lead: any) => (
+                <TouchableOpacity key={lead.id} className="bg-surface rounded-xl p-4 border border-border mb-3">
+                  <View className="flex-row items-center gap-3">
+                    <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
+                      <Text className="text-lg">👤</Text>
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-base font-semibold text-foreground">{lead.customerName}</Text>
+                      <Text className="text-xs text-muted">{lead.type} • {formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true, locale: de })}</Text>
+                    </View>
+                    <View className="items-end">
+                      <Text className="text-sm font-bold text-primary">€{lead.value || 0}</Text>
+                      <View className={`px-2 py-0.5 rounded-full ${lead.status === "new" ? "bg-primary/20" :
+                        lead.status === "contacted" ? "bg-warning/20" : "bg-success/20"
+                        }`}>
+                        <Text className={`text-xs ${lead.status === "new" ? "text-primary" :
+                          lead.status === "contacted" ? "text-warning" : "text-success"
+                          }`}>
+                          {lead.status === "new" ? "Neu" : lead.status === "contacted" ? "Kontaktiert" : "Qualifiziert"}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))
+            )}
+
+            {/* Lead Packages Info */}
+            <Text className="text-base font-medium text-foreground mt-8">Lead-Pakete kaufen</Text>
             {LEAD_PACKAGES.map(pkg => (
-              <View key={pkg.id} className="bg-surface rounded-xl p-4 border border-border">
+              <View key={pkg.id} className="bg-surface rounded-xl p-4 border border-border mb-3">
                 <View className="flex-row items-center justify-between mb-2">
                   <Text className="text-lg font-bold text-foreground">{pkg.name}</Text>
                   <Text className="text-xl font-bold text-primary">€{pkg.totalPrice}/Mo</Text>
@@ -383,114 +406,6 @@ export default function VendorPortalScreen() {
                 </TouchableOpacity>
               </View>
             ))}
-
-            {/* Recent Leads */}
-            <Text className="text-base font-medium text-foreground mt-4">Neueste Leads</Text>
-            {[
-              { name: "Max M.", type: "Produktanfrage", value: "€150", time: "vor 2h", status: "new" },
-              { name: "Lisa K.", type: "Großbestellung", value: "€2.500", time: "vor 5h", status: "contacted" },
-              { name: "Tom S.", type: "Beratung", value: "€300", time: "gestern", status: "qualified" },
-            ].map((lead, i) => (
-              <TouchableOpacity key={i} className="bg-surface rounded-xl p-4 border border-border">
-                <View className="flex-row items-center gap-3">
-                  <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
-                    <Text className="text-lg">👤</Text>
-                  </View>
-                  <View className="flex-1">
-                    <Text className="text-base font-semibold text-foreground">{lead.name}</Text>
-                    <Text className="text-xs text-muted">{lead.type} • {lead.time}</Text>
-                  </View>
-                  <View className="items-end">
-                    <Text className="text-sm font-bold text-primary">{lead.value}</Text>
-                    <View className={`px-2 py-0.5 rounded-full ${
-                      lead.status === "new" ? "bg-primary/20" :
-                      lead.status === "contacted" ? "bg-warning/20" : "bg-success/20"
-                    }`}>
-                      <Text className={`text-xs ${
-                        lead.status === "new" ? "text-primary" :
-                        lead.status === "contacted" ? "text-warning" : "text-success"
-                      }`}>
-                        {lead.status === "new" ? "Neu" : lead.status === "contacted" ? "Kontaktiert" : "Qualifiziert"}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
-
-        {/* Analytics Tab */}
-        {activeTab === "analytics" && (
-          <View className="gap-4">
-            <Text className="text-lg font-semibold text-foreground">Detaillierte Analytics</Text>
-            
-            {/* Conversion Funnel */}
-            <View className="bg-surface rounded-xl p-4 border border-border">
-              <Text className="text-base font-semibold text-foreground mb-3">📊 Conversion Funnel</Text>
-              {[
-                { label: "Impressionen", value: analytics.metrics.impressions, percent: 100 },
-                { label: "Klicks", value: analytics.metrics.clicks, percent: (analytics.metrics.clicks / analytics.metrics.impressions * 100) },
-                { label: "Conversions", value: analytics.metrics.conversions, percent: analytics.metrics.conversionRate },
-              ].map((step, i) => (
-                <View key={i} className="mb-3">
-                  <View className="flex-row justify-between mb-1">
-                    <Text className="text-sm text-muted">{step.label}</Text>
-                    <Text className="text-sm font-medium text-foreground">{step.value.toLocaleString()}</Text>
-                  </View>
-                  <View className="h-2 bg-background rounded-full overflow-hidden">
-                    <View 
-                      className="h-full bg-primary rounded-full"
-                      style={{ width: `${Math.min(100, step.percent)}%` }}
-                    />
-                  </View>
-                </View>
-              ))}
-            </View>
-
-            {/* Customer Demographics */}
-            <View className="bg-surface rounded-xl p-4 border border-border">
-              <Text className="text-base font-semibold text-foreground mb-3">👥 Kundendemografie</Text>
-              
-              <Text className="text-sm text-muted mb-2">Erfahrungslevel</Text>
-              <View className="flex-row gap-2 mb-4">
-                {Object.entries(analytics.customerDemographics.experienceLevel).map(([level, percent]) => (
-                  <View key={level} className="flex-1 bg-background rounded-lg p-2 items-center">
-                    <Text className="text-lg font-bold text-foreground">{percent}%</Text>
-                    <Text className="text-xs text-muted capitalize">{level === "beginner" ? "Anfänger" : level === "intermediate" ? "Mittel" : "Profi"}</Text>
-                  </View>
-                ))}
-              </View>
-
-              <Text className="text-sm text-muted mb-2">Abo-Stufe</Text>
-              <View className="flex-row gap-2">
-                {Object.entries(analytics.customerDemographics.subscriptionTier).map(([tier, percent]) => (
-                  <View key={tier} className="flex-1 bg-background rounded-lg p-2 items-center">
-                    <Text className="text-lg font-bold text-foreground">{percent}%</Text>
-                    <Text className="text-xs text-muted capitalize">{tier}</Text>
-                  </View>
-                ))}
-              </View>
-            </View>
-
-            {/* Key Metrics */}
-            <View className="bg-surface rounded-xl p-4 border border-border">
-              <Text className="text-base font-semibold text-foreground mb-3">📈 Wichtige Kennzahlen</Text>
-              <View className="gap-3">
-                <View className="flex-row justify-between">
-                  <Text className="text-sm text-muted">Conversion Rate</Text>
-                  <Text className="text-sm font-bold text-success">{analytics.metrics.conversionRate}%</Text>
-                </View>
-                <View className="flex-row justify-between">
-                  <Text className="text-sm text-muted">Durchschn. Bestellwert</Text>
-                  <Text className="text-sm font-bold text-foreground">€{analytics.metrics.averageOrderValue}</Text>
-                </View>
-                <View className="flex-row justify-between">
-                  <Text className="text-sm text-muted">Customer Lifetime Value</Text>
-                  <Text className="text-sm font-bold text-primary">€{analytics.metrics.customerLifetimeValue}</Text>
-                </View>
-              </View>
-            </View>
           </View>
         )}
 
@@ -498,76 +413,28 @@ export default function VendorPortalScreen() {
         {activeTab === "settings" && (
           <View className="gap-4">
             <Text className="text-lg font-semibold text-foreground">Einstellungen</Text>
-            
+
             {/* Current Plan */}
             <View className="bg-surface rounded-xl p-4 border border-border">
               <View className="flex-row items-center justify-between mb-3">
                 <Text className="text-base font-semibold text-foreground">Aktueller Plan</Text>
-                <View className={`px-3 py-1 rounded-full ${
-                  vendorTier === "enterprise" ? "bg-warning/20" : 
+                <View className={`px-3 py-1 rounded-full ${vendorTier === "enterprise" ? "bg-warning/20" :
                   vendorTier === "pro" ? "bg-primary/20" : "bg-muted/20"
-                }`}>
-                  <Text className={`text-sm font-medium ${
-                    vendorTier === "enterprise" ? "text-warning" : 
-                    vendorTier === "pro" ? "text-primary" : "text-muted"
                   }`}>
+                  <Text className={`text-sm font-medium ${vendorTier === "enterprise" ? "text-warning" :
+                    vendorTier === "pro" ? "text-primary" : "text-muted"
+                    }`}>
                     {subscription.name}
                   </Text>
                 </View>
               </View>
               <Text className="text-2xl font-bold text-foreground mb-2">€{subscription.monthlyPrice}/Monat</Text>
-              <Text className="text-sm text-muted mb-3">oder €{subscription.yearlyPrice}/Jahr (2 Monate gratis)</Text>
-              
-              <View className="gap-2 mb-4">
-                {subscription.features.slice(0, 4).map((feature, i) => (
-                  <View key={i} className="flex-row items-center gap-2">
-                    <IconSymbol name="checkmark.circle.fill" size={14} color={colors.success} />
-                    <Text className="text-sm text-foreground">{feature}</Text>
-                  </View>
-                ))}
-              </View>
 
-              <TouchableOpacity 
-                className="bg-primary py-3 rounded-lg"
+              <TouchableOpacity
+                className="bg-primary py-3 rounded-lg mt-4"
                 onPress={() => setShowUpgrade(true)}
               >
                 <Text className="text-center text-base font-semibold text-white">Plan upgraden</Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Shop Settings */}
-            <View className="bg-surface rounded-xl p-4 border border-border">
-              <Text className="text-base font-semibold text-foreground mb-3">Shop-Einstellungen</Text>
-              <View className="gap-3">
-                <TouchableOpacity className="flex-row items-center justify-between py-2">
-                  <Text className="text-sm text-foreground">Shop-Profil bearbeiten</Text>
-                  <IconSymbol name="chevron.right" size={16} color={colors.muted} />
-                </TouchableOpacity>
-                <TouchableOpacity className="flex-row items-center justify-between py-2">
-                  <Text className="text-sm text-foreground">Zahlungsmethoden</Text>
-                  <IconSymbol name="chevron.right" size={16} color={colors.muted} />
-                </TouchableOpacity>
-                <TouchableOpacity className="flex-row items-center justify-between py-2">
-                  <Text className="text-sm text-foreground">Versandeinstellungen</Text>
-                  <IconSymbol name="chevron.right" size={16} color={colors.muted} />
-                </TouchableOpacity>
-                <TouchableOpacity className="flex-row items-center justify-between py-2">
-                  <Text className="text-sm text-foreground">API-Zugang</Text>
-                  <IconSymbol name="chevron.right" size={16} color={colors.muted} />
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* Support */}
-            <View className="bg-surface rounded-xl p-4 border border-border">
-              <Text className="text-base font-semibold text-foreground mb-3">Support</Text>
-              <TouchableOpacity className="flex-row items-center gap-3 py-2">
-                <IconSymbol name="envelope.fill" size={20} color={colors.primary} />
-                <Text className="text-sm text-foreground">vendor-support@growmaster.app</Text>
-              </TouchableOpacity>
-              <TouchableOpacity className="flex-row items-center gap-3 py-2">
-                <IconSymbol name="doc.text.fill" size={20} color={colors.primary} />
-                <Text className="text-sm text-foreground">Vendor-Dokumentation</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -586,16 +453,15 @@ export default function VendorPortalScreen() {
                 <IconSymbol name="xmark.circle.fill" size={28} color={colors.muted} />
               </TouchableOpacity>
             </View>
-            
+
             <ScrollView showsVerticalScrollIndicator={false}>
               {(Object.entries(VENDOR_SUBSCRIPTIONS) as [VendorTier, typeof VENDOR_SUBSCRIPTIONS.basic][]).map(([tier, sub]) => (
-                <TouchableOpacity 
+                <TouchableOpacity
                   key={tier}
-                  className={`rounded-xl p-4 mb-3 border-2 ${
-                    vendorTier === tier ? 'border-primary bg-primary/10' : 'border-border bg-surface'
-                  }`}
+                  className={`rounded-xl p-4 mb-3 border-2 ${vendorTier === tier ? 'border-primary bg-primary/10' : 'border-border bg-surface'
+                    }`}
                   onPress={() => {
-                    setVendorTier(tier);
+                    // Start upgrade flow
                     setShowUpgrade(false);
                   }}
                 >

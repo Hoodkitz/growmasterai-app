@@ -299,7 +299,7 @@ export default function JournalScreen() {
                 <Text className="text-sm text-muted text-center">Dokumentiere deinen Grow mit Einträgen.</Text>
               </View>
             ) : (
-              entriesQuery.data?.map(entry => (
+              entriesQuery.data?.map((entry: any) => (
                 <View key={entry.id} className="bg-surface rounded-xl p-4 border border-border">
                   <View className="flex-row justify-between items-start mb-2">
                     <View>

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ScrollView, Text, View, TouchableOpacity, TextInput, Linking } from "react-native";
+import { ScrollView, Text, View, TouchableOpacity, TextInput, Linking, ActivityIndicator } from "react-native";
+import { trpc } from "@/lib/trpc";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
@@ -8,136 +9,9 @@ import { useSubscription } from "@/lib/subscription-context";
 import { STRAINS_DATABASE } from "@/lib/strains-data";
 
 type TabType = "shop" | "auctions" | "raffles" | "deals" | "strains";
-type CategoryType = "all" | "seeds" | "equipment" | "lighting" | "nutrients" | "tents";
+type CategoryType = "all" | "seeds" | "equipment" | "nutrients" | "accessories" | "other";
 
-// Mock marketplace data
-const MOCK_PRODUCTS = [
-  {
-    id: "p1",
-    name: "Northern Lights Feminized 5-Pack",
-    vendor: "Royal Queen Seeds",
-    vendorVerified: true,
-    price: 35.00,
-    originalPrice: 45.00,
-    rating: 4.8,
-    reviews: 89,
-    category: "seeds",
-    image: "🌱",
-    featured: true,
-    affiliateUrl: "https://example.com/affiliate/rqs",
-  },
-  {
-    id: "p2",
-    name: "Spider Farmer SF2000 LED",
-    vendor: "LED Grow Shop",
-    vendorVerified: true,
-    price: 289.00,
-    originalPrice: 349.00,
-    rating: 4.9,
-    reviews: 67,
-    category: "lighting",
-    image: "💡",
-    featured: true,
-    affiliateUrl: "https://example.com/affiliate/sf",
-  },
-  {
-    id: "p3",
-    name: "BioBizz Try-Pack Indoor",
-    vendor: "Grow24",
-    vendorVerified: true,
-    price: 24.90,
-    originalPrice: null,
-    rating: 4.7,
-    reviews: 156,
-    category: "nutrients",
-    image: "🧪",
-    featured: false,
-    affiliateUrl: "https://example.com/affiliate/biobizz",
-  },
-  {
-    id: "p4",
-    name: "Mars Hydro 80x80x160 Growzelt",
-    vendor: "Growland",
-    vendorVerified: true,
-    price: 89.00,
-    originalPrice: 119.00,
-    rating: 4.6,
-    reviews: 234,
-    category: "tents",
-    image: "🏕️",
-    featured: false,
-    affiliateUrl: "https://example.com/affiliate/mars",
-  },
-  {
-    id: "p5",
-    name: "Gorilla Glue Auto 3-Pack",
-    vendor: "FastBuds",
-    vendorVerified: true,
-    price: 29.00,
-    originalPrice: null,
-    rating: 4.9,
-    reviews: 312,
-    category: "seeds",
-    image: "🌿",
-    featured: true,
-    affiliateUrl: "https://example.com/affiliate/fastbuds",
-  },
-];
 
-const MOCK_AUCTIONS = [
-  {
-    id: "a1",
-    title: "Rare Landrace Collection - 10 Strains",
-    vendor: "Heritage Seeds",
-    currentBid: 245.00,
-    bids: 23,
-    timeLeft: "2h 34m",
-    image: "🏆",
-  },
-  {
-    id: "a2",
-    title: "Limited Edition Genetics Pack",
-    vendor: "Exotic Genetics",
-    currentBid: 180.00,
-    bids: 15,
-    timeLeft: "5h 12m",
-    image: "💎",
-  },
-  {
-    id: "a3",
-    title: "Vintage HPS 1000W Set (Collector)",
-    vendor: "Retro Grow",
-    currentBid: 89.00,
-    bids: 8,
-    timeLeft: "1d 3h",
-    image: "🔦",
-  },
-];
-
-const MOCK_RAFFLES = [
-  {
-    id: "r1",
-    title: "Komplettes Grow-Setup im Wert von €2.000",
-    vendor: "GrowMaster Partner",
-    ticketPrice: 5.00,
-    ticketsSold: 234,
-    totalTickets: 500,
-    prize: "LED, Zelt, Lüftung, Nährstoffe",
-    endsIn: "3 Tage",
-    image: "🎁",
-  },
-  {
-    id: "r2",
-    title: "1 Jahr Premium Samen-Abo",
-    vendor: "Seedsman",
-    ticketPrice: 2.50,
-    ticketsSold: 456,
-    totalTickets: 1000,
-    prize: "12x Samen-Packs nach Wahl",
-    endsIn: "5 Tage",
-    image: "🎫",
-  },
-];
 
 const MOCK_DEALS = [
   {
@@ -170,29 +44,36 @@ const CATEGORIES = [
   { id: "all", label: "Alle", icon: "square.grid.2x2.fill" },
   { id: "seeds", label: "Samen", icon: "leaf.fill" },
   { id: "equipment", label: "Equipment", icon: "wrench.fill" },
-  { id: "lighting", label: "Beleuchtung", icon: "lightbulb.fill" },
   { id: "nutrients", label: "Nährstoffe", icon: "drop.fill" },
-  { id: "tents", label: "Zelte", icon: "house.fill" },
+  { id: "accessories", label: "Zubehör", icon: "bag.fill" },
+  { id: "other", label: "Sonstiges", icon: "tag.fill" },
 ];
 
 export default function MarketplaceScreen() {
   const router = useRouter();
   const colors = useColors();
   const { tier } = useSubscription();
-  
+
   const [activeTab, setActiveTab] = useState<TabType>("shop");
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredProducts = MOCK_PRODUCTS.filter(p => 
-    (selectedCategory === "all" || p.category === selectedCategory) &&
+  const productsQuery = trpc.marketplace.listProducts.useQuery({
+    category: selectedCategory === "all" ? undefined : selectedCategory,
+    limit: 20
+  });
+  const auctionsQuery = trpc.marketplace.listAuctions.useQuery(undefined, { enabled: activeTab === "auctions" });
+  const rafflesQuery = trpc.marketplace.listRaffles.useQuery(undefined, { enabled: activeTab === "raffles" });
+
+  const products = productsQuery.data || [];
+  const auctions = auctionsQuery.data || [];
+  const raffles = rafflesQuery.data || [];
+
+  const filteredProducts = products.filter(p =>
     (searchQuery === "" || p.name.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  const handleProductPress = (product: typeof MOCK_PRODUCTS[0]) => {
-    // Track affiliate click and open link
-    Linking.openURL(product.affiliateUrl);
-  };
+
 
   return (
     <ScreenContainer>
@@ -222,8 +103,8 @@ export default function MarketplaceScreen() {
       </View>
 
       {/* Tabs */}
-      <ScrollView 
-        horizontal 
+      <ScrollView
+        horizontal
         showsHorizontalScrollIndicator={false}
         className="px-4 py-3 border-b border-border"
       >
@@ -237,19 +118,17 @@ export default function MarketplaceScreen() {
           ].map(tab => (
             <TouchableOpacity
               key={tab.id}
-              className={`flex-row items-center gap-1.5 px-4 py-2 rounded-full ${
-                activeTab === tab.id ? 'bg-primary' : 'bg-surface'
-              }`}
+              className={`flex-row items-center gap-1.5 px-4 py-2 rounded-full ${activeTab === tab.id ? 'bg-primary' : 'bg-surface'
+                }`}
               onPress={() => setActiveTab(tab.id)}
             >
-              <IconSymbol 
-                name={tab.icon as any} 
-                size={16} 
-                color={activeTab === tab.id ? "#fff" : colors.muted} 
+              <IconSymbol
+                name={tab.icon as any}
+                size={16}
+                color={activeTab === tab.id ? "#fff" : colors.muted}
               />
-              <Text className={`text-sm font-medium ${
-                activeTab === tab.id ? 'text-white' : 'text-muted'
-              }`}>
+              <Text className={`text-sm font-medium ${activeTab === tab.id ? 'text-white' : 'text-muted'
+                }`}>
                 {tab.label}
               </Text>
             </TouchableOpacity>
@@ -267,14 +146,12 @@ export default function MarketplaceScreen() {
                 {CATEGORIES.map(cat => (
                   <TouchableOpacity
                     key={cat.id}
-                    className={`px-3 py-2 rounded-lg ${
-                      selectedCategory === cat.id ? 'bg-primary/20' : 'bg-surface'
-                    }`}
+                    className={`px-3 py-2 rounded-lg ${selectedCategory === cat.id ? 'bg-primary/20' : 'bg-surface'
+                      }`}
                     onPress={() => setSelectedCategory(cat.id as CategoryType)}
                   >
-                    <Text className={`text-sm font-medium ${
-                      selectedCategory === cat.id ? 'text-primary' : 'text-muted'
-                    }`}>
+                    <Text className={`text-sm font-medium ${selectedCategory === cat.id ? 'text-primary' : 'text-muted'
+                      }`}>
                       {cat.label}
                     </Text>
                   </TouchableOpacity>
@@ -290,52 +167,43 @@ export default function MarketplaceScreen() {
 
             {/* Products Grid */}
             <View className="gap-3">
-              {filteredProducts.map(product => (
-                <TouchableOpacity 
-                  key={product.id}
-                  className="bg-surface rounded-xl p-4 border border-border"
-                  onPress={() => handleProductPress(product)}
-                >
-                  <View className="flex-row gap-3">
-                    <View className="w-20 h-20 rounded-lg bg-background items-center justify-center">
-                      <Text className="text-3xl">{product.image}</Text>
-                    </View>
-                    <View className="flex-1">
-                      <View className="flex-row items-start justify-between">
-                        <View className="flex-1 pr-2">
-                          <Text className="text-base font-semibold text-foreground" numberOfLines={2}>
-                            {product.name}
-                          </Text>
-                          <View className="flex-row items-center gap-1 mt-1">
-                            <Text className="text-xs text-muted">{product.vendor}</Text>
-                            {product.vendorVerified && (
-                              <IconSymbol name="checkmark.seal.fill" size={12} color={colors.primary} />
-                            )}
+              {productsQuery.isLoading ? (
+                <ActivityIndicator size="large" color={colors.primary} />
+              ) : (
+                filteredProducts.map(product => (
+                  <TouchableOpacity
+                    key={product.id}
+                    className="bg-surface rounded-xl p-4 border border-border"
+                    onPress={() => product.externalUrl && Linking.openURL(product.externalUrl)}
+                  >
+                    <View className="flex-row gap-3">
+                      <View className="w-20 h-20 rounded-lg bg-background items-center justify-center">
+                        <Text className="text-3xl">{(product.imageUrl || "📦")}</Text>
+                      </View>
+                      <View className="flex-1">
+                        <View className="flex-row items-start justify-between">
+                          <View className="flex-1 pr-2">
+                            <Text className="text-base font-semibold text-foreground" numberOfLines={2}>
+                              {product.name}
+                            </Text>
+                            <View className="flex-row items-center gap-1 mt-1">
+                              <Text className="text-xs text-muted">Vendor #{product.vendorId}</Text>
+                            </View>
                           </View>
+                          {product.isFeatured && (
+                            <View className="bg-warning/20 px-2 py-0.5 rounded">
+                              <Text className="text-xs text-warning">Featured</Text>
+                            </View>
+                          )}
                         </View>
-                        {product.featured && (
-                          <View className="bg-warning/20 px-2 py-0.5 rounded">
-                            <Text className="text-xs text-warning">Featured</Text>
-                          </View>
-                        )}
-                      </View>
-                      
-                      <View className="flex-row items-center gap-1 mt-2">
-                        <IconSymbol name="star.fill" size={12} color={colors.warning} />
-                        <Text className="text-xs text-foreground">{product.rating}</Text>
-                        <Text className="text-xs text-muted">({product.reviews})</Text>
-                      </View>
 
-                      <View className="flex-row items-center gap-2 mt-2">
-                        <Text className="text-lg font-bold text-primary">€{product.price.toFixed(2)}</Text>
-                        {product.originalPrice && (
-                          <Text className="text-sm text-muted line-through">€{product.originalPrice.toFixed(2)}</Text>
-                        )}
+                        <View className="flex-row items-center gap-2 mt-2">
+                          <Text className="text-lg font-bold text-primary">€{Number(product.price).toFixed(2)}</Text>
+                        </View>
                       </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              ))}
+                  </TouchableOpacity>
+                )))}
             </View>
 
             {/* Affiliate Disclosure */}
@@ -351,43 +219,42 @@ export default function MarketplaceScreen() {
         {activeTab === "auctions" && (
           <View className="px-4 pt-4 gap-4">
             <Text className="text-lg font-semibold text-foreground">🔨 Aktive Auktionen</Text>
-            
-            {MOCK_AUCTIONS.map(auction => (
-              <TouchableOpacity 
-                key={auction.id}
-                className="bg-surface rounded-xl p-4 border border-border"
-              >
-                <View className="flex-row gap-3">
-                  <View className="w-16 h-16 rounded-lg bg-background items-center justify-center">
-                    <Text className="text-2xl">{auction.image}</Text>
-                  </View>
-                  <View className="flex-1">
-                    <Text className="text-base font-semibold text-foreground" numberOfLines={2}>
-                      {auction.title}
-                    </Text>
-                    <Text className="text-xs text-muted">{auction.vendor}</Text>
-                    
-                    <View className="flex-row items-center justify-between mt-2">
-                      <View>
-                        <Text className="text-xs text-muted">Aktuelles Gebot</Text>
-                        <Text className="text-lg font-bold text-primary">€{auction.currentBid}</Text>
-                      </View>
-                      <View className="items-end">
-                        <Text className="text-xs text-muted">{auction.bids} Gebote</Text>
-                        <View className="flex-row items-center gap-1 mt-1">
-                          <IconSymbol name="clock.fill" size={12} color={colors.error} />
-                          <Text className="text-sm font-medium text-error">{auction.timeLeft}</Text>
+
+            {auctionsQuery.isLoading ? (
+              <ActivityIndicator size="large" color={colors.primary} />
+            ) : (
+              auctions.map(auction => (
+                <TouchableOpacity
+                  key={auction.id}
+                  className="bg-surface rounded-xl p-4 border border-border"
+                >
+                  <View className="flex-row gap-3">
+                    <View className="w-16 h-16 rounded-lg bg-background items-center justify-center">
+                      <Text className="text-2xl">{auction.imageUrl || "🏆"}</Text>
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-base font-semibold text-foreground" numberOfLines={2}>
+                        {auction.title}
+                      </Text>
+                      <Text className="text-xs text-muted">Vendor #{auction.vendorId}</Text>
+
+                      <View className="flex-row items-center justify-between mt-2">
+                        <View>
+                          <Text className="text-xs text-muted">Aktuelles Gebot</Text>
+                          <Text className="text-lg font-bold text-primary">€{Number(auction.currentPrice).toFixed(2)}</Text>
+                        </View>
+                        <View className="items-end">
+                          <Text className="text-xs text-muted">{auction.totalBids} Gebote</Text>
                         </View>
                       </View>
                     </View>
                   </View>
-                </View>
-                
-                <TouchableOpacity className="bg-primary mt-3 py-2 rounded-lg">
-                  <Text className="text-center text-sm font-semibold text-white">Gebot abgeben</Text>
+
+                  <TouchableOpacity className="bg-primary mt-3 py-2 rounded-lg">
+                    <Text className="text-center text-sm font-semibold text-white">Gebot abgeben</Text>
+                  </TouchableOpacity>
                 </TouchableOpacity>
-              </TouchableOpacity>
-            ))}
+              )))}
           </View>
         )}
 
@@ -395,63 +262,65 @@ export default function MarketplaceScreen() {
         {activeTab === "raffles" && (
           <View className="px-4 pt-4 gap-4">
             <Text className="text-lg font-semibold text-foreground">🎁 Aktive Verlosungen</Text>
-            
-            {MOCK_RAFFLES.map(raffle => (
-              <View 
-                key={raffle.id}
-                className="bg-surface rounded-xl p-4 border border-border"
-              >
-                <View className="flex-row gap-3 mb-3">
-                  <View className="w-16 h-16 rounded-lg bg-primary/20 items-center justify-center">
-                    <Text className="text-2xl">{raffle.image}</Text>
-                  </View>
-                  <View className="flex-1">
-                    <Text className="text-base font-semibold text-foreground" numberOfLines={2}>
-                      {raffle.title}
-                    </Text>
-                    <Text className="text-xs text-muted">{raffle.vendor}</Text>
-                    <Text className="text-xs text-primary mt-1">{raffle.prize}</Text>
-                  </View>
-                </View>
 
-                {/* Progress */}
-                <View className="mb-3">
-                  <View className="flex-row justify-between mb-1">
-                    <Text className="text-xs text-muted">Verkaufte Lose</Text>
-                    <Text className="text-xs text-foreground">{raffle.ticketsSold}/{raffle.totalTickets}</Text>
+            {rafflesQuery.isLoading ? (
+              <ActivityIndicator size="large" color={colors.primary} />
+            ) : (
+              raffles.map(raffle => (
+                <View
+                  key={raffle.id}
+                  className="bg-surface rounded-xl p-4 border border-border"
+                >
+                  <View className="flex-row gap-3 mb-3">
+                    <View className="w-16 h-16 rounded-lg bg-primary/20 items-center justify-center">
+                      <Text className="text-2xl">{raffle.imageUrl || "🎁"}</Text>
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-base font-semibold text-foreground" numberOfLines={2}>
+                        {raffle.title}
+                      </Text>
+                      <Text className="text-xs text-muted">Vendor #{raffle.vendorId}</Text>
+                      <Text className="text-xs text-primary mt-1">{raffle.prize}</Text>
+                    </View>
                   </View>
-                  <View className="h-2 bg-background rounded-full overflow-hidden">
-                    <View 
-                      className="h-full bg-primary rounded-full"
-                      style={{ width: `${(raffle.ticketsSold / raffle.totalTickets) * 100}%` }}
-                    />
-                  </View>
-                </View>
 
-                <View className="flex-row items-center justify-between">
-                  <View>
-                    <Text className="text-xs text-muted">Lospreis</Text>
-                    <Text className="text-lg font-bold text-primary">€{raffle.ticketPrice.toFixed(2)}</Text>
+                  {/* Progress */}
+                  <View className="mb-3">
+                    <View className="flex-row justify-between mb-1">
+                      <Text className="text-xs text-muted">Verkaufte Lose</Text>
+                      <Text className="text-xs text-foreground">{raffle.totalEntries}/{raffle.maxEntries}</Text>
+                    </View>
+                    <View className="h-2 bg-background rounded-full overflow-hidden">
+                      <View
+                        className="h-full bg-primary rounded-full"
+                        style={{ width: `${(Number(raffle.totalEntries) / Number(raffle.maxEntries)) * 100}%` }}
+                      />
+                    </View>
                   </View>
-                  <View className="items-end">
-                    <Text className="text-xs text-muted">Endet in</Text>
-                    <Text className="text-sm font-medium text-foreground">{raffle.endsIn}</Text>
-                  </View>
-                </View>
 
-                <View className="flex-row gap-2 mt-3">
-                  <TouchableOpacity className="flex-1 bg-surface border border-primary py-2 rounded-lg">
-                    <Text className="text-center text-sm font-semibold text-primary">1 Los</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity className="flex-1 bg-primary py-2 rounded-lg">
-                    <Text className="text-center text-sm font-semibold text-white">5 Lose</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity className="flex-1 bg-warning py-2 rounded-lg">
-                    <Text className="text-center text-sm font-semibold text-white">10 Lose</Text>
-                  </TouchableOpacity>
+                  <View className="flex-row items-center justify-between">
+                    <View>
+                      <Text className="text-xs text-muted">Lospreis</Text>
+                      <Text className="text-lg font-bold text-primary">€{Number(raffle.entryFee).toFixed(2)}</Text>
+                    </View>
+                    <View className="items-end">
+                      {/* Ends in logic simplified */}
+                    </View>
+                  </View>
+
+                  <View className="flex-row gap-2 mt-3">
+                    <TouchableOpacity className="flex-1 bg-surface border border-primary py-2 rounded-lg">
+                      <Text className="text-center text-sm font-semibold text-primary">1 Los</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity className="flex-1 bg-primary py-2 rounded-lg">
+                      <Text className="text-center text-sm font-semibold text-white">5 Lose</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity className="flex-1 bg-warning py-2 rounded-lg">
+                      <Text className="text-center text-sm font-semibold text-white">10 Lose</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            ))}
+              )))}
           </View>
         )}
 
@@ -459,9 +328,9 @@ export default function MarketplaceScreen() {
         {activeTab === "deals" && (
           <View className="px-4 pt-4 gap-4">
             <Text className="text-lg font-semibold text-foreground">🔥 Exklusive Deals</Text>
-            
+
             {MOCK_DEALS.map(deal => (
-              <View 
+              <View
                 key={deal.id}
                 className="bg-surface rounded-xl overflow-hidden border border-border"
               >
@@ -517,9 +386,9 @@ export default function MarketplaceScreen() {
           <View className="px-4 pt-4 gap-4">
             <Text className="text-lg font-semibold text-foreground">🌿 Sorten-Datenbank</Text>
             <Text className="text-sm text-muted">Die besten Sorten mit Bewertungen und Kauflinks</Text>
-            
+
             {STRAINS_DATABASE.slice(0, 6).map(strain => (
-              <TouchableOpacity 
+              <TouchableOpacity
                 key={strain.id}
                 className="bg-surface rounded-xl p-4 border border-border"
               >
@@ -530,20 +399,18 @@ export default function MarketplaceScreen() {
                   <View className="flex-1">
                     <View className="flex-row items-center gap-2">
                       <Text className="text-base font-semibold text-foreground">{strain.name}</Text>
-                      <View className={`px-2 py-0.5 rounded ${
-                        strain.type === "indica" ? "bg-purple-500/20" :
+                      <View className={`px-2 py-0.5 rounded ${strain.type === "indica" ? "bg-purple-500/20" :
                         strain.type === "sativa" ? "bg-orange-500/20" : "bg-green-500/20"
-                      }`}>
-                        <Text className={`text-xs capitalize ${
-                          strain.type === "indica" ? "text-purple-400" :
-                          strain.type === "sativa" ? "text-orange-400" : "text-green-400"
                         }`}>
+                        <Text className={`text-xs capitalize ${strain.type === "indica" ? "text-purple-400" :
+                          strain.type === "sativa" ? "text-orange-400" : "text-green-400"
+                          }`}>
                           {strain.type}
                         </Text>
                       </View>
                     </View>
                     <Text className="text-xs text-muted">{strain.breeder}</Text>
-                    
+
                     <View className="flex-row items-center gap-4 mt-2">
                       <View className="flex-row items-center gap-1">
                         <Text className="text-xs text-muted">THC:</Text>
@@ -564,11 +431,10 @@ export default function MarketplaceScreen() {
                       <Text className="text-xs text-muted">Schwierigkeit:</Text>
                       <View className="flex-row gap-1">
                         {[1, 2, 3, 4, 5].map(i => (
-                          <View 
+                          <View
                             key={i}
-                            className={`w-3 h-3 rounded-full ${
-                              i <= (strain.difficulty === 'beginner' ? 1 : strain.difficulty === 'intermediate' ? 2 : strain.difficulty === 'advanced' ? 3 : 4) ? 'bg-primary' : 'bg-border'
-                            }`}
+                            className={`w-3 h-3 rounded-full ${i <= (strain.difficulty === 'beginner' ? 1 : strain.difficulty === 'intermediate' ? 2 : strain.difficulty === 'advanced' ? 3 : 4) ? 'bg-primary' : 'bg-border'
+                              }`}
                           />
                         ))}
                       </View>
@@ -582,7 +448,7 @@ export default function MarketplaceScreen() {
                   <View className="flex-row gap-2 mt-3 pt-3 border-t border-border">
                     <Text className="text-xs text-muted">Kaufen bei:</Text>
                     {strain.affiliateLinks.slice(0, 2).map((link, i) => (
-                      <TouchableOpacity 
+                      <TouchableOpacity
                         key={i}
                         className="bg-primary/20 px-2 py-1 rounded"
                         onPress={() => Linking.openURL(link.url)}
