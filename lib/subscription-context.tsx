@@ -78,6 +78,13 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   }, [refresh]);
 
   const upgradeTo = useCallback(async (newTier: SubscriptionTier) => {
+    // In production, only allow downgrade to free (cancellation).
+    // Upgrades to paid tiers must go through RevenueCat purchase flow
+    // which calls setTier directly after verification.
+    if (!__DEV__ && newTier !== "free") {
+      console.warn("[Subscription] Direct tier upgrade blocked in production. Use purchase flow.");
+      return;
+    }
     await saveSubscriptionTier(newTier);
     setTier(newTier);
   }, []);

@@ -220,42 +220,44 @@ export default function SettingsScreen() {
           </View>
         )}
 
-        {/* Debug Section (only in development) */}
-        <View className="bg-surface rounded-2xl border border-border mb-6 overflow-hidden">
-          <Text className="text-lg font-semibold text-foreground p-4 pb-2">Entwickler</Text>
-          
-          <TouchableOpacity 
-            className="flex-row items-center justify-between p-4 border-t border-border"
-            onPress={handleResetUsage}
-          >
-            <Text className="text-base text-foreground">Nutzung zurücksetzen</Text>
-            <IconSymbol name="chevron.right" size={20} color={colors.muted} />
-          </TouchableOpacity>
+        {/* Debug Section - only visible in development builds */}
+        {__DEV__ && (
+          <View className="bg-surface rounded-2xl border border-border mb-6 overflow-hidden">
+            <Text className="text-lg font-semibold text-foreground p-4 pb-2">Entwickler</Text>
 
-          <TouchableOpacity 
-            className="flex-row items-center justify-between p-4 border-t border-border"
-            onPress={() => upgradeTo("premium")}
-          >
-            <Text className="text-base text-foreground">Test: Premium aktivieren</Text>
-            <IconSymbol name="chevron.right" size={20} color={colors.muted} />
-          </TouchableOpacity>
+            <TouchableOpacity
+              className="flex-row items-center justify-between p-4 border-t border-border"
+              onPress={handleResetUsage}
+            >
+              <Text className="text-base text-foreground">Nutzung zurücksetzen</Text>
+              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+            </TouchableOpacity>
 
-          <TouchableOpacity 
-            className="flex-row items-center justify-between p-4 border-t border-border"
-            onPress={() => upgradeTo("pro")}
-          >
-            <Text className="text-base text-foreground">Test: Pro aktivieren</Text>
-            <IconSymbol name="chevron.right" size={20} color={colors.muted} />
-          </TouchableOpacity>
+            <TouchableOpacity
+              className="flex-row items-center justify-between p-4 border-t border-border"
+              onPress={() => upgradeTo("premium")}
+            >
+              <Text className="text-base text-foreground">Test: Premium aktivieren</Text>
+              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+            </TouchableOpacity>
 
-          <TouchableOpacity 
-            className="flex-row items-center justify-between p-4 border-t border-border"
-            onPress={() => upgradeTo("free")}
-          >
-            <Text className="text-base text-foreground">Test: Free zurücksetzen</Text>
-            <IconSymbol name="chevron.right" size={20} color={colors.muted} />
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              className="flex-row items-center justify-between p-4 border-t border-border"
+              onPress={() => upgradeTo("pro")}
+            >
+              <Text className="text-base text-foreground">Test: Pro aktivieren</Text>
+              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className="flex-row items-center justify-between p-4 border-t border-border"
+              onPress={() => upgradeTo("free")}
+            >
+              <Text className="text-base text-foreground">Test: Free zurücksetzen</Text>
+              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+            </TouchableOpacity>
+          </View>
+        )}
 
         {/* Legal Section */}
         <View className="bg-surface rounded-2xl border border-border mb-6 overflow-hidden">

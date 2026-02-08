@@ -41,7 +41,7 @@ export default function PaywallScreen() {
 
   const handlePurchase = async () => {
     const pkg = getSelectedPackage();
-    
+
     // Wenn RevenueCat-Paket verfügbar, nutze echten Kauf
     if (pkg && !isWeb) {
       try {
@@ -50,15 +50,31 @@ export default function PaywallScreen() {
           router.back();
         }
       } catch (error) {
-        // Fallback wenn RevenueCat fehlschlägt
-        console.log("[Paywall] RevenueCat failed, using demo mode");
-        showDemoUpgrade();
+        console.log("[Paywall] RevenueCat purchase failed:", error);
+        if (__DEV__) {
+          // Demo-Modus nur in Entwicklungsbuilds
+          showDemoUpgrade();
+        } else {
+          Alert.alert(
+            "Kauf fehlgeschlagen",
+            "Der Kauf konnte nicht abgeschlossen werden. Bitte versuche es später erneut.",
+            [{ text: "OK" }]
+          );
+        }
       }
       return;
     }
-    
-    // Fallback für Web oder wenn keine Pakete geladen
-    showDemoUpgrade();
+
+    // Web oder keine Pakete geladen
+    if (__DEV__) {
+      showDemoUpgrade();
+    } else {
+      Alert.alert(
+        "Nicht verfügbar",
+        "In-App-Käufe sind derzeit nicht verfügbar. Bitte versuche es später erneut.",
+        [{ text: "OK" }]
+      );
+    }
   };
 
   const showDemoUpgrade = () => {
