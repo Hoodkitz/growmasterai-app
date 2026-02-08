@@ -72,4 +72,8 @@ tmp_*
 *.keystore
 credentials.json
 google-play-service-account.json
+
+# Build artifacts
+*.aab
+*.apk
 # Rollback zu v1.7.1 - Wed Jan  7 17:05:27 EST 2026
