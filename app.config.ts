@@ -62,6 +62,7 @@ const config: ExpoConfig = {
   },
   plugins: [
     "expo-router",
+    "react-native-purchases",
     [
       "expo-camera",
       {

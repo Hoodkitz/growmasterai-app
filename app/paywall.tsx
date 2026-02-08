@@ -6,11 +6,12 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
 import { usePurchases, useOfferings } from "@/lib/purchase-context";
-import { 
-  SubscriptionTier, 
-  TIER_INFO, 
+import { getOfferings as fetchOfferings } from "@/lib/purchases";
+import {
+  SubscriptionTier,
+  TIER_INFO,
   TIER_PRICING,
-  TIER_LIMITS 
+  TIER_LIMITS
 } from "@/lib/subscription";
 import { formatPrice, calculateYearlySavings } from "@/lib/purchases";
 
@@ -20,7 +21,7 @@ export default function PaywallScreen() {
   const router = useRouter();
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { tier: currentTier, upgradeTo } = useSubscription();
+  const { tier: currentTier } = useSubscription();
   const { purchase, restore, isLoading } = usePurchases();
   const { premiumMonthly, premiumYearly, proMonthly, proYearly } = useOfferings();
   
@@ -40,7 +41,22 @@ export default function PaywallScreen() {
   };
 
   const handlePurchase = async () => {
-    const pkg = getSelectedPackage();
+    let pkg = getSelectedPackage();
+
+    // Falls Pakete noch nicht geladen, nochmal versuchen
+    if (!pkg && !isWeb) {
+      try {
+        const freshOffering = await fetchOfferings();
+        if (freshOffering) {
+          const freshPkg = selectedTier === "premium"
+            ? (billingPeriod === "yearly" ? freshOffering.annual : freshOffering.monthly)
+            : (billingPeriod === "yearly" ? freshOffering.annual : freshOffering.monthly);
+          if (freshPkg) pkg = freshPkg;
+        }
+      } catch (e) {
+        console.log("[Paywall] Failed to refresh offerings:", e);
+      }
+    }
 
     // Wenn RevenueCat-Paket verfügbar, nutze echten Kauf
     if (pkg && !isWeb) {
@@ -51,51 +67,29 @@ export default function PaywallScreen() {
         }
       } catch (error) {
         console.log("[Paywall] RevenueCat purchase failed:", error);
-        if (__DEV__) {
-          // Demo-Modus nur in Entwicklungsbuilds
-          showDemoUpgrade();
-        } else {
-          Alert.alert(
-            "Kauf fehlgeschlagen",
-            "Der Kauf konnte nicht abgeschlossen werden. Bitte versuche es später erneut.",
-            [{ text: "OK" }]
-          );
-        }
+        Alert.alert(
+          "Kauf fehlgeschlagen",
+          "Der Kauf konnte nicht abgeschlossen werden. Bitte versuche es später erneut.",
+          [{ text: "OK" }]
+        );
       }
       return;
     }
 
-    // Web oder keine Pakete geladen
-    if (__DEV__) {
-      showDemoUpgrade();
-    } else {
+    // Keine Pakete verfügbar - Hinweis anzeigen
+    if (isWeb) {
       Alert.alert(
         "Nicht verfügbar",
-        "In-App-Käufe sind derzeit nicht verfügbar. Bitte versuche es später erneut.",
+        "In-App-Käufe sind nur in der mobilen App verfügbar. Bitte lade die App aus dem Google Play Store.",
+        [{ text: "OK" }]
+      );
+    } else {
+      Alert.alert(
+        "Verbindungsfehler",
+        "Die Abo-Pakete konnten nicht geladen werden. Bitte prüfe deine Internetverbindung und versuche es erneut.",
         [{ text: "OK" }]
       );
     }
-  };
-
-  const showDemoUpgrade = () => {
-    Alert.alert(
-      "Demo-Modus",
-      `In-App-Käufe sind noch nicht mit dem App Store verbunden.\n\nMöchtest du ${TIER_INFO[selectedTier].name} im Demo-Modus testen?`,
-      [
-        { text: "Abbrechen", style: "cancel" },
-        {
-          text: "Demo aktivieren",
-          onPress: async () => {
-            await upgradeTo(selectedTier);
-            Alert.alert(
-              "Demo aktiviert!",
-              `Du testest jetzt ${TIER_INFO[selectedTier].name} Features.\n\nHinweis: Dies ist nur eine Demo. Für echte Käufe muss die App mit dem App Store verbunden werden.`,
-              [{ text: "OK", onPress: () => router.back() }]
-            );
-          },
-        },
-      ]
-    );
   };
 
   const handleRestore = async () => {

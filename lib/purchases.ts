@@ -8,8 +8,8 @@ import Purchases, {
 } from "react-native-purchases";
 
 // RevenueCat API Keys
-// SDK API Key - set via REVENUECAT_API_KEY in .env
-const REVENUECAT_API_KEY = process.env.REVENUECAT_API_KEY || "";
+// SDK API Key - must use EXPO_PUBLIC_ prefix for client-side access
+const REVENUECAT_API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY || "";
 
 // Produkt-IDs für die Abos (wie angefordert)
 export const PRODUCT_IDS = {
