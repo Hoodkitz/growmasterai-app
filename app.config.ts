@@ -1,30 +1,19 @@
 import type { ExpoConfig } from "expo/config";
 // Environment variables are loaded automatically by Expo
 
-// Bundle ID format: space.manus.<project_name_dots>.<timestamp>
-// e.g., "my-app" created at 2024-01-15 10:30:45 -> "space.manus.my.app.t20240115103045"
-const bundleId = "space.manus.growmaster.app.t20251231214615";
-// Extract timestamp from bundle ID and prefix with "manus" for deep link scheme
-// e.g., "space.manus.my.app.t20240115103045" -> "manus20240115103045"
-const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
-const schemeFromBundleId = `manus${timestamp}`;
-
 const env = {
-  // App branding - update these values directly (do not use env vars)
   appName: "GrowMaster AI",
   appSlug: "growmaster-app",
-  // S3 URL of the app logo - set this to the URL returned by generate_image when creating custom logo
-  // Leave empty to use the default icon from assets/images/icon.png
-  logoUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663241359705/RYegdTrfncoCCVhY.png",
-  scheme: schemeFromBundleId,
-  iosBundleId: bundleId,
-  androidPackage: bundleId,
+  scheme: "growmasterai",
+  iosBundleId: "com.growmasterai.app",
+  androidPackage: "com.growmasterai.app",
 };
 
 const config: ExpoConfig = {
   name: env.appName,
   slug: env.appSlug,
   version: "1.0.0",
+  runtimeVersion: "1.0.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: env.scheme,
@@ -50,6 +39,7 @@ const config: ExpoConfig = {
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: env.androidPackage,
+    versionCode: 1,
     permissions: ["POST_NOTIFICATIONS"],
     intentFilters: [
       {
@@ -115,9 +105,9 @@ const config: ExpoConfig = {
       {
         android: {
           buildArchs: ["armeabi-v7a", "arm64-v8a"],
-          compileSdkVersion: 34,
-          targetSdkVersion: 34,
-          minSdkVersion: 23,
+          compileSdkVersion: 35,
+          targetSdkVersion: 35,
+          minSdkVersion: 24,
         },
       },
     ],

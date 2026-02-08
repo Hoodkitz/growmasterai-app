@@ -367,11 +367,9 @@ pnpm dev:server
 
 ## 📝 Known Issues
 
-- TypeScript strict mode warnings (non-critical)
 - iOS camera permission sometimes requires app restart
-- RevenueCat sandbox mode required for testing
-
-See `todo.md` for detailed roadmap.
+- RevenueCat sandbox mode required for testing purchases
+- Web export has SSR limitations for some routes (mobile builds unaffected)
 
 ## 🤝 Contributing
 

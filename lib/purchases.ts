@@ -8,8 +8,8 @@ import Purchases, {
 } from "react-native-purchases";
 
 // RevenueCat API Keys
-// SDK API Key (Google Play)
-const REVENUECAT_API_KEY = process.env.REVENUECAT_API_KEY || "goog_KaRWjmufAmhheobtrxzlqQKNyjC";
+// SDK API Key - set via REVENUECAT_API_KEY in .env
+const REVENUECAT_API_KEY = process.env.REVENUECAT_API_KEY || "";
 
 // Produkt-IDs für die Abos (wie angefordert)
 export const PRODUCT_IDS = {

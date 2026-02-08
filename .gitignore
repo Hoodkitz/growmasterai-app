@@ -30,7 +30,9 @@ yarn-error.*
 *.pem
 
 # local env files
-.env*.local
+.env
+.env.*
+!.env.example
 
 # typescript
 *.tsbuildinfo
@@ -59,4 +61,9 @@ Thumbs.db
 *.tgz
 *.tar.gz
 .cache/
+dist/
+web-build/
+
+# Temp files
+tmp_*
 # Rollback zu v1.7.1 - Wed Jan  7 17:05:27 EST 2026
