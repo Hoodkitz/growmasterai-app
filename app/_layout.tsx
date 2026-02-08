@@ -91,17 +91,17 @@ export default function RootLayout() {
     });
   }, []);
 
-  // Show nothing while checking
-  if (onboardingComplete === null) {
-    return null;
-  }
-
   // Redirect to onboarding if not completed
   React.useEffect(() => {
     if (onboardingComplete === false) {
       router.replace('/onboarding');
     }
   }, [onboardingComplete]);
+
+  // Show nothing while checking
+  if (onboardingComplete === null) {
+    return null;
+  }
 
   const content = (
     <GestureHandlerRootView style={{ flex: 1 }}>
