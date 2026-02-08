@@ -1,19 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, Text, View, TouchableOpacity, Alert, ActivityIndicator, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
-import { usePurchases, useOfferings } from "@/lib/purchase-context";
-import { getOfferings as fetchOfferings } from "@/lib/purchases";
 import {
-  SubscriptionTier,
   TIER_INFO,
   TIER_PRICING,
-  TIER_LIMITS
 } from "@/lib/subscription";
-import { formatPrice, calculateYearlySavings } from "@/lib/purchases";
+import {
+  initializePurchases,
+  getOfferings,
+  purchasePackage,
+  restorePurchases,
+  formatPrice,
+  getSubscriptionStatus,
+  isPurchasesAvailable,
+  getPurchaseErrorMessage,
+} from "@/lib/purchases";
 
 type BillingPeriod = "monthly" | "yearly";
 
@@ -21,100 +26,132 @@ export default function PaywallScreen() {
   const router = useRouter();
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { tier: currentTier } = useSubscription();
-  const { purchase, restore, isLoading } = usePurchases();
-  const { premiumMonthly, premiumYearly, proMonthly, proYearly } = useOfferings();
-  
+  const { tier: currentTier, setTier } = useSubscription();
+
   const [selectedTier, setSelectedTier] = useState<"premium" | "pro">("premium");
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("yearly");
+  const [isLoading, setIsLoading] = useState(false);
   const [restoring, setRestoring] = useState(false);
+  const [offerings, setOfferings] = useState<any>(null);
+  const [rcReady, setRcReady] = useState(false);
 
-  const isWeb = Platform.OS === "web";
+  // Initialisiere RevenueCat und lade Offerings beim Öffnen der Paywall
+  useEffect(() => {
+    if (Platform.OS === "web") return;
 
-  // Hole das ausgewählte Paket für RevenueCat
+    let cancelled = false;
+    (async () => {
+      const ok = await initializePurchases();
+      if (cancelled) return;
+      setRcReady(ok);
+
+      if (ok) {
+        const off = await getOfferings();
+        if (!cancelled) setOfferings(off);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, []);
+
+  // Finde das richtige Paket aus dem Offering
   const getSelectedPackage = () => {
-    if (selectedTier === "premium") {
-      return billingPeriod === "yearly" ? premiumYearly : premiumMonthly;
-    } else {
-      return billingPeriod === "yearly" ? proYearly : proMonthly;
+    if (!offerings) return null;
+    const packages = offerings.availablePackages || [];
+
+    if (billingPeriod === "yearly") {
+      return offerings.annual ?? packages.find((p: any) => p.identifier === "$rc_annual") ?? null;
     }
+    return offerings.monthly ?? packages.find((p: any) => p.identifier === "$rc_monthly") ?? null;
   };
 
   const handlePurchase = async () => {
-    let pkg = getSelectedPackage();
+    const pkg = getSelectedPackage();
 
-    // Falls Pakete noch nicht geladen, nochmal versuchen
-    if (!pkg && !isWeb) {
+    if (pkg) {
+      setIsLoading(true);
       try {
-        const freshOffering = await fetchOfferings();
-        if (freshOffering) {
-          const freshPkg = selectedTier === "premium"
-            ? (billingPeriod === "yearly" ? freshOffering.annual : freshOffering.monthly)
-            : (billingPeriod === "yearly" ? freshOffering.annual : freshOffering.monthly);
-          if (freshPkg) pkg = freshPkg;
-        }
-      } catch (e) {
-        console.log("[Paywall] Failed to refresh offerings:", e);
-      }
-    }
+        const result = await purchasePackage(pkg);
 
-    // Wenn RevenueCat-Paket verfügbar, nutze echten Kauf
-    if (pkg && !isWeb) {
-      try {
-        const success = await purchase(pkg);
-        if (success) {
-          router.back();
+        if (result.success) {
+          // Sync tier from RevenueCat
+          const status = await getSubscriptionStatus();
+          setTier(status.tier);
+          Alert.alert(
+            "Kauf erfolgreich!",
+            `Willkommen bei GrowMaster ${status.tier === "pro" ? "Pro" : "Premium"}! Alle Features sind jetzt freigeschaltet.`,
+            [{ text: "OK", onPress: () => router.back() }]
+          );
+        } else if (result.userCancelled) {
+          // User hat abgebrochen — kein Alert nötig
+        } else {
+          Alert.alert("Kauf fehlgeschlagen", getPurchaseErrorMessage({ message: result.error }));
         }
-      } catch (error) {
-        console.log("[Paywall] RevenueCat purchase failed:", error);
-        Alert.alert(
-          "Kauf fehlgeschlagen",
-          "Der Kauf konnte nicht abgeschlossen werden. Bitte versuche es später erneut.",
-          [{ text: "OK" }]
-        );
+      } catch (error: any) {
+        Alert.alert("Fehler", getPurchaseErrorMessage(error));
+      } finally {
+        setIsLoading(false);
       }
       return;
     }
 
-    // Keine Pakete verfügbar - Hinweis anzeigen
-    if (isWeb) {
+    // Kein Paket verfügbar
+    if (!rcReady) {
       Alert.alert(
         "Nicht verfügbar",
-        "In-App-Käufe sind nur in der mobilen App verfügbar. Bitte lade die App aus dem Google Play Store.",
+        "In-App-Käufe konnten nicht initialisiert werden. Bitte stelle sicher, dass du eine aktive Internetverbindung hast und versuche es erneut.",
         [{ text: "OK" }]
       );
     } else {
       Alert.alert(
-        "Verbindungsfehler",
-        "Die Abo-Pakete konnten nicht geladen werden. Bitte prüfe deine Internetverbindung und versuche es erneut.",
+        "Keine Pakete gefunden",
+        "Die Abo-Pakete konnten nicht geladen werden. Bitte versuche es später erneut.",
         [{ text: "OK" }]
       );
     }
   };
 
   const handleRestore = async () => {
-    if (isWeb) {
+    if (Platform.OS === "web") {
       Alert.alert("Nicht verfügbar", "Käufe können nur in der mobilen App wiederhergestellt werden.");
       return;
     }
+
     setRestoring(true);
-    await restore();
-    setRestoring(false);
+    try {
+      if (!rcReady) {
+        const ok = await initializePurchases();
+        if (!ok) {
+          Alert.alert("Fehler", "RevenueCat konnte nicht initialisiert werden.");
+          setRestoring(false);
+          return;
+        }
+      }
+
+      const result = await restorePurchases();
+      if (result.success && result.hasActiveEntitlement) {
+        const status = await getSubscriptionStatus();
+        setTier(status.tier);
+        Alert.alert("Käufe wiederhergestellt!", `Dein Abo wurde wiederhergestellt.`);
+      } else {
+        Alert.alert("Keine Käufe gefunden", "Es wurden keine aktiven Abonnements für dieses Konto gefunden.");
+      }
+    } catch (error) {
+      Alert.alert("Fehler", "Käufe konnten nicht wiederhergestellt werden.");
+    } finally {
+      setRestoring(false);
+    }
   };
 
   const pricing = TIER_PRICING[selectedTier];
-  
-  // Preis: Nutze RevenueCat wenn verfügbar, sonst Fallback
+
+  // Preis: Nutze RevenueCat wenn verfügbar, sonst Fallback-Preise
   const getDisplayPrice = () => {
     const pkg = getSelectedPackage();
-    if (pkg) {
-      return formatPrice(pkg);
-    }
+    if (pkg) return formatPrice(pkg);
     const price = billingPeriod === "monthly" ? pricing.monthly : pricing.yearly;
     return `€${price.toFixed(2)}`;
   };
-
-  const monthlyPrice = billingPeriod === "monthly" ? pricing.monthly : pricing.yearlyMonthly;
 
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
@@ -133,8 +170,8 @@ export default function PaywallScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView 
-        className="flex-1" 
+      <ScrollView
+        className="flex-1"
         contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 100 }}
         showsVerticalScrollIndicator={false}
       >
@@ -215,7 +252,7 @@ export default function PaywallScreen() {
                 )}
               </View>
             </View>
-            
+
             <View className="flex-row items-baseline gap-1 mb-3">
               <Text className="text-3xl font-bold text-foreground">
                 €{billingPeriod === "monthly" ? TIER_PRICING.premium.monthly.toFixed(2) : TIER_PRICING.premium.yearlyMonthly.toFixed(2)}
@@ -261,7 +298,7 @@ export default function PaywallScreen() {
                 )}
               </View>
             </View>
-            
+
             <View className="flex-row items-baseline gap-1 mb-3">
               <Text className="text-3xl font-bold text-foreground">
                 €{billingPeriod === "monthly" ? TIER_PRICING.pro.monthly.toFixed(2) : TIER_PRICING.pro.yearlyMonthly.toFixed(2)}
@@ -286,7 +323,7 @@ export default function PaywallScreen() {
         {/* Feature Comparison */}
         <View className="bg-surface rounded-2xl p-4 border border-border mb-6">
           <Text className="text-lg font-semibold text-foreground mb-4">Vergleich</Text>
-          
+
           <View className="gap-3">
             <View className="flex-row justify-between items-center py-2 border-b border-border">
               <Text className="text-foreground">Diagnosen/Tag</Text>
@@ -317,11 +354,11 @@ export default function PaywallScreen() {
               <View className="flex-row gap-4">
                 <Text className="text-muted w-16 text-center">—</Text>
                 <Text className="text-muted w-16 text-center">—</Text>
-                <IconSymbol name="checkmark.circle.fill" size={16} color={colors.warning} style={{ width: 64, textAlign: "center" }} />
+                <IconSymbol name="checkmark.circle.fill" size={16} color={colors.warning} style={{ width: 64, textAlign: "center" } as any} />
               </View>
             </View>
           </View>
-          
+
           <View className="flex-row justify-end gap-4 mt-2">
             <Text className="text-xs text-muted w-16 text-center">Free</Text>
             <Text className="text-xs text-primary w-16 text-center">Premium</Text>
@@ -355,13 +392,13 @@ export default function PaywallScreen() {
 
         {/* Legal Text */}
         <Text className="text-xs text-muted text-center leading-5">
-          Die Zahlung wird über deinen {Platform.OS === "ios" ? "Apple" : Platform.OS === "android" ? "Google" : "App Store"} Account abgerechnet. 
+          Die Zahlung wird über deinen {Platform.OS === "ios" ? "Apple" : Platform.OS === "android" ? "Google" : "App Store"} Account abgerechnet.
           Das Abo verlängert sich automatisch, wenn es nicht mindestens 24 Stunden vor Ablauf gekündigt wird.
         </Text>
       </ScrollView>
 
       {/* Purchase Button */}
-      <View 
+      <View
         className="absolute bottom-0 left-0 right-0 bg-background border-t border-border px-4 py-4"
         style={{ paddingBottom: insets.bottom + 16 }}
       >

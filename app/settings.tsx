@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
-import { TIER_INFO, TIER_LIMITS, TIER_PRICING, SubscriptionTier } from "@/lib/subscription";
+import { TIER_INFO, TIER_LIMITS, TIER_PRICING } from "@/lib/subscription";
 import { useAppAuth } from "@/lib/auth-context";
 
 export default function SettingsScreen() {
