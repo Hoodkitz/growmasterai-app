@@ -66,4 +66,10 @@ web-build/
 
 # Temp files
 tmp_*
+
+# Signing keys and credentials
+*.jks
+*.keystore
+credentials.json
+google-play-service-account.json
 # Rollback zu v1.7.1 - Wed Jan  7 17:05:27 EST 2026
