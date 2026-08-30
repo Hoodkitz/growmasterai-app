@@ -15,8 +15,7 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk",
-        "gradleCommand": ":app:assembleRelease",
-        "credentialsSource": "local"
+        "gradleCommand": ":app:assembleRelease"
       },
       "ios": {
         "simulator": false
