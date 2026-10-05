@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, decimal, json } from "drizzle-orm/mysql-core";
+import { int, bigint, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, decimal, json, uniqueIndex } from "drizzle-orm/mysql-core";
 
 /**
  * GrowMaster AI - Database Schema
@@ -34,6 +34,7 @@ export const users = mysqlTable("users", {
   level: int("level").default(1).notNull(),
   xp: int("xp").default(0).notNull(),
   streak: int("streak").default(0).notNull(),
+  longestStreak: int("longestStreak").default(0).notNull(),
   lastActiveAt: timestamp("lastActiveAt"),
 
   // Subscription
@@ -80,9 +81,16 @@ export const plants = mysqlTable("plants", {
   imageUrl: text("imageUrl"),
   isArchived: boolean("isArchived").default(false),
 
+  // Offline sync: client-generated id, client-side last-modified (epoch ms) and soft-delete marker (epoch ms)
+  clientId: varchar("clientId", { length: 64 }),
+  clientUpdatedAt: bigint("clientUpdatedAt", { mode: "number" }),
+  deletedAt: bigint("deletedAt", { mode: "number" }),
+
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (t) => ({
+  userClientUnique: uniqueIndex("plants_user_client_unique").on(t.userId, t.clientId),
+}));
 
 export type Plant = typeof plants.$inferSelect;
 export type InsertPlant = typeof plants.$inferInsert;
@@ -360,7 +368,10 @@ export const giveawayEntries = mysqlTable("giveawayEntries", {
   ticketCount: int("ticketCount").default(1),
 
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+}, (t) => ({
+  // one entry per user and raffle
+  giveawayUserUnique: uniqueIndex("giveawayEntries_giveaway_user_unique").on(t.giveawayId, t.userId),
+}));
 
 export type GiveawayEntry = typeof giveawayEntries.$inferSelect;
 export type InsertGiveawayEntry = typeof giveawayEntries.$inferInsert;
@@ -374,7 +385,7 @@ export const adBanners = mysqlTable("adBanners", {
   imageUrl: text("imageUrl").notNull(),
   targetUrl: text("targetUrl").notNull(),
 
-  placement: mysqlEnum("placement", ["home", "community", "strains", "tools"]).default("home").notNull(),
+  placement: mysqlEnum("placement", ["home", "community", "strains", "tools", "marketplace"]).default("home").notNull(),
 
   startsAt: timestamp("startsAt").notNull(),
   endsAt: timestamp("endsAt").notNull(),
@@ -459,3 +470,82 @@ export const leaderboardEntries = mysqlTable("leaderboardEntries", {
 
 export type LeaderboardEntry = typeof leaderboardEntries.$inferSelect;
 export type InsertLeaderboardEntry = typeof leaderboardEntries.$inferInsert;
+
+// ==================== USER CREDENTIALS (E-Mail/Passwort) ====================
+export const userCredentials = mysqlTable("user_credentials", {
+  openId: varchar("openId", { length: 64 }).primaryKey(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  passwordHash: varchar("passwordHash", { length: 255 }).notNull(),
+  emailVerifiedAt: timestamp("emailVerifiedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type UserCredential = typeof userCredentials.$inferSelect;
+export type InsertUserCredential = typeof userCredentials.$inferInsert;
+
+// ==================== POST LIKES ====================
+export const postLikes = mysqlTable("postLikes", {
+  id: int("id").autoincrement().primaryKey(),
+  postId: int("postId").notNull(),
+  userId: int("userId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (t) => ({
+  postUserUnique: uniqueIndex("postLikes_post_user_unique").on(t.postId, t.userId),
+}));
+
+export type PostLike = typeof postLikes.$inferSelect;
+export type InsertPostLike = typeof postLikes.$inferInsert;
+
+// ==================== VENDOR OUTREACH ====================
+export const vendorOutreach = mysqlTable("vendorOutreach", {
+  id: int("id").autoincrement().primaryKey(),
+  companyName: varchar("companyName", { length: 200 }).notNull(),
+  contactName: varchar("contactName", { length: 200 }),
+  email: varchar("email", { length: 320 }).notNull(),
+  website: varchar("website", { length: 500 }),
+  vendorType: mysqlEnum("vendorType", ["seedbank", "growshop", "headshop", "nutrient", "equipment", "other"]).default("other").notNull(),
+  country: varchar("country", { length: 8 }),
+  templateId: varchar("templateId", { length: 64 }).notNull(),
+  status: mysqlEnum("status", ["pending", "sent", "opened", "replied", "converted", "rejected"]).default("pending").notNull(),
+  notes: text("notes"),
+  sentAt: timestamp("sentAt"),
+  openedAt: timestamp("openedAt"),
+  repliedAt: timestamp("repliedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type VendorOutreachRecord = typeof vendorOutreach.$inferSelect;
+export type InsertVendorOutreach = typeof vendorOutreach.$inferInsert;
+
+// ==================== AUTH TOKENS (Passwort-Reset / E-Mail-Verifizierung) ====================
+// Only the SHA-256 hash of the token is stored; tokens are single-use (usedAt) and expire (expiresAt).
+export const authTokens = mysqlTable("auth_tokens", {
+  id: int("id").autoincrement().primaryKey(),
+  openId: varchar("openId", { length: 64 }).notNull(),
+  type: mysqlEnum("type", ["password_reset", "email_verify"]).notNull(),
+  tokenHash: varchar("tokenHash", { length: 64 }).notNull(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  usedAt: timestamp("usedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (t) => ({
+  tokenHashUnique: uniqueIndex("auth_tokens_hash_unique").on(t.tokenHash),
+}));
+
+export type AuthToken = typeof authTokens.$inferSelect;
+export type InsertAuthToken = typeof authTokens.$inferInsert;
+
+// ==================== PUSH TOKENS ====================
+export const pushTokens = mysqlTable("pushTokens", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  token: varchar("token", { length: 255 }).notNull(),
+  platform: varchar("platform", { length: 16 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (t) => ({
+  tokenUnique: uniqueIndex("pushTokens_token_unique").on(t.token),
+}));
+
+export type PushToken = typeof pushTokens.$inferSelect;
+export type InsertPushToken = typeof pushTokens.$inferInsert;

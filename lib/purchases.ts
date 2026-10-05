@@ -38,6 +38,14 @@ function loadNativeModule(): boolean {
   }
 }
 
+import {
+  ENTITLEMENT_PRO,
+  ENTITLEMENT_PREMIUM,
+  resolveTierFromEntitlements,
+  selectTierOfferings,
+  type PaidTier,
+} from "./entitlements";
+
 // Re-export types (type-only imports are safe — they're erased at compile time)
 export type { PurchasesOffering, PurchasesPackage, CustomerInfo } from "react-native-purchases";
 
@@ -51,9 +59,10 @@ export const PRODUCT_IDS = {
   LIFETIME: "lifetime",
 } as const;
 
-// Entitlement ID
+// Entitlement IDs (config-driven, siehe lib/entitlements.ts)
 export const ENTITLEMENTS = {
-  PRO: "GrowMaster AI Pro",
+  PRO: ENTITLEMENT_PRO,
+  PREMIUM: ENTITLEMENT_PREMIUM,
 } as const;
 
 export interface SubscriptionStatus {
@@ -87,8 +96,20 @@ export function isPurchasesAvailable(): boolean {
 /**
  * Initialisiert RevenueCat SDK
  */
-export async function initializePurchases(userId?: string): Promise<boolean> {
-  if (_initialized) return true;
+let _initPromise: Promise<boolean> | null = null;
+
+export function initializePurchases(userId?: string): Promise<boolean> {
+  if (_initialized) return Promise.resolve(true);
+  // Parallele Aufrufe (PurchaseProvider + Paywall) dürfen nicht doppelt konfigurieren
+  if (!_initPromise) {
+    _initPromise = doInitializePurchases(userId).finally(() => {
+      _initPromise = null;
+    });
+  }
+  return _initPromise;
+}
+
+async function doInitializePurchases(userId?: string): Promise<boolean> {
   if (!loadNativeModule()) return false;
   if (!REVENUECAT_API_KEY) {
     console.warn("[Purchases] No API key configured. Skipping initialization.");
@@ -135,6 +156,20 @@ export async function getOfferings(): Promise<any | null> {
 }
 
 /**
+ * Holt die Offerings je Tier (nur Tiers mit konfiguriertem Offering + Paketen).
+ */
+export async function getTierOfferings(): Promise<Partial<Record<PaidTier, any>>> {
+  if (!loadNativeModule() || !_initialized) return {};
+  try {
+    const offerings = await RCPurchases.getOfferings();
+    return selectTierOfferings(offerings.current, offerings.all);
+  } catch (error) {
+    console.error("[Purchases] Failed to get tier offerings:", error);
+    return {};
+  }
+}
+
+/**
  * Führt einen Kauf durch
  */
 export async function purchasePackage(pkg: any): Promise<{
@@ -154,8 +189,8 @@ export async function purchasePackage(pkg: any): Promise<{
     console.log("[Purchases] Attempting purchase:", pkg.identifier);
     const { customerInfo } = await RCPurchases.purchasePackage(pkg);
 
-    const isPro = customerInfo.entitlements.active[ENTITLEMENTS.PRO] !== undefined;
-    console.log("[Purchases] Purchase successful! Pro active:", isPro);
+    const { tier } = resolveTierFromEntitlements(Object.keys(customerInfo.entitlements.active));
+    console.log("[Purchases] Purchase successful! Tier:", tier);
 
     return { success: true, customerInfo };
   } catch (error: any) {
@@ -184,8 +219,9 @@ export async function restorePurchases(): Promise<{
     console.log("[Purchases] Restoring purchases...");
     const customerInfo = await RCPurchases.restorePurchases();
 
-    const hasActiveEntitlement = customerInfo.entitlements.active[ENTITLEMENTS.PRO] !== undefined;
-    console.log("[Purchases] Restore done. Pro active:", hasActiveEntitlement);
+    const { tier } = resolveTierFromEntitlements(Object.keys(customerInfo.entitlements.active));
+    const hasActiveEntitlement = tier !== "free";
+    console.log("[Purchases] Restore done. Tier:", tier);
 
     return { success: true, customerInfo, hasActiveEntitlement };
   } catch (error: any) {
@@ -202,12 +238,13 @@ export async function getSubscriptionStatus(): Promise<SubscriptionStatus> {
 
   try {
     const customerInfo = await RCPurchases.getCustomerInfo();
-    const proEntitlement = customerInfo.entitlements.active[ENTITLEMENTS.PRO];
+    const { tier, entitlementId } = resolveTierFromEntitlements(Object.keys(customerInfo.entitlements.active));
+    const proEntitlement = entitlementId ? customerInfo.entitlements.active[entitlementId] : undefined;
 
-    if (proEntitlement) {
+    if (proEntitlement && tier !== "free") {
       return {
         isActive: true,
-        tier: "pro",
+        tier,
         expirationDate: proEntitlement.expirationDate ? new Date(proEntitlement.expirationDate) : null,
         willRenew: proEntitlement.willRenew,
         productId: proEntitlement.productIdentifier,
@@ -241,5 +278,78 @@ export function getPurchaseErrorMessage(error: any): string {
     case "PRODUCT_ALREADY_PURCHASED": return "Du hast dieses Produkt bereits gekauft.";
     case "NETWORK_ERROR": return "Netzwerkfehler. Bitte prüfe deine Internetverbindung.";
     default: return error?.message || "Ein Fehler ist aufgetreten. Bitte versuche es erneut.";
+  }
+}
+
+/**
+ * Registriert einen Listener für CustomerInfo-Änderungen (Kauf, Ablauf, Restore).
+ * Gibt eine Funktion zum Abmelden zurück. Auf Web/Expo Go ohne Native-Modul: No-op.
+ * Falls RevenueCat noch nicht konfiguriert ist, wird kurz gewartet und erneut versucht.
+ */
+export function addCustomerInfoUpdateListener(
+  listener: (customerInfo: import("react-native-purchases").CustomerInfo) => void,
+): () => void {
+  if (!loadNativeModule()) return () => {};
+
+  let removed = false;
+  let attached = false;
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  let attempts = 0;
+
+  const attach = () => {
+    if (removed || attached) return;
+    if (!_initialized) {
+      // SDK wird asynchron konfiguriert – bis zu ~30s erneut versuchen
+      if (attempts++ < 60) timer = setTimeout(attach, 500);
+      return;
+    }
+    try {
+      RCPurchases.addCustomerInfoUpdateListener(listener);
+      attached = true;
+    } catch (error) {
+      console.error("[Purchases] Failed to add customer info listener:", error);
+    }
+  };
+  attach();
+
+  return () => {
+    removed = true;
+    if (timer) clearTimeout(timer);
+    if (attached) {
+      try {
+        RCPurchases.removeCustomerInfoUpdateListener(listener);
+      } catch (error) {
+        console.warn("[Purchases] Failed to remove customer info listener:", error);
+      }
+      attached = false;
+    }
+  };
+}
+
+/**
+ * Verknüpft den RevenueCat-Nutzer mit der App-User-ID (nach Login).
+ */
+export async function identifyUser(userId: string): Promise<any | null> {
+  if (!userId || !loadNativeModule() || !_initialized) return null;
+  try {
+    const { customerInfo } = await RCPurchases.logIn(userId);
+    return customerInfo;
+  } catch (error) {
+    console.error("[Purchases] Failed to identify user:", error);
+    return null;
+  }
+}
+
+/**
+ * Meldet den RevenueCat-Nutzer ab (zurück zu anonymer ID).
+ */
+export async function logoutUser(): Promise<void> {
+  if (!loadNativeModule() || !_initialized) return;
+  try {
+    const isAnonymous = await RCPurchases.isAnonymous();
+    if (isAnonymous) return; // logOut auf anonymem Nutzer wirft einen Fehler
+    await RCPurchases.logOut();
+  } catch (error) {
+    console.error("[Purchases] Failed to log out user:", error);
   }
 }

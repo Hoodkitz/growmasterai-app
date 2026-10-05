@@ -116,6 +116,18 @@ export async function exchangeOAuthCode(
   };
 }
 
+// Email/password auth (server issues a session token and sets the cookie)
+export async function emailAuth(
+  mode: "login" | "register",
+  payload: { email: string; password: string; name?: string },
+): Promise<{ sessionToken: string; user: any }> {
+  const result = await apiCall<{ app_session_id: string; user: any }>(
+    mode === "login" ? "/api/auth/login" : "/api/auth/register",
+    { method: "POST", body: JSON.stringify(payload) },
+  );
+  return { sessionToken: result.app_session_id, user: result.user };
+}
+
 // Logout
 export async function logout(): Promise<void> {
   await apiCall<void>("/api/auth/logout", {

@@ -96,11 +96,10 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     const newAchievements = checkAchievements(stats, unlockedIds);
 
     if (newAchievements.length > 0) {
-      // Unlock first one on server (limit 1 per check to avoid spam?) or loop
-      // For simplicity, just unlock first
-      const first = newAchievements[0];
-      unlockMutation.mutate({ achievementId: first.id });
-      setRecentAchievement(first);
+      for (const achievement of newAchievements) {
+        unlockMutation.mutate({ achievementId: achievement.id });
+      }
+      setRecentAchievement(newAchievements[0]);
     }
 
     return newAchievements;
@@ -126,10 +125,10 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
   const level = getLevelFromPoints(points);
   const levelProgress = getProgressToNextLevel(points);
 
-  const unlockedAchievements = ACHIEVEMENTS.filter(a => unlockedIds.includes(a.id)).map(a => ({
-    ...a,
-    unlockedAt: new Date(),
-  }));
+  const unlockedAchievements = ACHIEVEMENTS.filter(a => unlockedIds.includes(a.id)).map(a => {
+    const record = unlockedAchievementsList.find((u: { achievementId: string }) => u.achievementId === a.id) as { unlockedAt?: Date | string } | undefined;
+    return { ...a, unlockedAt: record?.unlockedAt ? new Date(record.unlockedAt) : new Date() };
+  });
 
   const lockedAchievements = ACHIEVEMENTS.filter(a => !unlockedIds.includes(a.id));
 

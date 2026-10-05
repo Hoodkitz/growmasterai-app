@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Platform } from "react-native";
+import * as Linking from "expo-linking";
 import { useAuth as useManusAuth } from "@/hooks/use-auth";
+import * as Api from "@/lib/_core/api";
+import * as Auth from "@/lib/_core/auth";
+import { initializePurchases, identifyUser, logoutUser } from "@/lib/purchases";
+import { APP_ID, OAUTH_PORTAL_URL, getLoginUrl } from "@/constants/oauth";
 
 interface UserProfile {
   id: string;
@@ -56,15 +62,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [manusAuth.user, manusAuth.isAuthenticated]);
 
+  // RevenueCat-Nutzer mit der App-User-ID (= users.openId) verknüpfen, damit der
+  // Webhook (/api/webhooks/revenuecat) den Kauf dem richtigen Konto zuordnen kann.
+  const userId = user?.id;
+  useEffect(() => {
+    if (!userId || Platform.OS === "web") return;
+    let cancelled = false;
+    (async () => {
+      const ok = await initializePurchases();
+      if (ok && !cancelled) await identifyUser(userId);
+    })().catch((e) => console.error("[Auth] RevenueCat identify failed:", e));
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+
   const loadAuthState = async () => {
     try {
-      const stored = await AsyncStorage.getItem(AUTH_STORAGE_KEY);
+      // Only trust the cached profile while a real session exists
+      const token = await Auth.getSessionToken();
+      const stored = token ? await AsyncStorage.getItem(AUTH_STORAGE_KEY) : null;
       if (stored) {
         const parsed = JSON.parse(stored);
         setUser({
           ...parsed,
           createdAt: new Date(parsed.createdAt),
         });
+      } else if (!token) {
+        await AsyncStorage.removeItem(AUTH_STORAGE_KEY);
       }
     } catch (error) {
       console.error("Error loading auth state:", error);
@@ -85,50 +110,54 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const applyServerSession = async (
+    mode: "login" | "register",
+    payload: { email: string; password: string; name?: string },
+  ) => {
+    const { sessionToken, user: serverUser } = await Api.emailAuth(mode, payload);
+    await Auth.setSessionToken(sessionToken);
+    await Auth.setUserInfo({
+      id: serverUser.id,
+      openId: serverUser.openId,
+      name: serverUser.name,
+      email: serverUser.email,
+      loginMethod: serverUser.loginMethod,
+      lastSignedIn: new Date(serverUser.lastSignedIn || Date.now()),
+    });
+    const email = (serverUser.email || payload.email).toLowerCase();
+    const profile: UserProfile = {
+      id: serverUser.openId,
+      email,
+      name: serverUser.name || email.split("@")[0],
+      role: ADMIN_EMAILS.includes(email) ? "admin" : "user",
+      provider: "email",
+      createdAt: new Date(),
+    };
+    setUser(profile);
+    await saveAuthState(profile);
+    await manusAuth.refresh();
+  };
+
+  // Google/Apple sign-in goes through the real OAuth portal; the session is
+  // established by app/oauth/callback.tsx after the redirect.
   const login = async (provider: "google" | "apple" | "email") => {
-    setLoading(true);
-    try {
-      // For demo purposes, simulate OAuth login
-      // In production, this would use actual OAuth providers
-      const mockUser: UserProfile = {
-        id: `${provider}_${Date.now()}`,
-        email: provider === "google" ? "user@gmail.com" : "user@icloud.com",
-        name: "Demo User",
-        role: "user",
-        provider,
-        createdAt: new Date(),
-      };
-      
-      setUser(mockUser);
-      await saveAuthState(mockUser);
-    } catch (error) {
-      console.error("Login error:", error);
-      throw error;
-    } finally {
-      setLoading(false);
+    if (!OAUTH_PORTAL_URL || !APP_ID) {
+      throw new Error(
+        `${provider === "apple" ? "Apple" : "Google"}-Anmeldung ist nicht konfiguriert. Bitte melde dich mit E-Mail an.`,
+      );
+    }
+    const url = getLoginUrl();
+    if (Platform.OS === "web" && typeof window !== "undefined") {
+      window.location.href = url;
+    } else {
+      await Linking.openURL(url);
     }
   };
 
   const loginWithEmail = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // Check for admin account
-      const isAdmin = ADMIN_EMAILS.includes(email.toLowerCase());
-      
-      const profile: UserProfile = {
-        id: `email_${Date.now()}`,
-        email: email.toLowerCase(),
-        name: email.split("@")[0],
-        role: isAdmin ? "admin" : "user",
-        provider: "email",
-        createdAt: new Date(),
-      };
-      
-      setUser(profile);
-      await saveAuthState(profile);
-    } catch (error) {
-      console.error("Email login error:", error);
-      throw error;
+      await applyServerSession("login", { email: email.trim(), password });
     } finally {
       setLoading(false);
     }
@@ -137,20 +166,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (email: string, password: string, name: string) => {
     setLoading(true);
     try {
-      const profile: UserProfile = {
-        id: `email_${Date.now()}`,
-        email: email.toLowerCase(),
-        name,
-        role: "user",
-        provider: "email",
-        createdAt: new Date(),
-      };
-      
-      setUser(profile);
-      await saveAuthState(profile);
-    } catch (error) {
-      console.error("Registration error:", error);
-      throw error;
+      await applyServerSession("register", { email: email.trim(), password, name: name.trim() });
     } finally {
       setLoading(false);
     }
@@ -164,6 +180,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       setUser(null);
       await saveAuthState(null);
+      if (Platform.OS !== "web") await logoutUser(); // RevenueCat → anonym (loggt Fehler selbst)
     } catch (error) {
       console.error("Logout error:", error);
     } finally {

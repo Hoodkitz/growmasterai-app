@@ -7,8 +7,10 @@ import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
 import { SubscriptionBadge, UsageIndicator } from "@/components/upgrade-prompt";
 import { TIER_INFO, TIER_LIMITS } from "@/lib/subscription";
-import { AdBanner } from "@/components/ad-banner";
+import { AdBanner, type Ad } from "@/components/ad-banner";
+import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getOnboardingStatus } from "@/components/onboarding/onboarding-flow";
 
 const { width } = Dimensions.get("window");
 
@@ -16,6 +18,28 @@ export default function HomeScreen() {
   const router = useRouter();
   const colors = useColors();
   const { tier, dailyDiagnoses, dailyMessages, remainingDiagnoses, remainingMessages } = useSubscription();
+
+  // Echte Anzeige aus adBanners (nur für nicht-werbefreie Tiers laden)
+  const adsQuery = trpc.ads.active.useQuery(
+    { placement: "home", limit: 1 },
+    { enabled: !TIER_LIMITS[tier].adFree, retry: false },
+  );
+  const trackImpression = trpc.ads.trackImpression.useMutation();
+  const trackClick = trpc.ads.trackClick.useMutation();
+  const homeAdRow = adsQuery.data?.[0];
+  const homeAd: Ad | null = homeAdRow
+    ? {
+        id: String(homeAdRow.id),
+        vendorName: homeAdRow.vendorName ?? "",
+        vendorLogo: "📢",
+        title: homeAdRow.title,
+        subtitle: homeAdRow.vendorName ?? "Gesponsert",
+        ctaText: "Ansehen",
+        link: homeAdRow.targetUrl,
+        backgroundColor: colors.surface,
+        accentColor: colors.primary,
+      }
+    : null;
   const limits = TIER_LIMITS[tier];
   const tierInfo = TIER_INFO[tier];
 
@@ -23,7 +47,7 @@ export default function HomeScreen() {
   useEffect(() => {
     const checkOnboarding = async () => {
       try {
-        const onboardingComplete = await AsyncStorage.getItem("onboardingComplete");
+        const onboardingComplete = await getOnboardingStatus();
         if (!onboardingComplete) {
           router.replace("/onboarding");
         }
@@ -315,7 +339,13 @@ export default function HomeScreen() {
 
         {/* Sponsored Ad */}
         <View className="px-4 mb-4">
-          <AdBanner position="home" variant="medium" />
+          <AdBanner
+            position="home"
+            variant="medium"
+            ad={homeAd}
+            onImpression={() => homeAdRow && trackImpression.mutate({ id: homeAdRow.id })}
+            onClick={() => homeAdRow && trackClick.mutate({ id: homeAdRow.id })}
+          />
         </View>
 
         {/* Tips Section */}

@@ -6,6 +6,7 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
 import {
+  parseNumberOr,
   getMoonPhase,
   calculateVPD,
   calculateNutrients,
@@ -49,11 +50,11 @@ export default function ToolsScreen() {
   const [envHumidity, setEnvHumidity] = useState("55");
 
   const moonPhase = getMoonPhase();
-  const vpdResult = calculateVPD(parseFloat(vpdTemp) || 25, parseFloat(vpdHumidity) || 60);
-  const nutrients = calculateNutrients(nutrientPhase, parseFloat(waterLiters) || 10, parseFloat(nutrientStrength) || 100);
-  const lightSchedule = getLightSchedule(lightPhase, parseFloat(ppfd) || 400);
-  const yieldEstimate = estimateYield(parseFloat(lightWatts) || 400, parseInt(plantCount) || 4, experience, growMethod);
-  const wateringSchedule = calculateWatering(parseFloat(potSize) || 11, waterPhase, parseFloat(envTemp) || 24, parseFloat(envHumidity) || 55);
+  const vpdResult = calculateVPD(parseNumberOr(vpdTemp, 25), parseNumberOr(vpdHumidity, 60));
+  const nutrients = calculateNutrients(nutrientPhase, parseNumberOr(waterLiters, 10), parseNumberOr(nutrientStrength, 100));
+  const lightSchedule = getLightSchedule(lightPhase, parseNumberOr(ppfd, 400));
+  const yieldEstimate = estimateYield(parseNumberOr(lightWatts, 400), Math.trunc(parseNumberOr(plantCount, 4)), experience, growMethod);
+  const wateringSchedule = calculateWatering(parseNumberOr(potSize, 11), waterPhase, parseNumberOr(envTemp, 24), parseNumberOr(envHumidity, 55));
 
   const TABS: { id: ToolTab; label: string; icon: string; premium: boolean }[] = [
     { id: "calendar", label: "Kalender", icon: "🌙", premium: false },

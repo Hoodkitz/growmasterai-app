@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Image, Linking } from "react-native";
+import { useEffect, useState } from "react";
+import { ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Image, Linking, TextInput, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
@@ -40,7 +40,24 @@ export default function VendorPortalScreen() {
     enabled: activeTab === "leads" && !!vendorProfile,
   });
 
-  const updateSettingsMutation = trpc.vendor.updateSettings.useMutation();
+  const utils = trpc.useUtils();
+  const updateSettingsMutation = trpc.vendor.updateSettings.useMutation({
+    onSuccess: () => {
+      utils.vendor.getProfile.invalidate();
+      Alert.alert("Gespeichert", "Dein Profil wurde aktualisiert.");
+    },
+    onError: () => Alert.alert("Fehler", "Profil konnte nicht gespeichert werden."),
+  });
+  const [form, setForm] = useState({ name: "", description: "", website: "" });
+  useEffect(() => {
+    if (vendorProfile) {
+      setForm({
+        name: vendorProfile.name ?? "",
+        description: vendorProfile.description ?? "",
+        website: vendorProfile.website ?? "",
+      });
+    }
+  }, [vendorProfile]);
 
   if (isLoadingProfile) {
     return (
@@ -437,6 +454,48 @@ export default function VendorPortalScreen() {
                 <Text className="text-center text-base font-semibold text-white">Plan upgraden</Text>
               </TouchableOpacity>
             </View>
+
+            {/* Profile */}
+            <View className="bg-surface rounded-xl p-4 border border-border gap-3">
+              <Text className="text-base font-semibold text-foreground">Shop-Profil</Text>
+              <TextInput
+                className="bg-background border border-border rounded-lg px-3 py-2 text-foreground"
+                placeholder="Name"
+                placeholderTextColor={colors.muted}
+                value={form.name}
+                onChangeText={name => setForm(f => ({ ...f, name }))}
+              />
+              <TextInput
+                className="bg-background border border-border rounded-lg px-3 py-2 text-foreground"
+                placeholder="Beschreibung"
+                placeholderTextColor={colors.muted}
+                multiline
+                value={form.description}
+                onChangeText={description => setForm(f => ({ ...f, description }))}
+              />
+              <TextInput
+                className="bg-background border border-border rounded-lg px-3 py-2 text-foreground"
+                placeholder="Website (https://...)"
+                placeholderTextColor={colors.muted}
+                autoCapitalize="none"
+                keyboardType="url"
+                value={form.website}
+                onChangeText={website => setForm(f => ({ ...f, website }))}
+              />
+              <TouchableOpacity
+                className={`py-3 rounded-lg ${form.name.trim() ? "bg-primary" : "bg-primary/40"}`}
+                disabled={!form.name.trim() || updateSettingsMutation.isPending}
+                onPress={() => updateSettingsMutation.mutate({
+                  name: form.name.trim(),
+                  description: form.description.trim() || undefined,
+                  website: form.website.trim() || undefined,
+                })}
+              >
+                <Text className="text-center text-base font-semibold text-white">
+                  {updateSettingsMutation.isPending ? "Speichern..." : "Speichern"}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
 
@@ -461,7 +520,10 @@ export default function VendorPortalScreen() {
                   className={`rounded-xl p-4 mb-3 border-2 ${vendorTier === tier ? 'border-primary bg-primary/10' : 'border-border bg-surface'
                     }`}
                   onPress={() => {
-                    // Start upgrade flow
+                    // Kein Billing-Backend: Plan-Wechsel per E-Mail-Anfrage
+                    const subject = encodeURIComponent(`Vendor-Plan: ${sub.name}`);
+                    const body = encodeURIComponent(`Ich möchte den Plan "${sub.name}" (€${sub.monthlyPrice}/Mo) buchen.\nVendor: ${vendorProfile?.name ?? ""}`);
+                    Linking.openURL(`mailto:partners@growmaster.app?subject=${subject}&body=${body}`);
                     setShowUpgrade(false);
                   }}
                 >

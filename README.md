@@ -22,10 +22,11 @@ Eine React Native App mit intelligenter Pflanzendiagnose, AI-Coach, Community-Fe
 - **Strain-Datenbank**: Informationen zu verschiedenen Cannabis-Sorten
 
 ### 👥 Community & Social
+> Hinweis: Shops, Clubs und der "Member Radar" nutzen aktuell Demo-Daten (fiktiv, keine echten Orte/Nutzer); Tutorial-Videos verlinken auf YouTube-Suchen.
+
 - **Community Feed**: Teile Grows, Erfolge und Erfahrungen
 - **Likes & Kommentare**: Interagiere mit anderen Growern
 - **Direktnachrichten**: Private Kommunikation
-- **Grow-Galerie**: Inspirierende Bilder der Community
 
 ### 🎮 Gamification
 - **Level-System**: Sammle XP durch Aktivitäten
@@ -59,7 +60,6 @@ Eine React Native App mit intelligenter Pflanzendiagnose, AI-Coach, Community-Fe
 - **Routing**: Expo Router v6 (file-based routing)
 - **Styling**: NativeWind (Tailwind CSS for React Native)
 - **State Management**: React Query + tRPC
-- **Forms**: React Hook Form
 - **Icons**: SF Symbols (iOS), Material Icons (Android)
 
 ### Backend

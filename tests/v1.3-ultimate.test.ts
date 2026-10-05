@@ -9,7 +9,7 @@ import {
 } from "../lib/grow-tools";
 import { STRAINS_DATABASE } from "../lib/strains-data";
 import { NEWS_ARTICLES, FAQ_DATA } from "../lib/news-data";
-import { MOCK_SHOPS, MOCK_NEARBY_MEMBERS } from "../lib/locations-data";
+import { TUTORIAL_VIDEOS } from "../lib/locations-data";
 
 describe("Grow Tools", () => {
   describe("getMoonPhase", () => {
@@ -184,21 +184,11 @@ describe("News Data", () => {
 });
 
 describe("Locations Data", () => {
-  it("should have shops data", () => {
-    expect(MOCK_SHOPS.length).toBeGreaterThan(0);
-  });
-
-  it("should have required fields for each shop", () => {
-    MOCK_SHOPS.forEach((shop: any) => {
-      expect(shop.id).toBeTruthy();
-      expect(shop.name).toBeTruthy();
-      expect(shop.type).toBeTruthy();
-      expect(shop.latitude).toBeTruthy();
-      expect(shop.longitude).toBeTruthy();
-    });
-  });
-
-  it("should have growers nearby data", () => {
-    expect(MOCK_NEARBY_MEMBERS.length).toBeGreaterThan(0);
+  it("no demo shops/members are exported any more (real POI data lives in locations-overpass tests)", async () => {
+    const mod = (await import("../lib/locations-data")) as Record<string, unknown>;
+    expect(mod.MOCK_SHOPS).toBeUndefined();
+    expect(mod.MOCK_CLUBS).toBeUndefined();
+    expect(mod.MOCK_NEARBY_MEMBERS).toBeUndefined();
+    expect(TUTORIAL_VIDEOS.length).toBeGreaterThan(0);
   });
 });

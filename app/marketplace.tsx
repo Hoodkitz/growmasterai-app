@@ -13,33 +13,6 @@ type CategoryType = "all" | "seeds" | "equipment" | "nutrients" | "accessories" 
 
 
 
-const MOCK_DEALS = [
-  {
-    id: "d1",
-    title: "Starter Bundle",
-    description: "Alles für deinen ersten Grow",
-    items: ["60x60 Zelt", "100W LED", "Lüfter-Set", "Basis-Nährstoffe"],
-    originalPrice: 399.00,
-    dealPrice: 279.00,
-    savings: 30,
-    vendor: "Growland",
-    stock: 12,
-    image: "📦",
-  },
-  {
-    id: "d2",
-    title: "Pro Lighting Upgrade",
-    description: "Upgrade deine Beleuchtung",
-    items: ["Spider Farmer SF4000", "Timer", "Aufhängung"],
-    originalPrice: 599.00,
-    dealPrice: 449.00,
-    savings: 25,
-    vendor: "LED Grow Shop",
-    stock: 5,
-    image: "⚡",
-  },
-];
-
 const CATEGORIES = [
   { id: "all", label: "Alle", icon: "square.grid.2x2.fill" },
   { id: "seeds", label: "Samen", icon: "leaf.fill" },
@@ -65,6 +38,11 @@ export default function MarketplaceScreen() {
   const auctionsQuery = trpc.marketplace.listAuctions.useQuery(undefined, { enabled: activeTab === "auctions" });
   const rafflesQuery = trpc.marketplace.listRaffles.useQuery(undefined, { enabled: activeTab === "raffles" });
 
+  const dealsQuery = trpc.marketplace.listProducts.useQuery(
+    { featuredOnly: true, limit: 20 },
+    { enabled: activeTab === "deals" },
+  );
+  const deals = dealsQuery.data || [];
   const products = productsQuery.data || [];
   const auctions = auctionsQuery.data || [];
   const raffles = rafflesQuery.data || [];
@@ -329,52 +307,24 @@ export default function MarketplaceScreen() {
           <View className="px-4 pt-4 gap-4">
             <Text className="text-lg font-semibold text-foreground">🔥 Exklusive Deals</Text>
 
-            {MOCK_DEALS.map(deal => (
-              <View
-                key={deal.id}
-                className="bg-surface rounded-xl overflow-hidden border border-border"
-              >
-                {/* Deal Header */}
-                <View className="bg-error/20 px-4 py-2 flex-row items-center justify-between">
-                  <Text className="text-sm font-bold text-error">-{deal.savings}% RABATT</Text>
-                  <Text className="text-xs text-error">Nur noch {deal.stock} verfügbar!</Text>
-                </View>
-
-                <View className="p-4">
-                  <View className="flex-row gap-3 mb-3">
-                    <View className="w-16 h-16 rounded-lg bg-background items-center justify-center">
-                      <Text className="text-2xl">{deal.image}</Text>
-                    </View>
-                    <View className="flex-1">
-                      <Text className="text-lg font-bold text-foreground">{deal.title}</Text>
-                      <Text className="text-sm text-muted">{deal.description}</Text>
-                      <Text className="text-xs text-primary mt-1">{deal.vendor}</Text>
-                    </View>
-                  </View>
-
-                  {/* Items included */}
-                  <View className="bg-background rounded-lg p-3 mb-3">
-                    <Text className="text-xs text-muted mb-2">Enthält:</Text>
-                    <View className="flex-row flex-wrap gap-2">
-                      {deal.items.map((item, i) => (
-                        <View key={i} className="flex-row items-center gap-1">
-                          <IconSymbol name="checkmark.circle.fill" size={12} color={colors.success} />
-                          <Text className="text-xs text-foreground">{item}</Text>
-                        </View>
-                      ))}
-                    </View>
-                  </View>
-
-                  {/* Price */}
-                  <View className="flex-row items-center justify-between">
-                    <View>
-                      <Text className="text-sm text-muted line-through">€{deal.originalPrice.toFixed(2)}</Text>
-                      <Text className="text-2xl font-bold text-primary">€{deal.dealPrice.toFixed(2)}</Text>
-                    </View>
-                    <TouchableOpacity className="bg-primary px-6 py-3 rounded-xl">
-                      <Text className="text-base font-semibold text-white">Jetzt kaufen</Text>
+            {dealsQuery.isLoading && <ActivityIndicator color={colors.primary} />}
+            {!dealsQuery.isLoading && deals.length === 0 && (
+              <Text className="text-sm text-muted text-center py-8">Aktuell keine Deals verfügbar.</Text>
+            )}
+            {deals.map(deal => (
+              <View key={deal.id} className="bg-surface rounded-xl p-4 border border-border">
+                <Text className="text-lg font-bold text-foreground">{deal.name}</Text>
+                {deal.description ? <Text className="text-sm text-muted mt-1">{deal.description}</Text> : null}
+                <View className="flex-row items-center justify-between mt-3">
+                  <Text className="text-2xl font-bold text-primary">€{Number(deal.price).toFixed(2)}</Text>
+                  {deal.externalUrl ? (
+                    <TouchableOpacity
+                      className="bg-primary px-6 py-3 rounded-xl"
+                      onPress={() => Linking.openURL(deal.externalUrl!)}
+                    >
+                      <Text className="text-base font-semibold text-white">Zum Angebot</Text>
                     </TouchableOpacity>
-                  </View>
+                  ) : null}
                 </View>
               </View>
             ))}

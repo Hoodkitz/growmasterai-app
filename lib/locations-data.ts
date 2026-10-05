@@ -1,6 +1,6 @@
 // Locations data for shops, clubs, and member radar
 
-export type LocationType = "headshop" | "growshop" | "club" | "member";
+export type LocationType = "headshop" | "growshop";
 
 export interface Location {
   id: string;
@@ -14,234 +14,219 @@ export interface Location {
   phone?: string;
   website?: string;
   openingHours?: string;
-  rating: number;
-  reviewCount: number;
-  description?: string;
-  features?: string[];
-  isVerified?: boolean;
-  distance?: number; // calculated based on user location
-}
-
-export interface MemberProfile {
-  id: string;
-  userName: string;
-  avatar?: string;
-  level: number;
-  badge: string;
-  experienceYears: number;
-  specialties: string[];
-  isOnline: boolean;
-  lastActive: Date;
-  latitude?: number;
-  longitude?: number;
+  /** OSM shop tag the entry was derived from */
+  osmShopType: string;
+  /** distance to the user in km */
   distance?: number;
-  isVisible: boolean; // privacy setting
-  bio?: string;
 }
 
-// Mock shop locations in Germany
-export const MOCK_SHOPS: Location[] = [
-  {
-    id: "shop1",
-    name: "Green Galaxy Headshop",
-    type: "headshop",
-    latitude: 52.5200,
-    longitude: 13.4050,
-    address: "Warschauer Str. 34",
-    city: "Berlin",
-    postalCode: "10243",
-    phone: "+49 30 12345678",
-    website: "https://greengalaxy.de",
-    openingHours: "Mo-Sa 11:00-20:00",
-    rating: 4.6,
-    reviewCount: 234,
-    description: "Berlins größter Headshop mit riesiger Auswahl an Bongs, Vaporizern und Zubehör.",
-    features: ["Vaporizer", "Bongs", "Papers", "Grinder", "CBD"],
-    isVerified: true,
-  },
-  {
-    id: "shop2",
-    name: "Grow City Hamburg",
-    type: "growshop",
-    latitude: 53.5511,
-    longitude: 9.9937,
-    address: "Reeperbahn 56",
-    city: "Hamburg",
-    postalCode: "20359",
-    phone: "+49 40 87654321",
-    website: "https://growcity-hh.de",
-    openingHours: "Mo-Fr 10:00-19:00, Sa 10:00-16:00",
-    rating: 4.8,
-    reviewCount: 189,
-    description: "Professioneller Growshop mit Beratung. Alles für Indoor und Outdoor Anbau.",
-    features: ["LED-Lampen", "Zelte", "Dünger", "Substrate", "Belüftung", "Beratung"],
-    isVerified: true,
-  },
-  {
-    id: "shop3",
-    name: "Hanf Haus München",
-    type: "headshop",
-    latitude: 48.1351,
-    longitude: 11.5820,
-    address: "Sonnenstr. 12",
-    city: "München",
-    postalCode: "80331",
-    phone: "+49 89 11223344",
-    openingHours: "Mo-Sa 10:00-19:00",
-    rating: 4.4,
-    reviewCount: 156,
-    description: "Traditioneller Headshop seit 1995. Große Auswahl an Hanfprodukten.",
-    features: ["Bongs", "Papers", "Hanfkleidung", "CBD", "Bücher"],
-    isVerified: true,
-  },
-  {
-    id: "shop4",
-    name: "Indoor Garden Köln",
-    type: "growshop",
-    latitude: 50.9375,
-    longitude: 6.9603,
-    address: "Ehrenstr. 78",
-    city: "Köln",
-    postalCode: "50672",
-    phone: "+49 221 99887766",
-    website: "https://indoorgarden-koeln.de",
-    openingHours: "Mo-Fr 11:00-19:00, Sa 11:00-17:00",
-    rating: 4.7,
-    reviewCount: 203,
-    description: "Spezialist für Hydroponik und Indoor-Growing. Professionelle Beratung.",
-    features: ["Hydroponik", "LED-Systeme", "Automatisierung", "Nährstoffe", "Klima"],
-    isVerified: true,
-  },
-  {
-    id: "shop5",
-    name: "Smoke & Grow Frankfurt",
-    type: "headshop",
-    latitude: 50.1109,
-    longitude: 8.6821,
-    address: "Zeil 45",
-    city: "Frankfurt",
-    postalCode: "60313",
-    openingHours: "Mo-Sa 10:00-20:00",
-    rating: 4.3,
-    reviewCount: 98,
-    description: "Headshop mit großer Auswahl an Rauchzubehör und CBD-Produkten.",
-    features: ["Vaporizer", "CBD", "Papers", "Grinder"],
-    isVerified: false,
-  },
-];
+// ==================== REAL POI DATA (OpenStreetMap / Overpass) ====================
+// Clubs and nearby members have no real data source -> intentionally no data here.
 
-// Mock Cannabis Social Clubs
-export const MOCK_CLUBS: Location[] = [
-  {
-    id: "club1",
-    name: "Green Circle Berlin",
-    type: "club",
-    latitude: 52.4934,
-    longitude: 13.4234,
-    address: "Mitgliedschaft erforderlich",
-    city: "Berlin",
-    postalCode: "10999",
-    website: "https://greencircle-berlin.de",
-    rating: 4.9,
-    reviewCount: 67,
-    description: "Einer der ersten Cannabis Social Clubs in Berlin. Fokus auf Bio-Anbau und Gemeinschaft.",
-    features: ["Bio-Anbau", "Workshops", "Community Events", "Beratung"],
-    isVerified: true,
-  },
-  {
-    id: "club2",
-    name: "Hanf Verein Hamburg",
-    type: "club",
-    latitude: 53.5653,
-    longitude: 10.0014,
-    address: "Mitgliedschaft erforderlich",
-    city: "Hamburg",
-    postalCode: "20095",
-    rating: 4.7,
-    reviewCount: 45,
-    description: "Anbauvereinigung mit Fokus auf medizinische Sorten und Patientenbetreuung.",
-    features: ["Medizinische Sorten", "Patientenberatung", "Qualitätskontrolle"],
-    isVerified: true,
-  },
-  {
-    id: "club3",
-    name: "Cannabis Kultur Köln",
-    type: "club",
-    latitude: 50.9413,
-    longitude: 6.9583,
-    address: "Mitgliedschaft erforderlich",
-    city: "Köln",
-    postalCode: "50667",
-    rating: 4.6,
-    reviewCount: 38,
-    description: "Kulturverein mit regelmäßigen Events und Bildungsangeboten rund um Cannabis.",
-    features: ["Kulturevents", "Bildung", "Gemeinschaft", "Verschiedene Sorten"],
-    isVerified: true,
-  },
-];
+export const OVERPASS_ENDPOINT = "https://overpass-api.de/api/interpreter";
+export const SHOP_SEARCH_RADIUS_M = 25000;
+export const SHOP_CACHE_KEY = "radar_shops_cache_v1";
+export const SHOP_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+// Cache is reused if user moved less than this (km)
+export const SHOP_CACHE_MAX_DRIFT_KM = 3;
 
-// Mock nearby members (for radar feature)
-export const MOCK_NEARBY_MEMBERS: MemberProfile[] = [
-  {
-    id: "member1",
-    userName: "GreenThumb420",
-    level: 7,
-    badge: "👑",
-    experienceYears: 5,
-    specialties: ["Indoor", "Hydroponik", "Autoflower"],
-    isOnline: true,
-    lastActive: new Date(),
-    distance: 2.3,
-    isVisible: true,
-    bio: "Leidenschaftlicher Indoor-Grower. Immer offen für Erfahrungsaustausch!",
-  },
-  {
-    id: "member2",
-    userName: "CannaQueen",
-    level: 5,
-    badge: "🌳",
-    experienceYears: 3,
-    specialties: ["Outdoor", "Organisch", "Sativa"],
-    isOnline: false,
-    lastActive: new Date(Date.now() - 2 * 60 * 60 * 1000),
-    distance: 4.7,
-    isVisible: true,
-    bio: "Outdoor-Enthusiastin. Liebe die Natur und natürlichen Anbau.",
-  },
-  {
-    id: "member3",
-    userName: "MedGrower",
-    level: 8,
-    badge: "⭐",
-    experienceYears: 8,
-    specialties: ["Medizinisch", "CBD", "Extrakte"],
-    isOnline: true,
-    lastActive: new Date(),
-    distance: 6.1,
-    isVisible: true,
-    bio: "Fokus auf medizinische Anwendungen und CBD-reiche Sorten.",
-  },
-  {
-    id: "member4",
-    userName: "SeedCollector",
-    level: 6,
-    badge: "🌲",
-    experienceYears: 4,
-    specialties: ["Genetik", "Züchtung", "Samen"],
-    isOnline: false,
-    lastActive: new Date(Date.now() - 24 * 60 * 60 * 1000),
-    distance: 8.9,
-    isVisible: true,
-    bio: "Sammler seltener Genetik. Tausche gerne Samen und Wissen.",
-  },
-];
+// shop=hydroponics / garden_centre -> growshop; shop=cannabis / headshop -> headshop
+const GROWSHOP_TAGS = ["hydroponics", "garden_centre"];
+const HEADSHOP_TAGS = ["cannabis", "headshop"];
+
+export function buildOverpassQuery(lat: number, lon: number, radiusM = SHOP_SEARCH_RADIUS_M): string {
+  const tags = [...GROWSHOP_TAGS, ...HEADSHOP_TAGS];
+  const around = `(around:${Math.round(radiusM)},${lat.toFixed(5)},${lon.toFixed(5)})`;
+  const parts = tags.map(t => `nwr["shop"="${t}"]${around};`).join("");
+  return `[out:json][timeout:25];(${parts});out center tags 100;`;
+}
+
+export function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return 6371 * 2 * Math.asin(Math.min(1, Math.sqrt(a)));
+}
+
+interface OverpassElement {
+  type?: string;
+  id?: number;
+  lat?: number;
+  lon?: number;
+  center?: { lat?: number; lon?: number };
+  tags?: Record<string, string>;
+}
+
+/**
+ * Pure parser: Overpass JSON -> Location[] sorted by distance.
+ * Unnamed or coordinate-less elements are dropped; no data is invented.
+ */
+export function parseOverpassShops(json: unknown, userLat?: number, userLon?: number): Location[] {
+  const elements: OverpassElement[] =
+    json && typeof json === "object" && Array.isArray((json as { elements?: unknown }).elements)
+      ? (json as { elements: OverpassElement[] }).elements
+      : [];
+
+  const seen = new Set<string>();
+  const result: Location[] = [];
+
+  for (const el of elements) {
+    const tags = el.tags;
+    if (!tags || !tags.name) continue;
+    const shopType = tags.shop;
+    if (!shopType || (!GROWSHOP_TAGS.includes(shopType) && !HEADSHOP_TAGS.includes(shopType))) continue;
+    const latitude = el.lat ?? el.center?.lat;
+    const longitude = el.lon ?? el.center?.lon;
+    if (typeof latitude !== "number" || typeof longitude !== "number") continue;
+    const id = `${el.type ?? "node"}/${el.id ?? `${latitude},${longitude}`}`;
+    if (seen.has(id)) continue;
+    seen.add(id);
+
+    const street = tags["addr:street"];
+    const houseNumber = tags["addr:housenumber"];
+    const location: Location = {
+      id,
+      name: tags.name,
+      type: GROWSHOP_TAGS.includes(shopType) ? "growshop" : "headshop",
+      latitude,
+      longitude,
+      address: street ? (houseNumber ? `${street} ${houseNumber}` : street) : "",
+      city: tags["addr:city"] ?? "",
+      postalCode: tags["addr:postcode"] ?? "",
+      phone: tags.phone ?? tags["contact:phone"],
+      website: tags.website ?? tags["contact:website"],
+      openingHours: tags.opening_hours,
+      osmShopType: shopType,
+    };
+    if (typeof userLat === "number" && typeof userLon === "number") {
+      location.distance = Math.round(haversineKm(userLat, userLon, latitude, longitude) * 10) / 10;
+    }
+    result.push(location);
+  }
+
+  return result.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
+}
+
+export interface ShopCache {
+  latitude: number;
+  longitude: number;
+  fetchedAt: number;
+  shops: Location[];
+}
+
+/** Pure: is the cache still usable for the given position? */
+export function isShopCacheValid(
+  cache: ShopCache | null | undefined,
+  lat: number,
+  lon: number,
+  now = Date.now(),
+): cache is ShopCache {
+  if (!cache || !Array.isArray(cache.shops)) return false;
+  if (now - cache.fetchedAt > SHOP_CACHE_TTL_MS || now < cache.fetchedAt) return false;
+  return haversineKm(cache.latitude, cache.longitude, lat, lon) <= SHOP_CACHE_MAX_DRIFT_KM;
+}
+
+export type NearbyShopsStatus =
+  | "ok"
+  | "permission_denied"
+  | "location_unavailable"
+  | "offline" // network failure, no cache
+  | "api_error"; // Overpass returned an error, no cache
+
+export interface NearbyShopsResult {
+  status: NearbyShopsStatus;
+  shops: Location[];
+  /** true if shops come from the cache although a fresh request failed */
+  stale?: boolean;
+  fromCache?: boolean;
+}
+
+async function readCache(): Promise<ShopCache | null> {
+  try {
+    const AsyncStorage = (await import("@react-native-async-storage/async-storage")).default;
+    const raw = await AsyncStorage.getItem(SHOP_CACHE_KEY);
+    return raw ? (JSON.parse(raw) as ShopCache) : null;
+  } catch {
+    return null;
+  }
+}
+
+async function writeCache(cache: ShopCache): Promise<void> {
+  try {
+    const AsyncStorage = (await import("@react-native-async-storage/async-storage")).default;
+    await AsyncStorage.setItem(SHOP_CACHE_KEY, JSON.stringify(cache));
+  } catch {
+    // cache is best-effort
+  }
+}
+
+/**
+ * Fetches real shops near the user (OpenStreetMap). Never returns fake data:
+ * on permission denial / offline / API error the list is empty (or a stale cache).
+ */
+export async function fetchNearbyShops(opts: { forceRefresh?: boolean } = {}): Promise<NearbyShopsResult> {
+  let lat: number;
+  let lon: number;
+  try {
+    const ExpoLocation = await import("expo-location");
+    const perm = await ExpoLocation.requestForegroundPermissionsAsync();
+    if (perm.status !== "granted") return { status: "permission_denied", shops: [] };
+    const pos =
+      (await ExpoLocation.getLastKnownPositionAsync()) ??
+      (await ExpoLocation.getCurrentPositionAsync({ accuracy: ExpoLocation.Accuracy.Balanced }));
+    lat = pos.coords.latitude;
+    lon = pos.coords.longitude;
+  } catch {
+    return { status: "location_unavailable", shops: [] };
+  }
+
+  const cache = await readCache();
+  if (!opts.forceRefresh && isShopCacheValid(cache, lat, lon)) {
+    // re-rank by distance from current position
+    const shops = cache.shops
+      .map(s => ({ ...s, distance: Math.round(haversineKm(lat, lon, s.latitude, s.longitude) * 10) / 10 }))
+      .sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
+    return { status: "ok", shops, fromCache: true };
+  }
+
+  const staleFallback = (status: NearbyShopsStatus): NearbyShopsResult =>
+    cache && Array.isArray(cache.shops) && cache.shops.length > 0
+      ? { status: "ok", shops: cache.shops, stale: true, fromCache: true }
+      : { status, shops: [] };
+
+  let response: Response;
+  try {
+    response = await fetch(OVERPASS_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `data=${encodeURIComponent(buildOverpassQuery(lat, lon))}`,
+    });
+  } catch {
+    return staleFallback("offline");
+  }
+  if (!response.ok) return staleFallback("api_error");
+
+  let json: unknown;
+  try {
+    json = await response.json();
+  } catch {
+    return staleFallback("api_error");
+  }
+  const shops = parseOverpassShops(json, lat, lon);
+  await writeCache({ latitude: lat, longitude: lon, fetchedAt: Date.now(), shops });
+  return { status: "ok", shops, fromCache: false };
+}
+
 
 // Tutorial videos from YouTube
 export interface TutorialVideo {
   id: string;
   title: string;
   description: string;
-  youtubeId: string;
+  youtubeSearchQuery: string; // opens a real YouTube search (no unverified video IDs)
   channel: string;
   channelAvatar?: string;
   duration: string;
@@ -257,7 +242,7 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
     id: "tut1",
     title: "Cannabis Anbau für Anfänger - Kompletter Guide",
     description: "Alles was du für deinen ersten Grow wissen musst. Von der Samenauswahl bis zur Ernte.",
-    youtubeId: "dQw4w9WgXcQ", // placeholder
+    youtubeSearchQuery: "Cannabis Anbau für Anfänger Kompletter Guide",
     channel: "GrowGuide DE",
     duration: "45:23",
     views: 234567,
@@ -269,7 +254,7 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
     id: "tut2",
     title: "Die perfekte Beleuchtung für Indoor Growing",
     description: "LED vs. HPS - Welche Lampe ist die richtige? Lichtspektrum und Abstände erklärt.",
-    youtubeId: "dQw4w9WgXcQ",
+    youtubeSearchQuery: "Die perfekte Beleuchtung für Indoor Growing",
     channel: "Indoor Grow Pro",
     duration: "28:15",
     views: 156789,
@@ -281,7 +266,7 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
     id: "tut3",
     title: "Schädlinge erkennen und bekämpfen",
     description: "Spinnmilben, Trauermücken, Thripse - So wirst du sie los ohne Chemie.",
-    youtubeId: "dQw4w9WgXcQ",
+    youtubeSearchQuery: "Schädlinge erkennen und bekämpfen",
     channel: "GrowGuide DE",
     duration: "32:45",
     views: 98765,
@@ -293,7 +278,7 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
     id: "tut4",
     title: "Ernte, Trocknung und Aushärtung",
     description: "Der wichtigste Schritt für Qualität. So holst du das Maximum aus deiner Ernte.",
-    youtubeId: "dQw4w9WgXcQ",
+    youtubeSearchQuery: "Ernte, Trocknung und Aushärtung",
     channel: "Cannabis Kultur",
     duration: "38:20",
     views: 187654,
@@ -305,7 +290,7 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
     id: "tut5",
     title: "SCROG Technik - Maximale Erträge",
     description: "Screen of Green erklärt. Schritt für Schritt zur perfekten Canopy.",
-    youtubeId: "dQw4w9WgXcQ",
+    youtubeSearchQuery: "SCROG Technik Maximale Erträge",
     channel: "Advanced Growing",
     duration: "42:10",
     views: 76543,
@@ -318,7 +303,7 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
     id: "tut6",
     title: "Nährstoffmangel erkennen - Blattdiagnose",
     description: "Gelbe Blätter? Braune Flecken? Lerne die Symptome zu deuten.",
-    youtubeId: "dQw4w9WgXcQ",
+    youtubeSearchQuery: "Nährstoffmangel erkennen Blattdiagnose",
     channel: "GrowGuide DE",
     duration: "25:30",
     views: 145678,
@@ -330,7 +315,7 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
     id: "tut7",
     title: "Die besten Sorten für Anfänger 2024",
     description: "Robuste, ertragreiche Sorten die Fehler verzeihen. Top 10 Empfehlungen.",
-    youtubeId: "dQw4w9WgXcQ",
+    youtubeSearchQuery: "Die besten Sorten für Anfänger 2024",
     channel: "Strain Reviews DE",
     duration: "18:45",
     views: 234567,
@@ -342,7 +327,7 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
     id: "tut8",
     title: "Hydroponik Setup für Einsteiger",
     description: "DWC, NFT, Ebb & Flow - Welches System passt zu dir?",
-    youtubeId: "dQw4w9WgXcQ",
+    youtubeSearchQuery: "Hydroponik Setup für Einsteiger",
     channel: "Hydro Grow",
     duration: "52:15",
     views: 65432,
@@ -610,4 +595,8 @@ export function formatViews(views: number): string {
   if (views >= 1000000) return `${(views / 1000000).toFixed(1)}M`;
   if (views >= 1000) return `${(views / 1000).toFixed(0)}K`;
   return views.toString();
+}
+
+export function getTutorialUrl(video: TutorialVideo): string {
+  return `https://www.youtube.com/results?search_query=${encodeURIComponent(video.youtubeSearchQuery)}`;
 }

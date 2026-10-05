@@ -460,7 +460,7 @@ export function getMedicalLabel(use: MedicalUse): string {
   return labels[use];
 }
 
-// Mock reviews
+// DEMO DATA: fictional reviews, unused by the UI. Real reviews need a backend.
 export const MOCK_STRAIN_REVIEWS: StrainReview[] = [
   {
     id: "rev1",

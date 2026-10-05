@@ -3,9 +3,14 @@
  * Export grow data to PDF, CSV, or backup
  */
 
-import * as FileSystem from 'expo-file-system';
+// SDK 54: string read/write APIs live in the legacy entry point
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
+import * as Print from 'expo-print';
+import { Platform } from 'react-native';
 import { format } from 'date-fns';
+import type { Expense } from './cost-tracking';
+import { buildExpensesCsv, csvCell, escapeHtml, generateExpensesHTML } from './export-format';
 
 export interface PlantData {
   id: string;
@@ -29,6 +34,16 @@ export interface JournalEntry {
   humidity?: number;
 }
 
+function safeFileName(name: string): string {
+  return name.replace(/[^\w\-]+/g, '_').replace(/^_+|_+$/g, '') || 'plant';
+}
+
+function writableDir(): string {
+  const dir = FileSystem.documentDirectory ?? FileSystem.cacheDirectory;
+  if (!dir) throw new Error('Kein beschreibbares Verzeichnis verfügbar');
+  return dir;
+}
+
 /**
  * Export plant data to CSV
  */
@@ -37,20 +52,20 @@ export async function exportToCSV(plantData: PlantData): Promise<string> {
   const rows = plantData.journalEntries.map(entry => [
     format(entry.date, 'yyyy-MM-dd'),
     entry.notes || '',
-    entry.height || '',
-    entry.ph || '',
-    entry.temperature || '',
-    entry.humidity || '',
+    entry.height ?? '',
+    entry.ph ?? '',
+    entry.temperature ?? '',
+    entry.humidity ?? '',
     entry.photos.length,
   ]);
 
   const csvContent = [
     headers.join(','),
-    ...rows.map(row => row.join(',')),
+    ...rows.map(row => row.map(csvCell).join(',')),
   ].join('\n');
 
-  const fileName = `${plantData.name}_journal_${format(new Date(), 'yyyy-MM-dd')}.csv`;
-  const filePath = `${(FileSystem as any).documentDirectory}${fileName}`;
+  const fileName = `${safeFileName(plantData.name)}_journal_${format(new Date(), 'yyyy-MM-dd')}.csv`;
+  const filePath = `${writableDir()}${fileName}`;
 
   await FileSystem.writeAsStringAsync(filePath, csvContent);
   return filePath;
@@ -60,7 +75,10 @@ export async function exportToCSV(plantData: PlantData): Promise<string> {
  * Generate HTML report for PDF conversion
  */
 export function generateHTMLReport(plantData: PlantData): string {
-  const totalDays = plantData.journalEntries.length;
+  const totalDays = Math.max(
+    0,
+    Math.floor((Date.now() - new Date(plantData.startDate).getTime()) / 86400000) + 1
+  );
   const totalPhotos = plantData.journalEntries.reduce((sum, e) => sum + e.photos.length, 0);
 
   return `
@@ -68,7 +86,7 @@ export function generateHTMLReport(plantData: PlantData): string {
     <html>
     <head>
       <meta charset="UTF-8">
-      <title>${plantData.name} - Grow Report</title>
+      <title>${escapeHtml(plantData.name)} - Grow Report</title>
       <style>
         body {
           font-family: Arial, sans-serif;
@@ -123,17 +141,17 @@ export function generateHTMLReport(plantData: PlantData): string {
     </head>
     <body>
       <div class="header">
-        <h1>🌱 ${plantData.name}</h1>
+        <h1>🌱 ${escapeHtml(plantData.name)}</h1>
         <p>Grow Report - Generated ${format(new Date(), 'MMMM d, yyyy')}</p>
       </div>
 
       <div class="summary">
         <h2>Grow Summary</h2>
         <div class="summary-item">
-          <strong>Strain:</strong> ${plantData.strain || 'Unknown'}
+          <strong>Strain:</strong> ${escapeHtml(plantData.strain || 'Unknown')}
         </div>
         <div class="summary-item">
-          <strong>Growth Stage:</strong> ${plantData.growthStage}
+          <strong>Growth Stage:</strong> ${escapeHtml(plantData.growthStage)}
         </div>
         <div class="summary-item">
           <strong>Start Date:</strong> ${format(plantData.startDate, 'MMM d, yyyy')}
@@ -153,7 +171,7 @@ export function generateHTMLReport(plantData: PlantData): string {
       ${plantData.journalEntries.map(entry => `
         <div class="entry">
           <div class="entry-date">${format(entry.date, 'EEEE, MMMM d, yyyy')}</div>
-          ${entry.notes ? `<div class="entry-notes">${entry.notes}</div>` : ''}
+          ${entry.notes ? `<div class="entry-notes">${escapeHtml(entry.notes)}</div>` : ''}
           ${entry.height || entry.ph || entry.temperature || entry.humidity ? `
             <div class="metrics">
               ${entry.height ? `<strong>Height:</strong> ${entry.height}cm &nbsp;` : ''}
@@ -176,18 +194,47 @@ export function generateHTMLReport(plantData: PlantData): string {
 }
 
 /**
- * Export to PDF (requires react-native-html-to-pdf or similar)
+ * Render an HTML string to a real PDF file in the document directory.
+ * Returns the file URI, or '' on web (where the browser print dialog is opened instead).
+ */
+async function htmlToPdfFile(html: string, baseName: string): Promise<string> {
+  if (Platform.OS === 'web') {
+    await Print.printAsync({ html });
+    return '';
+  }
+  const { uri } = await Print.printToFileAsync({ html });
+  const target = `${writableDir()}${safeFileName(baseName)}_${format(new Date(), 'yyyy-MM-dd')}.pdf`;
+  try {
+    await FileSystem.deleteAsync(target, { idempotent: true });
+    await FileSystem.moveAsync({ from: uri, to: target });
+    return target;
+  } catch {
+    // moving failed (e.g. cache->documents); the generated PDF at `uri` is still valid
+    return uri;
+  }
+}
+
+/**
+ * Export the grow report as a real PDF (expo-print).
  */
 export async function exportToPDF(plantData: PlantData): Promise<string> {
-  const html = generateHTMLReport(plantData);
+  return htmlToPdfFile(generateHTMLReport(plantData), `${plantData.name}_report`);
+}
 
-  // For now, save as HTML
-  // In production, use react-native-html-to-pdf or expo-print
-  const fileName = `${plantData.name}_report_${format(new Date(), 'yyyy-MM-dd')}.html`;
-  const filePath = `${(FileSystem as any).documentDirectory}${fileName}`;
-
-  await FileSystem.writeAsStringAsync(filePath, html);
+/**
+ * Export expenses as CSV file.
+ */
+export async function exportExpensesToCSV(expenses: Expense[], name = 'expenses'): Promise<string> {
+  const filePath = `${writableDir()}${safeFileName(name)}_${format(new Date(), 'yyyy-MM-dd')}.csv`;
+  await FileSystem.writeAsStringAsync(filePath, buildExpensesCsv(expenses));
   return filePath;
+}
+
+/**
+ * Export expenses as PDF file.
+ */
+export async function exportExpensesToPDF(expenses: Expense[], name = 'expenses'): Promise<string> {
+  return htmlToPdfFile(generateExpensesHTML(expenses, 'Expense Report'), name);
 }
 
 /**
@@ -199,7 +246,7 @@ export async function shareFile(filePath: string): Promise<void> {
   if (canShare) {
     await Sharing.shareAsync(filePath);
   } else {
-    console.warn('Sharing not available on this device');
+    throw new Error('Teilen wird auf diesem Gerät nicht unterstützt');
   }
 }
 
@@ -214,7 +261,7 @@ export async function createBackup(userData: any): Promise<string> {
   };
 
   const fileName = `growmaster_backup_${format(new Date(), 'yyyy-MM-dd')}.json`;
-  const filePath = `${(FileSystem as any).documentDirectory}${fileName}`;
+  const filePath = `${writableDir()}${fileName}`;
 
   await FileSystem.writeAsStringAsync(filePath, JSON.stringify(backup, null, 2));
   return filePath;
@@ -227,6 +274,9 @@ export async function restoreBackup(filePath: string): Promise<any> {
   const content = await FileSystem.readAsStringAsync(filePath);
   const backup = JSON.parse(content);
 
+  if (!backup || typeof backup !== 'object' || !('data' in backup)) {
+    throw new Error('Invalid backup file');
+  }
   if (backup.version !== '1.0.0') {
     throw new Error('Incompatible backup version');
   }

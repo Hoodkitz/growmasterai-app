@@ -2,7 +2,9 @@
  * Custom hook for optimized image loading
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { Image } from 'react-native';
+import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { ImageOptimization } from '@/lib/performance';
@@ -35,11 +37,7 @@ export function useOptimizedImage() {
     setError(null);
 
     try {
-      const {
-        maxDimension = 1200,
-        quality = 0.8,
-        format = 'jpeg',
-      } = options;
+      const { maxDimension = 1200, quality = 0.8, format: outputFormat = 'jpeg' } = options;
 
       // Get image info
       const info = await FileSystem.getInfoAsync(sourceUri);
@@ -47,24 +45,29 @@ export function useOptimizedImage() {
         throw new Error('Image file not found');
       }
 
-      // Read image dimensions (would need actual implementation)
-      // For now, we'll assume standard optimization
-      
-      // For actual implementation, you'd use expo-image-manipulator:
-      // import * as ImageManipulator from 'expo-image-manipulator';
-      
-      // const manipResult = await ImageManipulator.manipulateAsync(
-      //   sourceUri,
-      //   [{ resize: { width: maxDimension } }],
-      //   { compress: quality, format: ImageManipulator.SaveFormat[format.toUpperCase()] }
-      // );
+      // Read the real image dimensions, then downscale (longest side <= maxDimension)
+      // and re-encode (JPEG by default).
+      const dims = await new Promise<{ width: number; height: number }>((resolve, reject) =>
+        Image.getSize(sourceUri, (width, height) => resolve({ width, height }), reject)
+      );
+      const target = ImageOptimization.getOptimalDimensions(dims.width, dims.height, maxDimension);
+      const needsResize = target.width !== dims.width || target.height !== dims.height;
 
-      // Placeholder return (replace with actual manipulated image)
+      const manipulated = await ImageManipulator.manipulateAsync(
+        sourceUri,
+        needsResize ? [{ resize: { width: target.width, height: target.height } }] : [],
+        {
+          compress: quality,
+          format: outputFormat === 'png' ? ImageManipulator.SaveFormat.PNG : ImageManipulator.SaveFormat.JPEG,
+        }
+      );
+      const outInfo = await FileSystem.getInfoAsync(manipulated.uri);
+
       const result: OptimizedImageResult = {
-        uri: sourceUri,
-        width: 1200,
-        height: 900,
-        size: info.size || 0,
+        uri: manipulated.uri,
+        width: manipulated.width,
+        height: manipulated.height,
+        size: outInfo.exists && 'size' in outInfo ? outInfo.size ?? 0 : 0,
       };
 
       setLoading(false);
@@ -108,7 +111,7 @@ export function useImagePicker() {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 3],
-        quality: 1, // We'll compress later
+        quality: 1, // real compression happens in optimizeImage (expo-image-manipulator)
       });
 
       if (result.canceled) {

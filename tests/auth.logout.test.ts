@@ -27,6 +27,7 @@ function createAuthContext(): { ctx: TrpcContext; clearedCookies: CookieCall[] }
     level: 1,
     xp: 0,
     streak: 0,
+    longestStreak: 0,
     lastActiveAt: null,
     subscriptionTier: "free",
     subscriptionExpiresAt: null,

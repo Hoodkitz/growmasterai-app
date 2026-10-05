@@ -55,12 +55,13 @@ export function predictYield(params: YieldPredictionParams): YieldPrediction {
   factors.push({
     name: 'Vegetative Time',
     impact: 'positive',
-    magnitude: (vegBonus / baseYield) * 100,
+    magnitude: baseYield > 0 ? (vegBonus / baseYield) * 100 : 0,
     description: `${params.vegWeeks} weeks veg adds ${vegBonus}g`,
   });
 
   // 2. Light Efficiency (watts per plant)
-  const wattsPerPlant = params.lightWattage / params.plantCount;
+  const plantCount = Math.max(1, Math.floor(params.plantCount || 1));
+  const wattsPerPlant = params.lightWattage / plantCount;
   let lightMultiplier = 1.0;
 
   if (wattsPerPlant >= 300) {
@@ -184,6 +185,9 @@ export function predictYield(params: YieldPredictionParams): YieldPrediction {
 
   baseYield *= environmentMultiplier;
 
+  // Base values are per plant; scale to the whole grow
+  baseYield *= plantCount;
+
   // Calculate confidence based on data completeness
   let confidence = 70; // Base confidence
   if (params.vegWeeks > 0 && params.flowerWeeks > 0) confidence += 10;
@@ -222,7 +226,7 @@ export function trackYieldAccuracy(
   params: YieldPredictionParams
 ): HistoricalYield {
   const difference = actual - predicted;
-  const accuracy = 100 - Math.abs((difference / actual) * 100);
+  const accuracy = actual > 0 ? 100 - Math.abs((difference / actual) * 100) : 0;
 
   return {
     predicted,

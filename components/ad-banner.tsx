@@ -1,14 +1,23 @@
+import { useEffect, useRef } from "react";
 import { View, Text, TouchableOpacity, Linking } from "react-native";
+import { useRouter } from "expo-router";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
+import { TIER_LIMITS } from "@/lib/subscription";
 
-interface AdBannerProps {
+export interface AdBannerProps {
   position: "home" | "community" | "marketplace";
+  /** Echte Anzeige (z.B. aus der adBanners-Tabelle). Ohne Anzeige wird nichts gerendert. */
+  ad?: Ad | null;
   variant?: "small" | "medium" | "large";
+  /** Optional: einmal pro Mount, sobald eine Anzeige gerendert wird */
+  onImpression?: () => void;
+  /** Optional: beim Antippen */
+  onClick?: () => void;
 }
 
-interface Ad {
+export interface Ad {
   id: string;
   vendorName: string;
   vendorLogo: string;
@@ -20,62 +29,25 @@ interface Ad {
   accentColor: string;
 }
 
-const MOCK_ADS: Record<string, Ad[]> = {
-  home: [
-    {
-      id: "ad1",
-      vendorName: "SeedBank Pro",
-      vendorLogo: "🌱",
-      title: "Premium Genetik",
-      subtitle: "20% Rabatt auf alle Samen",
-      ctaText: "Jetzt shoppen",
-      link: "https://seedbankpro.com",
-      backgroundColor: "#10B98120",
-      accentColor: "#10B981",
-    },
-  ],
-  community: [
-    {
-      id: "ad2",
-      vendorName: "GrowTech",
-      vendorLogo: "💡",
-      title: "LED Sale",
-      subtitle: "Bis zu 40% auf Beleuchtung",
-      ctaText: "Angebote ansehen",
-      link: "https://growtech.com",
-      backgroundColor: "#3B82F620",
-      accentColor: "#3B82F6",
-    },
-  ],
-  marketplace: [
-    {
-      id: "ad3",
-      vendorName: "NutrientKing",
-      vendorLogo: "🧪",
-      title: "Bio Dünger",
-      subtitle: "Gratis Versand ab €50",
-      ctaText: "Entdecken",
-      link: "https://nutrientking.com",
-      backgroundColor: "#F59E0B20",
-      accentColor: "#F59E0B",
-    },
-  ],
-};
-
-export function AdBanner({ position, variant = "medium" }: AdBannerProps) {
-  const colors = useColors();
+export function AdBanner({ ad, variant = "medium", onImpression, onClick }: AdBannerProps) {
   const { tier } = useSubscription();
+  const impressionSent = useRef<string | null>(null);
+  const visible = !TIER_LIMITS[tier].adFree && !!ad;
 
-  // Pro users don't see ads
-  if (tier === "pro") return null;
+  useEffect(() => {
+    if (visible && ad && impressionSent.current !== ad.id) {
+      impressionSent.current = ad.id;
+      onImpression?.();
+    }
+  }, [visible, ad, onImpression]);
 
-  const ads = MOCK_ADS[position] || [];
-  if (ads.length === 0) return null;
-
-  const ad = ads[0];
+  // Bezahlte Tiers sind werbefrei; ohne echte Anzeige nichts rendern (keine Fake-Werbung)
+  if (TIER_LIMITS[tier].adFree) return null;
+  if (!ad) return null;
 
   const handlePress = () => {
-    Linking.openURL(ad.link);
+    onClick?.();
+    Linking.openURL(ad.link).catch((e) => console.warn("[AdBanner] Link konnte nicht geöffnet werden:", e));
   };
 
   if (variant === "small") {
@@ -159,6 +131,7 @@ export function AdBanner({ position, variant = "medium" }: AdBannerProps) {
 // Vendor Ad Request Component
 export function VendorAdRequest() {
   const colors = useColors();
+  const router = useRouter();
 
   return (
     <View className="bg-surface rounded-2xl p-4 border border-border">
@@ -178,10 +151,13 @@ export function VendorAdRequest() {
       </Text>
       
       <View className="flex-row gap-3">
-        <TouchableOpacity className="flex-1 bg-primary py-3 rounded-xl">
+        <TouchableOpacity className="flex-1 bg-primary py-3 rounded-xl" onPress={() => router.push("/vendor-portal" as any)}>
           <Text className="text-center text-sm font-semibold text-white">Anbieter werden</Text>
         </TouchableOpacity>
-        <TouchableOpacity className="flex-1 bg-surface border border-border py-3 rounded-xl">
+        <TouchableOpacity
+          className="flex-1 bg-surface border border-border py-3 rounded-xl"
+          onPress={() => Linking.openURL("mailto:partners@growmaster.app?subject=Werbung%20schalten").catch(() => {})}
+        >
           <Text className="text-center text-sm font-semibold text-foreground">Mehr erfahren</Text>
         </TouchableOpacity>
       </View>

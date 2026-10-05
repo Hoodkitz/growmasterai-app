@@ -3,34 +3,56 @@
  * Helps user create their first plant after onboarding
  */
 
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useState } from 'react';
 import { router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScreenContainer } from '@/components/screen-container';
-import { trpc } from '@/lib/trpc';
+
+// Same storage key/shape as app/(tabs)/plants.tsx so the plant shows up in the plants tab.
+const PLANTS_STORAGE_KEY = 'plants';
+
+const STAGES: { id: 'seedling' | 'vegetative' | 'flowering'; label: string }[] = [
+  { id: 'seedling', label: 'Keimling' },
+  { id: 'vegetative', label: 'Vegetativ' },
+  { id: 'flowering', label: 'Blüte' },
+];
 
 export default function SetupFirstPlantScreen() {
   const [plantName, setPlantName] = useState('');
   const [strain, setStrain] = useState('');
   const [growthStage, setGrowthStage] = useState<'seedling' | 'vegetative' | 'flowering'>('seedling');
+  const [saving, setSaving] = useState(false);
 
-  const createPlantMutation = trpc.plants.create.useMutation({
-    onSuccess: () => {
-      router.replace('/(tabs)');
-    },
-  });
-
-  const handleCreatePlant = () => {
+  const handleCreatePlant = async () => {
     if (!plantName.trim()) {
-      alert('Please enter a plant name');
+      Alert.alert('Name fehlt', 'Bitte gib deiner Pflanze einen Namen.');
       return;
     }
 
-    createPlantMutation.mutate({
-      name: plantName,
-      strain: strain || undefined,
-      growthStage,
-    });
+    setSaving(true);
+    try {
+      const stored = await AsyncStorage.getItem(PLANTS_STORAGE_KEY);
+      const existing = stored ? JSON.parse(stored) : [];
+      const now = new Date().toISOString();
+      const plant = {
+        id: Date.now().toString(),
+        name: plantName.trim(),
+        strain: strain.trim(),
+        phase: growthStage,
+        startDate: now,
+        notes: '',
+        createdAt: now,
+        updatedAt: now,
+      };
+      await AsyncStorage.setItem(PLANTS_STORAGE_KEY, JSON.stringify([...existing, plant]));
+      router.replace('/(tabs)');
+    } catch (error) {
+      console.error('Failed to save first plant:', error);
+      Alert.alert('Fehler', 'Die Pflanze konnte nicht gespeichert werden. Bitte versuche es erneut.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleSkip = () => {
@@ -42,66 +64,66 @@ export default function SetupFirstPlantScreen() {
       <ScrollView className="flex-1 px-6 pt-12">
         {/* Header */}
         <Text className="text-4xl font-bold text-foreground mb-2">
-          🌱 Create Your First Plant
+          🌱 Deine erste Pflanze
         </Text>
         <Text className="text-lg text-muted mb-8">
-          Let's set up your first grow! You can always add more plants later.
+          Starte deinen ersten Grow! Weitere Pflanzen kannst du jederzeit hinzufügen.
         </Text>
 
         {/* Form */}
         <View className="space-y-6">
-          {/* Plant Name */}
+          {/* Name der Pflanze */}
           <View>
             <Text className="text-base font-semibold text-foreground mb-2">
-              Plant Name *
+              Name der Pflanze *
             </Text>
             <TextInput
               value={plantName}
               onChangeText={setPlantName}
-              placeholder="e.g., My First Plant, Blue Dream #1"
+              placeholder="z. B. Meine erste Pflanze, Blue Dream #1"
               className="bg-surface border border-border rounded-xl px-4 py-3 text-foreground text-base"
               placeholderTextColor="#6B7280"
             />
             <Text className="text-sm text-muted mt-1">
-              Give your plant a unique name
+              Gib deiner Pflanze einen eindeutigen Namen
             </Text>
           </View>
 
-          {/* Strain (Optional) */}
+          {/* Sorte (optional) */}
           <View>
             <Text className="text-base font-semibold text-foreground mb-2">
-              Strain (Optional)
+              Sorte (optional)
             </Text>
             <TextInput
               value={strain}
               onChangeText={setStrain}
-              placeholder="e.g., Blue Dream, OG Kush"
+              placeholder="z. B. Blue Dream, OG Kush"
               className="bg-surface border border-border rounded-xl px-4 py-3 text-foreground text-base"
               placeholderTextColor="#6B7280"
             />
             <Text className="text-sm text-muted mt-1">
-              What strain are you growing?
+              Welche Sorte baust du an?
             </Text>
           </View>
 
           {/* Growth Stage */}
           <View>
             <Text className="text-base font-semibold text-foreground mb-2">
-              Current Stage
+              Aktuelle Phase
             </Text>
             <View className="flex-row space-x-2">
-              {['seedling', 'vegetative', 'flowering'].map((stage) => (
+              {STAGES.map(({ id: stage, label }) => (
                 <TouchableOpacity
                   key={stage}
-                  onPress={() => setGrowthStage(stage as any)}
+                  onPress={() => setGrowthStage(stage)}
                   className={`flex-1 py-3 rounded-xl border-2 ${growthStage === stage
                       ? 'bg-primary border-primary'
                       : 'bg-surface border-border'
                     }`}
                 >
-                  <Text className={`text-center font-semibold capitalize ${growthStage === stage ? 'text-white' : 'text-foreground'
+                  <Text className={`text-center font-semibold ${growthStage === stage ? 'text-white' : 'text-foreground'
                     }`}>
-                    {stage}
+                    {label}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -111,8 +133,8 @@ export default function SetupFirstPlantScreen() {
           {/* Info Box */}
           <View className="bg-primary/10 border border-primary/20 rounded-xl p-4">
             <Text className="text-sm text-foreground">
-              💡 <Text className="font-semibold">Tip:</Text> You can add photos, notes,
-              and track progress in your grow journal after creating your plant.
+              💡 <Text className="font-semibold">Tipp:</Text> Nach dem Erstellen kannst du Fotos und Notizen
+              hinzufügen und deinen Fortschritt im Grow-Tagebuch festhalten.
             </Text>
           </View>
 
@@ -120,11 +142,11 @@ export default function SetupFirstPlantScreen() {
           <View className="space-y-3 mt-8">
             <TouchableOpacity
               onPress={handleCreatePlant}
-              disabled={createPlantMutation.isPending}
+              disabled={saving}
               className="bg-primary rounded-xl py-4 shadow-lg"
             >
               <Text className="text-white text-center text-lg font-bold">
-                {createPlantMutation.isPending ? 'Creating...' : 'Create Plant 🌱'}
+                {saving ? 'Speichern...' : 'Pflanze erstellen 🌱'}
               </Text>
             </TouchableOpacity>
 
@@ -133,7 +155,7 @@ export default function SetupFirstPlantScreen() {
               className="py-4"
             >
               <Text className="text-muted text-center text-base">
-                Skip for now
+                Später
               </Text>
             </TouchableOpacity>
           </View>

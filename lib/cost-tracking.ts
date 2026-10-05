@@ -80,6 +80,7 @@ export function calculateROI(
 ): number {
   const revenue = yieldGrams * pricePerGram;
   const profit = revenue - totalExpenses;
+  if (totalExpenses <= 0) return 0;
   const roi = (profit / totalExpenses) * 100;
   return Math.round(roi);
 }
@@ -133,7 +134,7 @@ export function getExpenseBreakdown(expenses: Expense[]): ExpenseBreakdown[] {
   return Object.entries(byCategory).map(([category, amount]) => ({
     category,
     amount,
-    percentage: Math.round((amount / total) * 100),
+    percentage: total > 0 ? Math.round((amount / total) * 100) : 0,
     color: colors[category] || colors.other,
   }));
 }
