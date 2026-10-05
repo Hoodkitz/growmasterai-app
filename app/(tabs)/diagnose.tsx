@@ -48,7 +48,7 @@ export default function DiagnoseScreen() {
   const router = useRouter();
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { tier, dailyDiagnoses, canDiagnose, useDiagnosis, remainingDiagnoses } = useSubscription();
+  const { tier, dailyDiagnoses, canDiagnose, useDiagnosis: consumeDiagnosis, remainingDiagnoses } = useSubscription();
   const limits = TIER_LIMITS[tier];
   const [permission, requestPermission] = useCameraPermissions();
   
@@ -104,46 +104,57 @@ export default function DiagnoseScreen() {
     }
   }, [liveAnalysisActive]);
 
-  // Simulate live analysis overlays
+  // Real live analysis: periodically grab a frame and let the AI mark spots
+  const liveScanMutation = trpc.liveScan.analyze.useMutation();
+  const liveBusyRef = useRef(false);
+
   useEffect(() => {
-    if (liveAnalysisActive && mode === "camera") {
-      const interval = setInterval(() => {
-        const mockOverlays: AnalysisOverlay[] = [
-          {
-            id: "1",
-            type: "cut",
-            x: 0.25 + Math.random() * 0.15,
-            y: 0.2 + Math.random() * 0.1,
-            label: "✂️ Schnitt empfohlen",
-            description: "Entferne diesen Seitentrieb für besseren Ertrag am Hauptstamm. Dies fördert das vertikale Wachstum.",
-            color: "#F59E0B",
-          },
-          {
-            id: "2",
-            type: "healthy",
-            x: 0.5 + Math.random() * 0.1,
-            y: 0.35 + Math.random() * 0.1,
-            label: "✓ Gesund",
-            description: "Dieser Bereich zeigt optimales Wachstum mit guter Blattfarbe und Struktur.",
-            color: "#22C55E",
-          },
-          {
-            id: "3",
-            type: "tip",
-            x: 0.65 + Math.random() * 0.1,
-            y: 0.55 + Math.random() * 0.1,
-            label: "💡 LST möglich",
-            description: "Dieser Zweig eignet sich für Low Stress Training. Biege ihn vorsichtig nach außen.",
-            color: "#3B82F6",
-          },
-        ];
-        setOverlays(mockOverlays);
-      }, 3000);
-      
-      return () => clearInterval(interval);
-    } else {
+    if (!(liveAnalysisActive && mode === "camera")) {
       setOverlays([]);
+      return;
     }
+    const COLORS = { cut: "#F59E0B", issue: "#EF4444", healthy: "#22C55E", tip: "#3B82F6" } as const;
+    const PREFIX = { cut: "✂️ ", issue: "⚠️ ", healthy: "✓ ", tip: "💡 " } as const;
+    let cancelled = false;
+
+    const scan = async () => {
+      if (liveBusyRef.current || !cameraRef.current) return;
+      liveBusyRef.current = true;
+      try {
+        const photo = await cameraRef.current.takePictureAsync({
+          base64: true,
+          quality: 0.3,
+          skipProcessing: true,
+        });
+        if (!photo?.base64 || cancelled) return;
+        const found = await liveScanMutation.mutateAsync({
+          image: `data:image/jpeg;base64,${photo.base64}`,
+        });
+        if (cancelled) return;
+        setOverlays(
+          found.map((o, i) => ({
+            id: String(i),
+            type: o.type,
+            x: o.x,
+            y: o.y,
+            label: PREFIX[o.type] + o.label,
+            description: o.description,
+            color: COLORS[o.type],
+          })),
+        );
+      } catch (error) {
+        console.error("Live scan error:", error);
+      } finally {
+        liveBusyRef.current = false;
+      }
+    };
+
+    scan();
+    const interval = setInterval(scan, 8000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
   }, [liveAnalysisActive, mode]);
 
   const canStartDiagnosis = canDiagnose();
@@ -190,7 +201,7 @@ export default function DiagnoseScreen() {
   };
 
   const startDiagnosis = async (base64Images?: string[]) => {
-    const canUse = await useDiagnosis();
+    const canUse = await consumeDiagnosis();
     if (!canUse) return;
     
     let imagesToAnalyze = base64Images;

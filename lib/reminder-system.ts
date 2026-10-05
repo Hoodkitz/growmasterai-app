@@ -42,6 +42,13 @@ export async function requestNotificationPermissions(): Promise<boolean> {
     return false; // Web doesn't support push notifications
   }
 
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('reminders', {
+      name: 'Pflege-Erinnerungen',
+      importance: Notifications.AndroidImportance.HIGH,
+    });
+  }
+
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;
 
@@ -105,20 +112,28 @@ export async function scheduleNotification(
       await Notifications.cancelScheduledNotificationAsync(reminder.notificationId);
     }
 
-    const trigger: any = {
-      date: reminder.scheduledTime,
-    };
+    const when = new Date(reminder.scheduledTime);
+    let trigger: Notifications.NotificationTriggerInput;
 
-    // Add repeat if specified
     if (reminder.repeatInterval === 'daily') {
-      trigger.repeats = true;
-      trigger.hour = reminder.scheduledTime.getHours();
-      trigger.minute = reminder.scheduledTime.getMinutes();
+      trigger = {
+        type: Notifications.SchedulableTriggerInputTypes.DAILY,
+        hour: when.getHours(),
+        minute: when.getMinutes(),
+      };
     } else if (reminder.repeatInterval === 'weekly') {
-      trigger.repeats = true;
-      trigger.weekday = reminder.scheduledTime.getDay();
-      trigger.hour = reminder.scheduledTime.getHours();
-      trigger.minute = reminder.scheduledTime.getMinutes();
+      trigger = {
+        type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+        weekday: when.getDay() + 1, // expo: 1 = Sunday
+        hour: when.getHours(),
+        minute: when.getMinutes(),
+      };
+    } else {
+      if (when.getTime() <= Date.now()) {
+        console.warn('Reminder time is in the past, not scheduling');
+        return null;
+      }
+      trigger = { type: Notifications.SchedulableTriggerInputTypes.DATE, date: when };
     }
 
     const notificationId = await Notifications.scheduleNotificationAsync({
@@ -132,7 +147,7 @@ export async function scheduleNotification(
         },
         sound: true,
       },
-      trigger,
+      trigger: Platform.OS === 'android' ? { ...trigger, channelId: 'reminders' } as Notifications.NotificationTriggerInput : trigger,
     });
 
     return notificationId;
@@ -161,8 +176,8 @@ export async function createWateringReminder(
     plantId,
     plantName,
     type: 'watering',
-    title: `💧 Time to water ${plantName}`,
-    message: `Your ${plantName} needs watering. Check soil moisture before watering.`,
+    title: `💧 ${plantName} gießen`,
+    message: `${plantName} braucht Wasser. Prüfe vorher die Feuchtigkeit des Substrats.`,
     scheduledTime,
     repeatDays: daysUntilNextWatering,
     enabled: true,
@@ -196,8 +211,8 @@ export async function createFeedingReminder(
     plantId,
     plantName,
     type: 'feeding',
-    title: `🌿 Feed ${plantName}`,
-    message: `Time to give ${plantName} nutrients. Check feeding schedule.`,
+    title: `🌿 ${plantName} düngen`,
+    message: `${plantName} braucht Nährstoffe. Prüfe deinen Düngeplan.`,
     scheduledTime,
     repeatDays: daysUntilNextFeeding,
     enabled: true,

@@ -72,16 +72,16 @@ function ImprintContent() {
       <Section title="Angaben gemäß § 5 TMG">
         <Text className="text-foreground leading-6">
           GrowMaster AI{"\n"}
-          [Ihr vollständiger Name / Firmenname]{"\n"}
-          [Straße und Hausnummer]{"\n"}
-          [PLZ Ort]{"\n"}
+          Julien Paarmann{"\n"}
+          Kiefheider Weg 72{"\n"}
+          13503 Berlin{"\n"}
           Deutschland
         </Text>
       </Section>
 
       <Section title="Kontakt">
         <Text className="text-foreground leading-6">
-          Telefon: [Ihre Telefonnummer]{"\n"}
+          Telefon: +4917645029598{"\n"}
           E-Mail: support@growmaster.app{"\n"}
           Website: https://growmaster.app
         </Text>
@@ -89,8 +89,8 @@ function ImprintContent() {
 
       <Section title="Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV">
         <Text className="text-foreground leading-6">
-          [Ihr vollständiger Name]{"\n"}
-          [Adresse wie oben]
+          Julien Paarmann{"\n"}
+          Kiefheider Weg 72, 13503 Berlin
         </Text>
       </Section>
 

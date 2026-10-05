@@ -9,26 +9,14 @@ export interface MoonPhase {
 }
 
 export const getMoonPhase = (date: Date = new Date()): MoonPhase => {
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  
-  // Simplified moon phase calculation
-  const c = Math.floor(year / 100);
-  const n = year - 19 * Math.floor(year / 19);
-  const k = Math.floor((c - 17) / 25);
-  let i = c - Math.floor(c / 4) - Math.floor((c - k) / 3) + 19 * n + 15;
-  i = i - 30 * Math.floor(i / 30);
-  i = i - Math.floor(i / 28) * (1 - Math.floor(i / 28) * Math.floor(29 / (i + 1)) * Math.floor((21 - n) / 11));
-  let j = year + Math.floor(year / 4) + i + 2 - c + Math.floor(c / 4);
-  j = j - 7 * Math.floor(j / 7);
-  const l = i - j;
-  const moonMonth = 3 + Math.floor((l + 40) / 44);
-  const moonDay = l + 28 - 31 * Math.floor(moonMonth / 4);
-  
-  const lunarDay = ((day + moonDay) % 30);
-  const percentage = Math.round((lunarDay / 29.5) * 100);
-  
+  // Moon age from the synodic month, referenced to the new moon of 2000-01-06 18:14 UTC
+  const SYNODIC = 29.530588853;
+  const REF_NEW_MOON = Date.UTC(2000, 0, 6, 18, 14, 0);
+  const daysSince = (date.getTime() - REF_NEW_MOON) / 86400000;
+  const lunarDay = ((daysSince % SYNODIC) + SYNODIC) % SYNODIC;
+  // Illuminated fraction (0 = new moon, 100 = full moon)
+  const percentage = Math.round(((1 - Math.cos((2 * Math.PI * lunarDay) / SYNODIC)) / 2) * 100);
+
   if (lunarDay < 1.85) return { name: "Neumond", emoji: "🌑", description: "Keine sichtbare Beleuchtung", growTip: "Ideal für Wurzelarbeiten und Umpflanzen", percentage };
   if (lunarDay < 7.38) return { name: "Zunehmende Sichel", emoji: "🌒", description: "Rechte Seite beleuchtet", growTip: "Gute Zeit für Aussaat und Stecklinge", percentage };
   if (lunarDay < 11.07) return { name: "Erstes Viertel", emoji: "🌓", description: "Rechte Hälfte beleuchtet", growTip: "Optimale Zeit für oberirdisches Wachstum", percentage };
@@ -164,8 +152,8 @@ export interface DryingStatus {
 
 export const getDryingStatus = (startDate: Date, method: "hang" | "rack" | "paper"): DryingStatus => {
   const now = new Date();
-  const diffTime = Math.abs(now.getTime() - startDate.getTime());
-  const day = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const diffTime = Math.max(0, now.getTime() - startDate.getTime());
+  const day = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
   
   const expectedDays = method === "hang" ? 10 : method === "rack" ? 7 : 5;
   const progress = Math.min((day / expectedDays) * 100, 100);
@@ -291,3 +279,14 @@ export const calculateWatering = (
     tips,
   };
 };
+
+/**
+ * Parse a numeric text input. Returns the fallback only for empty/invalid input,
+ * so a typed 0 stays 0.
+ */
+export function parseNumberOr(value: string, fallback: number): number {
+  const trimmed = value.trim().replace(",", ".");
+  if (trimmed === "") return fallback;
+  const n = Number(trimmed);
+  return Number.isFinite(n) ? n : fallback;
+}

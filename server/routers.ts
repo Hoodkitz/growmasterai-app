@@ -2,12 +2,23 @@ import { z } from "zod";
 import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { getDb } from "./db";
-import { plants, journalEntries, communityPosts, postComments, vendors, vendorProducts, messages, users, auctions, giveaways, diagnoses, userAchievements, vendorLeads, adBanners } from "../drizzle/schema";
+import { plants, journalEntries, communityPosts, postComments, vendors, vendorProducts, messages, users, auctions, auctionBids, giveaways, giveawayEntries, pushTokens, diagnoses, userAchievements, vendorLeads, adBanners, postLikes, vendorOutreach } from "../drizzle/schema";
 import { eq, and, desc, sql, or, ne, gt, count } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
+import { liveScanLimiter, clientKey } from "./_core/rateLimit";
+import { computeStreak } from "./streak";
+import { mergePlants, plantTimestamp, type SyncPlant } from "../shared/plant-sync";
+import { summarizeOutreach } from "../lib/vendor-outreach";
 import { alias } from "drizzle-orm/mysql-core";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
+import { adminProcedure } from "./_core/trpc";
+import { ACHIEVEMENTS, getLevelFromPoints } from "../lib/gamification";
+import { vendorInquiries } from "../drizzle/schema";
+import { gte } from "drizzle-orm";
+import { validateBid, validateRaffleEntry } from "../lib/auction-rules";
+import { sendExpoPush } from "./push";
 
 // Diagnosis response schema
 const diagnosisResponseSchema = z.object({
@@ -107,6 +118,63 @@ Wenn die Pflanze gesund aussieht, beschreibe ihren guten Zustand und gib allgeme
           careTips: [],
           severity: "low" as const,
         };
+      }),
+  }),
+
+  // Live camera scan: real vision analysis returning positioned overlays
+  liveScan: router({
+    analyze: publicProcedure
+      .input(z.object({ image: z.string().min(1) }))
+      .mutation(async ({ input, ctx }) => {
+        const limit = liveScanLimiter.check(ctx.user ? `u:${ctx.user.id}` : `ip:${clientKey(ctx.req)}`);
+        if (!limit.allowed) {
+          throw new TRPCError({
+            code: "TOO_MANY_REQUESTS",
+            message: `Zu viele Scans. Bitte in ${limit.retryAfterSec}s erneut versuchen.`,
+          });
+        }
+        const result = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: `Du bist ein Experte für Cannabis-Anbau. Analysiere das Kamerabild und markiere bis zu 4 relevante Stellen.
+Antworte IMMER auf Deutsch als JSON:
+{"overlays":[{"type":"cut"|"issue"|"healthy"|"tip","x":0-1,"y":0-1,"label":"kurz (max 25 Zeichen)","description":"1-2 Sätze"}]}
+x/y sind relative Positionen im Bild (0,0 = links oben). Nur Stellen markieren, die du wirklich im Bild siehst. Ist keine Pflanze erkennbar, gib {"overlays":[]} zurück.`,
+            },
+            {
+              role: "user",
+              content: [
+                { type: "text" as const, text: "Analysiere dieses Live-Kamerabild." },
+                {
+                  type: "image_url" as const,
+                  image_url: {
+                    url: input.image.startsWith("data:") ? input.image : `data:image/jpeg;base64,${input.image}`,
+                    detail: "low" as const,
+                  },
+                },
+              ],
+            },
+          ],
+          responseFormat: { type: "json_object" },
+        });
+        const content = result.choices[0]?.message?.content;
+        const schema = z.object({
+          overlays: z.array(
+            z.object({
+              type: z.enum(["cut", "issue", "healthy", "tip"]),
+              x: z.number().min(0).max(1),
+              y: z.number().min(0).max(1),
+              label: z.string(),
+              description: z.string(),
+            }),
+          ),
+        });
+        try {
+          return schema.parse(JSON.parse(typeof content === "string" ? content : "{}")).overlays.slice(0, 4);
+        } catch {
+          return [];
+        }
       }),
   }),
 
@@ -353,6 +421,81 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
 
   // Plants Management
   plants: router({
+    /**
+     * Offline-first sync: client sends its full local state (plants + tombstones);
+     * server merges last-write-wins per clientId, persists changes and returns the merged state.
+     */
+    sync: protectedProcedure
+      .input(z.object({
+        plants: z.array(z.object({
+          id: z.string().min(1).max(64),
+          name: z.string().min(1).max(100),
+          strain: z.string().max(100).default(""),
+          phase: z.enum(["seedling", "vegetative", "flowering", "harvest"]),
+          startDate: z.string().max(40),
+          notes: z.string().max(10000).optional(),
+          growType: z.enum(["indoor", "outdoor", "greenhouse"]).optional(),
+          createdAt: z.string().max(40).optional(),
+          updatedAt: z.string().max(40).optional(),
+        })).max(500),
+        tombstones: z.record(z.string().max(64), z.string().max(40)).default({}),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+
+        const rows = await db.select().from(plants).where(and(eq(plants.userId, ctx.user.id), sql`${plants.clientId} IS NOT NULL`));
+        const remote = { plants: [] as SyncPlant[], tombstones: {} as Record<string, string> };
+        const rowByClientId = new Map<string, (typeof rows)[number]>();
+        for (const r of rows) {
+          const cid = r.clientId!;
+          rowByClientId.set(cid, r);
+          const iso = new Date(r.clientUpdatedAt ?? r.updatedAt.getTime()).toISOString();
+          if (r.deletedAt != null) {
+            remote.tombstones[cid] = new Date(r.deletedAt).toISOString();
+          } else {
+            remote.plants.push({
+              id: cid,
+              name: r.name,
+              strain: r.strain ?? "",
+              phase: (r.phase === "seedling" || r.phase === "vegetative" || r.phase === "flowering" ? r.phase : "harvest"),
+              startDate: r.startDate.toISOString(),
+              notes: r.notes ?? "",
+              growType: r.growType ?? undefined,
+              createdAt: r.createdAt.toISOString(),
+              updatedAt: iso,
+            });
+          }
+        }
+
+        const merged = mergePlants({ plants: input.plants, tombstones: input.tombstones }, remote);
+
+        for (const pl of merged.toPush.plants) {
+          const startDate = new Date(pl.startDate);
+          const values = {
+            name: pl.name,
+            strain: pl.strain || null,
+            phase: pl.phase,
+            startDate: Number.isNaN(startDate.getTime()) ? new Date() : startDate,
+            notes: pl.notes || null,
+            growType: pl.growType ?? "indoor",
+            clientUpdatedAt: plantTimestamp(pl),
+            deletedAt: null,
+          };
+          const existing = rowByClientId.get(pl.id);
+          if (existing) await db.update(plants).set(values).where(eq(plants.id, existing.id));
+          else await db.insert(plants).values({ ...values, userId: ctx.user.id, clientId: pl.id });
+        }
+        for (const [id, at] of Object.entries(merged.toPush.tombstones)) {
+          const deletedAt = Date.parse(at) || Date.now();
+          const existing = rowByClientId.get(id);
+          if (existing) await db.update(plants).set({ deletedAt, clientUpdatedAt: deletedAt }).where(eq(plants.id, existing.id));
+          // Unknown plant deleted offline before it was ever synced: nothing to store.
+        }
+
+        return { plants: merged.plants, tombstones: merged.tombstones };
+      }),
+
     create: protectedProcedure
       .input(z.object({
         name: z.string().min(1),
@@ -506,6 +649,64 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         };
       }),
 
+    likePost: protectedProcedure
+      .input(z.object({
+        postId: z.number(),
+        like: z.boolean(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        // Per-user idempotent: the unique (postId, userId) index guarantees one like per user.
+        const changed = await db.transaction(async (tx) => {
+          if (input.like) {
+            const res = await tx.insert(postLikes)
+              .ignore()
+              .values({ postId: input.postId, userId: ctx.user.id });
+            return (res[0]?.affectedRows ?? 0) > 0;
+          }
+          const res = await tx.delete(postLikes)
+            .where(and(eq(postLikes.postId, input.postId), eq(postLikes.userId, ctx.user.id)));
+          return (res[0]?.affectedRows ?? 0) > 0;
+        });
+
+        if (changed) {
+          await db.update(communityPosts)
+            .set({
+              likes: input.like
+                ? sql`${communityPosts.likes} + 1`
+                : sql`GREATEST(${communityPosts.likes} - 1, 0)`,
+            })
+            .where(eq(communityPosts.id, input.postId));
+        }
+
+        const [post] = await db.select({ likes: communityPosts.likes })
+          .from(communityPosts)
+          .where(eq(communityPosts.id, input.postId));
+
+        return { success: true, liked: input.like, likes: post?.likes ?? 0 };
+      }),
+
+    leaderboard: publicProcedure
+      .input(z.object({ limit: z.number().min(1).max(50).default(10) }).optional())
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        const rows = await db.select({
+          id: users.id,
+          name: users.name,
+          level: users.level,
+          xp: users.xp,
+        })
+          .from(users)
+          .orderBy(desc(users.xp))
+          .limit(input?.limit ?? 10);
+
+        return rows.map((r, i) => ({ rank: i + 1, ...r }));
+      }),
+
     createComment: protectedProcedure
       .input(z.object({
         postId: z.number(),
@@ -535,25 +736,22 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
     listProducts: publicProcedure
       .input(z.object({
         category: z.enum(["seeds", "equipment", "nutrients", "accessories", "other"]).optional(),
-        limit: z.number().default(20),
+        limit: z.number().min(1).max(100).default(20),
+        featuredOnly: z.boolean().optional(),
       }))
       .query(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
 
-        let query = db.select()
+        const conditions = [eq(vendorProducts.isActive, true)];
+        if (input.category) conditions.push(eq(vendorProducts.category, input.category));
+        if (input.featuredOnly) conditions.push(eq(vendorProducts.isFeatured, true));
+
+        return db.select()
           .from(vendorProducts)
-          .where(eq(vendorProducts.isActive, true))
+          .where(and(...conditions))
           .orderBy(desc(vendorProducts.isFeatured), desc(vendorProducts.createdAt))
           .limit(input.limit);
-
-        if (input.category) {
-          // Add category filter if using query builder dynamically or filter locally if needed
-          // For simplicity here assume direct where clause
-          // query = query.where(eq(vendorProducts.category, input.category))
-        }
-
-        return query; // Simplified for now
       }),
 
     getVendor: publicProcedure
@@ -588,6 +786,82 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
           .orderBy(desc(giveaways.endsAt))
           .limit(20);
       }),
+
+    placeBid: protectedProcedure
+      .input(z.object({ auctionId: z.number().int(), amount: z.number().positive().max(1_000_000) }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        return db.transaction(async (tx) => {
+          const [row] = await tx
+            .select({ auction: auctions, ownerUserId: vendors.userId })
+            .from(auctions)
+            .leftJoin(vendors, eq(vendors.id, auctions.vendorId))
+            .where(eq(auctions.id, input.auctionId))
+            .for("update")
+            .limit(1);
+          if (!row) throw new TRPCError({ code: "NOT_FOUND", message: "Auktion nicht gefunden" });
+          const a = row.auction;
+          const check = validateBid(
+            {
+              status: a.status,
+              startsAt: new Date(a.startsAt),
+              endsAt: new Date(a.endsAt),
+              vendorOwnerUserId: row.ownerUserId,
+              currentPrice: Number(a.currentPrice),
+              startPrice: Number(a.startPrice),
+              totalBids: a.totalBids ?? 0,
+            },
+            ctx.user.id,
+            input.amount,
+          );
+          if (!check.ok) throw new TRPCError({ code: check.code, message: check.message });
+
+          const amount = input.amount.toFixed(2);
+          await tx.insert(auctionBids).values({ auctionId: a.id, userId: ctx.user.id, amount });
+          await tx.update(auctions)
+            .set({ currentPrice: amount, totalBids: (a.totalBids ?? 0) + 1 })
+            .where(eq(auctions.id, a.id));
+          return { success: true, currentPrice: Number(amount), totalBids: (a.totalBids ?? 0) + 1 };
+        });
+      }),
+
+    enterRaffle: protectedProcedure
+      .input(z.object({ raffleId: z.number().int() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        return db.transaction(async (tx) => {
+          const [g] = await tx.select().from(giveaways).where(eq(giveaways.id, input.raffleId)).for("update").limit(1);
+          if (!g) throw new TRPCError({ code: "NOT_FOUND", message: "Verlosung nicht gefunden" });
+          const [existing] = await tx.select({ id: giveawayEntries.id }).from(giveawayEntries)
+            .where(and(eq(giveawayEntries.giveawayId, g.id), eq(giveawayEntries.userId, ctx.user.id)))
+            .limit(1);
+          const check = validateRaffleEntry({
+            status: g.status,
+            startsAt: new Date(g.startsAt),
+            endsAt: new Date(g.endsAt),
+            maxEntries: g.maxEntries,
+            totalEntries: g.totalEntries ?? 0,
+            alreadyEntered: !!existing,
+          });
+          if (!check.ok) throw new TRPCError({ code: check.code, message: check.message });
+
+          await tx.insert(giveawayEntries).values({ giveawayId: g.id, userId: ctx.user.id, ticketCount: 1 });
+          await tx.update(giveaways).set({ totalEntries: (g.totalEntries ?? 0) + 1 }).where(eq(giveaways.id, g.id));
+          return { success: true, totalEntries: (g.totalEntries ?? 0) + 1 };
+        });
+      }),
+
+    myRaffleEntries: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
+      const rows = await db.select({ giveawayId: giveawayEntries.giveawayId }).from(giveawayEntries)
+        .where(eq(giveawayEntries.userId, ctx.user.id));
+      return rows.map(r => r.giveawayId);
+    }),
   }),
 
   // Vendor Portal
@@ -705,6 +979,62 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
   }),
 
   // Messages
+  ads: router({
+    // Öffentlich: aktive Anzeigen für eine Platzierung (zeitfenster- und isActive-gefiltert)
+    active: publicProcedure
+      .input(z.object({
+        placement: z.enum(["home", "community", "strains", "tools", "marketplace"]),
+        limit: z.number().int().min(1).max(10).default(3),
+      }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+        const now = new Date();
+        return db
+          .select({
+            id: adBanners.id,
+            title: adBanners.title,
+            imageUrl: adBanners.imageUrl,
+            targetUrl: adBanners.targetUrl,
+            placement: adBanners.placement,
+            vendorName: vendors.name,
+          })
+          .from(adBanners)
+          .leftJoin(vendors, eq(vendors.id, adBanners.vendorId))
+          .where(and(
+            eq(adBanners.placement, input.placement),
+            eq(adBanners.isActive, true),
+            sql`${adBanners.startsAt} <= ${now}`,
+            sql`${adBanners.endsAt} >= ${now}`,
+          ))
+          .orderBy(sql`RAND()`)
+          .limit(input.limit);
+      }),
+
+    // Tracking (öffentlich, nur Zähler; Abrechnung/totalSpent bewusst NICHT hier, da unauthentifiziert manipulierbar)
+    trackImpression: publicProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { success: false };
+        await db.update(adBanners)
+          .set({ impressions: sql`COALESCE(${adBanners.impressions}, 0) + 1` })
+          .where(and(eq(adBanners.id, input.id), eq(adBanners.isActive, true)));
+        return { success: true };
+      }),
+
+    trackClick: publicProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { success: false };
+        await db.update(adBanners)
+          .set({ clicks: sql`COALESCE(${adBanners.clicks}, 0) + 1` })
+          .where(and(eq(adBanners.id, input.id), eq(adBanners.isActive, true)));
+        return { success: true };
+      }),
+  }),
+
   messages: router({
     send: protectedProcedure
       .input(z.object({
@@ -715,12 +1045,32 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
 
+        if (input.receiverId === ctx.user.id) throw new Error("Cannot send a message to yourself");
+        const [recipient] = await db.select({ id: users.id }).from(users).where(eq(users.id, input.receiverId)).limit(1);
+        if (!recipient) throw new Error("Recipient not found");
+
         await db.insert(messages).values({
           senderId: ctx.user.id,
           receiverId: input.receiverId,
           content: input.content,
         });
 
+        return { success: true };
+      }),
+
+    markRead: protectedProcedure
+      .input(z.object({ senderId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        await db.update(messages)
+          .set({ isRead: true })
+          .where(and(
+            eq(messages.senderId, input.senderId),
+            eq(messages.receiverId, ctx.user.id),
+            eq(messages.isRead, false),
+          ));
         return { success: true };
       }),
 
@@ -739,12 +1089,14 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
             openId: sender.openId,
             name: sender.name,
             avatarUrl: sender.avatarUrl,
+            level: sender.level,
           },
           receiver: {
             id: receiver.id,
             openId: receiver.openId,
             name: receiver.name,
             avatarUrl: receiver.avatarUrl,
+            level: receiver.level,
           },
         })
           .from(messages)
@@ -782,7 +1134,7 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
             totalYield: parseFloat(user.totalYield || "0"),
             journalEntries: journalCount?.value || 0,
             loginStreak: user.streak,
-            longestStreak: user.streak, // Default to current streak for MVP
+            longestStreak: Math.max(user.longestStreak, user.streak),
             communityPosts: postsCount?.value || 0,
             helpfulAnswers: 0,
             contestsWon: 0,
@@ -809,12 +1161,22 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
 
         if (existing) return { success: true, new: false };
 
+        const def = ACHIEVEMENTS.find((a) => a.id === input.achievementId);
+        if (!def) throw new Error("Unknown achievement");
+
         await db.insert(userAchievements).values({
           userId: ctx.user.id,
           achievementId: input.achievementId,
         });
 
-        return { success: true, new: true };
+        // Award XP defined by the achievement and recompute level
+        const [current] = await db.select({ xp: users.xp }).from(users).where(eq(users.id, ctx.user.id));
+        const newXp = (current?.xp ?? 0) + def.points;
+        await db.update(users)
+          .set({ xp: newXp, level: getLevelFromPoints(newXp).level })
+          .where(eq(users.id, ctx.user.id));
+
+        return { success: true, new: true, xpAwarded: def.points };
       }),
 
     updateStreak: protectedProcedure
@@ -826,29 +1188,198 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         if (!user) throw new Error("User not found");
 
         const now = new Date();
-        const lastActive = user.lastActiveAt || new Date(0);
+        const result = computeStreak({
+          streak: user.streak,
+          longestStreak: user.longestStreak,
+          lastActiveAt: user.lastActiveAt,
+          now,
+        });
+        if (result.unchanged) return { streak: user.streak, longestStreak: result.longestStreak };
 
-        // Check if same day
-        const isSameDay = now.toDateString() === lastActive.toDateString();
-        if (isSameDay) return { streak: user.streak };
-
-        // Check if consecutive day
-        const yesterday = new Date(now);
-        yesterday.setDate(yesterday.getDate() - 1);
-        const isConsecutive = yesterday.toDateString() === lastActive.toDateString();
-
-        let newStreak = isConsecutive ? user.streak + 1 : 1;
+        const newStreak = result.streak;
 
         await db.update(users)
           .set({
             streak: newStreak,
+            longestStreak: result.longestStreak,
             lastActiveAt: now,
             lastSignedIn: now,
           })
           .where(eq(users.id, ctx.user.id));
 
-        return { streak: newStreak };
+        return { streak: newStreak, longestStreak: result.longestStreak };
       }),
+  }),
+
+  // Admin panel (admin role only)
+  admin: router({
+    stats: adminProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
+      const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const num = async (q: Promise<{ c: number }[]>) => Number((await q)[0]?.c ?? 0);
+      const [totalUsers, activeUsers, premiumUsers, proUsers, totalDiagnoses, totalPosts, activeContests, pendingRequests, activeAds] = await Promise.all([
+        num(db.select({ c: count() }).from(users)),
+        num(db.select({ c: count() }).from(users).where(gte(users.lastActiveAt, since))),
+        num(db.select({ c: count() }).from(users).where(eq(users.subscriptionTier, "premium"))),
+        num(db.select({ c: count() }).from(users).where(eq(users.subscriptionTier, "pro"))),
+        num(db.select({ c: count() }).from(diagnoses)),
+        num(db.select({ c: count() }).from(communityPosts)),
+        num(db.select({ c: count() }).from(giveaways).where(eq(giveaways.status, "active"))),
+        num(db.select({ c: count() }).from(vendorInquiries).where(eq(vendorInquiries.status, "new"))),
+        num(db.select({ c: count() }).from(adBanners).where(eq(adBanners.isActive, true))),
+      ]);
+      const [ad] = await db.select({
+        impressions: sql<number>`COALESCE(SUM(${adBanners.impressions}), 0)`,
+        revenue: sql<number>`COALESCE(SUM(${adBanners.totalSpent}), 0)`,
+      }).from(adBanners);
+      return {
+        totalUsers, activeUsers, premiumUsers, proUsers, totalDiagnoses, totalPosts,
+        activeContests, pendingRequests, activeAds,
+        adImpressions: Number(ad?.impressions ?? 0),
+        adRevenue: Number(ad?.revenue ?? 0),
+      };
+    }),
+    vendors: adminProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
+      return db.select().from(vendors).orderBy(desc(vendors.createdAt)).limit(200);
+    }),
+    inquiries: adminProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
+      return db.select().from(vendorInquiries).orderBy(desc(vendorInquiries.createdAt)).limit(200);
+    }),
+    updateInquiry: adminProcedure
+      .input(z.object({ id: z.number(), status: z.enum(["new", "contacted", "negotiating", "approved", "rejected"]) }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        await db.update(vendorInquiries).set({ status: input.status }).where(eq(vendorInquiries.id, input.id));
+        return { success: true };
+      }),
+    giveaways: adminProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
+      return db.select().from(giveaways).orderBy(desc(giveaways.createdAt)).limit(100);
+    }),
+    endGiveaway: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        await db.update(giveaways).set({ status: "ended" }).where(eq(giveaways.id, input.id));
+        return { success: true };
+      }),
+    createGiveaway: adminProcedure
+      .input(z.object({ title: z.string().min(1).max(200), prize: z.string().min(1), description: z.string().optional(), days: z.number().int().min(1).max(365) }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        const now = new Date();
+        await db.insert(giveaways).values({
+          title: input.title, prize: input.prize, description: input.description,
+          startsAt: now, endsAt: new Date(now.getTime() + input.days * 86400000), status: "active",
+        });
+        return { success: true };
+      }),
+  }),
+
+  // Vendor outreach tracking (persisted; admin only)
+  push: router({
+    registerToken: protectedProcedure
+      .input(z.object({ token: z.string().min(10).max(255), platform: z.string().max(16).optional() }))
+      .mutation(async ({ ctx, input }) => {
+        if (!/^(Exponent|Expo)PushToken\[[^\]]+\]$/.test(input.token)) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Ungültiges Push-Token" });
+        }
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        await db.insert(pushTokens)
+          .values({ userId: ctx.user.id, token: input.token, platform: input.platform })
+          .onDuplicateKeyUpdate({ set: { userId: ctx.user.id, platform: input.platform ?? null } });
+        return { success: true };
+      }),
+
+    tokenCount: adminProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
+      const [row] = await db.select({ c: count() }).from(pushTokens);
+      return { count: row?.c ?? 0 };
+    }),
+
+    broadcast: adminProcedure
+      .input(z.object({ title: z.string().min(1).max(100), body: z.string().min(1).max(500) }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        const rows = await db.select({ token: pushTokens.token }).from(pushTokens);
+        const summary = await sendExpoPush(rows.map(r => r.token), input);
+        if (summary.invalidTokens.length > 0) {
+          const { inArray } = await import("drizzle-orm");
+          await db.delete(pushTokens).where(inArray(pushTokens.token, summary.invalidTokens));
+        }
+        return { attempted: summary.attempted, accepted: summary.accepted, failed: summary.failed, removed: summary.invalidTokens.length };
+      }),
+  }),
+
+  outreach: router({
+    list: adminProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
+      return db.select().from(vendorOutreach).orderBy(desc(vendorOutreach.createdAt)).limit(500);
+    }),
+    track: adminProcedure
+      .input(z.object({
+        companyName: z.string().min(1).max(200),
+        contactName: z.string().max(200).optional(),
+        email: z.string().email().max(320),
+        website: z.string().max(500).optional(),
+        vendorType: z.enum(["seedbank", "growshop", "headshop", "nutrient", "equipment", "other"]).default("other"),
+        country: z.string().max(8).optional(),
+        templateId: z.string().min(1).max(64),
+        status: z.enum(["pending", "sent", "opened", "replied", "converted", "rejected"]).default("pending"),
+        notes: z.string().max(5000).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        const now = new Date();
+        const [res] = await db.insert(vendorOutreach).values({
+          ...input,
+          sentAt: input.status === "sent" ? now : null,
+        });
+        return { id: res.insertId };
+      }),
+    updateStatus: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        status: z.enum(["pending", "sent", "opened", "replied", "converted", "rejected"]),
+        notes: z.string().max(5000).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        const now = new Date();
+        await db.update(vendorOutreach)
+          .set({
+            status: input.status,
+            ...(input.notes ? { notes: input.notes } : {}),
+            ...(input.status === "sent" ? { sentAt: now } : {}),
+            ...(input.status === "opened" ? { openedAt: now } : {}),
+            ...(input.status === "replied" ? { repliedAt: now } : {}),
+          })
+          .where(eq(vendorOutreach.id, input.id));
+        return { success: true };
+      }),
+    stats: adminProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
+      const rows = await db.select({ status: vendorOutreach.status, n: count() })
+        .from(vendorOutreach)
+        .groupBy(vendorOutreach.status);
+      return summarizeOutreach(rows.map((r) => ({ status: r.status, n: Number(r.n) })));
+    }),
   }),
 });
 

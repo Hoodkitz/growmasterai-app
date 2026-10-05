@@ -55,6 +55,17 @@ export default function MessagesScreen() {
     },
   });
 
+  const markReadMutation = trpc.messages.markRead.useMutation({
+    onSuccess: () => messagesQuery.refetch(),
+  });
+
+  const openConversation = (conv: Conversation) => {
+    setSelectedConversation(conv);
+    if (conv.unreadCount > 0) {
+      markReadMutation.mutate({ senderId: parseInt(conv.id) });
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
       messagesQuery.refetch();
@@ -86,7 +97,7 @@ export default function MessagesScreen() {
           participantId: otherUserId,
           participantName: otherUser.name || "Unknown",
           participantAvatar: otherUser.avatarUrl || "👤",
-          participantLevel: 1, // Need to add level to user query if needed
+          participantLevel: otherUser.level ?? 1,
           lastMessage: message.content,
           lastMessageTime: new Date(message.createdAt),
           unreadCount: (!message.isRead && !isMe) ? 1 : 0,
@@ -134,11 +145,9 @@ export default function MessagesScreen() {
   const sendMessage = () => {
     if (!newMessage.trim() || !selectedConversation) return;
 
-    // Optimistic update could go here
-
     sendMutation.mutate({
       receiverId: parseInt(selectedConversation.id),
-      content: newMessage,
+      content: newMessage.trim(),
     });
   };
 
@@ -181,7 +190,7 @@ export default function MessagesScreen() {
             renderItem={({ item }) => (
               <TouchableOpacity
                 className="bg-surface rounded-2xl p-4 border border-border flex-row items-center gap-3"
-                onPress={() => setSelectedConversation(item)}
+                onPress={() => openConversation(item)}
               >
                 <View className="relative">
                   <View className="w-14 h-14 rounded-full bg-primary/20 items-center justify-center">

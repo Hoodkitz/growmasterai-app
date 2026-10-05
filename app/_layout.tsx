@@ -9,7 +9,9 @@ import { Platform } from "react-native";
 import "@/lib/_core/nativewind-pressable";
 import { ThemeProvider } from "@/lib/theme-provider";
 import { SubscriptionProvider } from "@/lib/subscription-context";
+import { PurchaseProvider } from "@/lib/purchase-context";
 import { AuthProvider } from "@/lib/auth-context";
+import { PushRegistrar } from "@/components/push-registrar";
 import { GamificationProvider } from "@/lib/gamification-context";
 import { ErrorBoundary } from "@/components/error-boundary";
 import {
@@ -86,8 +88,8 @@ export default function RootLayout() {
   const [onboardingComplete, setOnboardingComplete] = React.useState<boolean | null>(null);
 
   React.useEffect(() => {
-    import('@/components/onboarding/onboarding-flow').then(({ hasCompletedOnboarding }) => {
-      hasCompletedOnboarding().then(setOnboardingComplete);
+    import('@/components/onboarding/onboarding-flow').then(({ getOnboardingStatus }) => {
+      getOnboardingStatus().then(setOnboardingComplete);
     });
   }, []);
 
@@ -109,12 +111,17 @@ export default function RootLayout() {
         <trpc.Provider client={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>
             <AuthProvider>
+              <PushRegistrar />
               <GamificationProvider>
                 <SubscriptionProvider>
+                  {/* PurchaseProvider nutzt useSubscription() (setTier) → muss innerhalb von SubscriptionProvider liegen */}
+                  <PurchaseProvider>
                   <Stack screenOptions={{ headerShown: false }}>
                     <Stack.Screen name="(tabs)" />
                     <Stack.Screen name="oauth/callback" />
                     <Stack.Screen name="login" options={{ presentation: "modal" }} />
+                    <Stack.Screen name="reset-password" />
+                    <Stack.Screen name="verify-email" />
                     <Stack.Screen name="paywall" options={{ presentation: "modal" }} />
                     <Stack.Screen name="settings" options={{ presentation: "modal" }} />
                     <Stack.Screen name="achievements" options={{ presentation: "modal" }} />
@@ -127,6 +134,7 @@ export default function RootLayout() {
                     <Stack.Screen name="onboarding" options={{ presentation: "fullScreenModal", gestureEnabled: false }} />
                   </Stack>
                   <StatusBar style="auto" />
+                  </PurchaseProvider>
                 </SubscriptionProvider>
               </GamificationProvider>
             </AuthProvider>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Text, View, TouchableOpacity, TextInput, Modal, FlatList, RefreshControl } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "expo-router";
@@ -8,6 +8,9 @@ import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
 import { UpgradePrompt } from "@/components/upgrade-prompt";
 import { TIER_LIMITS } from "@/lib/subscription";
+import { trpc } from "@/lib/trpc";
+import { useAppAuth } from "@/lib/auth-context";
+import { markPlantDeleted, syncPlantsWithServer } from "@/lib/plants-storage";
 
 interface Plant {
   id: string;
@@ -18,6 +21,7 @@ interface Plant {
   notes?: string;
   growType?: "indoor" | "outdoor" | "greenhouse";
   createdAt?: string;
+  updatedAt?: string;
 }
 
 const PHASES = {
@@ -78,24 +82,43 @@ export default function PlantsScreen() {
     }
   }, []);
 
+  // Server sync (only when logged in; failures are ignored -> offline-first)
+  const { isAuthenticated } = useAppAuth();
+  const syncMutation = trpc.plants.sync.useMutation();
+  const syncMutateAsync = syncMutation.mutateAsync;
+  const syncing = useRef(false);
+  const syncNow = useCallback(async () => {
+    if (!isAuthenticated || syncing.current) return;
+    syncing.current = true;
+    try {
+      const merged = await syncPlantsWithServer((input) => syncMutateAsync(input));
+      setPlants(merged.map((p) => ({ ...p, notes: p.notes || "" })));
+    } catch {
+      // offline / not authenticated on server: keep local data
+    } finally {
+      syncing.current = false;
+    }
+  }, [isAuthenticated, syncMutateAsync]);
+
   // Load plants on mount
   useEffect(() => {
-    loadPlants();
-  }, [loadPlants]);
+    loadPlants().then(syncNow);
+  }, [loadPlants, syncNow]);
 
   // Reload plants when screen comes into focus (e.g., after onboarding)
   useFocusEffect(
     useCallback(() => {
-      loadPlants();
-    }, [loadPlants])
+      loadPlants().then(syncNow);
+    }, [loadPlants, syncNow])
   );
 
   // Pull to refresh
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await loadPlants();
+    await syncNow();
     setRefreshing(false);
-  }, [loadPlants]);
+  }, [loadPlants, syncNow]);
 
   const addPlant = async () => {
     if (!newPlant.name.trim()) return;
@@ -109,11 +132,13 @@ export default function PlantsScreen() {
       startDate: new Date().toISOString(),
       notes: newPlant.notes.trim(),
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
     
     const updatedPlants = [...plants, plant];
     setPlants(updatedPlants);
     await savePlants(updatedPlants);
+    void syncNow();
     
     setNewPlant({ name: "", strain: "", phase: "seedling", notes: "" });
     setShowModal(false);
@@ -123,6 +148,8 @@ export default function PlantsScreen() {
     const updatedPlants = plants.filter(p => p.id !== id);
     setPlants(updatedPlants);
     await savePlants(updatedPlants);
+    await markPlantDeleted(id);
+    void syncNow();
   };
 
   const getDaysSinceStart = (startDate: string) => {

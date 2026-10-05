@@ -321,7 +321,22 @@ export interface OutreachRecord {
   notes?: string;
 }
 
-// In-Memory Tracking (in Produktion: Datenbank)
+/** Aggregiert Zähler pro Status (z. B. aus einer DB-GROUP-BY-Abfrage). */
+export function summarizeOutreach(rows: Array<{ status: OutreachStatus; n: number }>): {
+  total: number;
+  byStatus: Record<OutreachStatus, number>;
+  conversionRate: number;
+} {
+  const byStatus: Record<OutreachStatus, number> = {
+    pending: 0, sent: 0, opened: 0, replied: 0, converted: 0, rejected: 0,
+  };
+  for (const r of rows) byStatus[r.status] += r.n;
+  const total = Object.values(byStatus).reduce((a, b) => a + b, 0);
+  return { total, byStatus, conversionRate: total > 0 ? (byStatus.converted / total) * 100 : 0 };
+}
+
+// In-Memory Tracking – nur noch für Tests/Offline-Vorschau.
+// Persistenz: Tabelle `vendorOutreach` + tRPC-Router `outreach` (server/routers.ts).
 const outreachRecords: OutreachRecord[] = [];
 
 export function trackOutreach(record: Omit<OutreachRecord, "id">): OutreachRecord {

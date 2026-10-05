@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ScrollView, Text, View, TouchableOpacity, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
@@ -7,6 +8,8 @@ import { trpc } from "@/lib/trpc";
 import { useSubscription } from "@/lib/subscription-context";
 import { UpgradePrompt, UsageIndicator } from "@/components/upgrade-prompt";
 import { TIER_LIMITS } from "@/lib/subscription";
+
+const COACH_STORAGE_KEY = "@growmaster_coach_messages";
 
 interface Message {
   id: string;
@@ -26,8 +29,30 @@ export default function CoachScreen() {
     }
   ]);
   const [input, setInput] = useState("");
+  const [historyLoaded, setHistoryLoaded] = useState(false);
 
-  const { tier, dailyMessages, canMessage, useMessage, remainingMessages } = useSubscription();
+  // Restore saved conversation
+  useEffect(() => {
+    AsyncStorage.getItem(COACH_STORAGE_KEY)
+      .then((saved) => {
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) setMessages(parsed);
+        }
+      })
+      .catch((e) => console.error("Failed to load coach history:", e))
+      .finally(() => setHistoryLoaded(true));
+  }, []);
+
+  // Persist conversation (last 100 messages)
+  useEffect(() => {
+    if (!historyLoaded) return;
+    AsyncStorage.setItem(COACH_STORAGE_KEY, JSON.stringify(messages.slice(-100))).catch((e) =>
+      console.error("Failed to save coach history:", e),
+    );
+  }, [messages, historyLoaded]);
+
+  const { tier, dailyMessages, canMessage, useMessage: consumeMessage, remainingMessages } = useSubscription();
   const limits = TIER_LIMITS[tier];
 
   const coachMutation = trpc.coach.ask.useMutation({
@@ -56,7 +81,7 @@ export default function CoachScreen() {
     if (!input.trim() || coachMutation.isPending) return;
 
     // Check if user can send message
-    const canSend = await useMessage();
+    const canSend = await consumeMessage();
     if (!canSend) {
       return; // Limit reached
     }

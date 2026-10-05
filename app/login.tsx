@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useAppAuth } from "@/lib/auth-context";
+import { postAuth } from "@/lib/auth-mail-api";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -33,6 +34,11 @@ export default function LoginScreen() {
       Alert.alert("Fehler", "Bitte fülle alle Felder aus.");
       return;
     }
+
+    if (mode === "register" && password.length < 8) {
+      Alert.alert("Fehler", "Das Passwort muss mindestens 8 Zeichen lang sein.");
+      return;
+    }
     
     if (mode === "register" && !name) {
       Alert.alert("Fehler", "Bitte gib deinen Namen ein.");
@@ -47,16 +53,29 @@ export default function LoginScreen() {
       }
       router.replace("/(tabs)");
     } catch (error) {
-      Alert.alert("Fehler", "Anmeldung fehlgeschlagen. Bitte versuche es erneut.");
+      Alert.alert("Fehler", error instanceof Error && error.message ? error.message : "Anmeldung fehlgeschlagen. Bitte versuche es erneut.");
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      Alert.alert("E-Mail fehlt", "Bitte gib oben deine E-Mail-Adresse ein, dann tippe erneut auf „Passwort vergessen?“.");
+      return;
+    }
+    try {
+      const res = await postAuth("forgot-password", { email: email.trim() });
+      Alert.alert("Prüfe dein Postfach", res.message || "Falls ein Konto mit dieser E-Mail existiert, haben wir dir eine Nachricht gesendet.");
+    } catch (error) {
+      Alert.alert("Fehler", error instanceof Error ? error.message : "Anfrage fehlgeschlagen.");
     }
   };
 
   const handleSocialLogin = async (provider: "google" | "apple") => {
     try {
+      // Redirects to the OAuth portal; callback screen completes the session.
       await login(provider);
-      router.replace("/(tabs)");
     } catch (error) {
-      Alert.alert("Fehler", "Anmeldung fehlgeschlagen. Bitte versuche es erneut.");
+      Alert.alert("Fehler", error instanceof Error && error.message ? error.message : "Anmeldung fehlgeschlagen. Bitte versuche es erneut.");
     }
   };
 
@@ -168,6 +187,12 @@ export default function LoginScreen() {
             </View>
           </View>
 
+          {mode === "login" && (
+            <TouchableOpacity className="items-end -mt-3 mb-4" onPress={handleForgotPassword}>
+              <Text className="text-sm text-primary font-medium">Passwort vergessen?</Text>
+            </TouchableOpacity>
+          )}
+
           {/* Submit Button */}
           <TouchableOpacity 
             className="bg-primary rounded-xl p-4 items-center mb-4"
@@ -207,8 +232,8 @@ export default function LoginScreen() {
           {/* Terms */}
           <Text className="text-xs text-muted text-center mt-4 leading-5">
             Mit der Anmeldung akzeptierst du unsere{" "}
-            <Text className="text-primary">Nutzungsbedingungen</Text> und{" "}
-            <Text className="text-primary">Datenschutzrichtlinie</Text>
+            <Text className="text-primary" onPress={() => router.push("/legal")}>Nutzungsbedingungen</Text> und{" "}
+            <Text className="text-primary" onPress={() => router.push("/legal")}>Datenschutzrichtlinie</Text>
           </Text>
         </ScrollView>
       </KeyboardAvoidingView>

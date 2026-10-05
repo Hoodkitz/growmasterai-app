@@ -29,16 +29,21 @@ export interface AffiliateProgramConfig {
 }
 
 /**
- * Your Affiliate Program Configurations
- * UPDATE THESE WITH YOUR ACTUAL AFFILIATE IDs
+ * Affiliate Program Configurations.
+ * IDs come from EXPO_PUBLIC_AFFILIATE_<NAME> env vars. Programs without an ID
+ * produce plain (untracked) links instead of links with a bogus placeholder ID.
  */
+function envId(name: string): string {
+  return (process.env[`EXPO_PUBLIC_AFFILIATE_${name}_ID`] || process.env[`EXPO_PUBLIC_AFFILIATE_${name}`] || '').trim();
+}
+
 export const AFFILIATE_PROGRAMS: Record<string, AffiliateProgramConfig> = {
   // SEEDS
   seedsman: {
     programName: 'Seedsman',
     partnerId: 'seedsman',
     baseUrl: 'https://www.seedsman.com',
-    affiliateId: 'YOUR_SEEDSMAN_ID', // TODO: Replace with your ID
+    affiliateId: envId('SEEDSMAN'),
     trackingParam: 'a_aid',
   },
   
@@ -46,7 +51,7 @@ export const AFFILIATE_PROGRAMS: Record<string, AffiliateProgramConfig> = {
     programName: 'ILGM (I Love Growing Marijuana)',
     partnerId: 'ilgm',
     baseUrl: 'https://ilgm.com',
-    affiliateId: 'YOUR_ILGM_ID', // TODO: Replace
+    affiliateId: envId('ILGM'),
     trackingParam: 'ref',
   },
   
@@ -54,7 +59,7 @@ export const AFFILIATE_PROGRAMS: Record<string, AffiliateProgramConfig> = {
     programName: 'Crop King Seeds',
     partnerId: 'cropking',
     baseUrl: 'https://www.cropkingseeds.com',
-    affiliateId: 'YOUR_CROPKING_ID', // TODO: Replace
+    affiliateId: envId('CROPKING'),
     trackingParam: 'aff',
   },
 
@@ -63,7 +68,7 @@ export const AFFILIATE_PROGRAMS: Record<string, AffiliateProgramConfig> = {
     programName: 'General Hydroponics',
     partnerId: 'gh',
     baseUrl: 'https://generalhydroponics.com',
-    affiliateId: 'YOUR_GH_ID', // TODO: Replace
+    affiliateId: envId('GH'),
     trackingParam: 'ref',
   },
 
@@ -71,7 +76,7 @@ export const AFFILIATE_PROGRAMS: Record<string, AffiliateProgramConfig> = {
     programName: 'Advanced Nutrients',
     partnerId: 'advnutrients',
     baseUrl: 'https://www.advancednutrients.com',
-    affiliateId: 'YOUR_ADV_ID', // TODO: Replace
+    affiliateId: envId('ADV'),
     trackingParam: 'affiliate',
   },
 
@@ -79,7 +84,7 @@ export const AFFILIATE_PROGRAMS: Record<string, AffiliateProgramConfig> = {
     programName: 'Fox Farm',
     partnerId: 'foxfarm',
     baseUrl: 'https://foxfarm.com',
-    affiliateId: 'YOUR_FOXFARM_ID', // TODO: Replace
+    affiliateId: envId('FOXFARM'),
     trackingParam: 'ref',
   },
 
@@ -88,7 +93,7 @@ export const AFFILIATE_PROGRAMS: Record<string, AffiliateProgramConfig> = {
     programName: 'Mars Hydro',
     partnerId: 'marshydro',
     baseUrl: 'https://www.mars-hydro.com',
-    affiliateId: 'YOUR_MARS_ID', // TODO: Replace
+    affiliateId: envId('MARS'),
     trackingParam: 'sca_ref',
   },
 
@@ -96,7 +101,7 @@ export const AFFILIATE_PROGRAMS: Record<string, AffiliateProgramConfig> = {
     programName: 'Spider Farmer',
     partnerId: 'spiderfarmer',
     baseUrl: 'https://www.spider-farmer.com',
-    affiliateId: 'YOUR_SPIDER_ID', // TODO: Replace
+    affiliateId: envId('SPIDER'),
     trackingParam: 'ref',
   },
 
@@ -105,7 +110,7 @@ export const AFFILIATE_PROGRAMS: Record<string, AffiliateProgramConfig> = {
     programName: 'Gorilla Grow Tent',
     partnerId: 'gorilla',
     baseUrl: 'https://www.gorillagrowtent.com',
-    affiliateId: 'YOUR_GORILLA_ID', // TODO: Replace
+    affiliateId: envId('GORILLA'),
     trackingParam: 'ref',
   },
 
@@ -114,7 +119,7 @@ export const AFFILIATE_PROGRAMS: Record<string, AffiliateProgramConfig> = {
     programName: 'Amazon Associates',
     partnerId: 'amazon',
     baseUrl: 'https://www.amazon.com',
-    affiliateId: 'YOUR_AMAZON_TAG', // e.g., "growmaster-20"
+    affiliateId: envId('AMAZON'),
     trackingParam: 'tag',
   },
 };
@@ -137,7 +142,9 @@ export function buildAffiliateUrl(
   const url = new URL(productPath || '', program.baseUrl);
   
   // Add affiliate tracking parameter
-  url.searchParams.set(program.trackingParam, program.affiliateId);
+  if (program.affiliateId) {
+    url.searchParams.set(program.trackingParam, program.affiliateId);
+  }
   
   // Add additional parameters
   if (additionalParams) {
@@ -155,19 +162,17 @@ export function buildAffiliateUrl(
 export async function trackAffiliateClick(
   programId: string,
   productId?: string,
-  userId?: string
+  _userId?: string
 ): Promise<void> {
   try {
-    // Log to your analytics
-    console.log('[Affiliate] Click tracked:', {
-      programId,
-      productId,
-      userId,
-      timestamp: new Date().toISOString(),
-    });
-
-    // Send to backend for tracking
-    // await trpc.affiliate.trackClick.mutate({ programId, productId, userId });
+    // No affiliate backend exists yet: persist click counters locally.
+    const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
+    const key = 'affiliate_clicks';
+    const raw = await AsyncStorage.getItem(key);
+    const clicks: Record<string, number> = raw ? JSON.parse(raw) : {};
+    const id = productId ? `${programId}:${productId}` : programId;
+    clicks[id] = (clicks[id] || 0) + 1;
+    await AsyncStorage.setItem(key, JSON.stringify(clicks));
   } catch (error) {
     console.error('Error tracking affiliate click:', error);
   }
@@ -186,7 +191,7 @@ export const POPULAR_PRODUCTS: Record<string, AffiliateLink> = {
     productName: 'Blueberry Autoflower Seeds',
     category: 'seeds',
     baseUrl: 'https://www.seedsman.com/en/blueberry-autoflowering-feminised-seeds',
-    affiliateCode: 'YOUR_SEEDSMAN_ID',
+    affiliateCode: envId('SEEDSMAN'),
     fullUrl: buildAffiliateUrl('seedsman', '/en/blueberry-autoflowering-feminised-seeds'),
     commission: 10,
     clicks: 0,
@@ -203,7 +208,7 @@ export const POPULAR_PRODUCTS: Record<string, AffiliateLink> = {
     productName: 'Northern Lights Seeds',
     category: 'seeds',
     baseUrl: 'https://ilgm.com/products/northern-lights-feminized-seeds',
-    affiliateCode: 'YOUR_ILGM_ID',
+    affiliateCode: envId('ILGM'),
     fullUrl: buildAffiliateUrl('ilgm', '/products/northern-lights-feminized-seeds'),
     commission: 15,
     clicks: 0,
@@ -221,7 +226,7 @@ export const POPULAR_PRODUCTS: Record<string, AffiliateLink> = {
     productName: 'Flora Series Nutrient Trio',
     category: 'nutrients',
     baseUrl: 'https://generalhydroponics.com/floraseries',
-    affiliateCode: 'YOUR_GH_ID',
+    affiliateCode: envId('GH'),
     fullUrl: buildAffiliateUrl('generalHydroponics', '/floraseries'),
     commission: 8,
     clicks: 0,
@@ -239,7 +244,7 @@ export const POPULAR_PRODUCTS: Record<string, AffiliateLink> = {
     productName: 'Mars Hydro TS 1000',
     category: 'lights',
     baseUrl: 'https://www.mars-hydro.com/buy-mars-hydro-ts-1000',
-    affiliateCode: 'YOUR_MARS_ID',
+    affiliateCode: envId('MARS'),
     fullUrl: buildAffiliateUrl('marsHydro', '/buy-mars-hydro-ts-1000'),
     commission: 10,
     clicks: 0,
@@ -256,7 +261,7 @@ export const POPULAR_PRODUCTS: Record<string, AffiliateLink> = {
     productName: 'Spider Farmer SF1000',
     category: 'lights',
     baseUrl: 'https://www.spider-farmer.com/products/sf1000-led-grow-light',
-    affiliateCode: 'YOUR_SPIDER_ID',
+    affiliateCode: envId('SPIDER'),
     fullUrl: buildAffiliateUrl('spiderFarmer', '/products/sf1000-led-grow-light'),
     commission: 12,
     clicks: 0,
@@ -274,7 +279,7 @@ export const POPULAR_PRODUCTS: Record<string, AffiliateLink> = {
     productName: 'Gorilla Grow Tent 2x2',
     category: 'tents',
     baseUrl: 'https://www.gorillagrowtent.com/2-x-2-gorilla-grow-tent',
-    affiliateCode: 'YOUR_GORILLA_ID',
+    affiliateCode: envId('GORILLA'),
     fullUrl: buildAffiliateUrl('gorilla', '/2-x-2-gorilla-grow-tent'),
     commission: 10,
     clicks: 0,

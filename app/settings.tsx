@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { ScrollView, Text, View, TouchableOpacity, Alert, Switch } from "react-native";
+import { useEffect, useState } from "react";
+import { ScrollView, Text, View, TouchableOpacity, Alert, Switch, Platform, Linking } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { restorePurchases, getSubscriptionStatus } from "@/lib/purchases";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { IconSymbol } from "@/components/ui/icon-symbol";
@@ -7,6 +9,10 @@ import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
 import { TIER_INFO, TIER_LIMITS, TIER_PRICING } from "@/lib/subscription";
 import { useAppAuth } from "@/lib/auth-context";
+import { ExpenseTracker } from "@/components/expenses/expense-tracker";
+import type { Expense } from "@/lib/cost-tracking";
+
+const EXPENSES_KEY = "grow_expenses";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -14,7 +20,35 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const { tier, upgradeTo, dailyDiagnoses, dailyMessages, refresh } = useSubscription();
   const { user, isAdmin, logout } = useAppAuth();
-  const [notifications, setNotifications] = useState(true);
+  const [notifications, setNotificationsState] = useState(true);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+
+  useEffect(() => {
+    AsyncStorage.getItem(EXPENSES_KEY)
+      .then((raw) => {
+        if (!raw) return;
+        const parsed = JSON.parse(raw) as Array<Omit<Expense, "date"> & { date: string }>;
+        setExpenses(parsed.map((e) => ({ ...e, date: new Date(e.date) })));
+      })
+      .catch(() => {});
+  }, []);
+
+  const addExpense = (expense: Omit<Expense, "id">) => {
+    const next = [...expenses, { ...expense, id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}` }];
+    setExpenses(next);
+    AsyncStorage.setItem(EXPENSES_KEY, JSON.stringify(next)).catch(() => {});
+  };
+
+  useEffect(() => {
+    AsyncStorage.getItem("@growmaster_notifications_enabled").then((v) => {
+      if (v !== null) setNotificationsState(v === "true");
+    });
+  }, []);
+
+  const setNotifications = (value: boolean) => {
+    setNotificationsState(value);
+    AsyncStorage.setItem("@growmaster_notifications_enabled", String(value)).catch(() => {});
+  };
   const [darkMode, setDarkMode] = useState(true);
 
   const tierInfo = TIER_INFO[tier];
@@ -22,31 +56,38 @@ export default function SettingsScreen() {
 
   const handleCancelSubscription = () => {
     if (tier === "free") return;
-    
+    // Subscriptions can only be cancelled in the store account, not in-app.
+    const url =
+      Platform.OS === "ios"
+        ? "https://apps.apple.com/account/subscriptions"
+        : "https://play.google.com/store/account/subscriptions";
     Alert.alert(
-      "Abo kündigen",
-      "Bist du sicher, dass du dein Abo kündigen möchtest? Du behältst die Vorteile bis zum Ende des Abrechnungszeitraums.",
+      "Abo verwalten",
+      "Abos werden im App Store bzw. Google Play gekündigt. Du behältst die Vorteile bis zum Ende des Abrechnungszeitraums.",
       [
         { text: "Abbrechen", style: "cancel" },
-        {
-          text: "Kündigen",
-          style: "destructive",
-          onPress: async () => {
-            await upgradeTo("free");
-            Alert.alert("Gekündigt", "Dein Abo wurde gekündigt. Du kannst jederzeit wieder upgraden.");
-          },
-        },
+        { text: "Öffnen", onPress: () => Linking.openURL(url) },
       ]
     );
   };
 
   const handleRestorePurchases = async () => {
-    // In a real app, this would restore purchases from the App Store / Google Play
-    Alert.alert(
-      "Käufe wiederherstellen",
-      "Keine vorherigen Käufe gefunden.",
-      [{ text: "OK" }]
-    );
+    if (Platform.OS === "web") {
+      Alert.alert("Nicht verfügbar", "Käufe können nur in der mobilen App wiederhergestellt werden.");
+      return;
+    }
+    const result = await restorePurchases();
+    if (!result.success) {
+      Alert.alert("Fehler", result.error || "Käufe konnten nicht wiederhergestellt werden.");
+      return;
+    }
+    const status = await getSubscriptionStatus();
+    if (status.isActive) {
+      await upgradeTo(status.tier);
+      Alert.alert("Käufe wiederhergestellt", "Dein Abo wurde wiederhergestellt.");
+    } else {
+      Alert.alert("Keine Käufe gefunden", "Es wurden keine aktiven Abonnements für dieses Konto gefunden.");
+    }
   };
 
   const handleResetUsage = () => {
@@ -58,6 +99,10 @@ export default function SettingsScreen() {
         {
           text: "Zurücksetzen",
           onPress: async () => {
+            await AsyncStorage.multiSet([
+              ["@growmaster_daily_diagnoses", "0"],
+              ["@growmaster_daily_messages", "0"],
+            ]);
             await refresh();
             Alert.alert("Zurückgesetzt", "Die tägliche Nutzung wurde zurückgesetzt.");
           },
@@ -220,6 +265,12 @@ export default function SettingsScreen() {
           </View>
         )}
 
+        {/* Ausgaben-Tracker */}
+        <View className="mb-6">
+          <Text className="text-lg font-semibold text-foreground mb-2">Ausgaben</Text>
+          <ExpenseTracker expenses={expenses} onAddExpense={addExpense} />
+        </View>
+
         {/* Debug Section - only visible in development builds */}
         {__DEV__ && (
           <View className="bg-surface rounded-2xl border border-border mb-6 overflow-hidden">
@@ -233,21 +284,7 @@ export default function SettingsScreen() {
               <IconSymbol name="chevron.right" size={20} color={colors.muted} />
             </TouchableOpacity>
 
-            <TouchableOpacity
-              className="flex-row items-center justify-between p-4 border-t border-border"
-              onPress={() => upgradeTo("premium")}
-            >
-              <Text className="text-base text-foreground">Test: Premium aktivieren</Text>
-              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
-            </TouchableOpacity>
 
-            <TouchableOpacity
-              className="flex-row items-center justify-between p-4 border-t border-border"
-              onPress={() => upgradeTo("pro")}
-            >
-              <Text className="text-base text-foreground">Test: Pro aktivieren</Text>
-              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
-            </TouchableOpacity>
 
             <TouchableOpacity
               className="flex-row items-center justify-between p-4 border-t border-border"

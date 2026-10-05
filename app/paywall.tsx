@@ -7,20 +7,23 @@ import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
 import {
   TIER_INFO,
+  TIER_LIMITS,
   TIER_PRICING,
 } from "@/lib/subscription";
 import {
   initializePurchases,
-  getOfferings,
+  getTierOfferings,
   purchasePackage,
   restorePurchases,
   formatPrice,
   getSubscriptionStatus,
   isPurchasesAvailable,
   getPurchaseErrorMessage,
+  PRODUCT_IDS,
 } from "@/lib/purchases";
 
-type BillingPeriod = "monthly" | "yearly";
+type PaidTier = "premium" | "pro";
+type BillingPeriod = "monthly" | "yearly" | "lifetime";
 
 export default function PaywallScreen() {
   const router = useRouter();
@@ -28,11 +31,11 @@ export default function PaywallScreen() {
   const insets = useSafeAreaInsets();
   const { tier: currentTier, setTier } = useSubscription();
 
-  const [selectedTier, setSelectedTier] = useState<"premium" | "pro">("premium");
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("yearly");
   const [isLoading, setIsLoading] = useState(false);
   const [restoring, setRestoring] = useState(false);
-  const [offerings, setOfferings] = useState<any>(null);
+  const [tierOfferings, setTierOfferings] = useState<Partial<Record<PaidTier, any>>>({});
+  const [selectedTier, setSelectedTier] = useState<PaidTier>("pro");
   const [rcReady, setRcReady] = useState(false);
 
   // Initialisiere RevenueCat und lade Offerings beim Öffnen der Paywall
@@ -46,24 +49,35 @@ export default function PaywallScreen() {
       setRcReady(ok);
 
       if (ok) {
-        const off = await getOfferings();
-        if (!cancelled) setOfferings(off);
+        const off = await getTierOfferings();
+        if (cancelled) return;
+        setTierOfferings(off);
+        // Nur konfigurierte Tiers anbieten; Pro bleibt Fallback
+        if (!off.pro && off.premium) setSelectedTier("premium");
       }
     })();
 
     return () => { cancelled = true; };
   }, []);
 
+  // Angebotene Tiers: nur solche mit konfiguriertem Offering/Paketen (Pro-Fallback ohne Premium)
+  const availableTiers: PaidTier[] = (["premium", "pro"] as const).filter((t) => !!tierOfferings[t]);
+  const offerings = tierOfferings[selectedTier] ?? null;
+
   // Finde das richtige Paket aus dem Offering
-  const getSelectedPackage = () => {
+  const getPackageFor = (billingPeriod: BillingPeriod) => {
     if (!offerings) return null;
     const packages = offerings.availablePackages || [];
 
+    if (billingPeriod === "lifetime") {
+      return offerings.lifetime ?? packages.find((p: any) => p.identifier === "$rc_lifetime" || p.product?.identifier === PRODUCT_IDS.LIFETIME) ?? null;
+    }
     if (billingPeriod === "yearly") {
       return offerings.annual ?? packages.find((p: any) => p.identifier === "$rc_annual") ?? null;
     }
     return offerings.monthly ?? packages.find((p: any) => p.identifier === "$rc_monthly") ?? null;
   };
+  const getSelectedPackage = () => getPackageFor(billingPeriod);
 
   const handlePurchase = async () => {
     const pkg = getSelectedPackage();
@@ -143,12 +157,27 @@ export default function PaywallScreen() {
     }
   };
 
+  // Tier-Mapping ist per Env konfigurierbar (lib/entitlements.ts, docs/REVENUECAT_TIERS.md).
+  // Ohne Premium-Offering wird nur Pro angeboten.
   const pricing = TIER_PRICING[selectedTier];
+  const hasLifetime = !!getPackageFor("lifetime");
+
+  const fmt = (n: number) => (n === -1 ? "∞" : String(n));
+  const comparisonRows: { label: string; free: string; pro: string }[] = [
+    { label: "Diagnosen/Tag", free: fmt(TIER_LIMITS.free.diagnosesPerDay), pro: fmt(TIER_LIMITS.pro.diagnosesPerDay) },
+    { label: "Coach-Nachrichten", free: fmt(TIER_LIMITS.free.coachMessagesPerDay), pro: fmt(TIER_LIMITS.pro.coachMessagesPerDay) },
+    { label: "Pflanzen", free: fmt(TIER_LIMITS.free.maxPlants), pro: fmt(TIER_LIMITS.pro.maxPlants) },
+    { label: "Journal-Einträge", free: fmt(TIER_LIMITS.free.maxJournalEntries), pro: fmt(TIER_LIMITS.pro.maxJournalEntries) },
+    { label: "Werbefrei", free: TIER_LIMITS.free.adFree ? "✓" : "—", pro: TIER_LIMITS.pro.adFree ? "✓" : "—" },
+    { label: "Daten-Export", free: TIER_LIMITS.free.exportData ? "✓" : "—", pro: TIER_LIMITS.pro.exportData ? "✓" : "—" },
+    { label: "Prioritäts-Support", free: TIER_LIMITS.free.prioritySupport ? "✓" : "—", pro: TIER_LIMITS.pro.prioritySupport ? "✓" : "—" },
+  ];
 
   // Preis: Nutze RevenueCat wenn verfügbar, sonst Fallback-Preise
   const getDisplayPrice = () => {
     const pkg = getSelectedPackage();
     if (pkg) return formatPrice(pkg);
+    if (billingPeriod === "lifetime") return "—";
     const price = billingPeriod === "monthly" ? pricing.monthly : pricing.yearly;
     return `€${price.toFixed(2)}`;
   };
@@ -221,157 +250,97 @@ export default function PaywallScreen() {
               </Text>
             </View>
           </TouchableOpacity>
+          {hasLifetime && (
+            <TouchableOpacity
+              className={`flex-1 py-3 rounded-lg ${billingPeriod === "lifetime" ? "bg-primary" : ""}`}
+              onPress={() => setBillingPeriod("lifetime")}
+            >
+              <Text className={`text-center font-medium ${billingPeriod === "lifetime" ? "text-background" : "text-foreground"}`}>
+                Lifetime
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
-        {/* Plan Cards */}
-        <View className="gap-4 mb-6">
-          {/* Premium Card */}
-          <TouchableOpacity
-            className={`rounded-2xl p-4 border-2 ${
-              selectedTier === "premium" ? "border-primary bg-primary/5" : "border-border bg-surface"
-            }`}
-            onPress={() => setSelectedTier("premium")}
-          >
-            <View className="flex-row justify-between items-start mb-3">
-              <View>
-                <View className="flex-row items-center gap-2">
-                  <Text className="text-xl font-bold text-foreground">Premium</Text>
-                  {selectedTier === "premium" && (
-                    <View className="bg-primary px-2 py-0.5 rounded-full">
-                      <Text className="text-xs text-background font-medium">Beliebt</Text>
-                    </View>
-                  )}
-                </View>
-                <Text className="text-sm text-muted">{TIER_INFO.premium.description}</Text>
-              </View>
-              <View className={`w-6 h-6 rounded-full border-2 items-center justify-center ${
-                selectedTier === "premium" ? "border-primary bg-primary" : "border-border"
-              }`}>
-                {selectedTier === "premium" && (
-                  <IconSymbol name="checkmark.circle.fill" size={16} color="#fff" />
-                )}
-              </View>
-            </View>
+        {/* Tier-Auswahl (nur wenn mehrere Tiers konfiguriert sind) */}
+        {availableTiers.length > 1 && (
+          <View className="bg-surface rounded-xl p-1 flex-row mb-4">
+            {availableTiers.map((t) => (
+              <TouchableOpacity
+                key={t}
+                className={`flex-1 py-3 rounded-lg ${selectedTier === t ? "bg-primary" : ""}`}
+                onPress={() => setSelectedTier(t)}
+              >
+                <Text className={`text-center font-medium ${selectedTier === t ? "text-background" : "text-foreground"}`}>
+                  {TIER_INFO[t].name}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
 
-            <View className="flex-row items-baseline gap-1 mb-3">
-              <Text className="text-3xl font-bold text-foreground">
-                €{billingPeriod === "monthly" ? TIER_PRICING.premium.monthly.toFixed(2) : TIER_PRICING.premium.yearlyMonthly.toFixed(2)}
-              </Text>
-              <Text className="text-muted">/Monat</Text>
-              {billingPeriod === "yearly" && (
-                <Text className="text-sm text-muted ml-2">(€{TIER_PRICING.premium.yearly.toFixed(2)}/Jahr)</Text>
+        {/* Plan Card */}
+        <View className="rounded-2xl p-4 border-2 border-warning bg-warning/5 mb-6">
+          <View className="mb-3">
+            <View className="flex-row items-center gap-2">
+              <Text className="text-xl font-bold text-foreground">{TIER_INFO[selectedTier].name}</Text>
+              {selectedTier === "pro" && (
+                <View className="bg-warning px-2 py-0.5 rounded-full">
+                  <Text className="text-xs text-background font-medium">Unbegrenzt</Text>
+                </View>
               )}
             </View>
+            <Text className="text-sm text-muted">{TIER_INFO[selectedTier].description}</Text>
+          </View>
 
-            <View className="gap-2">
-              {TIER_INFO.premium.features.slice(0, 5).map((feature, index) => (
-                <View key={index} className="flex-row items-center gap-2">
-                  <IconSymbol name="checkmark.circle.fill" size={16} color={colors.primary} />
-                  <Text className="text-sm text-foreground">{feature}</Text>
-                </View>
-              ))}
-            </View>
-          </TouchableOpacity>
+          <View className="flex-row items-baseline gap-1 mb-3">
+            <Text className="text-3xl font-bold text-foreground">{getDisplayPrice()}</Text>
+            <Text className="text-muted">{billingPeriod === "lifetime" ? "einmalig" : billingPeriod === "yearly" ? "/Jahr" : "/Monat"}</Text>
+          </View>
 
-          {/* Pro Card */}
-          <TouchableOpacity
-            className={`rounded-2xl p-4 border-2 ${
-              selectedTier === "pro" ? "border-warning bg-warning/5" : "border-border bg-surface"
-            }`}
-            onPress={() => setSelectedTier("pro")}
-          >
-            <View className="flex-row justify-between items-start mb-3">
-              <View>
-                <View className="flex-row items-center gap-2">
-                  <Text className="text-xl font-bold text-foreground">Pro</Text>
-                  <View className="bg-warning px-2 py-0.5 rounded-full">
-                    <Text className="text-xs text-background font-medium">Unbegrenzt</Text>
-                  </View>
-                </View>
-                <Text className="text-sm text-muted">{TIER_INFO.pro.description}</Text>
+          <View className="gap-2">
+            {TIER_INFO[selectedTier].features.slice(0, 5).map((feature, index) => (
+              <View key={index} className="flex-row items-center gap-2">
+                <IconSymbol name="checkmark.circle.fill" size={16} color={colors.warning} />
+                <Text className="text-sm text-foreground">{feature}</Text>
               </View>
-              <View className={`w-6 h-6 rounded-full border-2 items-center justify-center ${
-                selectedTier === "pro" ? "border-warning bg-warning" : "border-border"
-              }`}>
-                {selectedTier === "pro" && (
-                  <IconSymbol name="checkmark.circle.fill" size={16} color="#fff" />
-                )}
-              </View>
-            </View>
-
-            <View className="flex-row items-baseline gap-1 mb-3">
-              <Text className="text-3xl font-bold text-foreground">
-                €{billingPeriod === "monthly" ? TIER_PRICING.pro.monthly.toFixed(2) : TIER_PRICING.pro.yearlyMonthly.toFixed(2)}
-              </Text>
-              <Text className="text-muted">/Monat</Text>
-              {billingPeriod === "yearly" && (
-                <Text className="text-sm text-muted ml-2">(€{TIER_PRICING.pro.yearly.toFixed(2)}/Jahr)</Text>
-              )}
-            </View>
-
-            <View className="gap-2">
-              {TIER_INFO.pro.features.slice(0, 5).map((feature, index) => (
-                <View key={index} className="flex-row items-center gap-2">
-                  <IconSymbol name="checkmark.circle.fill" size={16} color={colors.warning} />
-                  <Text className="text-sm text-foreground">{feature}</Text>
-                </View>
-              ))}
-            </View>
-          </TouchableOpacity>
+            ))}
+          </View>
         </View>
 
-        {/* Feature Comparison */}
+        {/* Feature Comparison (Werte aus TIER_LIMITS) */}
         <View className="bg-surface rounded-2xl p-4 border border-border mb-6">
           <Text className="text-lg font-semibold text-foreground mb-4">Vergleich</Text>
 
           <View className="gap-3">
-            <View className="flex-row justify-between items-center py-2 border-b border-border">
-              <Text className="text-foreground">Diagnosen/Tag</Text>
-              <View className="flex-row gap-4">
-                <Text className="text-muted w-16 text-center">3</Text>
-                <Text className="text-primary w-16 text-center">15</Text>
-                <Text className="text-warning w-16 text-center">∞</Text>
+            {comparisonRows.map((row, i) => (
+              <View
+                key={row.label}
+                className={`flex-row justify-between items-center py-2 ${i < comparisonRows.length - 1 ? "border-b border-border" : ""}`}
+              >
+                <Text className="text-foreground">{row.label}</Text>
+                <View className="flex-row gap-4">
+                  <Text className="text-muted w-16 text-center">{row.free}</Text>
+                  <Text className="text-warning w-16 text-center">{row.pro}</Text>
+                </View>
               </View>
-            </View>
-            <View className="flex-row justify-between items-center py-2 border-b border-border">
-              <Text className="text-foreground">Coach-Nachrichten</Text>
-              <View className="flex-row gap-4">
-                <Text className="text-muted w-16 text-center">5</Text>
-                <Text className="text-primary w-16 text-center">50</Text>
-                <Text className="text-warning w-16 text-center">∞</Text>
-              </View>
-            </View>
-            <View className="flex-row justify-between items-center py-2 border-b border-border">
-              <Text className="text-foreground">Pflanzen</Text>
-              <View className="flex-row gap-4">
-                <Text className="text-muted w-16 text-center">2</Text>
-                <Text className="text-primary w-16 text-center">10</Text>
-                <Text className="text-warning w-16 text-center">∞</Text>
-              </View>
-            </View>
-            <View className="flex-row justify-between items-center py-2">
-              <Text className="text-foreground">Prioritäts-Support</Text>
-              <View className="flex-row gap-4">
-                <Text className="text-muted w-16 text-center">—</Text>
-                <Text className="text-muted w-16 text-center">—</Text>
-                <IconSymbol name="checkmark.circle.fill" size={16} color={colors.warning} style={{ width: 64, textAlign: "center" } as any} />
-              </View>
-            </View>
+            ))}
           </View>
 
           <View className="flex-row justify-end gap-4 mt-2">
             <Text className="text-xs text-muted w-16 text-center">Free</Text>
-            <Text className="text-xs text-primary w-16 text-center">Premium</Text>
             <Text className="text-xs text-warning w-16 text-center">Pro</Text>
           </View>
         </View>
 
-        {/* Guarantee */}
+        {/* Hinweis statt nicht durchsetzbarer Garantie */}
         <View className="bg-primary/10 rounded-xl p-4 flex-row items-center gap-3 mb-6">
           <IconSymbol name="checkmark.circle.fill" size={24} color={colors.primary} />
           <View className="flex-1">
-            <Text className="text-foreground font-medium">7 Tage Geld-zurück-Garantie</Text>
-            <Text className="text-sm text-muted">Nicht zufrieden? Volle Erstattung, keine Fragen.</Text>
+            <Text className="text-foreground font-medium">Erstattung nach Store-Richtlinien</Text>
+            <Text className="text-sm text-muted">
+              Rückerstattungen richten sich nach den Bedingungen von Apple bzw. Google und werden dort beantragt.
+            </Text>
           </View>
         </View>
 
@@ -393,7 +362,7 @@ export default function PaywallScreen() {
         {/* Legal Text */}
         <Text className="text-xs text-muted text-center leading-5">
           Die Zahlung wird über deinen {Platform.OS === "ios" ? "Apple" : Platform.OS === "android" ? "Google" : "App Store"} Account abgerechnet.
-          Das Abo verlängert sich automatisch, wenn es nicht mindestens 24 Stunden vor Ablauf gekündigt wird.
+          Abos verlängern sich automatisch, wenn es nicht mindestens 24 Stunden vor Ablauf gekündigt wird.
         </Text>
       </ScrollView>
 
@@ -404,19 +373,19 @@ export default function PaywallScreen() {
       >
         <TouchableOpacity
           className="rounded-xl p-4 items-center flex-row justify-center gap-2"
-          style={{ backgroundColor: selectedTier === "pro" ? colors.warning : colors.primary }}
+          style={{ backgroundColor: colors.warning }}
           onPress={handlePurchase}
-          disabled={isLoading}
+          disabled={isLoading || (billingPeriod === "lifetime" && !hasLifetime)}
         >
           {isLoading ? (
             <ActivityIndicator color="#fff" />
           ) : (
             <>
               <Text className="text-lg font-bold text-background">
-                {selectedTier === "premium" ? "Premium" : "Pro"} starten
+                Pro starten
               </Text>
               <Text className="text-sm text-background/80">
-                {getDisplayPrice()}{billingPeriod === "yearly" ? "/Jahr" : "/Monat"}
+                {getDisplayPrice()}{billingPeriod === "lifetime" ? " einmalig" : billingPeriod === "yearly" ? "/Jahr" : "/Monat"}
               </Text>
             </>
           )}

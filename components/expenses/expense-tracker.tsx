@@ -3,8 +3,9 @@
  * Track and visualize grow expenses
  */
 
-import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
 import { useState } from 'react';
+import { exportExpensesToCSV, exportExpensesToPDF, shareFile } from '@/lib/export-service';
 import { Expense, calculateTotalExpenses, getExpenseBreakdown, analyzeProfitability } from '@/lib/cost-tracking';
 
 interface ExpenseTrackerProps {
@@ -19,6 +20,24 @@ export function ExpenseTracker({ plantId, expenses, onAddExpense, yieldGrams }: 
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<Expense['category']>('nutrients');
+  const [exporting, setExporting] = useState(false);
+
+  const handleExport = async (kind: 'csv' | 'pdf') => {
+    if (expenses.length === 0) {
+      Alert.alert('Nothing to export', 'Add at least one expense first.');
+      return;
+    }
+    setExporting(true);
+    try {
+      const name = plantId ? `expenses_${plantId}` : 'expenses';
+      const path = kind === 'csv' ? await exportExpensesToCSV(expenses, name) : await exportExpensesToPDF(expenses, name);
+      if (path) await shareFile(path);
+    } catch (e) {
+      Alert.alert('Export failed', e instanceof Error ? e.message : 'Unknown error');
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const total = calculateTotalExpenses(expenses);
   const breakdown = getExpenseBreakdown(expenses);
@@ -37,14 +56,14 @@ export function ExpenseTracker({ plantId, expenses, onAddExpense, yieldGrams }: 
   const handleAddExpense = () => {
     const parsedAmount = parseFloat(amount);
     if (isNaN(parsedAmount) || parsedAmount <= 0 || !description.trim()) {
-      alert('Please enter valid amount and description');
+      Alert.alert('Ungültige Eingabe', 'Bitte gültigen Betrag und Beschreibung eingeben.');
       return;
     }
 
     onAddExpense({
       plantId,
       category,
-      description,
+      description: description.trim(),
       amount: parsedAmount,
       currency: 'USD',
       date: new Date(),
@@ -87,6 +106,24 @@ export function ExpenseTracker({ plantId, expenses, onAddExpense, yieldGrams }: 
           </Text>
         </View>
       )}
+
+      {/* Export */}
+      <View className="flex-row mb-4 gap-2">
+        <TouchableOpacity
+          className="flex-1 bg-surface border border-border rounded-xl py-3"
+          disabled={exporting}
+          onPress={() => handleExport('csv')}
+        >
+          <Text className="text-center font-semibold text-foreground">{exporting ? '...' : 'Export CSV'}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="flex-1 bg-surface border border-border rounded-xl py-3"
+          disabled={exporting}
+          onPress={() => handleExport('pdf')}
+        >
+          <Text className="text-center font-semibold text-foreground">{exporting ? '...' : 'Export PDF'}</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Category Breakdown */}
       <View className="bg-surface rounded-xl p-4 mb-4">

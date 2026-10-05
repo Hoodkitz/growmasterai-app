@@ -15,6 +15,20 @@
       "when": 1767248237777,
       "tag": "0001_wealthy_morgan_stark",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1791220882140,
+      "tag": "0002_auth_likes_outreach_streak",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1791222460082,
+      "tag": "0003_black_gateway",
+      "breakpoints": true
     }
   ]
 }

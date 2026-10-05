@@ -50,6 +50,19 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
 
 const ONBOARDING_KEY = '@growmaster_onboarding_completed';
 
+export async function getOnboardingStatus(): Promise<boolean> {
+  try {
+    const v = await AsyncStorage.getItem(ONBOARDING_KEY);
+    return v === 'true';
+  } catch { return false; }
+}
+export async function setOnboardingComplete(): Promise<void> {
+  await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
+}
+export async function resetOnboarding(): Promise<void> {
+  await AsyncStorage.removeItem(ONBOARDING_KEY);
+}
+
 export function OnboardingFlow() {
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -138,17 +151,12 @@ export function OnboardingFlow() {
  * Check if user has completed onboarding
  */
 export async function hasCompletedOnboarding(): Promise<boolean> {
-  try {
-    const value = await AsyncStorage.getItem(ONBOARDING_KEY);
-    return value === 'true';
-  } catch {
-    return false;
-  }
+  return getOnboardingStatus();
 }
 
 /**
  * Reset onboarding (for testing)
  */
-export async function resetOnboarding(): Promise<void> {
+export async function resetOnboardingLegacy(): Promise<void> {
   await AsyncStorage.removeItem(ONBOARDING_KEY);
 }
