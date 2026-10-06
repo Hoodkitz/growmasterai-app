@@ -13,7 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getOnboardingStatus } from "@/components/onboarding/onboarding-flow";
 import { useAppAuth } from "@/lib/auth-context";
 import { useGamification } from "@/lib/gamification-context";
-import { getMoonPhase } from "@/lib/grow-tools";
+import { getMoonAge, getMoonPhase } from "@/lib/grow-tools";
 import { PLANTS_KEY } from "@/lib/plants-storage";
 
 interface HomePlant {
@@ -32,6 +32,7 @@ const PHASE_LABELS: Record<string, string> = {
 };
 
 const { width } = Dimensions.get("window");
+const DIAL = Math.min(width - 48, 280);
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -80,6 +81,7 @@ export default function HomeScreen() {
     const { user, isAuthenticated } = useAppAuth();
   const { points, level, levelProgress, stats } = useGamification();
   const moon = getMoonPhase();
+  const moonAge = getMoonAge();
   const [plants, setPlants] = useState<HomePlant[]>([]);
 
   // Pflanzen bei jedem Fokus neu laden (gleicher Speicher wie der Pflanzen-Tab)
@@ -111,22 +113,50 @@ export default function HomeScreen() {
         contentContainerStyle={{ paddingBottom: 32 }} 
         showsVerticalScrollIndicator={false}
       >
-        {/* Mondzyklus + Tipp für heute */}
-        <View className="px-4 pt-2 mb-4">
-          <View className="bg-primary/10 rounded-2xl p-4 border border-primary/30">
-            <View className="flex-row items-center gap-4">
-              <Text style={{ fontSize: 44 }}>{moon.emoji}</Text>
-              <View className="flex-1">
-                <Text className="text-xs text-muted uppercase">Mondzyklus heute</Text>
-                <Text className="text-lg font-bold text-foreground">
-                  {moon.name} · {moon.percentage}%
-                </Text>
-              </View>
+        {/* Mondzyklus als Uhr + Tipp für heute */}
+        <View className="px-4 pt-2 mb-4 items-center">
+          <View style={{ width: DIAL, height: DIAL, alignItems: "center", justifyContent: "center" }}>
+            {Array.from({ length: 30 }).map((_, i) => {
+              const reached = i <= Math.floor(moonAge);
+              return (
+                <View
+                  key={i}
+                  style={{
+                    position: "absolute",
+                    left: DIAL / 2 - 1.5,
+                    top: DIAL / 2 - (i % 5 === 0 ? 8 : 5),
+                    width: 3,
+                    height: i % 5 === 0 ? 16 : 10,
+                    borderRadius: 2,
+                    backgroundColor: reached ? colors.primary : colors.border,
+                    transform: [{ rotate: `${i * 12}deg` }, { translateY: -(DIAL / 2 - 10) }],
+                  }}
+                />
+              );
+            })}
+            <View
+              style={{
+                width: DIAL - 56,
+                height: DIAL - 56,
+                borderRadius: (DIAL - 56) / 2,
+                backgroundColor: colors.surface,
+                borderWidth: 1,
+                borderColor: colors.border,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ fontSize: 96, lineHeight: 112 }}>{moon.emoji}</Text>
             </View>
-            <View className="mt-3 pt-3 border-t border-primary/20">
-              <Text className="text-xs text-muted mb-1">Tipp für heute</Text>
-              <Text className="text-sm text-foreground leading-5">{moon.growTip}</Text>
-            </View>
+          </View>
+          <Text className="text-2xl font-bold text-foreground mt-3">{moon.name}</Text>
+          <Text className="text-sm text-muted">
+            Tag {Math.floor(moonAge) + 1} von 30 · {moon.percentage}% beleuchtet
+          </Text>
+
+          <View className="w-full bg-primary/15 rounded-2xl p-4 border border-primary/40 mt-4">
+            <Text className="text-xs text-muted mb-1">Tipp für heute</Text>
+            <Text className="text-base text-foreground leading-6">{moon.growTip}</Text>
           </View>
         </View>
 

@@ -133,7 +133,7 @@ export default function RootLayout() {
                     <Stack.Screen name="legal" options={{ presentation: "modal" }} />
                     <Stack.Screen name="onboarding" options={{ presentation: "fullScreenModal", gestureEnabled: false }} />
                   </Stack>
-                  <StatusBar style="auto" />
+                  <StatusBar style="light" />
                   </PurchaseProvider>
                 </SubscriptionProvider>
               </GamificationProvider>

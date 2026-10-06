@@ -8,6 +8,15 @@ export interface MoonPhase {
   percentage: number;
 }
 
+export const SYNODIC_MONTH = 29.530588853;
+
+/** Mondalter in Tagen seit Neumond (0 .. 29.53) */
+export const getMoonAge = (date: Date = new Date()): number => {
+  const REF_NEW_MOON = Date.UTC(2000, 0, 6, 18, 14, 0);
+  const daysSince = (date.getTime() - REF_NEW_MOON) / 86400000;
+  return ((daysSince % SYNODIC_MONTH) + SYNODIC_MONTH) % SYNODIC_MONTH;
+};
+
 export const getMoonPhase = (date: Date = new Date()): MoonPhase => {
   // Moon age from the synodic month, referenced to the new moon of 2000-01-06 18:14 UTC
   const SYNODIC = 29.530588853;
