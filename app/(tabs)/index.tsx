@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ScrollView, Text, View, TouchableOpacity, Dimensions } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
@@ -11,6 +11,25 @@ import { AdBanner, type Ad } from "@/components/ad-banner";
 import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getOnboardingStatus } from "@/components/onboarding/onboarding-flow";
+import { useAppAuth } from "@/lib/auth-context";
+import { useGamification } from "@/lib/gamification-context";
+import { getMoonPhase } from "@/lib/grow-tools";
+import { PLANTS_KEY } from "@/lib/plants-storage";
+
+interface HomePlant {
+  id: string;
+  name: string;
+  strain?: string;
+  phase?: "seedling" | "vegetative" | "flowering" | "harvest";
+  deletedAt?: number | null;
+}
+
+const PHASE_LABELS: Record<string, string> = {
+  seedling: "Keimling",
+  vegetative: "Vegetativ",
+  flowering: "Blüte",
+  harvest: "Ernte",
+};
 
 const { width } = Dimensions.get("window");
 
@@ -58,13 +77,32 @@ export default function HomeScreen() {
     checkOnboarding();
   }, []);
 
-  // Mock achievements data
+    const { user, isAuthenticated } = useAppAuth();
+  const { points, level, levelProgress, stats } = useGamification();
+  const moon = getMoonPhase();
+  const [plants, setPlants] = useState<HomePlant[]>([]);
+
+  // Pflanzen bei jedem Fokus neu laden (gleicher Speicher wie der Pflanzen-Tab)
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      AsyncStorage.getItem(PLANTS_KEY)
+        .then((raw) => {
+          if (!active) return;
+          const parsed: HomePlant[] = raw ? JSON.parse(raw) : [];
+          setPlants(parsed.filter((pl) => !pl.deletedAt));
+        })
+        .catch(() => active && setPlants([]));
+      return () => {
+        active = false;
+      };
+    }, []),
+  );
+
   const achievements = {
-    level: 5,
-    xp: 450,
-    xpToNext: 500,
-    streak: 7,
-    totalDiagnoses: 23,
+    level: level.level,
+    xp: points,
+    streak: stats.loginStreak ?? 0,
   };
 
   return (
@@ -73,8 +111,45 @@ export default function HomeScreen() {
         contentContainerStyle={{ paddingBottom: 32 }} 
         showsVerticalScrollIndicator={false}
       >
+        {/* Mondzyklus + Tipp für heute */}
+        <View className="px-4 pt-2 mb-4">
+          <View className="bg-primary/10 rounded-2xl p-4 border border-primary/30">
+            <View className="flex-row items-center gap-4">
+              <Text style={{ fontSize: 44 }}>{moon.emoji}</Text>
+              <View className="flex-1">
+                <Text className="text-xs text-muted uppercase">Mondzyklus heute</Text>
+                <Text className="text-lg font-bold text-foreground">
+                  {moon.name} · {moon.percentage}%
+                </Text>
+              </View>
+            </View>
+            <View className="mt-3 pt-3 border-t border-primary/20">
+              <Text className="text-xs text-muted mb-1">Tipp für heute</Text>
+              <Text className="text-sm text-foreground leading-5">{moon.growTip}</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Login-Aufforderung */}
+        {!isAuthenticated && (
+          <View className="px-4 mb-4">
+            <View className="bg-surface rounded-2xl p-4 border border-border">
+              <Text className="text-base font-semibold text-foreground mb-1">Melde dich an</Text>
+              <Text className="text-sm text-muted mb-3">
+                Sichere deine Pflanzen, synchronisiere sie auf allen Geräten und sammle XP.
+              </Text>
+              <TouchableOpacity
+                className="bg-primary rounded-xl py-3 items-center"
+                onPress={() => router.push("/login")}
+              >
+                <Text className="text-base font-semibold text-white">Anmelden / Registrieren</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
         {/* Header with Profile */}
-        <View className="px-4 pt-2 pb-4">
+        <View className="px-4 pb-4">
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-3">
               <TouchableOpacity 
@@ -85,10 +160,10 @@ export default function HomeScreen() {
               </TouchableOpacity>
               <View>
                 <View className="flex-row items-center gap-2">
-                  <Text className="text-lg font-bold text-foreground">Willkommen!</Text>
+                  <Text className="text-lg font-bold text-foreground">{isAuthenticated && user?.name ? `Hi, ${user.name}` : "Willkommen!"}</Text>
                   <SubscriptionBadge />
                 </View>
-                <Text className="text-sm text-muted">Level {achievements.level} Grower</Text>
+                <Text className="text-sm text-muted">Level {achievements.level} · {level.title}</Text>
               </View>
             </View>
             <TouchableOpacity 
@@ -108,12 +183,12 @@ export default function HomeScreen() {
                 <IconSymbol name="flame.fill" size={18} color={colors.warning} />
                 <Text className="text-sm font-medium text-foreground">{achievements.streak} Tage Streak!</Text>
               </View>
-              <Text className="text-sm text-muted">{achievements.xp}/{achievements.xpToNext} XP</Text>
+              <Text className="text-sm text-muted">{achievements.xp} XP</Text>
             </View>
             <View className="h-2 bg-border rounded-full overflow-hidden">
               <View 
                 className="h-full rounded-full bg-primary"
-                style={{ width: `${(achievements.xp / achievements.xpToNext) * 100}%` }}
+                style={{ width: `${Math.min(100, Math.max(0, levelProgress))}%` }}
               />
             </View>
           </View>
@@ -197,6 +272,53 @@ export default function HomeScreen() {
           </View>
         </View>
 
+        {/* My Plants Quick View */}
+        <View className="px-4 mb-4">
+          <View className="flex-row items-center justify-between mb-3">
+            <Text className="text-lg font-bold text-foreground">Meine Pflanzen</Text>
+            <TouchableOpacity onPress={() => router.push("/(tabs)/plants")}>
+              <Text className="text-sm font-medium text-primary">Alle anzeigen</Text>
+            </TouchableOpacity>
+          </View>
+
+          {plants.slice(0, 3).map((pl) => (
+            <TouchableOpacity
+              key={pl.id}
+              className="bg-surface rounded-2xl p-4 border border-border flex-row items-center gap-4 mb-2"
+              onPress={() => router.push("/(tabs)/plants")}
+            >
+              <View className="w-12 h-12 rounded-xl bg-primary/20 items-center justify-center">
+                <IconSymbol name="leaf.fill" size={24} color={colors.primary} />
+              </View>
+              <View className="flex-1">
+                <Text className="text-base font-semibold text-foreground">{pl.name}</Text>
+                <Text className="text-sm text-muted">
+                  {[pl.strain, pl.phase ? PHASE_LABELS[pl.phase] : null].filter(Boolean).join(" · ") || "Keine Details"}
+                </Text>
+              </View>
+              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+            </TouchableOpacity>
+          ))}
+          {plants.length > 3 && (
+            <Text className="text-sm text-muted mb-2">+ {plants.length - 3} weitere</Text>
+          )}
+
+          <TouchableOpacity
+            className="bg-surface rounded-2xl p-4 border border-border flex-row items-center gap-4"
+            onPress={() => router.push("/(tabs)/plants")}
+          >
+            <View className="w-12 h-12 rounded-xl bg-primary/20 items-center justify-center">
+              <IconSymbol name="plus.circle.fill" size={24} color={colors.primary} />
+            </View>
+            <View className="flex-1">
+              <Text className="text-base font-semibold text-foreground">Pflanze hinzufügen</Text>
+              <Text className="text-sm text-muted">
+                {plants.length === 0 ? "Starte dein Grow-Tracking" : `${plants.length} Pflanze${plants.length === 1 ? "" : "n"} aktiv`}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
         {/* Daily Usage Card */}
         <View className="px-4 mb-4">
           <View className="bg-surface rounded-2xl p-4 border border-border">
@@ -227,116 +349,6 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Achievements Preview */}
-        <View className="px-4 mb-4">
-          <View className="flex-row items-center justify-between mb-3">
-            <Text className="text-lg font-bold text-foreground">Erfolge</Text>
-            <TouchableOpacity>
-              <Text className="text-sm font-medium text-primary">Alle anzeigen</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4">
-            <View className="flex-row gap-3">
-              {/* Achievement Cards */}
-              <View className="bg-surface rounded-2xl p-4 border border-border w-36 items-center">
-                <View className="w-14 h-14 rounded-full bg-warning/20 items-center justify-center mb-2">
-                  <Text className="text-2xl">🌱</Text>
-                </View>
-                <Text className="text-sm font-semibold text-foreground text-center">Erste Pflanze</Text>
-                <Text className="text-xs text-muted">+50 XP</Text>
-              </View>
-              
-              <View className="bg-surface rounded-2xl p-4 border border-border w-36 items-center">
-                <View className="w-14 h-14 rounded-full bg-primary/20 items-center justify-center mb-2">
-                  <Text className="text-2xl">🔍</Text>
-                </View>
-                <Text className="text-sm font-semibold text-foreground text-center">10 Diagnosen</Text>
-                <Text className="text-xs text-muted">+100 XP</Text>
-              </View>
-              
-              <View className="bg-surface rounded-2xl p-4 border border-border w-36 items-center opacity-50">
-                <View className="w-14 h-14 rounded-full bg-muted/20 items-center justify-center mb-2">
-                  <IconSymbol name="lock.fill" size={24} color={colors.muted} />
-                </View>
-                <Text className="text-sm font-semibold text-foreground text-center">7 Tage Streak</Text>
-                <Text className="text-xs text-muted">+200 XP</Text>
-              </View>
-              
-              <View className="bg-surface rounded-2xl p-4 border border-border w-36 items-center opacity-50">
-                <View className="w-14 h-14 rounded-full bg-muted/20 items-center justify-center mb-2">
-                  <IconSymbol name="lock.fill" size={24} color={colors.muted} />
-                </View>
-                <Text className="text-sm font-semibold text-foreground text-center">Master Grower</Text>
-                <Text className="text-xs text-muted">+500 XP</Text>
-              </View>
-            </View>
-          </ScrollView>
-        </View>
-
-        {/* Community Highlights */}
-        <View className="px-4 mb-4">
-          <View className="flex-row items-center justify-between mb-3">
-            <Text className="text-lg font-bold text-foreground">Community</Text>
-            <TouchableOpacity onPress={() => router.push("/(tabs)/community")}>
-              <Text className="text-sm font-medium text-primary">Mehr</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <View className="bg-surface rounded-2xl p-4 border border-border">
-            <View className="flex-row items-center gap-3 mb-3">
-              <View className="w-10 h-10 rounded-full bg-warning/20 items-center justify-center">
-                <IconSymbol name="trophy.fill" size={20} color={colors.warning} />
-              </View>
-              <View className="flex-1">
-                <Text className="text-base font-semibold text-foreground">Aktives Gewinnspiel</Text>
-                <Text className="text-sm text-muted">Höchster Ertrag Q1 2026</Text>
-              </View>
-              <TouchableOpacity 
-                className="bg-primary px-3 py-1.5 rounded-full"
-                onPress={() => router.push("/(tabs)/community")}
-              >
-                <Text className="text-sm font-medium text-white">Teilnehmen</Text>
-              </TouchableOpacity>
-            </View>
-            
-            <View className="flex-row items-center gap-4 pt-3 border-t border-border">
-              <View className="flex-row items-center gap-1">
-                <IconSymbol name="person.2.fill" size={16} color={colors.muted} />
-                <Text className="text-sm text-muted">234 Teilnehmer</Text>
-              </View>
-              <View className="flex-row items-center gap-1">
-                <IconSymbol name="gift.fill" size={16} color={colors.muted} />
-                <Text className="text-sm text-muted">€500 Preis</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        {/* My Plants Quick View */}
-        <View className="px-4 mb-4">
-          <View className="flex-row items-center justify-between mb-3">
-            <Text className="text-lg font-bold text-foreground">Meine Pflanzen</Text>
-            <TouchableOpacity onPress={() => router.push("/(tabs)/plants")}>
-              <Text className="text-sm font-medium text-primary">Alle anzeigen</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <TouchableOpacity 
-            className="bg-surface rounded-2xl p-4 border border-border flex-row items-center gap-4"
-            onPress={() => router.push("/(tabs)/plants")}
-          >
-            <View className="w-14 h-14 rounded-xl bg-primary/20 items-center justify-center">
-              <IconSymbol name="leaf.fill" size={28} color={colors.primary} />
-            </View>
-            <View className="flex-1">
-              <Text className="text-base font-semibold text-foreground">Pflanze hinzufügen</Text>
-              <Text className="text-sm text-muted">Starte dein Grow-Tracking</Text>
-            </View>
-            <IconSymbol name="plus.circle.fill" size={24} color={colors.primary} />
-          </TouchableOpacity>
-        </View>
-
         {/* Sponsored Ad */}
         <View className="px-4 mb-4">
           <AdBanner
@@ -348,23 +360,6 @@ export default function HomeScreen() {
           />
         </View>
 
-        {/* Tips Section */}
-        <View className="px-4">
-          <Text className="text-lg font-bold text-foreground mb-3">Tipp des Tages</Text>
-          <View className="bg-primary/10 rounded-2xl p-4 border border-primary/30">
-            <View className="flex-row items-start gap-3">
-              <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
-                <IconSymbol name="sparkles" size={20} color={colors.primary} />
-              </View>
-              <View className="flex-1">
-                <Text className="text-base font-semibold text-foreground mb-1">Optimale Luftfeuchtigkeit</Text>
-                <Text className="text-sm text-muted leading-5">
-                  In der Blütephase sollte die Luftfeuchtigkeit zwischen 40-50% liegen, um Schimmelbildung zu vermeiden und die Trichom-Produktion zu maximieren.
-                </Text>
-              </View>
-            </View>
-          </View>
-        </View>
       </ScrollView>
     </ScreenContainer>
   );
