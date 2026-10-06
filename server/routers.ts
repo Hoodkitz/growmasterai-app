@@ -26,6 +26,9 @@ const diagnosisResponseSchema = z.object({
   recommendations: z.array(z.string()),
   careTips: z.array(z.string()),
   severity: z.enum(["low", "medium", "high"]),
+  plantGender: z.enum(["male", "female", "hermaphrodite", "unknown"]).optional(),
+  genderConfidence: z.number().min(0).max(100).optional(),
+  voiceResponse: z.string().optional(),
 });
 
 // Coach response schema
@@ -69,13 +72,27 @@ export const appRouter = router({
               role: "system",
               content: `Du bist ein Experte für Cannabis-Pflanzengesundheit und -diagnose. Analysiere die bereitgestellten Bilder und identifiziere alle Probleme, Krankheiten, Schädlinge oder Nährstoffmängel.
 
+WICHTIG: Bestimme auch das Geschlecht der Pflanze (männlich/weiblich/hermaphrodit) anhand sichtbarer Blüten, Pollensäcke oder Stigmata.
+
 Antworte IMMER auf Deutsch und im folgenden JSON-Format:
 {
   "problem": "Detaillierte Beschreibung des identifizierten Problems",
   "recommendations": ["Empfehlung 1", "Empfehlung 2", "Empfehlung 3"],
   "careTips": ["Pflege-Tipp 1", "Pflege-Tipp 2", "Pflege-Tipp 3"],
-  "severity": "low" | "medium" | "high"
+  "severity": "low" | "medium" | "high",
+  "plantGender": "male" | "female" | "hermaphrodite" | "unknown",
+  "genderConfidence": 0-100 (Zahl),
+  "voiceResponse": "Kurze, gesprochene Zusammenfassung für Text-to-Speech (1-2 Sätze)"
 }
+
+Geschlechts-Bestimmung:
+- "male": Pollensäcke sichtbar (kleine grüne Bälle an Nodien)
+- "female": Weiße Stigmata (Härchen) sichtbar
+- "hermaphrodite": Sowohl Pollensäcke als auch Stigmata
+- "unknown": Geschlecht nicht erkennbar (z.B. vegetative Phase)
+
+Die voiceResponse sollte eine natürlich klingende Zusammenfassung sein, z.B.:
+"Deine Pflanze zeigt Anzeichen von Stickstoffmangel. Die Blätter sind gelblich. Erhöhe die Düngergabe."
 
 Wenn die Pflanze gesund aussieht, beschreibe ihren guten Zustand und gib allgemeine Pflegetipps.`,
             },

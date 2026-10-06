@@ -16,6 +16,7 @@ import { useRouter } from "expo-router";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system/legacy";
+import * as Speech from "expo-speech";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
@@ -42,6 +43,9 @@ interface DiagnosisResult {
   recommendations: string[];
   careTips: string[];
   severity: "low" | "medium" | "high";
+  plantGender?: "male" | "female" | "hermaphrodite" | "unknown";
+  genderConfidence?: number;
+  voiceResponse?: string;
 }
 
 export default function DiagnoseScreen() {
@@ -60,6 +64,7 @@ export default function DiagnoseScreen() {
   const [images, setImages] = useState<string[]>([]);
   const [notes, setNotes] = useState("");
   const [diagnosis, setDiagnosis] = useState<DiagnosisResult | null>(null);
+  const [hasScannedOnce, setHasScannedOnce] = useState(false);
   
   const cameraRef = useRef<CameraView>(null);
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -69,6 +74,17 @@ export default function DiagnoseScreen() {
     onSuccess: (data) => {
       setDiagnosis(data);
       setMode("result");
+      
+      // Auto-play voice response after 1 second
+      if (data.voiceResponse) {
+        setTimeout(() => {
+          Speech.speak(data.voiceResponse || data.problem, {
+            language: "de-DE",
+            pitch: 1.0,
+            rate: 0.9,
+          });
+        }, 1000);
+      }
     },
     onError: (error) => {
       console.error("Diagnosis error:", error);
@@ -176,6 +192,7 @@ export default function DiagnoseScreen() {
       
       if (photo) {
         setImages([photo.uri]);
+        setHasScannedOnce(true); // Enable live analysis after first scan
         await startDiagnosis([`data:image/jpeg;base64,${photo.base64}`]);
       }
     } catch (error) {
@@ -235,6 +252,7 @@ export default function DiagnoseScreen() {
     setLiveAnalysisActive(false);
     setOverlays([]);
     setSelectedOverlay(null);
+    // Keep hasScannedOnce so user can use live analysis again
   };
 
   const getSeverityColor = (severity: string) => {
@@ -290,9 +308,26 @@ export default function DiagnoseScreen() {
       <ScreenContainer className="p-4">
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
           <View className="flex-1 gap-6">
-            <View className="gap-1">
-              <Text className="text-2xl font-bold text-foreground">Analyse-Ergebnis</Text>
-              <Text className="text-base text-muted">KI-gestützte Pflanzendiagnose</Text>
+            <View className="flex-row items-center justify-between">
+              <View className="gap-1">
+                <Text className="text-2xl font-bold text-foreground">Analyse-Ergebnis</Text>
+                <Text className="text-base text-muted">KI-gestützte Pflanzendiagnose</Text>
+              </View>
+              {/* Voice Replay Button */}
+              {diagnosis.voiceResponse && (
+                <TouchableOpacity
+                  className="w-12 h-12 rounded-full bg-primary/20 items-center justify-center"
+                  onPress={() => {
+                    Speech.speak(diagnosis.voiceResponse || diagnosis.problem, {
+                      language: "de-DE",
+                      pitch: 1.0,
+                      rate: 0.9,
+                    });
+                  }}
+                >
+                  <IconSymbol name="speaker.wave.2.fill" size={24} color={colors.primary} />
+                </TouchableOpacity>
+              )}
             </View>
 
             <View className="bg-primary/10 rounded-2xl p-4 border border-primary/30 gap-3">
@@ -312,6 +347,33 @@ export default function DiagnoseScreen() {
               </View>
               <Text className="text-base text-foreground leading-6">{diagnosis.problem}</Text>
             </View>
+
+            {/* Plant Gender Badge */}
+            {diagnosis.plantGender && diagnosis.plantGender !== "unknown" && (
+              <View className="bg-surface rounded-2xl p-4 border border-border">
+                <View className="flex-row items-center justify-between">
+                  <View className="flex-row items-center gap-3">
+                    <View className="w-12 h-12 rounded-full bg-primary/20 items-center justify-center">
+                      <Text className="text-2xl">
+                        {diagnosis.plantGender === "female" ? "♀️" : diagnosis.plantGender === "male" ? "♂️" : "⚧"}
+                      </Text>
+                    </View>
+                    <View>
+                      <Text className="text-lg font-semibold text-foreground">
+                        {diagnosis.plantGender === "female" ? "Weibliche Pflanze" : 
+                         diagnosis.plantGender === "male" ? "Männliche Pflanze" : 
+                         "Hermaphrodit"}
+                      </Text>
+                      {diagnosis.genderConfidence && (
+                        <Text className="text-sm text-muted">
+                          Sicherheit: {diagnosis.genderConfidence}%
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                </View>
+              </View>
+            )}
 
             {diagnosis.recommendations.length > 0 && (
               <View className="bg-surface rounded-2xl p-4 border border-border gap-3">
@@ -559,20 +621,22 @@ export default function DiagnoseScreen() {
         )}
         
         <View className="px-4">
-          {/* Live Analysis Toggle */}
-          <View className="flex-row justify-center gap-4 mb-4">
-            <TouchableOpacity 
-              className={`px-4 py-2 rounded-full flex-row items-center gap-2 ${liveAnalysisActive ? "bg-primary" : "bg-white/20"}`}
-              onPress={toggleLiveAnalysis}
-              disabled={!canStartDiagnosis}
-              style={{ opacity: canStartDiagnosis ? 1 : 0.5 }}
-            >
-              <IconSymbol name="viewfinder" size={18} color="#fff" />
-              <Text className="text-sm font-medium text-white">
-                {liveAnalysisActive ? "Live-Analyse stoppen" : "Live-Analyse starten"}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          {/* Live Analysis Toggle - Only show after first scan */}
+          {hasScannedOnce && (
+            <View className="flex-row justify-center gap-4 mb-4">
+              <TouchableOpacity 
+                className={`px-4 py-2 rounded-full flex-row items-center gap-2 ${liveAnalysisActive ? "bg-primary" : "bg-white/20"}`}
+                onPress={toggleLiveAnalysis}
+                disabled={!canStartDiagnosis}
+                style={{ opacity: canStartDiagnosis ? 1 : 0.5 }}
+              >
+                <IconSymbol name="viewfinder" size={18} color="#fff" />
+                <Text className="text-sm font-medium text-white">
+                  {liveAnalysisActive ? "Live-Analyse stoppen" : "Live-Analyse starten"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
           
           {/* Capture Controls */}
           <View className="flex-row items-center justify-center gap-8">

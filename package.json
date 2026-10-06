@@ -16,7 +16,10 @@
     "db:push": "drizzle-kit generate && drizzle-kit migrate",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "qr": "node scripts/generate_qr.mjs"
+    "qr": "node scripts/generate_qr.mjs",
+    "perf:audit": "npx tsx scripts/performance-audit.ts",
+    "perf:fix": "npx tsx scripts/apply-quick-fixes.ts",
+    "perf:all": "pnpm perf:audit && pnpm perf:fix"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -56,6 +59,7 @@
     "expo-router": "~6.0.19",
     "expo-secure-store": "~15.0.8",
     "expo-sharing": "^14.0.8",
+    "expo-speech": "^57.0.3",
     "expo-splash-screen": "~31.0.12",
     "expo-status-bar": "~3.0.9",
     "expo-symbols": "~1.0.8",
@@ -63,6 +67,7 @@
     "expo-video": "~3.0.15",
     "expo-web-browser": "~15.0.10",
     "express": "^4.22.1",
+    "googleapis": "^183.0.0",
     "jose": "6.1.0",
     "mysql2": "^3.16.0",
     "nativewind": "^4.2.1",

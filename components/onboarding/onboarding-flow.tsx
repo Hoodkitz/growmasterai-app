@@ -20,31 +20,24 @@ interface OnboardingStep {
 const ONBOARDING_STEPS: OnboardingStep[] = [
   {
     id: 1,
-    title: '🌱 Welcome to GrowMaster AI',
-    description: 'Your AI-powered companion for growing cannabis. Track, diagnose, and optimize your grows like a pro.',
+    title: '🌱 Willkommen!',
+    description: 'GrowMaster AI hilft dir, gesunde Cannabis-Pflanzen zu züchten. Ganz einfach mit deinem Handy.',
     image: '🌿',
-    actionLabel: 'Get Started',
+    actionLabel: 'Los geht\'s',
   },
   {
     id: 2,
-    title: '📸 AI Plant Diagnosis',
-    description: 'Take a photo of your plant and get instant AI-powered diagnosis. Identify problems before they become serious.',
-    image: '🔍',
-    actionLabel: 'Sounds Amazing',
+    title: '📸 Foto machen',
+    description: 'Mach ein Foto von deiner Pflanze. Die KI sagt dir sofort, ob alles okay ist oder was sie braucht.',
+    image: '📷',
+    actionLabel: 'Verstanden',
   },
   {
     id: 3,
-    title: '💬 24/7 AI Coach',
-    description: 'Ask any question about growing. Our AI coach provides expert advice anytime, anywhere.',
+    title: '💬 Fragen stellen',
+    description: 'Frag einfach, wenn du Hilfe brauchst. Der KI-Coach antwortet rund um die Uhr.',
     image: '🤖',
-    actionLabel: 'I Need This',
-  },
-  {
-    id: 4,
-    title: '📓 Smart Grow Journal',
-    description: 'Track your plants with photos, notes, and automatic reminders. Never forget to water again!',
-    image: '📱',
-    actionLabel: 'Let\'s Go!',
+    actionLabel: 'Fertig!',
   },
 ];
 
