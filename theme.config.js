@@ -1,12 +1,12 @@
 /** @type {const} */
 const themeColors = {
   // Primary brand colors - vibrant green gradient base
-  primary: { light: '#10B981', dark: '#10B981' },
-  primaryDark: { light: '#059669', dark: '#059669' },
+  primary: { light: '#059669', dark: '#059669' },
+  primaryDark: { light: '#047857', dark: '#047857' },
   primaryLight: { light: '#34D399', dark: '#34D399' },
   
   // Background colors - deep dark for premium feel
-  background: { light: '#ffffff', dark: '#0A0F0D' },
+  background: { light: '#ffffff', dark: '#070B09' },
   backgroundSecondary: { light: '#F9FAFB', dark: '#111916' },
   
   // Surface colors - elevated cards
