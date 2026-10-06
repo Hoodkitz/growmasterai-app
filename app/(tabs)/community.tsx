@@ -49,7 +49,7 @@ export default function CommunityScreen() {
   const { tier } = useSubscription();
   const { level, points } = useGamification();
 
-  const [activeTab, setActiveTab] = useState<TabType>("feed");
+  const [activeTab, setActiveTab] = useState<TabType>("tutorials");
   const [newsCategory, setNewsCategory] = useState<"all" | "law" | "tips">("all");
 
   const postsQuery = trpc.community.listPosts.useQuery({ limit: 20 });
@@ -157,8 +157,8 @@ export default function CommunityScreen() {
     { id: "news" as TabType, label: "News", icon: "newspaper.fill" },
     { id: "radar" as TabType, label: "Radar", icon: "location.fill" },
     { id: "tutorials" as TabType, label: "Tutorials", icon: "play.circle.fill" },
-    { id: "strains" as TabType, label: "Sorten", icon: "leaf.fill" },
     { id: "contests" as TabType, label: "Events", icon: "trophy.fill" },
+    { id: "strains" as TabType, label: "Sorten", icon: "leaf.fill" },
   ];
 
   const filteredNews = NEWS_ARTICLES.filter(article =>
@@ -196,228 +196,14 @@ export default function CommunityScreen() {
         </View>
       </View>
 
-      {/* Tab Bar */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        className="px-4 mb-4"
-        contentContainerStyle={{ gap: 8 }}
-      >
-        {tabs.map(tab => (
-          <TouchableOpacity
-            key={tab.id}
-            className={`flex-row items-center gap-1.5 px-3 py-2 rounded-full ${activeTab === tab.id ? 'bg-primary' : 'bg-surface'
-              }`}
-            onPress={() => setActiveTab(tab.id)}
-          >
-            <IconSymbol
-              name={tab.icon as any}
-              size={16}
-              color={activeTab === tab.id ? "#fff" : colors.muted}
-            />
-            <Text className={`text-sm font-medium ${activeTab === tab.id ? 'text-white' : 'text-muted'
-              }`}>
-              {tab.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={postsQuery.isRefetching} onRefresh={onRefresh} tintColor={colors.primary} />}
       >
-        {/* Feed Tab */}
-        {activeTab === "feed" && (
-          <View className="px-4 gap-4">
-            {/* Create Post */}
-            <TouchableOpacity
-              className="bg-surface rounded-xl p-4 border border-border flex-row items-center gap-3"
-              onPress={() => setComposerOpen(o => !o)}
-            >
-              <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
-                <Text className="text-lg">{level.badge}</Text>
-              </View>
-              <Text className="text-muted flex-1">Teile deinen Grow...</Text>
-              <IconSymbol name="camera.fill" size={20} color={colors.primary} />
-            </TouchableOpacity>
-
-            {composerOpen && (
-              <View className="bg-surface rounded-xl p-4 border border-border gap-3">
-                <TextInput
-                  className="text-base text-foreground min-h-[80px]"
-                  placeholder="Was gibt's Neues in deinem Grow?"
-                  placeholderTextColor={colors.muted}
-                  multiline
-                  maxLength={2000}
-                  value={composerText}
-                  onChangeText={setComposerText}
-                  style={{ textAlignVertical: "top" }}
-                />
-                <View className="flex-row justify-end gap-2">
-                  <TouchableOpacity className="px-4 py-2" onPress={() => setComposerOpen(false)}>
-                    <Text className="text-muted">Abbrechen</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    className={`px-4 py-2 rounded-lg ${composerText.trim() ? "bg-primary" : "bg-primary/40"}`}
-                    disabled={!composerText.trim() || createPostMutation.isPending}
-                    onPress={submitPost}
-                  >
-                    <Text className="text-white font-semibold">{createPostMutation.isPending ? "..." : "Posten"}</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
-
-            {/* Posts */}
-            {postsQuery.isLoading ? (
-              <ActivityIndicator size="large" color={colors.primary} />
-            ) : (
-              posts.length === 0 ? (
-                <Text className="text-center text-muted py-8">Noch keine Beiträge – sei der Erste!</Text>
-              ) : posts.map(({ post, user }) => (
-                <View key={post.id} className="bg-surface rounded-xl border border-border overflow-hidden">
-                  <View className="p-4">
-                    <View className="flex-row items-center gap-3 mb-3">
-                      <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
-                        {/* Placeholder for badge/avatar */}
-                        <Text className="text-lg">{(user?.name || "?").charAt(0).toUpperCase()}</Text>
-                      </View>
-                      <View className="flex-1">
-                        <View className="flex-row items-center gap-2">
-                          <Text className="text-base font-semibold text-foreground">{user?.name || "Unknown"}</Text>
-                          <Text className="text-xs text-muted">Lv.{user?.level || 1}</Text>
-                        </View>
-                        <Text className="text-xs text-muted">{formatRelativeTime(new Date(post.createdAt))}</Text>
-                      </View>
-                    </View>
-                    <Text className="text-base text-foreground mb-3">{post.content}</Text>
-                    {/* Images handled here if present */}
-
-                    <View className="flex-row items-center gap-4 pt-3 border-t border-border">
-                      <TouchableOpacity className="flex-row items-center gap-1" onPress={() => toggleLike(post.id)}>
-                        <IconSymbol name={"heart"} size={18} color={likedPosts.includes(post.id) ? colors.error : colors.muted} />
-                        <Text className={`text-sm ${likedPosts.includes(post.id) ? "text-error" : "text-muted"}`}>{post.likes}</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity className="flex-row items-center gap-1">
-                        <IconSymbol name="bubble.left.fill" size={18} color={colors.muted} />
-                        <Text className="text-sm text-muted">{post.comments}</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity className="flex-row items-center gap-1">
-                        <IconSymbol name="paperplane.fill" size={18} color={colors.muted} />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-              )))}
-
-            {/* Leaderboard Preview */}
-            <View className="bg-surface rounded-xl p-4 border border-border">
-              <View className="flex-row items-center justify-between mb-3">
-                <Text className="text-lg font-semibold text-foreground">🏆 Top Grower</Text>
-                <TouchableOpacity onPress={() => setActiveTab("contests")}>
-                  <Text className="text-sm text-primary">Alle anzeigen</Text>
-                </TouchableOpacity>
-              </View>
-              {leaderboard.length === 0 && (
-                <Text className="text-sm text-muted py-2">Noch keine Platzierungen.</Text>
-              )}
-              {leaderboard.slice(0, 3).map((entry, index) => (
-                <View key={entry.id} className="flex-row items-center gap-3 py-2">
-                  <Text className="text-lg font-bold w-6" style={{
-                    color: index === 0 ? "#FFD700" : index === 1 ? "#C0C0C0" : "#CD7F32"
-                  }}>
-                    {entry.rank}
-                  </Text>
-                  <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
-                    <Text>🌱</Text>
-                  </View>
-                  <Text className="text-base text-foreground flex-1">{entry.name || "Grower"}</Text>
-                  <Text className="text-sm text-primary font-medium">{entry.xp.toLocaleString()} XP</Text>
-                </View>
-              ))}
-            </View>
-
-            <AdBanner position="community" variant="medium" />
-          </View>
-        )}
-
-        {/* News Tab */}
-        {activeTab === "news" && (
-          <View className="px-4 gap-4">
-            {/* Category Filter */}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4">
-              <View className="flex-row gap-2">
-                {[
-                  { id: "all", label: "Alle" },
-                  { id: "law", label: "Gesetzgebung" },
-                  { id: "tips", label: "Tipps" },
-                ].map(cat => (
-                  <TouchableOpacity
-                    key={cat.id}
-                    className={`px-4 py-2 rounded-full ${newsCategory === cat.id ? 'bg-primary' : 'bg-surface'}`}
-                    onPress={() => setNewsCategory(cat.id as any)}
-                  >
-                    <Text className={newsCategory === cat.id ? 'text-white' : 'text-muted'}>{cat.label}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </ScrollView>
-
-            {/* Legal Info Card */}
-            <View className="bg-error/10 rounded-xl p-4 border border-error/30">
-              <View className="flex-row items-center gap-2 mb-3">
-                <IconSymbol name="exclamationmark.triangle.fill" size={20} color={colors.error} />
-                <Text className="text-lg font-semibold text-foreground">Aktuelle Rechtslage DE</Text>
-              </View>
-              <View className="gap-2">
-                {LEGAL_INFO.slice(0, 4).map(info => (
-                  <TouchableOpacity key={info.id} className="flex-row items-center gap-2">
-                    <View className="w-2 h-2 rounded-full bg-error" />
-                    <Text className="text-sm text-foreground flex-1">{info.title}: {info.details[0]}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-
-            {/* News Articles */}
-            {filteredNews.map(article => (
-              <TouchableOpacity key={article.id} className="bg-surface rounded-xl border border-border overflow-hidden">
-                {article.isPinned && (
-                  <View className="bg-primary px-3 py-1">
-                    <Text className="text-xs font-medium text-white">📌 Wichtig</Text>
-                  </View>
-                )}
-                <View className="p-4">
-                  <View className="flex-row items-center gap-2 mb-2">
-                    <View className="px-2 py-0.5 rounded-full" style={{ backgroundColor: getCategoryColor(article.category) + "20" }}>
-                      <Text className="text-xs font-medium" style={{ color: getCategoryColor(article.category) }}>{getCategoryLabel(article.category)}</Text>
-                    </View>
-                    <Text className="text-xs text-muted">{formatNewsDate(article.publishedAt)}</Text>
-                  </View>
-                  <Text className="text-base font-semibold text-foreground mb-1">{article.title}</Text>
-                  <Text className="text-sm text-muted mb-2">{article.summary}</Text>
-                  <Text className="text-xs text-primary">Quelle: {article.source}</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-
-            {/* FAQ Section */}
-            <View className="bg-surface rounded-xl p-4 border border-border">
-              <Text className="text-lg font-semibold text-foreground mb-3">❓ Häufige Fragen</Text>
-              {FAQ_DATA.slice(0, 4).map(faq => (
-                <TouchableOpacity key={faq.id} className="py-3 border-b border-border last:border-0">
-                  <Text className="text-sm font-medium text-foreground mb-1">{faq.question}</Text>
-                  <Text className="text-xs text-muted" numberOfLines={2}>{faq.answer}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        )}
-
+        <Text className="px-4 mb-2 mt-2 text-xl font-bold text-foreground">📡 Radar</Text>
         {/* Radar Tab */}
-        {activeTab === "radar" && (
+        {(
           <View className="px-4 gap-4">
             {/* Radar Sub-Tabs */}
             <View className="flex-row gap-2">
@@ -546,6 +332,224 @@ export default function CommunityScreen() {
             )}
           </View>
         )}
+
+        <Text className="px-4 mb-2 mt-2 text-xl font-bold text-foreground">📰 News</Text>
+        {/* News Tab */}
+        {(
+          <View className="px-4 gap-4">
+            {/* Category Filter */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4">
+              <View className="flex-row gap-2">
+                {[
+                  { id: "all", label: "Alle" },
+                  { id: "law", label: "Gesetzgebung" },
+                  { id: "tips", label: "Tipps" },
+                ].map(cat => (
+                  <TouchableOpacity
+                    key={cat.id}
+                    className={`px-4 py-2 rounded-full ${newsCategory === cat.id ? 'bg-primary' : 'bg-surface'}`}
+                    onPress={() => setNewsCategory(cat.id as any)}
+                  >
+                    <Text className={newsCategory === cat.id ? 'text-white' : 'text-muted'}>{cat.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+
+            {/* Legal Info Card */}
+            <View className="bg-error/10 rounded-xl p-4 border border-error/30">
+              <View className="flex-row items-center gap-2 mb-3">
+                <IconSymbol name="exclamationmark.triangle.fill" size={20} color={colors.error} />
+                <Text className="text-lg font-semibold text-foreground">Aktuelle Rechtslage DE</Text>
+              </View>
+              <View className="gap-2">
+                {LEGAL_INFO.slice(0, 4).map(info => (
+                  <TouchableOpacity key={info.id} className="flex-row items-center gap-2">
+                    <View className="w-2 h-2 rounded-full bg-error" />
+                    <Text className="text-sm text-foreground flex-1">{info.title}: {info.details[0]}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            {/* News Articles */}
+            {filteredNews.map(article => (
+              <TouchableOpacity key={article.id} className="bg-surface rounded-xl border border-border overflow-hidden">
+                {article.isPinned && (
+                  <View className="bg-primary px-3 py-1">
+                    <Text className="text-xs font-medium text-white">📌 Wichtig</Text>
+                  </View>
+                )}
+                <View className="p-4">
+                  <View className="flex-row items-center gap-2 mb-2">
+                    <View className="px-2 py-0.5 rounded-full" style={{ backgroundColor: getCategoryColor(article.category) + "20" }}>
+                      <Text className="text-xs font-medium" style={{ color: getCategoryColor(article.category) }}>{getCategoryLabel(article.category)}</Text>
+                    </View>
+                    <Text className="text-xs text-muted">{formatNewsDate(article.publishedAt)}</Text>
+                  </View>
+                  <Text className="text-base font-semibold text-foreground mb-1">{article.title}</Text>
+                  <Text className="text-sm text-muted mb-2">{article.summary}</Text>
+                  <Text className="text-xs text-primary">Quelle: {article.source}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+
+            {/* FAQ Section */}
+            <View className="bg-surface rounded-xl p-4 border border-border">
+              <Text className="text-lg font-semibold text-foreground mb-3">❓ Häufige Fragen</Text>
+              {FAQ_DATA.slice(0, 4).map(faq => (
+                <TouchableOpacity key={faq.id} className="py-3 border-b border-border last:border-0">
+                  <Text className="text-sm font-medium text-foreground mb-1">{faq.question}</Text>
+                  <Text className="text-xs text-muted" numberOfLines={2}>{faq.answer}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
+
+        <Text className="px-4 mb-2 mt-2 text-xl font-bold text-foreground">💬 Feed</Text>
+        {/* Feed Tab */}
+        {(
+          <View className="px-4 gap-4">
+            {/* Create Post */}
+            <TouchableOpacity
+              className="bg-surface rounded-xl p-4 border border-border flex-row items-center gap-3"
+              onPress={() => setComposerOpen(o => !o)}
+            >
+              <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
+                <Text className="text-lg">{level.badge}</Text>
+              </View>
+              <Text className="text-muted flex-1">Teile deinen Grow...</Text>
+              <IconSymbol name="camera.fill" size={20} color={colors.primary} />
+            </TouchableOpacity>
+
+            {composerOpen && (
+              <View className="bg-surface rounded-xl p-4 border border-border gap-3">
+                <TextInput
+                  className="text-base text-foreground min-h-[80px]"
+                  placeholder="Was gibt's Neues in deinem Grow?"
+                  placeholderTextColor={colors.muted}
+                  multiline
+                  maxLength={2000}
+                  value={composerText}
+                  onChangeText={setComposerText}
+                  style={{ textAlignVertical: "top" }}
+                />
+                <View className="flex-row justify-end gap-2">
+                  <TouchableOpacity className="px-4 py-2" onPress={() => setComposerOpen(false)}>
+                    <Text className="text-muted">Abbrechen</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    className={`px-4 py-2 rounded-lg ${composerText.trim() ? "bg-primary" : "bg-primary/40"}`}
+                    disabled={!composerText.trim() || createPostMutation.isPending}
+                    onPress={submitPost}
+                  >
+                    <Text className="text-white font-semibold">{createPostMutation.isPending ? "..." : "Posten"}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+
+            {/* Posts */}
+            {postsQuery.isLoading ? (
+              <ActivityIndicator size="large" color={colors.primary} />
+            ) : (
+              posts.length === 0 ? (
+                <Text className="text-center text-muted py-8">Noch keine Beiträge – sei der Erste!</Text>
+              ) : posts.map(({ post, user }) => (
+                <View key={post.id} className="bg-surface rounded-xl border border-border overflow-hidden">
+                  <View className="p-4">
+                    <View className="flex-row items-center gap-3 mb-3">
+                      <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
+                        {/* Placeholder for badge/avatar */}
+                        <Text className="text-lg">{(user?.name || "?").charAt(0).toUpperCase()}</Text>
+                      </View>
+                      <View className="flex-1">
+                        <View className="flex-row items-center gap-2">
+                          <Text className="text-base font-semibold text-foreground">{user?.name || "Unknown"}</Text>
+                          <Text className="text-xs text-muted">Lv.{user?.level || 1}</Text>
+                        </View>
+                        <Text className="text-xs text-muted">{formatRelativeTime(new Date(post.createdAt))}</Text>
+                      </View>
+                    </View>
+                    <Text className="text-base text-foreground mb-3">{post.content}</Text>
+                    {/* Images handled here if present */}
+
+                    <View className="flex-row items-center gap-4 pt-3 border-t border-border">
+                      <TouchableOpacity className="flex-row items-center gap-1" onPress={() => toggleLike(post.id)}>
+                        <IconSymbol name={"heart"} size={18} color={likedPosts.includes(post.id) ? colors.error : colors.muted} />
+                        <Text className={`text-sm ${likedPosts.includes(post.id) ? "text-error" : "text-muted"}`}>{post.likes}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity className="flex-row items-center gap-1">
+                        <IconSymbol name="bubble.left.fill" size={18} color={colors.muted} />
+                        <Text className="text-sm text-muted">{post.comments}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity className="flex-row items-center gap-1">
+                        <IconSymbol name="paperplane.fill" size={18} color={colors.muted} />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              )))}
+
+            {/* Leaderboard Preview */}
+            <View className="bg-surface rounded-xl p-4 border border-border">
+              <View className="flex-row items-center justify-between mb-3">
+                <Text className="text-lg font-semibold text-foreground">🏆 Top Grower</Text>
+                <TouchableOpacity onPress={() => setActiveTab("contests")}>
+                  <Text className="text-sm text-primary">Alle anzeigen</Text>
+                </TouchableOpacity>
+              </View>
+              {leaderboard.length === 0 && (
+                <Text className="text-sm text-muted py-2">Noch keine Platzierungen.</Text>
+              )}
+              {leaderboard.slice(0, 3).map((entry, index) => (
+                <View key={entry.id} className="flex-row items-center gap-3 py-2">
+                  <Text className="text-lg font-bold w-6" style={{
+                    color: index === 0 ? "#FFD700" : index === 1 ? "#C0C0C0" : "#CD7F32"
+                  }}>
+                    {entry.rank}
+                  </Text>
+                  <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
+                    <Text>🌱</Text>
+                  </View>
+                  <Text className="text-base text-foreground flex-1">{entry.name || "Grower"}</Text>
+                  <Text className="text-sm text-primary font-medium">{entry.xp.toLocaleString()} XP</Text>
+                </View>
+              ))}
+            </View>
+
+            <AdBanner position="community" variant="medium" />
+          </View>
+        )}
+
+        {/* Submenü: Tutorials, Events, Sorten */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        className="px-4 my-4"
+        contentContainerStyle={{ gap: 8 }}
+      >
+        {tabs.filter(t => t.id === "tutorials" || t.id === "contests" || t.id === "strains").map(tab => (
+          <TouchableOpacity
+            key={tab.id}
+            className={`flex-row items-center gap-1.5 px-3 py-2 rounded-full ${activeTab === tab.id ? 'bg-primary' : 'bg-surface'
+              }`}
+            onPress={() => setActiveTab(tab.id)}
+          >
+            <IconSymbol
+              name={tab.icon as any}
+              size={16}
+              color={activeTab === tab.id ? "#fff" : colors.muted}
+            />
+            <Text className={`text-sm font-medium ${activeTab === tab.id ? 'text-white' : 'text-muted'
+              }`}>
+              {tab.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
 
         {/* Tutorials Tab */}
         {activeTab === "tutorials" && (
