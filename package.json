@@ -1,6 +1,6 @@
 {
   "name": "growmaster-app",
-  "version": "1.0.0",
+  "version": "1.3.0",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
@@ -19,12 +19,14 @@
     "qr": "node scripts/generate_qr.mjs",
     "perf:audit": "npx tsx scripts/performance-audit.ts",
     "perf:fix": "npx tsx scripts/apply-quick-fixes.ts",
-    "perf:all": "pnpm perf:audit && pnpm perf:fix"
+    "perf:all": "pnpm perf:audit && pnpm perf:fix",
+    "prepare": "husky"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/netinfo": "^11.4.1",
+    "@react-native-google-signin/google-signin": "16.1.5",
     "@react-navigation/bottom-tabs": "^7.8.12",
     "@react-navigation/elements": "^2.9.2",
     "@react-navigation/native": "^7.1.25",
@@ -40,9 +42,11 @@
     "drizzle-orm": "^0.44.7",
     "expo": "~54.0.29",
     "expo-audio": "~1.1.0",
+    "expo-auth-session": "~7.0.11",
     "expo-build-properties": "^1.0.10",
     "expo-camera": "^17.0.10",
     "expo-constants": "~18.0.12",
+    "expo-crypto": "~15.0.9",
     "expo-dev-client": "~6.0.20",
     "expo-file-system": "^19.0.21",
     "expo-font": "~14.0.10",
@@ -59,7 +63,7 @@
     "expo-router": "~6.0.19",
     "expo-secure-store": "~15.0.8",
     "expo-sharing": "^14.0.8",
-    "expo-speech": "^57.0.3",
+    "expo-speech": "12.0.2",
     "expo-splash-screen": "~31.0.12",
     "expo-status-bar": "~3.0.9",
     "expo-symbols": "~1.0.8",
@@ -101,12 +105,23 @@
     "esbuild": "^0.25.12",
     "eslint": "^9.39.2",
     "eslint-config-expo": "~10.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
     "prettier": "^3.7.4",
     "qrcode": "^1.5.4",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.21.0",
     "typescript": "~5.9.3",
     "vitest": "^2.1.9"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   },
   "packageManager": "pnpm@9.12.0"
 }

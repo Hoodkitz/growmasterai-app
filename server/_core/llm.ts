@@ -201,14 +201,164 @@ const normalizeToolChoice = (
   return toolChoice;
 };
 
-const resolveApiUrl = () =>
-  ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0
-    ? `${ENV.forgeApiUrl.replace(/\/$/, "")}/v1/chat/completions`
-    : "https://forge.manus.im/v1/chat/completions";
+const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-3.7-flash";
+
+// Fallback chain: if the primary model is overloaded/unavailable, try the next.
+// Kept short on purpose — Cloudflare's free tunnel aborts at 100s, and a vision
+// request already takes ~20s, so we cannot afford a long retry ladder.
+const GEMINI_FALLBACK_MODELS = [
+  GEMINI_MODEL,
+  "gemini-3.5-flash",
+  "gemini-flash-latest",
+];
+
+const resolveApiUrl = (model: string) =>
+  `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${ENV.geminiApiKey}`;
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Optimize prompt for Ollama inference: reduce verbosity while keeping key info
+ */
+function optimizePromptForOllama(prompt: string): string {
+  // For diagnosis prompts, keep it concise
+  if (prompt.includes("Cannabis-Pflanzengesundheit")) {
+    return `You are a cannabis plant health expert. Analyze the image and identify issues (diseases, pests, deficiencies).
+
+Determine plant gender (male/female/hermaphrodite/unknown) based on visible flowers, pollen sacs, or stigmas.
+
+Return JSON:
+{
+  "problem": "Description of identified problem",
+  "recommendations": ["Action 1", "Action 2", "Action 3"],
+  "careTips": ["Tip 1", "Tip 2", "Tip 3"],
+  "severity": "low"|"medium"|"high",
+  "plantGender": "male"|"female"|"hermaphrodite"|"unknown",
+  "genderConfidence": 0-100,
+  "voiceResponse": "1-2 sentence spoken summary"
+}
+
+Gender:
+- male: pollen sacs visible
+- female: white stigmas visible
+- hermaphrodite: both
+- unknown: not visible
+
+${prompt.includes("Zusätzliche Notizen") ? prompt.match(/Zusätzliche Notizen.*?:/)?.[0] || "" : ""}`;
+  }
+  
+  // For other prompts, just trim excessive whitespace
+  return prompt.trim().replace(/\n\n+/g, "\n\n");
+}
+
+/**
+ * POST the payload to Gemini, walking a short fallback chain on transient
+ * errors (429/5xx). One attempt per model keeps the worst case well under the
+ * 100s upstream timeout; client errors (400/403/404) return immediately.
+ * 
+ * If all Gemini models fail with 503, falls back to local Ollama.
+ */
+async function fetchWithRetry(payload: Record<string, unknown>): Promise<Response> {
+  let lastResponse: Response | null = null;
+
+  for (const model of GEMINI_FALLBACK_MODELS) {
+    const response = await fetch(resolveApiUrl(model), {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) return response;
+
+    // Retry only transient errors; bail out on client errors (400/403/404)
+    if (![429, 500, 502, 503, 504].includes(response.status)) {
+      return response;
+    }
+
+    lastResponse = response;
+    await sleep(500);
+  }
+
+  // If all Gemini models failed with 429/503, try local Ollama as final fallback
+  if (lastResponse && [429, 503].includes(lastResponse.status)) {
+    try {
+      console.log(`[Gemini ${lastResponse.status}] Falling back to local Ollama...`);
+      const ollamaResponse = await fetchOllama(payload);
+      if (ollamaResponse.ok) return ollamaResponse;
+    } catch (e) {
+      console.error("[Ollama fallback failed]", e);
+    }
+  }
+
+  return lastResponse as Response;
+}
+
+/**
+ * Fallback to local Ollama when Gemini is overloaded.
+ * Converts Gemini payload to Ollama format with optimized prompt.
+ */
+async function fetchOllama(geminiPayload: Record<string, unknown>): Promise<Response> {
+  const contents = geminiPayload.contents as Array<{ parts: Array<{ text?: string; inlineData?: { data: string } }> }>;
+  const systemInstruction = geminiPayload.systemInstruction as { parts: Array<{ text: string }> } | undefined;
+
+  // Extract text prompt and images
+  let prompt = systemInstruction?.parts?.map(p => p.text).join("\n") || "";
+  const images: string[] = [];
+
+  for (const content of contents) {
+    for (const part of content.parts) {
+      if (part.text) prompt += "\n" + part.text;
+      if (part.inlineData?.data) images.push(part.inlineData.data);
+    }
+  }
+
+  // Optimize prompt for faster inference: reduce verbosity
+  const optimizedPrompt = optimizePromptForOllama(prompt);
+
+  const ollamaModel = process.env.OLLAMA_MODEL || "llava-phi3";
+  const ollamaPayload = {
+    model: ollamaModel,
+    prompt: optimizedPrompt,
+    images,
+    stream: false,
+    // Use default Ollama settings - custom num_ctx/num_predict can slow it down
+  };
+
+  const response = await fetch("http://127.0.0.1:11434/api/generate", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(ollamaPayload),
+  });
+
+  if (!response.ok) return response;
+
+  // Convert Ollama response to Gemini format
+  const ollamaData = await response.json() as { response: string };
+  const geminiFormat = {
+    candidates: [{
+      content: {
+        parts: [{ text: ollamaData.response }],
+        role: "model",
+      },
+      finishReason: "STOP",
+    }],
+    usageMetadata: {
+      promptTokenCount: 0,
+      candidatesTokenCount: 0,
+      totalTokenCount: 0,
+    },
+  };
+
+  // Return a synthetic Response with Gemini-compatible JSON
+  return new Response(JSON.stringify(geminiFormat), {
+    status: 200,
+    headers: { "content-type": "application/json" },
+  });
+}
 
 const assertApiKey = () => {
-  if (!ENV.forgeApiKey) {
-    throw new Error("OPENAI_API_KEY is not configured");
+  if (!ENV.geminiApiKey) {
+    throw new Error("GEMINI_API_KEY is not configured");
   }
 };
 
@@ -252,6 +402,44 @@ const normalizeResponseFormat = ({
   };
 };
 
+const geminiRole = (role: Role): string => {
+  if (role === "system") return "user";
+  if (role === "tool" || role === "function") return "function";
+  return role;
+};
+
+const contentToParts = (content: MessageContent | MessageContent[]): Array<Record<string, unknown>> => {
+  const parts: Array<Record<string, unknown>> = [];
+  const items = Array.isArray(content) ? content : [content];
+
+  for (const item of items) {
+    if (typeof item === "string") {
+      parts.push({ text: item });
+    } else if (item.type === "text") {
+      parts.push({ text: item.text });
+    } else if (item.type === "image_url") {
+      parts.push({
+        inlineData: {
+          mimeType: "image/jpeg",
+          data: item.image_url.url.split(",")[1] || item.image_url.url,
+        },
+      });
+    }
+  }
+
+  return parts;
+};
+
+const toolsToGemini = (tools: Tool[]): Array<Record<string, unknown>> => {
+  return tools.map((tool) => ({
+    functionDeclarations: [{
+      name: tool.function.name,
+      description: tool.function.description || "",
+      parameters: tool.function.parameters || { type: "object", properties: {} },
+    }],
+  }));
+};
+
 export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
   assertApiKey();
 
@@ -266,23 +454,21 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     response_format,
   } = params;
 
-  const payload: Record<string, unknown> = {
-    model: "gemini-2.5-flash",
-    messages: messages.map(normalizeMessage),
-  };
+  const contents = messages
+    .filter((m) => m.role !== "system")
+    .map((m) => ({
+      role: geminiRole(m.role),
+      parts: contentToParts(m.content),
+    }));
 
-  if (tools && tools.length > 0) {
-    payload.tools = tools;
-  }
+  const systemMessage = messages.find((m) => m.role === "system");
+  const systemInstruction = systemMessage
+    ? { parts: contentToParts(systemMessage.content) }
+    : undefined;
 
-  const normalizedToolChoice = normalizeToolChoice(toolChoice || tool_choice, tools);
-  if (normalizedToolChoice) {
-    payload.tool_choice = normalizedToolChoice;
-  }
-
-  payload.max_tokens = 32768;
-  payload.thinking = {
-    budget_tokens: 128,
+  const generationConfig: Record<string, unknown> = {
+    maxOutputTokens: 32768,
+    temperature: 0.7,
   };
 
   const normalizedResponseFormat = normalizeResponseFormat({
@@ -293,22 +479,77 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
   });
 
   if (normalizedResponseFormat) {
-    payload.response_format = normalizedResponseFormat;
+    if (normalizedResponseFormat.type === "json_schema") {
+      generationConfig.responseMimeType = "application/json";
+      generationConfig.responseSchema = normalizedResponseFormat.json_schema.schema;
+    } else if (normalizedResponseFormat.type === "json_object") {
+      generationConfig.responseMimeType = "application/json";
+    }
   }
 
-  const response = await fetch(resolveApiUrl(), {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      authorization: `Bearer ${ENV.forgeApiKey}`,
-    },
-    body: JSON.stringify(payload),
-  });
+  const payload: Record<string, unknown> = {
+    contents,
+    generationConfig,
+  };
+
+  if (systemInstruction) {
+    payload.systemInstruction = systemInstruction;
+  }
+
+  if (tools && tools.length > 0) {
+    payload.tools = toolsToGemini(tools);
+  }
+
+  const normalizedToolChoice = normalizeToolChoice(toolChoice || tool_choice, tools);
+  if (normalizedToolChoice && normalizedToolChoice !== "none") {
+    payload.toolConfig = {
+      functionCallingConfig: {
+        mode: normalizedToolChoice === "auto" ? "AUTO" : "ANY",
+      },
+    };
+  }
+
+  const response = await fetchWithRetry(payload);
 
   if (!response.ok) {
     const errorText = await response.text();
     throw new Error(`LLM invoke failed: ${response.status} ${response.statusText} – ${errorText}`);
   }
 
-  return (await response.json()) as InvokeResult;
+  const data = await response.json() as Record<string, unknown>;
+  const candidates = data.candidates as Array<Record<string, unknown>> | undefined;
+  const firstCandidate = candidates?.[0];
+  const content = firstCandidate?.content as Record<string, unknown> | undefined;
+  const parts = content?.parts as Array<Record<string, unknown>> | undefined;
+
+  const textParts = parts
+    ?.filter((p) => typeof p.text === "string")
+    .map((p) => p.text as string) || [];
+
+  const toolCalls = parts
+    ?.filter((p) => p.functionCall)
+    .map((p, i) => ({
+      id: `call_${i}`,
+      type: "function" as const,
+      function: {
+        name: String((p.functionCall as Record<string, unknown>).name ?? ""),
+        arguments: JSON.stringify((p.functionCall as Record<string, unknown>).args || {}),
+      },
+    }));
+
+  return {
+    id: `gemini-${Date.now()}`,
+    created: Math.floor(Date.now() / 1000),
+    model: GEMINI_MODEL,
+    choices: [{
+      index: 0,
+      message: {
+        role: "assistant" as const,
+        content: textParts.join(""),
+        tool_calls: toolCalls?.length ? toolCalls : undefined,
+      },
+      finish_reason: String(firstCandidate?.finishReason ?? "stop"),
+    }],
+    usage: data.usageMetadata as InvokeResult["usage"],
+  };
 }

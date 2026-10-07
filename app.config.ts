@@ -117,6 +117,15 @@ const config: ExpoConfig = {
         },
       },
     ],
+    [
+      "@react-native-google-signin/google-signin",
+      {
+        iosUrlScheme: "com.googleusercontent.apps.824654272024-pamt0fdjln1o6imm97sttuflf0secn89",
+        android: {
+          googleServicesFile: "./android/app/google-services.json",
+        },
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,

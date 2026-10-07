@@ -16,6 +16,7 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useAppAuth } from "@/lib/auth-context";
 import { postAuth } from "@/lib/auth-mail-api";
+import { useGoogleAuth } from "@/lib/google-auth";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -70,10 +71,18 @@ export default function LoginScreen() {
     }
   };
 
+  const { signIn: signInWithGoogle, isLoading: googleLoading } = useGoogleAuth();
+
   const handleSocialLogin = async (provider: "google" | "apple") => {
     try {
-      // Redirects to the OAuth portal; callback screen completes the session.
-      await login(provider);
+      if (provider === "google") {
+        const success = await signInWithGoogle();
+        if (success) {
+          router.replace("/(tabs)");
+        }
+      } else {
+        await login(provider);
+      }
     } catch (error) {
       Alert.alert("Fehler", error instanceof Error && error.message ? error.message : "Anmeldung fehlgeschlagen. Bitte versuche es erneut.");
     }
@@ -106,7 +115,7 @@ export default function LoginScreen() {
             <TouchableOpacity 
               className="flex-row items-center justify-center gap-3 bg-surface border border-border rounded-xl p-4"
               onPress={() => handleSocialLogin("google")}
-              disabled={loading}
+              disabled={loading || googleLoading}
             >
               <Text className="text-2xl">🔵</Text>
               <Text className="text-base font-medium text-foreground">Mit Google fortfahren</Text>

@@ -1,11 +1,9 @@
 import * as Linking from "expo-linking";
 import * as ReactNative from "react-native";
+import { Platform } from "react-native";
 
-// Extract scheme from bundle ID (last segment timestamp, prefixed with "manus")
-// e.g., "space.manus.my.app.t20240115103045" -> "manus20240115103045"
-const bundleId = "space.manus.growmaster.app.t20251231214615";
-const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
-const schemeFromBundleId = `manus${timestamp}`;
+// Deep Link Scheme (aus app.config.ts)
+const deepLinkScheme = "growmasterai";
 
 const env = {
   portal: process.env.EXPO_PUBLIC_OAUTH_PORTAL_URL ?? "",
@@ -14,7 +12,8 @@ const env = {
   ownerId: process.env.EXPO_PUBLIC_OWNER_OPEN_ID ?? "",
   ownerName: process.env.EXPO_PUBLIC_OWNER_NAME ?? "",
   apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? "",
-  deepLinkScheme: schemeFromBundleId,
+  deepLinkScheme,
+  googleClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID ?? "",
 };
 
 export const OAUTH_PORTAL_URL = env.portal;
@@ -23,6 +22,16 @@ export const APP_ID = env.appId;
 export const OWNER_OPEN_ID = env.ownerId;
 export const OWNER_NAME = env.ownerName;
 export const API_BASE_URL = env.apiBaseUrl;
+export const GOOGLE_CLIENT_ID = env.googleClientId;
+
+export const getRedirectUri = (): string => {
+  if (Platform.OS === "web") {
+    return `${env.apiBaseUrl}/api/oauth/callback`;
+  }
+  return Linking.createURL("/oauth/callback", {
+    scheme: env.deepLinkScheme,
+  });
+};
 
 /**
  * Get the API base URL, deriving from current hostname if not set.

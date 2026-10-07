@@ -3,6 +3,7 @@ import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { getDb } from "./db";
 import { plants, journalEntries, communityPosts, postComments, vendors, vendorProducts, messages, users, auctions, auctionBids, giveaways, giveawayEntries, pushTokens, diagnoses, userAchievements, vendorLeads, adBanners, postLikes, vendorOutreach } from "../drizzle/schema";
+import { generateCacheKey, getCachedDiagnosis, setCachedDiagnosis, deduplicateRequest, getCacheStats } from "./_core/diagnosisCache";
 import { eq, and, desc, sql, or, ne, gt, count } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { liveScanLimiter, clientKey } from "./_core/rateLimit";
@@ -58,19 +59,34 @@ export const appRouter = router({
         notes: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
-        const imageContents = input.images.map((img) => ({
-          type: "image_url" as const,
-          image_url: {
-            url: img.startsWith("data:") ? img : `data:image/jpeg;base64,${img}`,
-            detail: "high" as const,
-          },
-        }));
+        // Generate cache key from images + notes
+        const cacheKey = generateCacheKey(input.images, input.notes);
+        
+        // Check cache first
+        const cached = await getCachedDiagnosis(cacheKey);
+        if (cached) {
+          console.log("[Diagnosis] Cache hit:", cacheKey.slice(0, 12));
+          return cached;
+        }
+        
+        console.log("[Diagnosis] Cache miss, invoking LLM:", cacheKey.slice(0, 12));
+        
+        // Deduplicate concurrent requests
+        const result = await deduplicateRequest(cacheKey, async () => {
+          const imageContents = input.images.map((img) => ({
+            type: "image_url" as const,
+            image_url: {
+              url: img.startsWith("data:") ? img : `data:image/jpeg;base64,${img}`,
+              detail: "high" as const,
+            },
+          }));
 
-        const result = await invokeLLM({
-          messages: [
-            {
-              role: "system",
-              content: `Du bist ein Experte für Cannabis-Pflanzengesundheit und -diagnose. Analysiere die bereitgestellten Bilder und identifiziere alle Probleme, Krankheiten, Schädlinge oder Nährstoffmängel.
+          const startTime = Date.now();
+          const llmResult = await invokeLLM({
+            messages: [
+              {
+                role: "system",
+                content: `Du bist ein Experte für Cannabis-Pflanzengesundheit und -diagnose. Analysiere die bereitgestellten Bilder und identifiziere alle Probleme, Krankheiten, Schädlinge oder Nährstoffmängel.
 
 WICHTIG: Bestimme auch das Geschlecht der Pflanze (männlich/weiblich/hermaphrodit) anhand sichtbarer Blüten, Pollensäcke oder Stigmata.
 
@@ -95,46 +111,57 @@ Die voiceResponse sollte eine natürlich klingende Zusammenfassung sein, z.B.:
 "Deine Pflanze zeigt Anzeichen von Stickstoffmangel. Die Blätter sind gelblich. Erhöhe die Düngergabe."
 
 Wenn die Pflanze gesund aussieht, beschreibe ihren guten Zustand und gib allgemeine Pflegetipps.`,
+              },
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "text" as const,
+                    text: input.notes
+                      ? `Analysiere diese Cannabis-Pflanze. Zusätzliche Notizen vom Nutzer: ${input.notes}`
+                      : "Analysiere diese Cannabis-Pflanze und identifiziere alle Probleme oder Auffälligkeiten.",
+                  },
+                  ...imageContents,
+                ],
+              },
+            ],
+            responseFormat: {
+              type: "json_object",
             },
-            {
-              role: "user",
-              content: [
-                {
-                  type: "text" as const,
-                  text: input.notes
-                    ? `Analysiere diese Cannabis-Pflanze. Zusätzliche Notizen vom Nutzer: ${input.notes}`
-                    : "Analysiere diese Cannabis-Pflanze und identifiziere alle Probleme oder Auffälligkeiten.",
-                },
-                ...imageContents,
-              ],
-            },
-          ],
-          responseFormat: {
-            type: "json_object",
-          },
-        });
+          });
+          
+          const duration = Date.now() - startTime;
+          console.log(`[Diagnosis] LLM response time: ${duration}ms`);
 
-        const content = result.choices[0]?.message?.content;
-        if (typeof content === "string") {
-          try {
-            const parsed = JSON.parse(content);
-            return diagnosisResponseSchema.parse(parsed);
-          } catch {
-            return {
-              problem: content,
-              recommendations: [],
-              careTips: [],
-              severity: "medium" as const,
-            };
+          const content = llmResult.choices[0]?.message?.content;
+          if (typeof content === "string") {
+            try {
+              const parsed = JSON.parse(content);
+              const validated = diagnosisResponseSchema.parse(parsed);
+              
+              // Cache the successful response
+              await setCachedDiagnosis(cacheKey, validated);
+              
+              return validated;
+            } catch {
+              return {
+                problem: content,
+                recommendations: [],
+                careTips: [],
+                severity: "medium" as const,
+              };
+            }
           }
-        }
 
-        return {
-          problem: "Analyse konnte nicht durchgeführt werden.",
-          recommendations: ["Bitte versuche es erneut mit besseren Bildern."],
-          careTips: [],
-          severity: "low" as const,
-        };
+          return {
+            problem: "Analyse konnte nicht durchgeführt werden.",
+            recommendations: ["Bitte versuche es erneut mit besseren Bildern."],
+            careTips: [],
+            severity: "low" as const,
+          };
+        });
+        
+        return result;
       }),
   }),
 

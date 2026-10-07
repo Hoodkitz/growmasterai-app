@@ -250,40 +250,40 @@ export default function HomeScreen() {
         {/* Quick Actions Grid */}
         <View className="px-4 mb-4">
           <Text className="text-lg font-bold text-foreground mb-3">Schnellzugriff</Text>
+          
+          {/* Primary Action - Diagnose */}
+          <TouchableOpacity 
+            className="bg-primary rounded-2xl p-6 items-center gap-3 mb-3"
+            onPress={() => router.push("/(tabs)/diagnose")}
+          >
+            <View className="w-16 h-16 rounded-full bg-white/20 items-center justify-center">
+              <IconSymbol name="camera.fill" size={32} color="#fff" />
+            </View>
+            <View className="items-center">
+              <Text className="text-xl font-bold text-white">Pflanze scannen</Text>
+              <Text className="text-sm text-white/80">KI-gestützte Diagnose</Text>
+            </View>
+          </TouchableOpacity>
+          
+          {/* Secondary Actions */}
           <View className="flex-row gap-3">
-            {/* Live Scan - Primary Action */}
-            <TouchableOpacity 
-              className="flex-1 bg-primary rounded-2xl p-4 items-center gap-2"
-              onPress={() => router.push("/(tabs)/diagnose")}
-            >
-              <View className="w-14 h-14 rounded-full bg-white/20 items-center justify-center">
-                <IconSymbol name="viewfinder" size={28} color="#fff" />
-              </View>
-              <Text className="text-base font-bold text-white">Live Scan</Text>
-              <Text className="text-xs text-white/80">Echtzeit-Analyse</Text>
-            </TouchableOpacity>
-
-            {/* Coach */}
             <TouchableOpacity 
               className="flex-1 bg-surface rounded-2xl p-4 items-center gap-2 border border-border"
               onPress={() => router.push("/(tabs)/coach")}
             >
-              <View className="w-14 h-14 rounded-full bg-primary/20 items-center justify-center">
-                <IconSymbol name="message.fill" size={28} color={colors.primary} />
+              <View className="w-12 h-12 rounded-full bg-primary/20 items-center justify-center">
+                <IconSymbol name="message.fill" size={24} color={colors.primary} />
               </View>
               <Text className="text-base font-bold text-foreground">Coach</Text>
               <Text className="text-xs text-muted">Frag den Experten</Text>
             </TouchableOpacity>
-          </View>
-          
-          {/* Second Row - Tools & Marketplace */}
-          <View className="flex-row gap-3 mt-3">
+
             <TouchableOpacity 
               className="flex-1 bg-surface rounded-2xl p-4 items-center gap-2 border border-border"
               onPress={() => router.push("/tools")}
             >
-              <View className="w-14 h-14 rounded-full bg-warning/20 items-center justify-center">
-                <IconSymbol name="wrench.fill" size={28} color={colors.warning} />
+              <View className="w-12 h-12 rounded-full bg-warning/20 items-center justify-center">
+                <IconSymbol name="wrench.fill" size={24} color={colors.warning} />
               </View>
               <Text className="text-base font-bold text-foreground">Tools</Text>
               <Text className="text-xs text-muted">Rechner & Kalender</Text>
@@ -293,8 +293,8 @@ export default function HomeScreen() {
               className="flex-1 bg-surface rounded-2xl p-4 items-center gap-2 border border-border"
               onPress={() => router.push("/marketplace")}
             >
-              <View className="w-14 h-14 rounded-full bg-success/20 items-center justify-center">
-                <IconSymbol name="cart.fill" size={28} color={colors.success} />
+              <View className="w-12 h-12 rounded-full bg-success/20 items-center justify-center">
+                <IconSymbol name="cart.fill" size={24} color={colors.success} />
               </View>
               <Text className="text-base font-bold text-foreground">Shop</Text>
               <Text className="text-xs text-muted">Seeds & Equipment</Text>

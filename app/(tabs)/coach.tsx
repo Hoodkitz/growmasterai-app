@@ -8,14 +8,18 @@ import { trpc } from "@/lib/trpc";
 import { useSubscription } from "@/lib/subscription-context";
 import { UpgradePrompt, UsageIndicator } from "@/components/upgrade-prompt";
 import { TIER_LIMITS } from "@/lib/subscription";
+import { InlineError } from "@/components/error-display";
+import { getCoachErrorMessage } from "@/lib/error-handling";
 
 const COACH_STORAGE_KEY = "@growmaster_coach_messages";
 
 interface Message {
   id: string;
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "error";
   content: string;
   tips?: string[];
+  error?: ReturnType<typeof getCoachErrorMessage>;
+  retryQuestion?: string;
 }
 
 export default function CoachScreen() {
@@ -66,14 +70,18 @@ export default function CoachScreen() {
       setMessages(prev => [...prev, assistantMessage]);
       setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
     },
-    onError: (error) => {
+    onError: (error, variables) => {
       console.error("Coach error:", error);
+      const errorDetails = getCoachErrorMessage(error);
       const errorMessage: Message = {
         id: Date.now().toString(),
-        role: "assistant",
-        content: "Entschuldigung, es gab einen Fehler bei der Verarbeitung deiner Frage. Bitte versuche es erneut.",
+        role: "error",
+        content: errorDetails.message,
+        error: errorDetails,
+        retryQuestion: variables.question,
       };
       setMessages(prev => [...prev, errorMessage]);
+      setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
     },
   });
 
@@ -99,6 +107,14 @@ export default function CoachScreen() {
     // Scroll to bottom
     setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
 
+    coachMutation.mutate({ question });
+  };
+
+  const retryMessage = (messageId: string, question: string) => {
+    // Remove the error message
+    setMessages(prev => prev.filter(m => m.id !== messageId));
+    
+    // Retry the question
     coachMutation.mutate({ question });
   };
 

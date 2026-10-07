@@ -25,16 +25,20 @@ export function createTRPCClient() {
         url: `${getApiBaseUrl()}/api/trpc`,
         // tRPC v11: transformer MUST be inside httpBatchLink, not at root
         transformer: superjson,
-        async headers() {
-          const token = await Auth.getSessionToken();
-          return token ? { Authorization: `Bearer ${token}` } : {};
-        },
-        // Custom fetch to include credentials for cookie-based auth
+        // Increase timeout for LLM calls (Ollama fallback can take 40s+)
         fetch(url, options) {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 90000); // 90s timeout
+          
           return fetch(url, {
             ...options,
             credentials: "include",
-          });
+            signal: controller.signal,
+          }).finally(() => clearTimeout(timeoutId));
+        },
+        async headers() {
+          const token = await Auth.getSessionToken();
+          return token ? { Authorization: `Bearer ${token}` } : {};
         },
       }),
     ],

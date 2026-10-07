@@ -51,6 +51,7 @@ const MAPPING: Record<string, MaterialIconName> = {
   "dollarsign.circle.fill": "attach-money",
   "creditcard.fill": "credit-card",
   "hammer.fill": "gavel",
+  "wrench.fill": "build", // Tools icon
   
   // Content
   "doc.fill": "description",

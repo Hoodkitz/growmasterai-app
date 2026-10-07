@@ -1,0 +1,80 @@
+# Google Play Store Listing - GrowMaster AI (English)
+
+## App Name
+GrowMaster AI - Cannabis Grow Assistant
+
+## Short Description (max 80 chars)
+AI plant diagnosis, grow coach & community for cannabis cultivation
+
+## Full Description (max 4000 chars)
+
+GrowMaster AI is your intelligent companion for cannabis cultivation. Whether you're a beginner or a pro - our AI-powered app helps you at every step, from germination to harvest.
+
+AI PLANT DIAGNOSIS
+Photograph your plant and our AI instantly detects problems: nutrient deficiencies, pests, diseases, and more. You get precise diagnoses with concrete solutions.
+
+AI GROW COACH
+Your personal grow advisor is available 24/7. Ask questions about watering, nutrients, lighting, training techniques, and more. The coach knows your plants and gives individual tips.
+
+PLANT MANAGEMENT
+Manage all your plants in one place. Track growth phases, document progress, and keep an overview of your entire grow.
+
+GROW JOURNAL
+Keep a detailed diary with photos, measurements, and notes. Document every day of your grow and learn from your experiences.
+
+STRAIN DATABASE
+Over 1000 cannabis strains with detailed information on THC/CBD content, flowering time, yield, difficulty level, and growing tips.
+
+COMMUNITY
+Connect with other growers. Share your successes, ask questions, and learn from the community. With likes, comments, and direct messages.
+
+GAMIFICATION
+Collect XP, level up, and unlock achievements. Daily streaks and a leaderboard motivate you to keep going.
+
+MARKETPLACE
+Discover seeds, nutrients, equipment, and more from verified vendors. With community reviews and recommendations.
+
+SMART TOOLS
+- VPD Calculator
+- Nutrient Calculator
+- CO2 Calculator
+- Grow Calendar with Lunar Phases
+- Cost Tracker
+- Harvest Forecast
+
+PREMIUM FEATURES
+- Advanced AI diagnoses
+- Unlimited grow coach
+- Manage more plants
+- Ad-free experience
+- Priority support
+
+The app is developed in Germany and is GDPR-compliant. All data is stored securely.
+
+Note: This app is intended for legal cannabis cultivation only. Please familiarize yourself with the laws applicable in your country.
+
+## Category
+Lifestyle or Tools
+
+## Content Rating
+Mature 17+ (Cannabis Reference)
+
+## Privacy Policy URL
+https://hoodkitz.github.io/growmasterai-legal/privacy.html
+
+## Tags/Keywords
+cannabis, grow, cultivation, plant, diagnosis, ai, grow assistant, plant tracker, grow journal, cannabis app, garden, indoor grow, outdoor grow, hemp
+
+## Contact
+- Email: support@growmaster.app
+- Website: https://hoodkitz.github.io/growmasterai-legal/
+
+## Screenshots Required (per device)
+1. Home Dashboard with Plant Overview
+2. AI Diagnosis with Camera
+3. AI Coach Chat
+4. Grow Journal Entry
+5. Strain Database
+6. Community Feed
+7. Marketplace
+8. Gamification / Achievements

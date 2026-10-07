@@ -25,6 +25,9 @@ import { useSubscription } from "@/lib/subscription-context";
 import { UpgradePrompt, UsageIndicator } from "@/components/upgrade-prompt";
 import { TIER_LIMITS, canUseDiagnosis } from "@/lib/subscription";
 import { trpc } from "@/lib/trpc";
+import { ErrorDisplay } from "@/components/error-display";
+import { AIProcessingIndicator } from "@/components/loading-state";
+import { getDiagnosisErrorMessage } from "@/lib/error-handling";
 
 const { width, height } = Dimensions.get("window");
 
@@ -64,6 +67,7 @@ export default function DiagnoseScreen() {
   const [images, setImages] = useState<string[]>([]);
   const [notes, setNotes] = useState("");
   const [diagnosis, setDiagnosis] = useState<DiagnosisResult | null>(null);
+  const [diagnosisError, setDiagnosisError] = useState<ReturnType<typeof getDiagnosisErrorMessage> | null>(null);
   const [hasScannedOnce, setHasScannedOnce] = useState(false);
   
   const cameraRef = useRef<CameraView>(null);
@@ -73,27 +77,25 @@ export default function DiagnoseScreen() {
   const diagnosisMutation = trpc.diagnosis.analyze.useMutation({
     onSuccess: (data) => {
       setDiagnosis(data);
+      setDiagnosisError(null);
       setMode("result");
       
-      // Auto-play voice response after 1 second
+      // Auto-play voice response immediately for smooth flow
       if (data.voiceResponse) {
-        setTimeout(() => {
-          Speech.speak(data.voiceResponse || data.problem, {
-            language: "de-DE",
-            pitch: 1.0,
-            rate: 0.9,
-          });
-        }, 1000);
+        // Stop any ongoing speech first
+        Speech.stop();
+        Speech.speak(data.voiceResponse || data.problem, {
+          language: "de-DE",
+          pitch: 1.0,
+          rate: 0.95,
+        });
       }
     },
     onError: (error) => {
       console.error("Diagnosis error:", error);
-      setDiagnosis({
-        problem: "Fehler bei der Analyse. Bitte versuche es erneut.",
-        recommendations: ["Stelle sicher, dass die Bilder klar und gut beleuchtet sind."],
-        careTips: [],
-        severity: "low",
-      });
+      const errorDetails = getDiagnosisErrorMessage(error);
+      setDiagnosisError(errorDetails);
+      setDiagnosis(null);
       setMode("result");
     },
   });
@@ -245,9 +247,12 @@ export default function DiagnoseScreen() {
   };
 
   const resetDiagnosis = () => {
+    // Stop any ongoing speech
+    Speech.stop();
     setImages([]);
     setNotes("");
     setDiagnosis(null);
+    setDiagnosisError(null);
     setMode("camera");
     setLiveAnalysisActive(false);
     setOverlays([]);
@@ -302,7 +307,35 @@ export default function DiagnoseScreen() {
     );
   }
 
-  // Result view
+  // Result view - Error
+  if (mode === "result" && diagnosisError) {
+    return (
+      <ScreenContainer className="p-4">
+        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }} showsVerticalScrollIndicator={false}>
+          <View className="flex-1 justify-center gap-6">
+            <ErrorDisplay
+              error={diagnosisError}
+              onRetry={() => {
+                setMode("gallery");
+                setDiagnosisError(null);
+                if (images.length > 0) {
+                  startDiagnosis();
+                }
+              }}
+            />
+            <TouchableOpacity
+              className="bg-surface rounded-xl py-3 items-center border border-border"
+              onPress={resetDiagnosis}
+            >
+              <Text className="text-base font-medium text-foreground">Neue Analyse starten</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </ScreenContainer>
+    );
+  }
+
+  // Result view - Success
   if (mode === "result" && diagnosis) {
     return (
       <ScreenContainer className="p-4">
@@ -318,10 +351,11 @@ export default function DiagnoseScreen() {
                 <TouchableOpacity
                   className="w-12 h-12 rounded-full bg-primary/20 items-center justify-center"
                   onPress={() => {
+                    Speech.stop();
                     Speech.speak(diagnosis.voiceResponse || diagnosis.problem, {
                       language: "de-DE",
                       pitch: 1.0,
-                      rate: 0.9,
+                      rate: 0.95,
                     });
                   }}
                 >
@@ -472,10 +506,7 @@ export default function DiagnoseScreen() {
               disabled={diagnosisMutation.isPending || !canStartDiagnosis}
             >
               {diagnosisMutation.isPending ? (
-                <View className="flex-row items-center gap-2">
-                  <ActivityIndicator color="#fff" />
-                  <Text className="text-base font-semibold text-background">Analysiere...</Text>
-                </View>
+                <AIProcessingIndicator feature="diagnosis" compact />
               ) : (
                 <Text className={`text-base font-semibold ${canStartDiagnosis ? 'text-background' : 'text-muted'}`}>
                   Analyse starten
