@@ -26,7 +26,6 @@
     "@expo/vector-icons": "^15.0.3",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/netinfo": "^11.4.1",
-    "@react-native-google-signin/google-signin": "16.1.5",
     "@react-navigation/bottom-tabs": "^7.8.12",
     "@react-navigation/elements": "^2.9.2",
     "@react-navigation/native": "^7.1.25",
@@ -89,7 +88,8 @@
     "react-native-worklets": "0.5.1",
     "superjson": "^1.13.3",
     "tailwind-merge": "^2.6.0",
-    "zod": "^4.2.1"
+    "zod": "^4.2.1",
+    "@react-native-google-signin/google-signin": "16.1.5"
   },
   "devDependencies": {
     "@expo/ngrok": "^4.1.3",
