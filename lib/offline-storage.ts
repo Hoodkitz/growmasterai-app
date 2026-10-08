@@ -3,17 +3,17 @@
  * Enables app to work without internet connection
  */
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import NetInfo from '@react-native-community/netinfo';
-import { useState, useEffect } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import NetInfo from "@react-native-community/netinfo";
+import { useState, useEffect } from "react";
 
-const OFFLINE_QUEUE_KEY = '@growmaster_offline_queue';
-const OFFLINE_DATA_KEY = '@growmaster_offline_data';
+const OFFLINE_QUEUE_KEY = "@growmaster_offline_queue";
+const OFFLINE_DATA_KEY = "@growmaster_offline_data";
 
 export interface OfflineAction {
   id: string;
-  type: 'create' | 'update' | 'delete';
-  entity: 'plant' | 'journal' | 'diagnosis' | 'expense';
+  type: "create" | "update" | "delete";
+  entity: "plant" | "journal" | "diagnosis" | "expense";
   data: any;
   timestamp: number;
   synced: boolean;
@@ -34,7 +34,7 @@ export function useNetworkStatus() {
   const [isConnected, setIsConnected] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener(state => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
       setIsConnected(state.isConnected === true);
     });
 
@@ -47,10 +47,12 @@ export function useNetworkStatus() {
 /**
  * Save action to offline queue
  */
-export async function queueOfflineAction(action: Omit<OfflineAction, 'id' | 'timestamp' | 'synced'>): Promise<void> {
+export async function queueOfflineAction(
+  action: Omit<OfflineAction, "id" | "timestamp" | "synced">,
+): Promise<void> {
   try {
     const queue = await getOfflineQueue();
-    
+
     const newAction: OfflineAction = {
       ...action,
       id: `offline_${Date.now()}_${Math.random()}`,
@@ -61,7 +63,7 @@ export async function queueOfflineAction(action: Omit<OfflineAction, 'id' | 'tim
     queue.push(newAction);
     await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
   } catch (error) {
-    console.error('Error queuing offline action:', error);
+    console.error("Error queuing offline action:", error);
   }
 }
 
@@ -73,7 +75,7 @@ export async function getOfflineQueue(): Promise<OfflineAction[]> {
     const data = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
     return data ? JSON.parse(data) : [];
   } catch (error) {
-    console.error('Error getting offline queue:', error);
+    console.error("Error getting offline queue:", error);
     return [];
   }
 }
@@ -81,14 +83,17 @@ export async function getOfflineQueue(): Promise<OfflineAction[]> {
 /**
  * Sync offline actions when back online
  */
-export async function syncOfflineActions(): Promise<{ success: number; failed: number }> {
+export async function syncOfflineActions(): Promise<{
+  success: number;
+  failed: number;
+}> {
   const online = await isOnline();
   if (!online) {
     return { success: 0, failed: 0 };
   }
 
   const queue = await getOfflineQueue();
-  const unsynced = queue.filter(a => !a.synced);
+  const unsynced = queue.filter((a) => !a.synced);
 
   let success = 0;
   let failed = 0;
@@ -96,12 +101,12 @@ export async function syncOfflineActions(): Promise<{ success: number; failed: n
   for (const action of unsynced) {
     try {
       // Sync with backend based on action type
-      // await syncAction(action);
-      
+      // TODO: Implement actual sync logic per entity type
+      // For now, mark as synced to prevent infinite retry loops
       action.synced = true;
       success++;
     } catch (error) {
-      console.error('Error syncing action:', error);
+      console.error("Error syncing action:", error);
       failed++;
     }
   }
@@ -110,7 +115,7 @@ export async function syncOfflineActions(): Promise<{ success: number; failed: n
   await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
 
   // Clean up old synced actions (older than 7 days)
-  const cleanedQueue = queue.filter(a => {
+  const cleanedQueue = queue.filter((a) => {
     if (a.synced) {
       const age = Date.now() - a.timestamp;
       return age < 7 * 24 * 60 * 60 * 1000; // Keep for 7 days
@@ -135,7 +140,7 @@ export async function cacheOfflineData(key: string, data: any): Promise<void> {
     };
     await AsyncStorage.setItem(OFFLINE_DATA_KEY, JSON.stringify(cache));
   } catch (error) {
-    console.error('Error caching offline data:', error);
+    console.error("Error caching offline data:", error);
   }
 }
 
@@ -147,7 +152,7 @@ export async function getOfflineCache(): Promise<Record<string, any>> {
     const data = await AsyncStorage.getItem(OFFLINE_DATA_KEY);
     return data ? JSON.parse(data) : {};
   } catch (error) {
-    console.error('Error getting offline cache:', error);
+    console.error("Error getting offline cache:", error);
     return {};
   }
 }
@@ -155,7 +160,10 @@ export async function getOfflineCache(): Promise<Record<string, any>> {
 /**
  * Get specific cached data
  */
-export async function getCachedData(key: string, maxAge: number = 24 * 60 * 60 * 1000): Promise<any | null> {
+export async function getCachedData(
+  key: string,
+  maxAge: number = 24 * 60 * 60 * 1000,
+): Promise<any | null> {
   const cache = await getOfflineCache();
   const cached = cache[key];
 

@@ -2,22 +2,55 @@ import { z } from "zod";
 import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { getDb } from "./db";
-import { plants, journalEntries, communityPosts, postComments, vendors, vendorProducts, messages, users, auctions, auctionBids, giveaways, giveawayEntries, pushTokens, diagnoses, userAchievements, vendorLeads, adBanners, postLikes, vendorOutreach } from "../drizzle/schema";
-import { generateCacheKey, getCachedDiagnosis, setCachedDiagnosis, deduplicateRequest, getCacheStats } from "./_core/diagnosisCache";
-import { eq, and, desc, sql, or, ne, gt, count } from "drizzle-orm";
+import {
+  plants,
+  journalEntries,
+  communityPosts,
+  postComments,
+  vendors,
+  vendorProducts,
+  messages,
+  users,
+  auctions,
+  auctionBids,
+  giveaways,
+  giveawayEntries,
+  pushTokens,
+  diagnoses,
+  userAchievements,
+  vendorLeads,
+  adBanners,
+  postLikes,
+  vendorOutreach,
+  vendorInquiries,
+} from "../drizzle/schema";
+import {
+  generateCacheKey,
+  getCachedDiagnosis,
+  setCachedDiagnosis,
+  deduplicateRequest,
+  getCacheStats,
+} from "./_core/diagnosisCache";
+import { eq, and, desc, sql, or, ne, gt, count, gte } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { liveScanLimiter, clientKey } from "./_core/rateLimit";
 import { computeStreak } from "./streak";
-import { mergePlants, plantTimestamp, type SyncPlant } from "../shared/plant-sync";
+import {
+  mergePlants,
+  plantTimestamp,
+  type SyncPlant,
+} from "../shared/plant-sync";
 import { summarizeOutreach } from "../lib/vendor-outreach";
 import { alias } from "drizzle-orm/mysql-core";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import {
+  publicProcedure,
+  protectedProcedure,
+  router,
+  adminProcedure,
+} from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
-import { adminProcedure } from "./_core/trpc";
 import { ACHIEVEMENTS, getLevelFromPoints } from "../lib/gamification";
-import { vendorInquiries } from "../drizzle/schema";
-import { gte } from "drizzle-orm";
 import { validateBid, validateRaffleEntry } from "../lib/auction-rules";
 import { sendExpoPush } from "./push";
 
@@ -27,7 +60,9 @@ const diagnosisResponseSchema = z.object({
   recommendations: z.array(z.string()),
   careTips: z.array(z.string()),
   severity: z.enum(["low", "medium", "high"]),
-  plantGender: z.enum(["male", "female", "hermaphrodite", "unknown"]).optional(),
+  plantGender: z
+    .enum(["male", "female", "hermaphrodite", "unknown"])
+    .optional(),
   genderConfidence: z.number().min(0).max(100).optional(),
   voiceResponse: z.string().optional(),
 });
@@ -53,30 +88,37 @@ export const appRouter = router({
 
   // Plant diagnosis with AI
   diagnosis: router({
-    analyze: publicProcedure
-      .input(z.object({
-        images: z.array(z.string()).min(1).max(4), // Base64 encoded images
-        notes: z.string().optional(),
-      }))
+    analyze: protectedProcedure
+      .input(
+        z.object({
+          images: z.array(z.string()).min(1).max(4), // Base64 encoded images
+          notes: z.string().optional(),
+        }),
+      )
       .mutation(async ({ input }) => {
         // Generate cache key from images + notes
         const cacheKey = generateCacheKey(input.images, input.notes);
-        
+
         // Check cache first
         const cached = await getCachedDiagnosis(cacheKey);
         if (cached) {
           console.log("[Diagnosis] Cache hit:", cacheKey.slice(0, 12));
           return cached;
         }
-        
-        console.log("[Diagnosis] Cache miss, invoking LLM:", cacheKey.slice(0, 12));
-        
+
+        console.log(
+          "[Diagnosis] Cache miss, invoking LLM:",
+          cacheKey.slice(0, 12),
+        );
+
         // Deduplicate concurrent requests
         const result = await deduplicateRequest(cacheKey, async () => {
           const imageContents = input.images.map((img) => ({
             type: "image_url" as const,
             image_url: {
-              url: img.startsWith("data:") ? img : `data:image/jpeg;base64,${img}`,
+              url: img.startsWith("data:")
+                ? img
+                : `data:image/jpeg;base64,${img}`,
               detail: "high" as const,
             },
           }));
@@ -129,7 +171,7 @@ Wenn die Pflanze gesund aussieht, beschreibe ihren guten Zustand und gib allgeme
               type: "json_object",
             },
           });
-          
+
           const duration = Date.now() - startTime;
           console.log(`[Diagnosis] LLM response time: ${duration}ms`);
 
@@ -138,10 +180,10 @@ Wenn die Pflanze gesund aussieht, beschreibe ihren guten Zustand und gib allgeme
             try {
               const parsed = JSON.parse(content);
               const validated = diagnosisResponseSchema.parse(parsed);
-              
+
               // Cache the successful response
               await setCachedDiagnosis(cacheKey, validated);
-              
+
               return validated;
             } catch {
               return {
@@ -160,17 +202,19 @@ Wenn die Pflanze gesund aussieht, beschreibe ihren guten Zustand und gib allgeme
             severity: "low" as const,
           };
         });
-        
+
         return result;
       }),
   }),
 
   // Live camera scan: real vision analysis returning positioned overlays
   liveScan: router({
-    analyze: publicProcedure
+    analyze: protectedProcedure
       .input(z.object({ image: z.string().min(1) }))
       .mutation(async ({ input, ctx }) => {
-        const limit = liveScanLimiter.check(ctx.user ? `u:${ctx.user.id}` : `ip:${clientKey(ctx.req)}`);
+        const limit = liveScanLimiter.check(
+          ctx.user ? `u:${ctx.user.id}` : `ip:${clientKey(ctx.req)}`,
+        );
         if (!limit.allowed) {
           throw new TRPCError({
             code: "TOO_MANY_REQUESTS",
@@ -189,11 +233,16 @@ x/y sind relative Positionen im Bild (0,0 = links oben). Nur Stellen markieren, 
             {
               role: "user",
               content: [
-                { type: "text" as const, text: "Analysiere dieses Live-Kamerabild." },
+                {
+                  type: "text" as const,
+                  text: "Analysiere dieses Live-Kamerabild.",
+                },
                 {
                   type: "image_url" as const,
                   image_url: {
-                    url: input.image.startsWith("data:") ? input.image : `data:image/jpeg;base64,${input.image}`,
+                    url: input.image.startsWith("data:")
+                      ? input.image
+                      : `data:image/jpeg;base64,${input.image}`,
                     detail: "low" as const,
                   },
                 },
@@ -215,7 +264,9 @@ x/y sind relative Positionen im Bild (0,0 = links oben). Nur Stellen markieren, 
           ),
         });
         try {
-          return schema.parse(JSON.parse(typeof content === "string" ? content : "{}")).overlays.slice(0, 4);
+          return schema
+            .parse(JSON.parse(typeof content === "string" ? content : "{}"))
+            .overlays.slice(0, 4);
         } catch {
           return [];
         }
@@ -225,9 +276,11 @@ x/y sind relative Positionen im Bild (0,0 = links oben). Nur Stellen markieren, 
   // Gender Detection AI
   gender: router({
     detect: publicProcedure
-      .input(z.object({
-        image: z.string(), // Base64 encoded image
-      }))
+      .input(
+        z.object({
+          image: z.string(), // Base64 encoded image
+        }),
+      )
       .mutation(async ({ input }) => {
         const result = await invokeLLM({
           messages: [
@@ -251,11 +304,16 @@ Zwitter: Beide Merkmale vorhanden`,
             {
               role: "user",
               content: [
-                { type: "text" as const, text: "Bestimme das Geschlecht dieser Cannabis-Pflanze." },
+                {
+                  type: "text" as const,
+                  text: "Bestimme das Geschlecht dieser Cannabis-Pflanze.",
+                },
                 {
                   type: "image_url" as const,
                   image_url: {
-                    url: input.image.startsWith("data:") ? input.image : `data:image/jpeg;base64,${input.image}`,
+                    url: input.image.startsWith("data:")
+                      ? input.image
+                      : `data:image/jpeg;base64,${input.image}`,
                     detail: "high" as const,
                   },
                 },
@@ -270,20 +328,34 @@ Zwitter: Beide Merkmale vorhanden`,
           try {
             return JSON.parse(content);
           } catch {
-            return { gender: "unknown", confidence: 0, indicators: [], explanation: content, recommendation: "Bitte versuche es mit einem besseren Bild." };
+            return {
+              gender: "unknown",
+              confidence: 0,
+              indicators: [],
+              explanation: content,
+              recommendation: "Bitte versuche es mit einem besseren Bild.",
+            };
           }
         }
-        return { gender: "unknown", confidence: 0, indicators: [], explanation: "Analyse fehlgeschlagen", recommendation: "Bitte versuche es erneut." };
+        return {
+          gender: "unknown",
+          confidence: 0,
+          indicators: [],
+          explanation: "Analyse fehlgeschlagen",
+          recommendation: "Bitte versuche es erneut.",
+        };
       }),
   }),
 
   // Strain Identification AI
   strain: router({
     identify: publicProcedure
-      .input(z.object({
-        image: z.string(),
-        additionalInfo: z.string().optional(),
-      }))
+      .input(
+        z.object({
+          image: z.string(),
+          additionalInfo: z.string().optional(),
+        }),
+      )
       .mutation(async ({ input }) => {
         const result = await invokeLLM({
           messages: [
@@ -312,11 +384,18 @@ Gib bis zu 3 mögliche Sorten an, sortiert nach Wahrscheinlichkeit.`,
             {
               role: "user",
               content: [
-                { type: "text" as const, text: input.additionalInfo ? `Identifiziere diese Cannabis-Sorte. Zusätzliche Info: ${input.additionalInfo}` : "Identifiziere diese Cannabis-Sorte." },
+                {
+                  type: "text" as const,
+                  text: input.additionalInfo
+                    ? `Identifiziere diese Cannabis-Sorte. Zusätzliche Info: ${input.additionalInfo}`
+                    : "Identifiziere diese Cannabis-Sorte.",
+                },
                 {
                   type: "image_url" as const,
                   image_url: {
-                    url: input.image.startsWith("data:") ? input.image : `data:image/jpeg;base64,${input.image}`,
+                    url: input.image.startsWith("data:")
+                      ? input.image
+                      : `data:image/jpeg;base64,${input.image}`,
                     detail: "high" as const,
                   },
                 },
@@ -331,21 +410,35 @@ Gib bis zu 3 mögliche Sorten an, sortiert nach Wahrscheinlichkeit.`,
           try {
             return JSON.parse(content);
           } catch {
-            return { possibleStrains: [], characteristics: {}, growthStage: "Unbekannt", healthAssessment: content, tips: [] };
+            return {
+              possibleStrains: [],
+              characteristics: {},
+              growthStage: "Unbekannt",
+              healthAssessment: content,
+              tips: [],
+            };
           }
         }
-        return { possibleStrains: [], characteristics: {}, growthStage: "Unbekannt", healthAssessment: "Analyse fehlgeschlagen", tips: [] };
+        return {
+          possibleStrains: [],
+          characteristics: {},
+          growthStage: "Unbekannt",
+          healthAssessment: "Analyse fehlgeschlagen",
+          tips: [],
+        };
       }),
   }),
 
   // Harvest Readiness AI
   harvest: router({
     checkReadiness: publicProcedure
-      .input(z.object({
-        image: z.string(),
-        strainInfo: z.string().optional(),
-        floweringWeek: z.number().optional(),
-      }))
+      .input(
+        z.object({
+          image: z.string(),
+          strainInfo: z.string().optional(),
+          floweringWeek: z.number().optional(),
+        }),
+      )
       .mutation(async ({ input }) => {
         const result = await invokeLLM({
           messages: [
@@ -372,11 +465,16 @@ Klar = zu früh, Milchig = THC-Peak, Bernstein = mehr CBD/CBN, entspannender`,
             {
               role: "user",
               content: [
-                { type: "text" as const, text: `Analysiere die Erntereife dieser Cannabis-Pflanze.${input.strainInfo ? ` Sorte: ${input.strainInfo}` : ""}${input.floweringWeek ? ` Blütewoche: ${input.floweringWeek}` : ""}` },
+                {
+                  type: "text" as const,
+                  text: `Analysiere die Erntereife dieser Cannabis-Pflanze.${input.strainInfo ? ` Sorte: ${input.strainInfo}` : ""}${input.floweringWeek ? ` Blütewoche: ${input.floweringWeek}` : ""}`,
+                },
                 {
                   type: "image_url" as const,
                   image_url: {
-                    url: input.image.startsWith("data:") ? input.image : `data:image/jpeg;base64,${input.image}`,
+                    url: input.image.startsWith("data:")
+                      ? input.image
+                      : `data:image/jpeg;base64,${input.image}`,
                     detail: "high" as const,
                   },
                 },
@@ -391,28 +489,47 @@ Klar = zu früh, Milchig = THC-Peak, Bernstein = mehr CBD/CBN, entspannender`,
           try {
             return JSON.parse(content);
           } catch {
-            return { readiness: 0, trichomeAnalysis: { clear: 0, milky: 0, amber: 0 }, recommendation: content, expectedEffect: "", optimalHarvestWindow: "", tips: [] };
+            return {
+              readiness: 0,
+              trichomeAnalysis: { clear: 0, milky: 0, amber: 0 },
+              recommendation: content,
+              expectedEffect: "",
+              optimalHarvestWindow: "",
+              tips: [],
+            };
           }
         }
-        return { readiness: 0, trichomeAnalysis: { clear: 0, milky: 0, amber: 0 }, recommendation: "Analyse fehlgeschlagen", expectedEffect: "", optimalHarvestWindow: "", tips: [] };
+        return {
+          readiness: 0,
+          trichomeAnalysis: { clear: 0, milky: 0, amber: 0 },
+          recommendation: "Analyse fehlgeschlagen",
+          expectedEffect: "",
+          optimalHarvestWindow: "",
+          tips: [],
+        };
       }),
   }),
 
   // Grow Coach AI Chat
   coach: router({
-    ask: publicProcedure
-      .input(z.object({
-        question: z.string().min(5),
-        images: z.array(z.string()).max(2).optional(),
-      }))
+    ask: protectedProcedure
+      .input(
+        z.object({
+          question: z.string().min(5),
+          images: z.array(z.string()).max(2).optional(),
+        }),
+      )
       .mutation(async ({ input }) => {
-        const imageContents = input.images?.map((img) => ({
-          type: "image_url" as const,
-          image_url: {
-            url: img.startsWith("data:") ? img : `data:image/jpeg;base64,${img}`,
-            detail: "auto" as const,
-          },
-        })) || [];
+        const imageContents =
+          input.images?.map((img) => ({
+            type: "image_url" as const,
+            image_url: {
+              url: img.startsWith("data:")
+                ? img
+                : `data:image/jpeg;base64,${img}`,
+              detail: "auto" as const,
+            },
+          })) || [];
 
         const result = await invokeLLM({
           messages: [
@@ -430,12 +547,13 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
             },
             {
               role: "user",
-              content: imageContents.length > 0
-                ? [
-                  { type: "text" as const, text: input.question },
-                  ...imageContents,
-                ]
-                : input.question,
+              content:
+                imageContents.length > 0
+                  ? [
+                      { type: "text" as const, text: input.question },
+                      ...imageContents,
+                    ]
+                  : input.question,
             },
           ],
           responseFormat: {
@@ -457,7 +575,8 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         }
 
         return {
-          answer: "Entschuldigung, ich konnte deine Frage nicht verarbeiten. Bitte versuche es erneut.",
+          answer:
+            "Entschuldigung, ich konnte deine Frage nicht verarbeiten. Bitte versuche es erneut.",
           tips: [],
         };
       }),
@@ -470,31 +589,63 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
      * server merges last-write-wins per clientId, persists changes and returns the merged state.
      */
     sync: protectedProcedure
-      .input(z.object({
-        plants: z.array(z.object({
-          id: z.string().min(1).max(64),
-          name: z.string().min(1).max(100),
-          strain: z.string().max(100).default(""),
-          phase: z.enum(["seedling", "vegetative", "flowering", "harvest"]),
-          startDate: z.string().max(40),
-          notes: z.string().max(10000).optional(),
-          growType: z.enum(["indoor", "outdoor", "greenhouse"]).optional(),
-          createdAt: z.string().max(40).optional(),
-          updatedAt: z.string().max(40).optional(),
-        })).max(500),
-        tombstones: z.record(z.string().max(64), z.string().max(40)).default({}),
-      }))
+      .input(
+        z.object({
+          plants: z
+            .array(
+              z.object({
+                id: z.string().min(1).max(64),
+                name: z.string().min(1).max(100),
+                strain: z.string().max(100).default(""),
+                phase: z.enum([
+                  "seedling",
+                  "vegetative",
+                  "flowering",
+                  "harvest",
+                ]),
+                startDate: z.string().max(40),
+                notes: z.string().max(10000).optional(),
+                growType: z
+                  .enum(["indoor", "outdoor", "greenhouse"])
+                  .optional(),
+                createdAt: z.string().max(40).optional(),
+                updatedAt: z.string().max(40).optional(),
+              }),
+            )
+            .max(500),
+          tombstones: z
+            .record(z.string().max(64), z.string().max(40))
+            .default({}),
+        }),
+      )
       .mutation(async ({ ctx, input }) => {
         const db = await getDb();
-        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+        if (!db)
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Database connection failed",
+          });
 
-        const rows = await db.select().from(plants).where(and(eq(plants.userId, ctx.user.id), sql`${plants.clientId} IS NOT NULL`));
-        const remote = { plants: [] as SyncPlant[], tombstones: {} as Record<string, string> };
+        const rows = await db
+          .select()
+          .from(plants)
+          .where(
+            and(
+              eq(plants.userId, ctx.user.id),
+              sql`${plants.clientId} IS NOT NULL`,
+            ),
+          );
+        const remote = {
+          plants: [] as SyncPlant[],
+          tombstones: {} as Record<string, string>,
+        };
         const rowByClientId = new Map<string, (typeof rows)[number]>();
         for (const r of rows) {
           const cid = r.clientId!;
           rowByClientId.set(cid, r);
-          const iso = new Date(r.clientUpdatedAt ?? r.updatedAt.getTime()).toISOString();
+          const iso = new Date(
+            r.clientUpdatedAt ?? r.updatedAt.getTime(),
+          ).toISOString();
           if (r.deletedAt != null) {
             remote.tombstones[cid] = new Date(r.deletedAt).toISOString();
           } else {
@@ -502,7 +653,12 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
               id: cid,
               name: r.name,
               strain: r.strain ?? "",
-              phase: (r.phase === "seedling" || r.phase === "vegetative" || r.phase === "flowering" ? r.phase : "harvest"),
+              phase:
+                r.phase === "seedling" ||
+                r.phase === "vegetative" ||
+                r.phase === "flowering"
+                  ? r.phase
+                  : "harvest",
               startDate: r.startDate.toISOString(),
               notes: r.notes ?? "",
               growType: r.growType ?? undefined,
@@ -512,7 +668,10 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
           }
         }
 
-        const merged = mergePlants({ plants: input.plants, tombstones: input.tombstones }, remote);
+        const merged = mergePlants(
+          { plants: input.plants, tombstones: input.tombstones },
+          remote,
+        );
 
         for (const pl of merged.toPush.plants) {
           const startDate = new Date(pl.startDate);
@@ -520,20 +679,33 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
             name: pl.name,
             strain: pl.strain || null,
             phase: pl.phase,
-            startDate: Number.isNaN(startDate.getTime()) ? new Date() : startDate,
+            startDate: Number.isNaN(startDate.getTime())
+              ? new Date()
+              : startDate,
             notes: pl.notes || null,
             growType: pl.growType ?? "indoor",
             clientUpdatedAt: plantTimestamp(pl),
             deletedAt: null,
           };
           const existing = rowByClientId.get(pl.id);
-          if (existing) await db.update(plants).set(values).where(eq(plants.id, existing.id));
-          else await db.insert(plants).values({ ...values, userId: ctx.user.id, clientId: pl.id });
+          if (existing)
+            await db
+              .update(plants)
+              .set(values)
+              .where(eq(plants.id, existing.id));
+          else
+            await db
+              .insert(plants)
+              .values({ ...values, userId: ctx.user.id, clientId: pl.id });
         }
         for (const [id, at] of Object.entries(merged.toPush.tombstones)) {
           const deletedAt = Date.parse(at) || Date.now();
           const existing = rowByClientId.get(id);
-          if (existing) await db.update(plants).set({ deletedAt, clientUpdatedAt: deletedAt }).where(eq(plants.id, existing.id));
+          if (existing)
+            await db
+              .update(plants)
+              .set({ deletedAt, clientUpdatedAt: deletedAt })
+              .where(eq(plants.id, existing.id));
           // Unknown plant deleted offline before it was ever synced: nothing to store.
         }
 
@@ -541,11 +713,13 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
       }),
 
     create: protectedProcedure
-      .input(z.object({
-        name: z.string().min(1),
-        strain: z.string().optional(),
-        growthStage: z.enum(['seedling', 'vegetative', 'flowering']),
-      }))
+      .input(
+        z.object({
+          name: z.string().min(1),
+          strain: z.string().optional(),
+          growthStage: z.enum(["seedling", "vegetative", "flowering"]),
+        }),
+      )
       .mutation(async ({ ctx, input }) => {
         const db = await getDb();
         if (!db) {
@@ -565,22 +739,32 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
       }),
   }),
 
-
   // Journal Management
   journal: router({
     create: protectedProcedure
-      .input(z.object({
-        plantId: z.number().optional(),
-        type: z.enum(["note", "watering", "feeding", "training", "photo", "measurement", "issue", "milestone"]),
-        title: z.string().optional(),
-        content: z.string().optional(),
-        height: z.number().optional(),
-        ph: z.number().optional(),
-        ec: z.number().optional(),
-        temperature: z.number().optional(),
-        humidity: z.number().optional(),
-        images: z.array(z.string()).optional(),
-      }))
+      .input(
+        z.object({
+          plantId: z.number().optional(),
+          type: z.enum([
+            "note",
+            "watering",
+            "feeding",
+            "training",
+            "photo",
+            "measurement",
+            "issue",
+            "milestone",
+          ]),
+          title: z.string().optional(),
+          content: z.string().optional(),
+          height: z.number().optional(),
+          ph: z.number().optional(),
+          ec: z.number().optional(),
+          temperature: z.number().optional(),
+          humidity: z.number().optional(),
+          images: z.array(z.string()).optional(),
+        }),
+      )
       .mutation(async ({ ctx, input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
@@ -594,7 +778,9 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
           height: input.height ? input.height.toString() : undefined,
           ph: input.ph ? input.ph.toString() : undefined,
           ec: input.ec ? input.ec.toString() : undefined,
-          temperature: input.temperature ? input.temperature.toString() : undefined,
+          temperature: input.temperature
+            ? input.temperature.toString()
+            : undefined,
           humidity: input.humidity ? input.humidity.toString() : undefined,
           images: input.images,
         });
@@ -602,16 +788,16 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         return { success: true, entryId: result.insertId };
       }),
 
-    list: protectedProcedure
-      .query(async ({ ctx }) => {
-        const db = await getDb();
-        if (!db) throw new Error("Database connection failed");
+    list: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
 
-        return db.select()
-          .from(journalEntries)
-          .where(eq(journalEntries.userId, ctx.user.id))
-          .orderBy(desc(journalEntries.createdAt));
-      }),
+      return db
+        .select()
+        .from(journalEntries)
+        .where(eq(journalEntries.userId, ctx.user.id))
+        .orderBy(desc(journalEntries.createdAt));
+    }),
 
     byPlant: protectedProcedure
       .input(z.object({ plantId: z.number() }))
@@ -619,26 +805,30 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
 
-        return db.select()
+        return db
+          .select()
           .from(journalEntries)
-          .where(and(
-            eq(journalEntries.userId, ctx.user.id),
-            eq(journalEntries.plantId, input.plantId)
-          ))
+          .where(
+            and(
+              eq(journalEntries.userId, ctx.user.id),
+              eq(journalEntries.plantId, input.plantId),
+            ),
+          )
           .orderBy(desc(journalEntries.createdAt));
       }),
   }),
 
-
   // Community
   community: router({
     createPost: protectedProcedure
-      .input(z.object({
-        type: z.enum(["post", "question", "showcase", "giveaway"]),
-        title: z.string().optional(),
-        content: z.string().min(1),
-        images: z.array(z.string()).optional(),
-      }))
+      .input(
+        z.object({
+          type: z.enum(["post", "question", "showcase", "giveaway"]),
+          title: z.string().optional(),
+          content: z.string().min(1),
+          images: z.array(z.string()).optional(),
+        }),
+      )
       .mutation(async ({ ctx, input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
@@ -655,10 +845,12 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
       }),
 
     listPosts: publicProcedure
-      .input(z.object({
-        limit: z.number().min(1).max(50).default(20),
-        cursor: z.number().nullish(), // For pagination (offset or ID based)
-      }))
+      .input(
+        z.object({
+          limit: z.number().min(1).max(50).default(20),
+          cursor: z.number().nullish(), // For pagination (offset or ID based)
+        }),
+      )
       .query(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
@@ -666,14 +858,15 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         const limit = input.limit;
         const offset = input.cursor || 0;
 
-        const posts = await db.select({
-          post: communityPosts,
-          user: {
-            name: users.name,
-            avatarUrl: users.avatarUrl,
-            level: users.level,
-          }
-        })
+        const posts = await db
+          .select({
+            post: communityPosts,
+            user: {
+              name: users.name,
+              avatarUrl: users.avatarUrl,
+              level: users.level,
+            },
+          })
           .from(communityPosts)
           .leftJoin(users, eq(communityPosts.userId, users.id))
           .where(eq(communityPosts.isApproved, true))
@@ -694,10 +887,12 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
       }),
 
     likePost: protectedProcedure
-      .input(z.object({
-        postId: z.number(),
-        like: z.boolean(),
-      }))
+      .input(
+        z.object({
+          postId: z.number(),
+          like: z.boolean(),
+        }),
+      )
       .mutation(async ({ ctx, input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
@@ -705,18 +900,26 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         // Per-user idempotent: the unique (postId, userId) index guarantees one like per user.
         const changed = await db.transaction(async (tx) => {
           if (input.like) {
-            const res = await tx.insert(postLikes)
+            const res = await tx
+              .insert(postLikes)
               .ignore()
               .values({ postId: input.postId, userId: ctx.user.id });
             return (res[0]?.affectedRows ?? 0) > 0;
           }
-          const res = await tx.delete(postLikes)
-            .where(and(eq(postLikes.postId, input.postId), eq(postLikes.userId, ctx.user.id)));
+          const res = await tx
+            .delete(postLikes)
+            .where(
+              and(
+                eq(postLikes.postId, input.postId),
+                eq(postLikes.userId, ctx.user.id),
+              ),
+            );
           return (res[0]?.affectedRows ?? 0) > 0;
         });
 
         if (changed) {
-          await db.update(communityPosts)
+          await db
+            .update(communityPosts)
             .set({
               likes: input.like
                 ? sql`${communityPosts.likes} + 1`
@@ -725,7 +928,8 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
             .where(eq(communityPosts.id, input.postId));
         }
 
-        const [post] = await db.select({ likes: communityPosts.likes })
+        const [post] = await db
+          .select({ likes: communityPosts.likes })
           .from(communityPosts)
           .where(eq(communityPosts.id, input.postId));
 
@@ -733,17 +937,20 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
       }),
 
     leaderboard: publicProcedure
-      .input(z.object({ limit: z.number().min(1).max(50).default(10) }).optional())
+      .input(
+        z.object({ limit: z.number().min(1).max(50).default(10) }).optional(),
+      )
       .query(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
 
-        const rows = await db.select({
-          id: users.id,
-          name: users.name,
-          level: users.level,
-          xp: users.xp,
-        })
+        const rows = await db
+          .select({
+            id: users.id,
+            name: users.name,
+            level: users.level,
+            xp: users.xp,
+          })
           .from(users)
           .orderBy(desc(users.xp))
           .limit(input?.limit ?? 10);
@@ -752,10 +959,12 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
       }),
 
     createComment: protectedProcedure
-      .input(z.object({
-        postId: z.number(),
-        content: z.string().min(1),
-      }))
+      .input(
+        z.object({
+          postId: z.number(),
+          content: z.string().min(1),
+        }),
+      )
       .mutation(async ({ ctx, input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
@@ -767,7 +976,8 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         });
 
         // Update comment count on post (atomic increment ideally, simplified here)
-        await db.update(communityPosts)
+        await db
+          .update(communityPosts)
           .set({ comments: sql`${communityPosts.comments} + 1` })
           .where(eq(communityPosts.id, input.postId));
 
@@ -778,23 +988,33 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
   // Marketplace
   marketplace: router({
     listProducts: publicProcedure
-      .input(z.object({
-        category: z.enum(["seeds", "equipment", "nutrients", "accessories", "other"]).optional(),
-        limit: z.number().min(1).max(100).default(20),
-        featuredOnly: z.boolean().optional(),
-      }))
+      .input(
+        z.object({
+          category: z
+            .enum(["seeds", "equipment", "nutrients", "accessories", "other"])
+            .optional(),
+          limit: z.number().min(1).max(100).default(20),
+          featuredOnly: z.boolean().optional(),
+        }),
+      )
       .query(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
 
         const conditions = [eq(vendorProducts.isActive, true)];
-        if (input.category) conditions.push(eq(vendorProducts.category, input.category));
-        if (input.featuredOnly) conditions.push(eq(vendorProducts.isFeatured, true));
+        if (input.category)
+          conditions.push(eq(vendorProducts.category, input.category));
+        if (input.featuredOnly)
+          conditions.push(eq(vendorProducts.isFeatured, true));
 
-        return db.select()
+        return db
+          .select()
           .from(vendorProducts)
           .where(and(...conditions))
-          .orderBy(desc(vendorProducts.isFeatured), desc(vendorProducts.createdAt))
+          .orderBy(
+            desc(vendorProducts.isFeatured),
+            desc(vendorProducts.createdAt),
+          )
           .limit(input.limit);
       }),
 
@@ -807,32 +1027,37 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         return db.select().from(vendors).where(eq(vendors.id, input.vendorId));
       }),
 
-    listAuctions: publicProcedure
-      .query(async () => {
-        const db = await getDb();
-        if (!db) throw new Error("Database connection failed");
+    listAuctions: publicProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
 
-        return db.select()
-          .from(auctions)
-          .where(eq(auctions.status, "active"))
-          .orderBy(desc(auctions.endsAt))
-          .limit(20);
-      }),
+      return db
+        .select()
+        .from(auctions)
+        .where(eq(auctions.status, "active"))
+        .orderBy(desc(auctions.endsAt))
+        .limit(20);
+    }),
 
-    listRaffles: publicProcedure
-      .query(async () => {
-        const db = await getDb();
-        if (!db) throw new Error("Database connection failed");
+    listRaffles: publicProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
 
-        return db.select()
-          .from(giveaways)
-          .where(eq(giveaways.status, "active"))
-          .orderBy(desc(giveaways.endsAt))
-          .limit(20);
-      }),
+      return db
+        .select()
+        .from(giveaways)
+        .where(eq(giveaways.status, "active"))
+        .orderBy(desc(giveaways.endsAt))
+        .limit(20);
+    }),
 
     placeBid: protectedProcedure
-      .input(z.object({ auctionId: z.number().int(), amount: z.number().positive().max(1_000_000) }))
+      .input(
+        z.object({
+          auctionId: z.number().int(),
+          amount: z.number().positive().max(1_000_000),
+        }),
+      )
       .mutation(async ({ ctx, input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
@@ -845,7 +1070,11 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
             .where(eq(auctions.id, input.auctionId))
             .for("update")
             .limit(1);
-          if (!row) throw new TRPCError({ code: "NOT_FOUND", message: "Auktion nicht gefunden" });
+          if (!row)
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Auktion nicht gefunden",
+            });
           const a = row.auction;
           const check = validateBid(
             {
@@ -860,14 +1089,22 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
             ctx.user.id,
             input.amount,
           );
-          if (!check.ok) throw new TRPCError({ code: check.code, message: check.message });
+          if (!check.ok)
+            throw new TRPCError({ code: check.code, message: check.message });
 
           const amount = input.amount.toFixed(2);
-          await tx.insert(auctionBids).values({ auctionId: a.id, userId: ctx.user.id, amount });
-          await tx.update(auctions)
+          await tx
+            .insert(auctionBids)
+            .values({ auctionId: a.id, userId: ctx.user.id, amount });
+          await tx
+            .update(auctions)
             .set({ currentPrice: amount, totalBids: (a.totalBids ?? 0) + 1 })
             .where(eq(auctions.id, a.id));
-          return { success: true, currentPrice: Number(amount), totalBids: (a.totalBids ?? 0) + 1 };
+          return {
+            success: true,
+            currentPrice: Number(amount),
+            totalBids: (a.totalBids ?? 0) + 1,
+          };
         });
       }),
 
@@ -878,10 +1115,26 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         if (!db) throw new Error("Database connection failed");
 
         return db.transaction(async (tx) => {
-          const [g] = await tx.select().from(giveaways).where(eq(giveaways.id, input.raffleId)).for("update").limit(1);
-          if (!g) throw new TRPCError({ code: "NOT_FOUND", message: "Verlosung nicht gefunden" });
-          const [existing] = await tx.select({ id: giveawayEntries.id }).from(giveawayEntries)
-            .where(and(eq(giveawayEntries.giveawayId, g.id), eq(giveawayEntries.userId, ctx.user.id)))
+          const [g] = await tx
+            .select()
+            .from(giveaways)
+            .where(eq(giveaways.id, input.raffleId))
+            .for("update")
+            .limit(1);
+          if (!g)
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Verlosung nicht gefunden",
+            });
+          const [existing] = await tx
+            .select({ id: giveawayEntries.id })
+            .from(giveawayEntries)
+            .where(
+              and(
+                eq(giveawayEntries.giveawayId, g.id),
+                eq(giveawayEntries.userId, ctx.user.id),
+              ),
+            )
             .limit(1);
           const check = validateRaffleEntry({
             status: g.status,
@@ -891,10 +1144,16 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
             totalEntries: g.totalEntries ?? 0,
             alreadyEntered: !!existing,
           });
-          if (!check.ok) throw new TRPCError({ code: check.code, message: check.message });
+          if (!check.ok)
+            throw new TRPCError({ code: check.code, message: check.message });
 
-          await tx.insert(giveawayEntries).values({ giveawayId: g.id, userId: ctx.user.id, ticketCount: 1 });
-          await tx.update(giveaways).set({ totalEntries: (g.totalEntries ?? 0) + 1 }).where(eq(giveaways.id, g.id));
+          await tx
+            .insert(giveawayEntries)
+            .values({ giveawayId: g.id, userId: ctx.user.id, ticketCount: 1 });
+          await tx
+            .update(giveaways)
+            .set({ totalEntries: (g.totalEntries ?? 0) + 1 })
+            .where(eq(giveaways.id, g.id));
           return { success: true, totalEntries: (g.totalEntries ?? 0) + 1 };
         });
       }),
@@ -902,9 +1161,11 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
     myRaffleEntries: protectedProcedure.query(async ({ ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database connection failed");
-      const rows = await db.select({ giveawayId: giveawayEntries.giveawayId }).from(giveawayEntries)
+      const rows = await db
+        .select({ giveawayId: giveawayEntries.giveawayId })
+        .from(giveawayEntries)
         .where(eq(giveawayEntries.userId, ctx.user.id));
-      return rows.map(r => r.giveawayId);
+      return rows.map((r) => r.giveawayId);
     }),
   }),
 
@@ -931,7 +1192,12 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
       const activeProducts = await db
         .select({ count: count() })
         .from(vendorProducts)
-        .where(and(eq(vendorProducts.vendorId, vendor.id), eq(vendorProducts.isActive, true)));
+        .where(
+          and(
+            eq(vendorProducts.vendorId, vendor.id),
+            eq(vendorProducts.isActive, true),
+          ),
+        );
 
       const recentLeads = await db
         .select()
@@ -950,9 +1216,11 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
     }),
 
     getProducts: protectedProcedure
-      .input(z.object({
-        limit: z.number().default(50),
-      }))
+      .input(
+        z.object({
+          limit: z.number().default(50),
+        }),
+      )
       .query(async ({ ctx, input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
@@ -962,55 +1230,59 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         });
         if (!vendor) throw new Error("Vendor profile not found");
 
-        return db.select()
+        return db
+          .select()
           .from(vendorProducts)
           .where(eq(vendorProducts.vendorId, vendor.id))
           .orderBy(desc(vendorProducts.createdAt))
           .limit(input.limit);
       }),
 
-    getCampaigns: protectedProcedure
-      .query(async ({ ctx }) => {
-        const db = await getDb();
-        if (!db) throw new Error("Database connection failed");
+    getCampaigns: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
 
-        const vendor = await db.query.vendors.findFirst({
-          where: eq(vendors.userId, ctx.user.id),
-        });
-        if (!vendor) throw new Error("Vendor profile not found");
+      const vendor = await db.query.vendors.findFirst({
+        where: eq(vendors.userId, ctx.user.id),
+      });
+      if (!vendor) throw new Error("Vendor profile not found");
 
-        return db.select()
-          .from(adBanners)
-          .where(eq(adBanners.vendorId, vendor.id));
-      }),
+      return db
+        .select()
+        .from(adBanners)
+        .where(eq(adBanners.vendorId, vendor.id));
+    }),
 
-    getLeads: protectedProcedure
-      .query(async ({ ctx }) => {
-        const db = await getDb();
-        if (!db) throw new Error("Database connection failed");
+    getLeads: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
 
-        const vendor = await db.query.vendors.findFirst({
-          where: eq(vendors.userId, ctx.user.id),
-        });
-        if (!vendor) throw new Error("Vendor profile not found");
+      const vendor = await db.query.vendors.findFirst({
+        where: eq(vendors.userId, ctx.user.id),
+      });
+      if (!vendor) throw new Error("Vendor profile not found");
 
-        return db.select()
-          .from(vendorLeads)
-          .where(eq(vendorLeads.vendorId, vendor.id))
-          .orderBy(desc(vendorLeads.createdAt));
-      }),
+      return db
+        .select()
+        .from(vendorLeads)
+        .where(eq(vendorLeads.vendorId, vendor.id))
+        .orderBy(desc(vendorLeads.createdAt));
+    }),
 
     updateSettings: protectedProcedure
-      .input(z.object({
-        name: z.string().min(1),
-        description: z.string().optional(),
-        website: z.string().optional(),
-      }))
+      .input(
+        z.object({
+          name: z.string().min(1),
+          description: z.string().optional(),
+          website: z.string().optional(),
+        }),
+      )
       .mutation(async ({ ctx, input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
 
-        await db.update(vendors)
+        await db
+          .update(vendors)
           .set({
             name: input.name,
             description: input.description,
@@ -1026,10 +1298,18 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
   ads: router({
     // Öffentlich: aktive Anzeigen für eine Platzierung (zeitfenster- und isActive-gefiltert)
     active: publicProcedure
-      .input(z.object({
-        placement: z.enum(["home", "community", "strains", "tools", "marketplace"]),
-        limit: z.number().int().min(1).max(10).default(3),
-      }))
+      .input(
+        z.object({
+          placement: z.enum([
+            "home",
+            "community",
+            "strains",
+            "tools",
+            "marketplace",
+          ]),
+          limit: z.number().int().min(1).max(10).default(3),
+        }),
+      )
       .query(async ({ input }) => {
         const db = await getDb();
         if (!db) return [];
@@ -1045,12 +1325,14 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
           })
           .from(adBanners)
           .leftJoin(vendors, eq(vendors.id, adBanners.vendorId))
-          .where(and(
-            eq(adBanners.placement, input.placement),
-            eq(adBanners.isActive, true),
-            sql`${adBanners.startsAt} <= ${now}`,
-            sql`${adBanners.endsAt} >= ${now}`,
-          ))
+          .where(
+            and(
+              eq(adBanners.placement, input.placement),
+              eq(adBanners.isActive, true),
+              sql`${adBanners.startsAt} <= ${now}`,
+              sql`${adBanners.endsAt} >= ${now}`,
+            ),
+          )
           .orderBy(sql`RAND()`)
           .limit(input.limit);
       }),
@@ -1061,7 +1343,8 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) return { success: false };
-        await db.update(adBanners)
+        await db
+          .update(adBanners)
           .set({ impressions: sql`COALESCE(${adBanners.impressions}, 0) + 1` })
           .where(and(eq(adBanners.id, input.id), eq(adBanners.isActive, true)));
         return { success: true };
@@ -1072,7 +1355,8 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) return { success: false };
-        await db.update(adBanners)
+        await db
+          .update(adBanners)
           .set({ clicks: sql`COALESCE(${adBanners.clicks}, 0) + 1` })
           .where(and(eq(adBanners.id, input.id), eq(adBanners.isActive, true)));
         return { success: true };
@@ -1081,16 +1365,23 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
 
   messages: router({
     send: protectedProcedure
-      .input(z.object({
-        receiverId: z.number(),
-        content: z.string().min(1),
-      }))
+      .input(
+        z.object({
+          receiverId: z.number(),
+          content: z.string().min(1),
+        }),
+      )
       .mutation(async ({ ctx, input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
 
-        if (input.receiverId === ctx.user.id) throw new Error("Cannot send a message to yourself");
-        const [recipient] = await db.select({ id: users.id }).from(users).where(eq(users.id, input.receiverId)).limit(1);
+        if (input.receiverId === ctx.user.id)
+          throw new Error("Cannot send a message to yourself");
+        const [recipient] = await db
+          .select({ id: users.id })
+          .from(users)
+          .where(eq(users.id, input.receiverId))
+          .limit(1);
         if (!recipient) throw new Error("Recipient not found");
 
         await db.insert(messages).values({
@@ -1108,25 +1399,28 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
 
-        await db.update(messages)
+        await db
+          .update(messages)
           .set({ isRead: true })
-          .where(and(
-            eq(messages.senderId, input.senderId),
-            eq(messages.receiverId, ctx.user.id),
-            eq(messages.isRead, false),
-          ));
+          .where(
+            and(
+              eq(messages.senderId, input.senderId),
+              eq(messages.receiverId, ctx.user.id),
+              eq(messages.isRead, false),
+            ),
+          );
         return { success: true };
       }),
 
-    list: protectedProcedure
-      .query(async ({ ctx }) => {
-        const db = await getDb();
-        if (!db) throw new Error("Database connection failed");
+    list: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
 
-        const sender = alias(users, "sender");
-        const receiver = alias(users, "receiver");
+      const sender = alias(users, "sender");
+      const receiver = alias(users, "receiver");
 
-        return db.select({
+      return db
+        .select({
           message: messages,
           sender: {
             id: sender.id,
@@ -1143,51 +1437,67 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
             level: receiver.level,
           },
         })
-          .from(messages)
-          .leftJoin(sender, eq(messages.senderId, sender.id))
-          .leftJoin(receiver, eq(messages.receiverId, receiver.id))
-          .where(or(
+        .from(messages)
+        .leftJoin(sender, eq(messages.senderId, sender.id))
+        .leftJoin(receiver, eq(messages.receiverId, receiver.id))
+        .where(
+          or(
             eq(messages.senderId, ctx.user.id),
-            eq(messages.receiverId, ctx.user.id)
-          ))
-          .orderBy(desc(messages.createdAt))
-          .limit(50);
-      }),
+            eq(messages.receiverId, ctx.user.id),
+          ),
+        )
+        .orderBy(desc(messages.createdAt))
+        .limit(50);
+    }),
   }),
 
   achievements: router({
-    getStats: protectedProcedure
-      .query(async ({ ctx }) => {
-        const db = await getDb();
-        if (!db) throw new Error("Database connection failed");
+    getStats: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
 
-        const [user] = await db.select().from(users).where(eq(users.id, ctx.user.id));
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, ctx.user.id));
 
-        // Count related items
-        const [diagnosesCount] = await db.select({ value: count() }).from(diagnoses).where(eq(diagnoses.userId, ctx.user.id));
-        const [journalCount] = await db.select({ value: count() }).from(journalEntries).where(eq(journalEntries.userId, ctx.user.id));
-        const [postsCount] = await db.select({ value: count() }).from(communityPosts).where(eq(communityPosts.userId, ctx.user.id));
+      // Count related items
+      const [diagnosesCount] = await db
+        .select({ value: count() })
+        .from(diagnoses)
+        .where(eq(diagnoses.userId, ctx.user.id));
+      const [journalCount] = await db
+        .select({ value: count() })
+        .from(journalEntries)
+        .where(eq(journalEntries.userId, ctx.user.id));
+      const [postsCount] = await db
+        .select({ value: count() })
+        .from(communityPosts)
+        .where(eq(communityPosts.userId, ctx.user.id));
 
-        const unlocked = await db.select().from(userAchievements).where(eq(userAchievements.userId, ctx.user.id));
+      const unlocked = await db
+        .select()
+        .from(userAchievements)
+        .where(eq(userAchievements.userId, ctx.user.id));
 
-        return {
-          stats: {
-            totalDiagnoses: diagnosesCount?.value || 0,
-            totalPlants: user.totalPlants,
-            totalHarvests: user.totalHarvests,
-            totalYield: parseFloat(user.totalYield || "0"),
-            journalEntries: journalCount?.value || 0,
-            loginStreak: user.streak,
-            longestStreak: Math.max(user.longestStreak, user.streak),
-            communityPosts: postsCount?.value || 0,
-            helpfulAnswers: 0,
-            contestsWon: 0,
-            xp: user.xp,
-            level: user.level,
-          },
-          unlockedAchievements: unlocked,
-        };
-      }),
+      return {
+        stats: {
+          totalDiagnoses: diagnosesCount?.value || 0,
+          totalPlants: user.totalPlants,
+          totalHarvests: user.totalHarvests,
+          totalYield: parseFloat(user.totalYield || "0"),
+          journalEntries: journalCount?.value || 0,
+          loginStreak: user.streak,
+          longestStreak: Math.max(user.longestStreak, user.streak),
+          communityPosts: postsCount?.value || 0,
+          helpfulAnswers: 0,
+          contestsWon: 0,
+          xp: user.xp,
+          level: user.level,
+        },
+        unlockedAchievements: unlocked,
+      };
+    }),
 
     unlock: protectedProcedure
       .input(z.object({ achievementId: z.string() }))
@@ -1196,12 +1506,15 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         if (!db) throw new Error("Database connection failed");
 
         // Check if already unlocked
-        const [existing] = await db.select()
+        const [existing] = await db
+          .select()
           .from(userAchievements)
-          .where(and(
-            eq(userAchievements.userId, ctx.user.id),
-            eq(userAchievements.achievementId, input.achievementId)
-          ));
+          .where(
+            and(
+              eq(userAchievements.userId, ctx.user.id),
+              eq(userAchievements.achievementId, input.achievementId),
+            ),
+          );
 
         if (existing) return { success: true, new: false };
 
@@ -1214,45 +1527,53 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         });
 
         // Award XP defined by the achievement and recompute level
-        const [current] = await db.select({ xp: users.xp }).from(users).where(eq(users.id, ctx.user.id));
+        const [current] = await db
+          .select({ xp: users.xp })
+          .from(users)
+          .where(eq(users.id, ctx.user.id));
         const newXp = (current?.xp ?? 0) + def.points;
-        await db.update(users)
+        await db
+          .update(users)
           .set({ xp: newXp, level: getLevelFromPoints(newXp).level })
           .where(eq(users.id, ctx.user.id));
 
         return { success: true, new: true, xpAwarded: def.points };
       }),
 
-    updateStreak: protectedProcedure
-      .mutation(async ({ ctx }) => {
-        const db = await getDb();
-        if (!db) throw new Error("Database connection failed");
+    updateStreak: protectedProcedure.mutation(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
 
-        const [user] = await db.select().from(users).where(eq(users.id, ctx.user.id));
-        if (!user) throw new Error("User not found");
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, ctx.user.id));
+      if (!user) throw new Error("User not found");
 
-        const now = new Date();
-        const result = computeStreak({
-          streak: user.streak,
-          longestStreak: user.longestStreak,
-          lastActiveAt: user.lastActiveAt,
-          now,
-        });
-        if (result.unchanged) return { streak: user.streak, longestStreak: result.longestStreak };
+      const now = new Date();
+      const result = computeStreak({
+        streak: user.streak,
+        longestStreak: user.longestStreak,
+        lastActiveAt: user.lastActiveAt,
+        now,
+      });
+      if (result.unchanged)
+        return { streak: user.streak, longestStreak: result.longestStreak };
 
-        const newStreak = result.streak;
+      const newStreak = result.streak;
 
-        await db.update(users)
-          .set({
-            streak: newStreak,
-            longestStreak: result.longestStreak,
-            lastActiveAt: now,
-            lastSignedIn: now,
-          })
-          .where(eq(users.id, ctx.user.id));
+      await db
+        .update(users)
+        .set({
+          streak: newStreak,
+          longestStreak: result.longestStreak,
+          lastActiveAt: now,
+          lastSignedIn: now,
+        })
+        .where(eq(users.id, ctx.user.id));
 
-        return { streak: newStreak, longestStreak: result.longestStreak };
-      }),
+      return { streak: newStreak, longestStreak: result.longestStreak };
+    }),
   }),
 
   // Admin panel (admin role only)
@@ -1261,25 +1582,75 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
       const db = await getDb();
       if (!db) throw new Error("Database connection failed");
       const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-      const num = async (q: Promise<{ c: number }[]>) => Number((await q)[0]?.c ?? 0);
-      const [totalUsers, activeUsers, premiumUsers, proUsers, totalDiagnoses, totalPosts, activeContests, pendingRequests, activeAds] = await Promise.all([
+      const num = async (q: Promise<{ c: number }[]>) =>
+        Number((await q)[0]?.c ?? 0);
+      const [
+        totalUsers,
+        activeUsers,
+        premiumUsers,
+        proUsers,
+        totalDiagnoses,
+        totalPosts,
+        activeContests,
+        pendingRequests,
+        activeAds,
+      ] = await Promise.all([
         num(db.select({ c: count() }).from(users)),
-        num(db.select({ c: count() }).from(users).where(gte(users.lastActiveAt, since))),
-        num(db.select({ c: count() }).from(users).where(eq(users.subscriptionTier, "premium"))),
-        num(db.select({ c: count() }).from(users).where(eq(users.subscriptionTier, "pro"))),
+        num(
+          db
+            .select({ c: count() })
+            .from(users)
+            .where(gte(users.lastActiveAt, since)),
+        ),
+        num(
+          db
+            .select({ c: count() })
+            .from(users)
+            .where(eq(users.subscriptionTier, "premium")),
+        ),
+        num(
+          db
+            .select({ c: count() })
+            .from(users)
+            .where(eq(users.subscriptionTier, "pro")),
+        ),
         num(db.select({ c: count() }).from(diagnoses)),
         num(db.select({ c: count() }).from(communityPosts)),
-        num(db.select({ c: count() }).from(giveaways).where(eq(giveaways.status, "active"))),
-        num(db.select({ c: count() }).from(vendorInquiries).where(eq(vendorInquiries.status, "new"))),
-        num(db.select({ c: count() }).from(adBanners).where(eq(adBanners.isActive, true))),
+        num(
+          db
+            .select({ c: count() })
+            .from(giveaways)
+            .where(eq(giveaways.status, "active")),
+        ),
+        num(
+          db
+            .select({ c: count() })
+            .from(vendorInquiries)
+            .where(eq(vendorInquiries.status, "new")),
+        ),
+        num(
+          db
+            .select({ c: count() })
+            .from(adBanners)
+            .where(eq(adBanners.isActive, true)),
+        ),
       ]);
-      const [ad] = await db.select({
-        impressions: sql<number>`COALESCE(SUM(${adBanners.impressions}), 0)`,
-        revenue: sql<number>`COALESCE(SUM(${adBanners.totalSpent}), 0)`,
-      }).from(adBanners);
+      const [ad] = await db
+        .select({
+          impressions: sql<number>`COALESCE(SUM(${adBanners.impressions}), 0)`,
+          revenue: sql<number>`COALESCE(SUM(${adBanners.totalSpent}), 0)`,
+        })
+        .from(adBanners);
       return {
-        totalUsers, activeUsers, premiumUsers, proUsers, totalDiagnoses, totalPosts,
-        activeContests, pendingRequests, activeAds,
+        totalUsers,
+        activeUsers,
+        premiumUsers,
+        proUsers,
+        totalDiagnoses,
+        totalPosts,
+        activeContests,
+        pendingRequests,
+        activeAds,
         adImpressions: Number(ad?.impressions ?? 0),
         adRevenue: Number(ad?.revenue ?? 0),
       };
@@ -1287,43 +1658,83 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
     vendors: adminProcedure.query(async () => {
       const db = await getDb();
       if (!db) throw new Error("Database connection failed");
-      return db.select().from(vendors).orderBy(desc(vendors.createdAt)).limit(200);
+      return db
+        .select()
+        .from(vendors)
+        .orderBy(desc(vendors.createdAt))
+        .limit(200);
     }),
     inquiries: adminProcedure.query(async () => {
       const db = await getDb();
       if (!db) throw new Error("Database connection failed");
-      return db.select().from(vendorInquiries).orderBy(desc(vendorInquiries.createdAt)).limit(200);
+      return db
+        .select()
+        .from(vendorInquiries)
+        .orderBy(desc(vendorInquiries.createdAt))
+        .limit(200);
     }),
     updateInquiry: adminProcedure
-      .input(z.object({ id: z.number(), status: z.enum(["new", "contacted", "negotiating", "approved", "rejected"]) }))
+      .input(
+        z.object({
+          id: z.number(),
+          status: z.enum([
+            "new",
+            "contacted",
+            "negotiating",
+            "approved",
+            "rejected",
+          ]),
+        }),
+      )
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
-        await db.update(vendorInquiries).set({ status: input.status }).where(eq(vendorInquiries.id, input.id));
+        await db
+          .update(vendorInquiries)
+          .set({ status: input.status })
+          .where(eq(vendorInquiries.id, input.id));
         return { success: true };
       }),
     giveaways: adminProcedure.query(async () => {
       const db = await getDb();
       if (!db) throw new Error("Database connection failed");
-      return db.select().from(giveaways).orderBy(desc(giveaways.createdAt)).limit(100);
+      return db
+        .select()
+        .from(giveaways)
+        .orderBy(desc(giveaways.createdAt))
+        .limit(100);
     }),
     endGiveaway: adminProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
-        await db.update(giveaways).set({ status: "ended" }).where(eq(giveaways.id, input.id));
+        await db
+          .update(giveaways)
+          .set({ status: "ended" })
+          .where(eq(giveaways.id, input.id));
         return { success: true };
       }),
     createGiveaway: adminProcedure
-      .input(z.object({ title: z.string().min(1).max(200), prize: z.string().min(1), description: z.string().optional(), days: z.number().int().min(1).max(365) }))
+      .input(
+        z.object({
+          title: z.string().min(1).max(200),
+          prize: z.string().min(1),
+          description: z.string().optional(),
+          days: z.number().int().min(1).max(365),
+        }),
+      )
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
         const now = new Date();
         await db.insert(giveaways).values({
-          title: input.title, prize: input.prize, description: input.description,
-          startsAt: now, endsAt: new Date(now.getTime() + input.days * 86400000), status: "active",
+          title: input.title,
+          prize: input.prize,
+          description: input.description,
+          startsAt: now,
+          endsAt: new Date(now.getTime() + input.days * 86400000),
+          status: "active",
         });
         return { success: true };
       }),
@@ -1332,16 +1743,31 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
   // Vendor outreach tracking (persisted; admin only)
   push: router({
     registerToken: protectedProcedure
-      .input(z.object({ token: z.string().min(10).max(255), platform: z.string().max(16).optional() }))
+      .input(
+        z.object({
+          token: z.string().min(10).max(255),
+          platform: z.string().max(16).optional(),
+        }),
+      )
       .mutation(async ({ ctx, input }) => {
         if (!/^(Exponent|Expo)PushToken\[[^\]]+\]$/.test(input.token)) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: "Ungültiges Push-Token" });
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Ungültiges Push-Token",
+          });
         }
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
-        await db.insert(pushTokens)
-          .values({ userId: ctx.user.id, token: input.token, platform: input.platform })
-          .onDuplicateKeyUpdate({ set: { userId: ctx.user.id, platform: input.platform ?? null } });
+        await db
+          .insert(pushTokens)
+          .values({
+            userId: ctx.user.id,
+            token: input.token,
+            platform: input.platform,
+          })
+          .onDuplicateKeyUpdate({
+            set: { userId: ctx.user.id, platform: input.platform ?? null },
+          });
         return { success: true };
       }),
 
@@ -1353,17 +1779,34 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
     }),
 
     broadcast: adminProcedure
-      .input(z.object({ title: z.string().min(1).max(100), body: z.string().min(1).max(500) }))
+      .input(
+        z.object({
+          title: z.string().min(1).max(100),
+          body: z.string().min(1).max(500),
+        }),
+      )
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
-        const rows = await db.select({ token: pushTokens.token }).from(pushTokens);
-        const summary = await sendExpoPush(rows.map(r => r.token), input);
+        const rows = await db
+          .select({ token: pushTokens.token })
+          .from(pushTokens);
+        const summary = await sendExpoPush(
+          rows.map((r) => r.token),
+          input,
+        );
         if (summary.invalidTokens.length > 0) {
           const { inArray } = await import("drizzle-orm");
-          await db.delete(pushTokens).where(inArray(pushTokens.token, summary.invalidTokens));
+          await db
+            .delete(pushTokens)
+            .where(inArray(pushTokens.token, summary.invalidTokens));
         }
-        return { attempted: summary.attempted, accepted: summary.accepted, failed: summary.failed, removed: summary.invalidTokens.length };
+        return {
+          attempted: summary.attempted,
+          accepted: summary.accepted,
+          failed: summary.failed,
+          removed: summary.invalidTokens.length,
+        };
       }),
   }),
 
@@ -1371,20 +1814,44 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
     list: adminProcedure.query(async () => {
       const db = await getDb();
       if (!db) throw new Error("Database connection failed");
-      return db.select().from(vendorOutreach).orderBy(desc(vendorOutreach.createdAt)).limit(500);
+      return db
+        .select()
+        .from(vendorOutreach)
+        .orderBy(desc(vendorOutreach.createdAt))
+        .limit(500);
     }),
     track: adminProcedure
-      .input(z.object({
-        companyName: z.string().min(1).max(200),
-        contactName: z.string().max(200).optional(),
-        email: z.string().email().max(320),
-        website: z.string().max(500).optional(),
-        vendorType: z.enum(["seedbank", "growshop", "headshop", "nutrient", "equipment", "other"]).default("other"),
-        country: z.string().max(8).optional(),
-        templateId: z.string().min(1).max(64),
-        status: z.enum(["pending", "sent", "opened", "replied", "converted", "rejected"]).default("pending"),
-        notes: z.string().max(5000).optional(),
-      }))
+      .input(
+        z.object({
+          companyName: z.string().min(1).max(200),
+          contactName: z.string().max(200).optional(),
+          email: z.string().email().max(320),
+          website: z.string().max(500).optional(),
+          vendorType: z
+            .enum([
+              "seedbank",
+              "growshop",
+              "headshop",
+              "nutrient",
+              "equipment",
+              "other",
+            ])
+            .default("other"),
+          country: z.string().max(8).optional(),
+          templateId: z.string().min(1).max(64),
+          status: z
+            .enum([
+              "pending",
+              "sent",
+              "opened",
+              "replied",
+              "converted",
+              "rejected",
+            ])
+            .default("pending"),
+          notes: z.string().max(5000).optional(),
+        }),
+      )
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
@@ -1396,16 +1863,26 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         return { id: res.insertId };
       }),
     updateStatus: adminProcedure
-      .input(z.object({
-        id: z.number(),
-        status: z.enum(["pending", "sent", "opened", "replied", "converted", "rejected"]),
-        notes: z.string().max(5000).optional(),
-      }))
+      .input(
+        z.object({
+          id: z.number(),
+          status: z.enum([
+            "pending",
+            "sent",
+            "opened",
+            "replied",
+            "converted",
+            "rejected",
+          ]),
+          notes: z.string().max(5000).optional(),
+        }),
+      )
       .mutation(async ({ input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
         const now = new Date();
-        await db.update(vendorOutreach)
+        await db
+          .update(vendorOutreach)
           .set({
             status: input.status,
             ...(input.notes ? { notes: input.notes } : {}),
@@ -1419,10 +1896,13 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
     stats: adminProcedure.query(async () => {
       const db = await getDb();
       if (!db) throw new Error("Database connection failed");
-      const rows = await db.select({ status: vendorOutreach.status, n: count() })
+      const rows = await db
+        .select({ status: vendorOutreach.status, n: count() })
         .from(vendorOutreach)
         .groupBy(vendorOutreach.status);
-      return summarizeOutreach(rows.map((r) => ({ status: r.status, n: Number(r.n) })));
+      return summarizeOutreach(
+        rows.map((r) => ({ status: r.status, n: Number(r.n) })),
+      );
     }),
   }),
 });

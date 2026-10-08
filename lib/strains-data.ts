@@ -2,9 +2,35 @@
 
 export type StrainType = "indica" | "sativa" | "hybrid";
 export type Difficulty = "beginner" | "intermediate" | "advanced" | "expert";
-export type Effect = "relaxed" | "euphoric" | "creative" | "energetic" | "sleepy" | "hungry" | "focused" | "uplifted";
-export type Flavor = "sweet" | "earthy" | "citrus" | "pine" | "berry" | "diesel" | "skunk" | "tropical" | "spicy" | "cheese";
-export type MedicalUse = "pain" | "anxiety" | "depression" | "insomnia" | "appetite" | "nausea" | "inflammation" | "stress";
+export type Effect =
+  | "relaxed"
+  | "euphoric"
+  | "creative"
+  | "energetic"
+  | "sleepy"
+  | "hungry"
+  | "focused"
+  | "uplifted";
+export type Flavor =
+  | "sweet"
+  | "earthy"
+  | "citrus"
+  | "pine"
+  | "berry"
+  | "diesel"
+  | "skunk"
+  | "tropical"
+  | "spicy"
+  | "cheese";
+export type MedicalUse =
+  | "pain"
+  | "anxiety"
+  | "depression"
+  | "insomnia"
+  | "appetite"
+  | "nausea"
+  | "inflammation"
+  | "stress";
 
 export interface Strain {
   id: string;
@@ -87,7 +113,8 @@ export const STRAINS_DATABASE: Strain[] = [
     effects: ["relaxed", "sleepy", "euphoric", "hungry"],
     flavors: ["sweet", "earthy", "pine"],
     medicalUses: ["insomnia", "pain", "stress", "anxiety"],
-    description: "Northern Lights ist eine der bekanntesten und beliebtesten Indica-Sorten weltweit. Sie ist bekannt für ihre entspannende Wirkung und ihren süßen, erdigen Geschmack. Perfekt für Anfänger aufgrund ihrer Robustheit.",
+    description:
+      "Northern Lights ist eine der bekanntesten und beliebtesten Indica-Sorten weltweit. Sie ist bekannt für ihre entspannende Wirkung und ihren süßen, erdigen Geschmack. Perfekt für Anfänger aufgrund ihrer Robustheit.",
     growTips: [
       "Sehr widerstandsfähig gegen Schimmel und Schädlinge",
       "Ideal für SOG und SCROG Methoden",
@@ -103,8 +130,22 @@ export const STRAINS_DATABASE: Strain[] = [
     rating: 4.8,
     reviewCount: 1245,
     affiliateLinks: [
-      { shop: "Sensi Seeds", url: "https://sensiseeds.com/northern-lights", price: 29.99, currency: "EUR", seedCount: 3, type: "feminized" },
-      { shop: "Royal Queen Seeds", url: "https://royalqueenseeds.com/northern-lights", price: 25.00, currency: "EUR", seedCount: 3, type: "feminized" },
+      {
+        shop: "Sensi Seeds",
+        url: "https://sensiseeds.com/northern-lights",
+        price: 29.99,
+        currency: "EUR",
+        seedCount: 3,
+        type: "feminized",
+      },
+      {
+        shop: "Royal Queen Seeds",
+        url: "https://royalqueenseeds.com/northern-lights",
+        price: 25.0,
+        currency: "EUR",
+        seedCount: 3,
+        type: "feminized",
+      },
     ],
   },
   {
@@ -124,7 +165,8 @@ export const STRAINS_DATABASE: Strain[] = [
     effects: ["euphoric", "creative", "energetic", "uplifted"],
     flavors: ["earthy", "pine", "spicy"],
     medicalUses: ["depression", "stress", "pain", "appetite"],
-    description: "White Widow ist ein legendärer Hybrid aus den Niederlanden. Bekannt für ihre weißen, harzigen Blüten und den ausgewogenen, erhebenden Effekt. Eine der meistverkauften Sorten seit den 90er Jahren.",
+    description:
+      "White Widow ist ein legendärer Hybrid aus den Niederlanden. Bekannt für ihre weißen, harzigen Blüten und den ausgewogenen, erhebenden Effekt. Eine der meistverkauften Sorten seit den 90er Jahren.",
     growTips: [
       "Sehr harzreich - ideal für Extrakte",
       "Kompakte Struktur, gut für kleine Räume",
@@ -140,8 +182,22 @@ export const STRAINS_DATABASE: Strain[] = [
     rating: 4.7,
     reviewCount: 2156,
     affiliateLinks: [
-      { shop: "Dutch Passion", url: "https://dutch-passion.com/white-widow", price: 32.50, currency: "EUR", seedCount: 3, type: "feminized" },
-      { shop: "Royal Queen Seeds", url: "https://royalqueenseeds.com/white-widow", price: 27.00, currency: "EUR", seedCount: 3, type: "feminized" },
+      {
+        shop: "Dutch Passion",
+        url: "https://dutch-passion.com/white-widow",
+        price: 32.5,
+        currency: "EUR",
+        seedCount: 3,
+        type: "feminized",
+      },
+      {
+        shop: "Royal Queen Seeds",
+        url: "https://royalqueenseeds.com/white-widow",
+        price: 27.0,
+        currency: "EUR",
+        seedCount: 3,
+        type: "feminized",
+      },
     ],
   },
   {
@@ -161,7 +217,8 @@ export const STRAINS_DATABASE: Strain[] = [
     effects: ["relaxed", "euphoric", "sleepy", "hungry"],
     flavors: ["diesel", "earthy", "pine"],
     medicalUses: ["pain", "insomnia", "stress", "depression"],
-    description: "Gorilla Glue #4 ist eine extrem potente Sorte mit sehr hohem THC-Gehalt. Der Name kommt von den extrem klebrigen, harzigen Blüten. Mehrfacher Cannabis Cup Gewinner.",
+    description:
+      "Gorilla Glue #4 ist eine extrem potente Sorte mit sehr hohem THC-Gehalt. Der Name kommt von den extrem klebrigen, harzigen Blüten. Mehrfacher Cannabis Cup Gewinner.",
     growTips: [
       "Benötigt Stützen wegen schwerer Blüten",
       "Hoher Nährstoffbedarf in der Blüte",
@@ -179,8 +236,22 @@ export const STRAINS_DATABASE: Strain[] = [
     reviewCount: 3421,
     isPremium: true,
     affiliateLinks: [
-      { shop: "Barney's Farm", url: "https://barneysfarm.com/gorilla-glue", price: 45.00, currency: "EUR", seedCount: 3, type: "feminized" },
-      { shop: "Fast Buds", url: "https://fastbuds.com/gorilla-glue-auto", price: 35.00, currency: "EUR", seedCount: 3, type: "autoflower" },
+      {
+        shop: "Barney's Farm",
+        url: "https://barneysfarm.com/gorilla-glue",
+        price: 45.0,
+        currency: "EUR",
+        seedCount: 3,
+        type: "feminized",
+      },
+      {
+        shop: "Fast Buds",
+        url: "https://fastbuds.com/gorilla-glue-auto",
+        price: 35.0,
+        currency: "EUR",
+        seedCount: 3,
+        type: "autoflower",
+      },
     ],
   },
   {
@@ -200,7 +271,8 @@ export const STRAINS_DATABASE: Strain[] = [
     effects: ["euphoric", "creative", "uplifted", "relaxed"],
     flavors: ["berry", "sweet", "citrus"],
     medicalUses: ["depression", "pain", "stress", "anxiety"],
-    description: "Blue Dream ist eine der beliebtesten Sorten in den USA. Sie bietet einen sanften, ausgewogenen High mit süßem Beerengeschmack. Ideal für den Tag.",
+    description:
+      "Blue Dream ist eine der beliebtesten Sorten in den USA. Sie bietet einen sanften, ausgewogenen High mit süßem Beerengeschmack. Ideal für den Tag.",
     growTips: [
       "Wächst schnell und kräftig",
       "Gut für SCROG wegen langer Seitentriebe",
@@ -217,8 +289,22 @@ export const STRAINS_DATABASE: Strain[] = [
     rating: 4.6,
     reviewCount: 1876,
     affiliateLinks: [
-      { shop: "Royal Queen Seeds", url: "https://royalqueenseeds.com/blue-dream", price: 29.00, currency: "EUR", seedCount: 3, type: "feminized" },
-      { shop: "Fast Buds", url: "https://fastbuds.com/blue-dream-auto", price: 32.00, currency: "EUR", seedCount: 3, type: "autoflower" },
+      {
+        shop: "Royal Queen Seeds",
+        url: "https://royalqueenseeds.com/blue-dream",
+        price: 29.0,
+        currency: "EUR",
+        seedCount: 3,
+        type: "feminized",
+      },
+      {
+        shop: "Fast Buds",
+        url: "https://fastbuds.com/blue-dream-auto",
+        price: 32.0,
+        currency: "EUR",
+        seedCount: 3,
+        type: "autoflower",
+      },
     ],
   },
   {
@@ -238,7 +324,8 @@ export const STRAINS_DATABASE: Strain[] = [
     effects: ["euphoric", "relaxed", "hungry", "sleepy"],
     flavors: ["earthy", "pine", "diesel"],
     medicalUses: ["stress", "pain", "depression", "insomnia"],
-    description: "OG Kush ist eine legendäre Sorte aus Kalifornien und Grundlage vieler moderner Hybriden. Bekannt für ihren einzigartigen erdigen, dieselartigen Geschmack.",
+    description:
+      "OG Kush ist eine legendäre Sorte aus Kalifornien und Grundlage vieler moderner Hybriden. Bekannt für ihren einzigartigen erdigen, dieselartigen Geschmack.",
     growTips: [
       "Benötigt stabile Umgebungsbedingungen",
       "Reagiert empfindlich auf pH-Schwankungen",
@@ -257,8 +344,22 @@ export const STRAINS_DATABASE: Strain[] = [
     reviewCount: 2543,
     isPremium: true,
     affiliateLinks: [
-      { shop: "Sensi Seeds", url: "https://sensiseeds.com/og-kush", price: 39.99, currency: "EUR", seedCount: 3, type: "feminized" },
-      { shop: "Barney's Farm", url: "https://barneysfarm.com/og-kush", price: 42.00, currency: "EUR", seedCount: 3, type: "feminized" },
+      {
+        shop: "Sensi Seeds",
+        url: "https://sensiseeds.com/og-kush",
+        price: 39.99,
+        currency: "EUR",
+        seedCount: 3,
+        type: "feminized",
+      },
+      {
+        shop: "Barney's Farm",
+        url: "https://barneysfarm.com/og-kush",
+        price: 42.0,
+        currency: "EUR",
+        seedCount: 3,
+        type: "feminized",
+      },
     ],
   },
   {
@@ -278,7 +379,8 @@ export const STRAINS_DATABASE: Strain[] = [
     effects: ["euphoric", "energetic", "creative", "uplifted"],
     flavors: ["citrus", "earthy", "sweet"],
     medicalUses: ["depression", "stress", "anxiety", "appetite"],
-    description: "Amnesia Haze ist eine preisgekrönte Sativa mit starkem, zerebralem High. Bekannt für ihren zitrusartigen Geschmack und energetisierenden Effekt.",
+    description:
+      "Amnesia Haze ist eine preisgekrönte Sativa mit starkem, zerebralem High. Bekannt für ihren zitrusartigen Geschmack und energetisierenden Effekt.",
     growTips: [
       "Lange Blütezeit - Geduld erforderlich",
       "Hohe Erträge bei richtiger Pflege",
@@ -295,8 +397,22 @@ export const STRAINS_DATABASE: Strain[] = [
     rating: 4.5,
     reviewCount: 1654,
     affiliateLinks: [
-      { shop: "Royal Queen Seeds", url: "https://royalqueenseeds.com/amnesia-haze", price: 35.00, currency: "EUR", seedCount: 3, type: "feminized" },
-      { shop: "Dutch Passion", url: "https://dutch-passion.com/amnesia-haze", price: 38.00, currency: "EUR", seedCount: 3, type: "feminized" },
+      {
+        shop: "Royal Queen Seeds",
+        url: "https://royalqueenseeds.com/amnesia-haze",
+        price: 35.0,
+        currency: "EUR",
+        seedCount: 3,
+        type: "feminized",
+      },
+      {
+        shop: "Dutch Passion",
+        url: "https://dutch-passion.com/amnesia-haze",
+        price: 38.0,
+        currency: "EUR",
+        seedCount: 3,
+        type: "feminized",
+      },
     ],
   },
   {
@@ -316,7 +432,8 @@ export const STRAINS_DATABASE: Strain[] = [
     effects: ["relaxed", "sleepy", "hungry"],
     flavors: ["sweet", "earthy", "citrus"],
     medicalUses: ["insomnia", "pain", "stress"],
-    description: "Critical Auto ist perfekt für Anfänger. Kompakt, schnell und ertragreich. Automatische Blüte ohne Lichtzyklus-Änderung nötig.",
+    description:
+      "Critical Auto ist perfekt für Anfänger. Kompakt, schnell und ertragreich. Automatische Blüte ohne Lichtzyklus-Änderung nötig.",
     growTips: [
       "Keine Lichtzyklus-Änderung nötig",
       "Von Samen bis Ernte in 8-9 Wochen",
@@ -332,8 +449,22 @@ export const STRAINS_DATABASE: Strain[] = [
     rating: 4.4,
     reviewCount: 987,
     affiliateLinks: [
-      { shop: "Royal Queen Seeds", url: "https://royalqueenseeds.com/critical-auto", price: 22.00, currency: "EUR", seedCount: 3, type: "autoflower" },
-      { shop: "Fast Buds", url: "https://fastbuds.com/critical-auto", price: 25.00, currency: "EUR", seedCount: 3, type: "autoflower" },
+      {
+        shop: "Royal Queen Seeds",
+        url: "https://royalqueenseeds.com/critical-auto",
+        price: 22.0,
+        currency: "EUR",
+        seedCount: 3,
+        type: "autoflower",
+      },
+      {
+        shop: "Fast Buds",
+        url: "https://fastbuds.com/critical-auto",
+        price: 25.0,
+        currency: "EUR",
+        seedCount: 3,
+        type: "autoflower",
+      },
     ],
   },
   {
@@ -353,7 +484,8 @@ export const STRAINS_DATABASE: Strain[] = [
     effects: ["euphoric", "relaxed", "creative", "hungry"],
     flavors: ["sweet", "earthy", "spicy"],
     medicalUses: ["pain", "depression", "stress", "appetite"],
-    description: "Girl Scout Cookies (GSC) ist eine der begehrtesten Sorten weltweit. Extrem potent mit einzigartigem süßen Geschmack. Mehrfacher Cannabis Cup Gewinner.",
+    description:
+      "Girl Scout Cookies (GSC) ist eine der begehrtesten Sorten weltweit. Extrem potent mit einzigartigem süßen Geschmack. Mehrfacher Cannabis Cup Gewinner.",
     growTips: [
       "Kompakte Struktur, gut für SOG",
       "Hoher Nährstoffbedarf",
@@ -371,8 +503,22 @@ export const STRAINS_DATABASE: Strain[] = [
     reviewCount: 2876,
     isPremium: true,
     affiliateLinks: [
-      { shop: "Barney's Farm", url: "https://barneysfarm.com/gsc", price: 48.00, currency: "EUR", seedCount: 3, type: "feminized" },
-      { shop: "Fast Buds", url: "https://fastbuds.com/gsc-auto", price: 38.00, currency: "EUR", seedCount: 3, type: "autoflower" },
+      {
+        shop: "Barney's Farm",
+        url: "https://barneysfarm.com/gsc",
+        price: 48.0,
+        currency: "EUR",
+        seedCount: 3,
+        type: "feminized",
+      },
+      {
+        shop: "Fast Buds",
+        url: "https://fastbuds.com/gsc-auto",
+        price: 38.0,
+        currency: "EUR",
+        seedCount: 3,
+        type: "autoflower",
+      },
     ],
   },
 ];
@@ -460,34 +606,6 @@ export function getMedicalLabel(use: MedicalUse): string {
   return labels[use];
 }
 
-// DEMO DATA: fictional reviews, unused by the UI. Real reviews need a backend.
-export const MOCK_STRAIN_REVIEWS: StrainReview[] = [
-  {
-    id: "rev1",
-    strainId: "northern-lights",
-    userId: "user1",
-    userName: "GreenThumb420",
-    rating: 5,
-    difficulty: "beginner",
-    yieldRating: 5,
-    tasteRating: 4,
-    effectRating: 5,
-    comment: "Perfekte Anfängersorte! Sehr robust und verzeiht Fehler. Toller entspannender Effekt.",
-    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    helpful: 23,
-  },
-  {
-    id: "rev2",
-    strainId: "gorilla-glue",
-    userId: "user2",
-    userName: "CannaKing",
-    rating: 5,
-    difficulty: "intermediate",
-    yieldRating: 5,
-    tasteRating: 5,
-    effectRating: 5,
-    comment: "Unglaublich potent! Die Blüten sind so klebrig, dass die Schere ständig verklebt. Absolut top!",
-    createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-    helpful: 45,
-  },
-];
+// Reviews are now fetched from the backend via tRPC.
+// This type is kept for reference; actual review data comes from the API.
+export type { StrainReview };
