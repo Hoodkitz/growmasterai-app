@@ -1,21 +1,27 @@
 /**
  * Security event logging for audit trail and threat detection
  * Logs authentication attempts, privilege escalation, and suspicious activity
+ *
+ * Writes structured JSON Lines to a daily rotating log file (logs/security-YYYY-MM-DD.log)
+ * and to console. File writes are best-effort: logging must never crash the app.
  */
 
+import { appendFile, mkdir } from "node:fs/promises";
+import { join } from "node:path";
+
 export type SecurityEventType =
-  | 'login_attempt'
-  | 'login_success'
-  | 'login_failure'
-  | 'logout'
-  | 'admin_action'
-  | 'privilege_escalation_attempt'
-  | 'rate_limit_exceeded'
-  | 'invalid_token'
-  | 'suspicious_activity'
-  | 'password_reset_request'
-  | 'password_reset_success'
-  | 'email_verification';
+  | "login_attempt"
+  | "login_success"
+  | "login_failure"
+  | "logout"
+  | "admin_action"
+  | "privilege_escalation_attempt"
+  | "rate_limit_exceeded"
+  | "invalid_token"
+  | "suspicious_activity"
+  | "password_reset_request"
+  | "password_reset_success"
+  | "email_verification";
 
 export interface SecurityEvent {
   type: SecurityEventType;
@@ -30,14 +36,54 @@ export interface SecurityEvent {
   details?: Record<string, any>;
 }
 
+// ---------- file logging ----------
+
+const LOG_DIR = process.env.SECURITY_LOG_DIR ?? "logs";
+const LOG_FILE_PREFIX = "security-";
+const LOG_FILE_SUFFIX = ".log";
+
+function getLogFilePath(date: Date): string {
+  const yyyy = date.getUTCFullYear();
+  const mm = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(date.getUTCDate()).padStart(2, "0");
+  return join(
+    LOG_DIR,
+    `${LOG_FILE_PREFIX}${yyyy}-${mm}-${dd}${LOG_FILE_SUFFIX}`,
+  );
+}
+
+let lastLogDir: string | null = null;
+
+async function ensureLogDir(dir: string): Promise<void> {
+  if (lastLogDir === dir) return;
+  await mkdir(dir, { recursive: true, mode: 0o700 });
+  lastLogDir = dir;
+}
+
+async function writeToFile(event: SecurityEvent): Promise<void> {
+  try {
+    const filePath = getLogFilePath(new Date(event.timestamp));
+    await ensureLogDir(LOG_DIR);
+    const line = JSON.stringify(event) + "\n";
+    await appendFile(filePath, line, { encoding: "utf8", mode: 0o600 });
+  } catch (err) {
+    // Logging must never crash the application
+    console.error(
+      "[SECURITY] Failed to write to log file:",
+      err instanceof Error ? err.message : err,
+    );
+  }
+}
+
+// ---------- public API ----------
+
 /**
- * Logs security events to console and could be extended to send to:
- * - File (security.log)
- * - Database table
- * - External SIEM (Splunk, DataDog, etc.)
- * - Monitoring service (Sentry, New Relic)
+ * Logs security events to console and to a persistent daily log file.
+ * File writes are best-effort: logging must never crash the app.
  */
-export function logSecurityEvent(event: Omit<SecurityEvent, 'timestamp'>): void {
+export function logSecurityEvent(
+  event: Omit<SecurityEvent, "timestamp">,
+): void {
   const fullEvent: SecurityEvent = {
     ...event,
     timestamp: new Date().toISOString(),
@@ -48,37 +94,35 @@ export function logSecurityEvent(event: Omit<SecurityEvent, 'timestamp'>): void 
   const message = formatSecurityEvent(fullEvent);
 
   switch (logLevel) {
-    case 'error':
-      console.error('[SECURITY]', message, fullEvent);
+    case "error":
+      console.error("[SECURITY]", message, fullEvent);
       break;
-    case 'warn':
-      console.warn('[SECURITY]', message, fullEvent);
+    case "warn":
+      console.warn("[SECURITY]", message, fullEvent);
       break;
     default:
-      console.log('[SECURITY]', message, fullEvent);
+      console.log("[SECURITY]", message, fullEvent);
   }
 
-  // TODO: In production, also write to:
-  // - Persistent log file
-  // - Security audit table in database
-  // - External monitoring/SIEM service
+  // Persistent file logging (fire-and-forget, never throws)
+  void writeToFile(fullEvent);
 }
 
-function getLogLevel(type: SecurityEventType): 'info' | 'warn' | 'error' {
+function getLogLevel(type: SecurityEventType): "info" | "warn" | "error" {
   const errorEvents: SecurityEventType[] = [
-    'privilege_escalation_attempt',
-    'suspicious_activity',
-  ];
-  
-  const warnEvents: SecurityEventType[] = [
-    'login_failure',
-    'rate_limit_exceeded',
-    'invalid_token',
+    "privilege_escalation_attempt",
+    "suspicious_activity",
   ];
 
-  if (errorEvents.includes(type)) return 'error';
-  if (warnEvents.includes(type)) return 'warn';
-  return 'info';
+  const warnEvents: SecurityEventType[] = [
+    "login_failure",
+    "rate_limit_exceeded",
+    "invalid_token",
+  ];
+
+  if (errorEvents.includes(type)) return "error";
+  if (warnEvents.includes(type)) return "warn";
+  return "info";
 }
 
 function formatSecurityEvent(event: SecurityEvent): string {
@@ -91,7 +135,7 @@ function formatSecurityEvent(event: SecurityEvent): string {
   if (event.success !== undefined) parts.push(`success=${event.success}`);
   if (event.reason) parts.push(`reason=${event.reason}`);
 
-  return parts.join(' | ');
+  return parts.join(" | ");
 }
 
 /**
@@ -103,20 +147,20 @@ export function getClientIp(req: {
   socket?: { remoteAddress?: string };
 }): string {
   // Check X-Forwarded-For (when behind proxy/load balancer)
-  const forwarded = req.headers['x-forwarded-for'];
+  const forwarded = req.headers["x-forwarded-for"];
   if (forwarded) {
     const ips = Array.isArray(forwarded) ? forwarded[0] : forwarded;
-    return ips.split(',')[0].trim();
+    return ips.split(",")[0].trim();
   }
 
   // Check X-Real-IP
-  const realIp = req.headers['x-real-ip'];
-  if (realIp && typeof realIp === 'string') {
+  const realIp = req.headers["x-real-ip"];
+  if (realIp && typeof realIp === "string") {
     return realIp;
   }
 
   // Fallback to Express IP
-  return req.ip || req.socket?.remoteAddress || 'unknown';
+  return req.ip || req.socket?.remoteAddress || "unknown";
 }
 
 /**
@@ -124,11 +168,13 @@ export function getClientIp(req: {
  */
 export function securityLoggingMiddleware() {
   return (req: any, res: any, next: any) => {
-    req.logSecurityEvent = (event: Omit<SecurityEvent, 'timestamp' | 'ip' | 'userAgent'>) => {
+    req.logSecurityEvent = (
+      event: Omit<SecurityEvent, "timestamp" | "ip" | "userAgent">,
+    ) => {
       logSecurityEvent({
         ...event,
         ip: getClientIp(req),
-        userAgent: req.headers['user-agent'] as string,
+        userAgent: req.headers["user-agent"] as string,
       });
     };
     next();

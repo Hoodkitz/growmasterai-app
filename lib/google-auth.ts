@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   GoogleSignin,
   statusCodes,
@@ -14,7 +15,10 @@ GoogleSignin.configure({
 });
 
 export function useGoogleAuth() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const signIn = async () => {
+    setIsLoading(true);
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
@@ -29,6 +33,8 @@ export function useGoogleAuth() {
       } else {
         throw new Error(error.message || "Google Anmeldung fehlgeschlagen.");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -39,8 +45,6 @@ export function useGoogleAuth() {
       console.error("Google Sign-Out Fehler:", error);
     }
   };
-
-  const isLoading = false;
 
   return { signIn, signOut, isLoading };
 }

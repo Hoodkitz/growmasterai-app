@@ -5,8 +5,8 @@ const env = {
   appName: "GrowMaster AI",
   appSlug: "growmaster-app",
   scheme: "growmasterai",
-  iosBundleId: "com.growmasterai.app",
-  androidPackage: "com.growmasterai.app",
+  iosBundleId: "com.growmaster.app",
+  androidPackage: "com.growmaster.app",
 };
 
 const config: ExpoConfig = {
@@ -22,8 +22,8 @@ const config: ExpoConfig = {
   owner: "growmasterai",
   extra: {
     eas: {
-      projectId: "107675ed-cb12-4ace-a851-8113f28add85"
-    }
+      projectId: "107675ed-cb12-4ace-a851-8113f28add85",
+    },
   },
   ios: {
     supportsTablet: true,
@@ -65,26 +65,31 @@ const config: ExpoConfig = {
     [
       "expo-camera",
       {
-        cameraPermission: "Allow $(PRODUCT_NAME) to access your camera for plant diagnosis.",
+        cameraPermission:
+          "Allow $(PRODUCT_NAME) to access your camera for plant diagnosis.",
       },
     ],
     [
       "expo-image-picker",
       {
-        photosPermission: "Allow $(PRODUCT_NAME) to access your photos for plant diagnosis.",
-        cameraPermission: "Allow $(PRODUCT_NAME) to access your camera for plant diagnosis.",
+        photosPermission:
+          "Allow $(PRODUCT_NAME) to access your photos for plant diagnosis.",
+        cameraPermission:
+          "Allow $(PRODUCT_NAME) to access your camera for plant diagnosis.",
       },
     ],
     [
       "expo-location",
       {
-        locationWhenInUsePermission: "Allow $(PRODUCT_NAME) to use your location to find growshops near you.",
+        locationWhenInUsePermission:
+          "Allow $(PRODUCT_NAME) to use your location to find growshops near you.",
       },
     ],
     [
       "expo-audio",
       {
-        microphonePermission: "Allow $(PRODUCT_NAME) to access your microphone.",
+        microphonePermission:
+          "Allow $(PRODUCT_NAME) to access your microphone.",
       },
     ],
     [
@@ -120,7 +125,10 @@ const config: ExpoConfig = {
     [
       "@react-native-google-signin/google-signin",
       {
-        iosUrlScheme: "com.googleusercontent.apps.824654272024-pamt0fdjln1o6imm97sttuflf0secn89",
+        iosUrlScheme:
+          "com.googleusercontent.apps.824654272024-pamt0fdjln1o6imm97sttuflf0secn89",
+        webClientId:
+          "366301588725-dnado2jdl944lm823n51jnf31fnta60v.apps.googleusercontent.com",
         android: {
           googleServicesFile: "./android/app/google-services.json",
         },
