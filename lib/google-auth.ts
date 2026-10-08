@@ -4,20 +4,51 @@ import {
   statusCodes,
 } from "@react-native-google-signin/google-signin";
 import { Platform } from "react-native";
+import Constants from "expo-constants";
+
+// Read webClientId from app.config.ts (via expo-constants) or process.env
+const googleSigninPlugin = Constants.expoConfig?.plugins?.find(
+  (plugin: any) =>
+    Array.isArray(plugin) &&
+    plugin[0] === "@react-native-google-signin/google-signin",
+) as
+  | [
+      string,
+      { webClientId?: string; iosClientId?: string; iosUrlScheme?: string },
+    ]
+  | undefined;
+
+const webClientId =
+  googleSigninPlugin?.[1]?.webClientId ||
+  process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ||
+  "366301588725-dnado2jdl944lm823n51jnf31fnta60v.apps.googleusercontent.com";
+
+const iosClientId =
+  googleSigninPlugin?.[1]?.iosClientId ||
+  process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID ||
+  "824654272024-pamt0fdjln1o6imm97sttuflf0secn89.apps.googleusercontent.com";
+
+let isConfigured = false;
 
 // Configure Google Sign-In
-GoogleSignin.configure({
-  webClientId:
-    "824654272024-6iq3g2cq9tltl3o58mo4t654mhljl944.apps.googleusercontent.com",
-  iosClientId:
-    "824654272024-pamt0fdjln1o6imm97sttuflf0secn89.apps.googleusercontent.com",
-  offlineAccess: true,
-});
+function ensureConfigured() {
+  if (isConfigured) return;
+  GoogleSignin.configure({
+    webClientId,
+    iosClientId,
+    offlineAccess: true,
+  });
+  isConfigured = true;
+}
+
+// Auto-configure on module load
+ensureConfigured();
 
 export function useGoogleAuth() {
   const [isLoading, setIsLoading] = useState(false);
 
   const signIn = async () => {
+    ensureConfigured();
     setIsLoading(true);
     try {
       await GoogleSignin.hasPlayServices();
