@@ -61,7 +61,8 @@ export function getErrorDetails(error: unknown): ErrorDetails {
       case "TIMEOUT":
         return {
           title: "Zeitüberschreitung",
-          message: "Die Anfrage hat zu lange gedauert. Bitte versuche es erneut.",
+          message:
+            "Die Anfrage hat zu lange gedauert. Bitte versuche es erneut.",
           action: "Erneut versuchen",
           retryable: true,
         };
@@ -69,7 +70,8 @@ export function getErrorDetails(error: unknown): ErrorDetails {
       case "INTERNAL_SERVER_ERROR":
         return {
           title: "Server-Fehler",
-          message: "Ein interner Fehler ist aufgetreten. Unser Team wurde benachrichtigt.",
+          message:
+            "Ein interner Fehler ist aufgetreten. Unser Team wurde benachrichtigt.",
           action: "Später erneut versuchen",
           retryable: true,
         };
@@ -79,16 +81,21 @@ export function getErrorDetails(error: unknown): ErrorDetails {
         if (message.includes("network") || message.includes("fetch")) {
           return {
             title: "Verbindungsfehler",
-            message: "Keine Internetverbindung. Bitte überprüfe deine Netzwerkeinstellungen.",
+            message:
+              "Keine Internetverbindung. Bitte überprüfe deine Netzwerkeinstellungen.",
             action: "Verbindung prüfen",
             retryable: true,
           };
         }
 
-        if (message.includes("Limit erreicht") || message.includes("Kontingent")) {
+        if (
+          message.includes("Limit erreicht") ||
+          message.includes("Kontingent")
+        ) {
           return {
             title: "Tageslimit erreicht",
-            message: "Du hast dein heutiges Kontingent aufgebraucht. Upgrade für mehr Nutzung.",
+            message:
+              "Du hast dein heutiges Kontingent aufgebraucht. Upgrade für mehr Nutzung.",
             action: "Premium holen",
             retryable: false,
           };
@@ -107,7 +114,8 @@ export function getErrorDetails(error: unknown): ErrorDetails {
   if (error instanceof TypeError && error.message.includes("fetch")) {
     return {
       title: "Netzwerkfehler",
-      message: "Verbindung zum Server fehlgeschlagen. Bitte überprüfe deine Internetverbindung.",
+      message:
+        "Verbindung zum Server fehlgeschlagen. Bitte überprüfe deine Internetverbindung.",
       action: "Verbindung prüfen",
       retryable: true,
     };
@@ -136,7 +144,8 @@ export function getErrorDetails(error: unknown): ErrorDetails {
   // Unknown error type
   return {
     title: "Unbekannter Fehler",
-    message: "Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.",
+    message:
+      "Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.",
     action: "Erneut versuchen",
     retryable: true,
   };
@@ -153,14 +162,16 @@ export function getDiagnosisErrorMessage(error: unknown): ErrorDetails {
   if (baseError.title === "Server-Fehler") {
     return {
       ...baseError,
-      message: "Die KI-Analyse ist derzeit nicht verfügbar. Bitte versuche es in wenigen Minuten erneut.",
+      message:
+        "Die KI-Analyse ist derzeit nicht verfügbar. Bitte versuche es in wenigen Minuten erneut.",
     };
   }
 
   if (baseError.title === "Zeitüberschreitung") {
     return {
       ...baseError,
-      message: "Die Bildanalyse dauert länger als erwartet. Versuche es mit weniger oder kleineren Bildern.",
+      message:
+        "Die Bildanalyse dauert länger als erwartet. Versuche es mit weniger oder kleineren Bildern.",
     };
   }
 
@@ -174,14 +185,16 @@ export function getCoachErrorMessage(error: unknown): ErrorDetails {
   if (baseError.title === "Server-Fehler") {
     return {
       ...baseError,
-      message: "Der Coach ist derzeit nicht verfügbar. Bitte versuche es in wenigen Minuten erneut.",
+      message:
+        "Der Coach ist derzeit nicht verfügbar. Bitte versuche es in wenigen Minuten erneut.",
     };
   }
 
   if (baseError.title === "Zeitüberschreitung") {
     return {
       ...baseError,
-      message: "Der Coach denkt gerade sehr intensiv nach. Bitte versuche es erneut oder stelle eine einfachere Frage.",
+      message:
+        "Der Coach denkt gerade sehr intensiv nach. Bitte versuche es erneut oder stelle eine einfachere Frage.",
     };
   }
 
@@ -192,10 +205,14 @@ export function getRadarErrorMessage(error: unknown): ErrorDetails {
   const baseError = getErrorDetails(error);
 
   // Customize for radar/map feature
-  if (baseError.title === "Netzwerkfehler" || baseError.title === "Verbindungsfehler") {
+  if (
+    baseError.title === "Netzwerkfehler" ||
+    baseError.title === "Verbindungsfehler"
+  ) {
     return {
       title: "Kartendienst nicht erreichbar",
-      message: "Die Karte konnte nicht geladen werden. Versuche es später erneut oder nutze zwischengespeicherte Daten.",
+      message:
+        "Die Karte konnte nicht geladen werden. Versuche es später erneut oder nutze zwischengespeicherte Daten.",
       action: "Offline-Daten verwenden",
       retryable: true,
     };
@@ -204,7 +221,8 @@ export function getRadarErrorMessage(error: unknown): ErrorDetails {
   if (baseError.title === "Server-Fehler") {
     return {
       ...baseError,
-      message: "Der Kartendienst ist derzeit nicht verfügbar. Zwischengespeicherte Daten werden angezeigt.",
+      message:
+        "Der Kartendienst ist derzeit nicht verfügbar. Zwischengespeicherte Daten werden angezeigt.",
     };
   }
 
@@ -218,7 +236,7 @@ export async function isOffline(): Promise<boolean> {
   // For React Native, you'd use @react-native-community/netinfo
   // For now, return a simple check
   try {
-    const response = await fetch("https://www.google.com", {
+    await fetch("https://www.google.com", {
       method: "HEAD",
       mode: "no-cors",
       cache: "no-cache",
@@ -232,7 +250,9 @@ export async function isOffline(): Promise<boolean> {
 /**
  * Estimate time remaining for AI processing
  */
-export function getEstimatedProcessingTime(feature: "diagnosis" | "coach" | "gender" | "strain" | "harvest"): number {
+export function getEstimatedProcessingTime(
+  feature: "diagnosis" | "coach" | "gender" | "strain" | "harvest",
+): number {
   // Returns estimated seconds
   switch (feature) {
     case "diagnosis":

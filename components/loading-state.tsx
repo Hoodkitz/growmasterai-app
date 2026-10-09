@@ -45,7 +45,8 @@ export function LoadingState({
     return () => clearInterval(interval);
   }, []);
 
-  const progress = estimatedSeconds > 0 ? (elapsed / estimatedSeconds) * 100 : 0;
+  const progress =
+    estimatedSeconds > 0 ? (elapsed / estimatedSeconds) * 100 : 0;
   const remainingSeconds = Math.max(0, estimatedSeconds - elapsed);
 
   if (compact) {
@@ -165,7 +166,9 @@ export function AIProcessingIndicator({
             {getFeatureMessage()}
             {dots}
           </Text>
-          <Text className="text-xs text-muted mt-1">~{getEstimatedTime()}s</Text>
+          <Text className="text-xs text-muted mt-1">
+            ~{getEstimatedTime()}s
+          </Text>
         </View>
       </View>
     );
@@ -175,7 +178,11 @@ export function AIProcessingIndicator({
     <View className="bg-surface rounded-2xl p-6 border border-border items-center gap-4">
       <View className="relative">
         <View className="w-20 h-20 rounded-full bg-primary/20 items-center justify-center">
-          <IconSymbol name="brain.head.profile" size={32} color={colors.primary} />
+          <IconSymbol
+            name="brain.head.profile"
+            size={32}
+            color={colors.primary}
+          />
         </View>
         <View className="absolute -bottom-1 -right-1 bg-background rounded-full p-1">
           <ActivityIndicator size="small" color={colors.primary} />
@@ -196,7 +203,8 @@ export function AIProcessingIndicator({
         <View className="flex-row items-start gap-2">
           <IconSymbol name="lightbulb.fill" size={16} color={colors.primary} />
           <Text className="flex-1 text-xs text-muted">
-            Die KI analysiert Millionen von Datenpunkten, um dir die beste Antwort zu geben.
+            Die KI analysiert Millionen von Datenpunkten, um dir die beste
+            Antwort zu geben.
           </Text>
         </View>
       </View>
@@ -208,8 +216,6 @@ export function AIProcessingIndicator({
  * Skeleton loader for content
  */
 export function SkeletonLoader({ lines = 3 }: { lines?: number }) {
-  const colors = useColors();
-
   return (
     <View className="gap-3">
       {Array.from({ length: lines }).map((_, i) => (

@@ -77,7 +77,7 @@ export function PushRegistrar() {
         responseListener.current.remove();
       }
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, register]);
 
   // Schedule streak reminder notification
   useEffect(() => {

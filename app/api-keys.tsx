@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { ScrollView, Text, View, TouchableOpacity, Alert, TextInput } from "react-native";
+import {
+  ScrollView,
+  Text,
+  View,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -65,14 +71,16 @@ export default function ApiKeysScreen() {
   };
 
   const revokeKey = async (id: string) => {
-    const next = keys.map((k) => (k.id === id ? { ...k, is_active: false } : k));
+    const next = keys.map((k) =>
+      k.id === id ? { ...k, is_active: false } : k,
+    );
     setKeys(next);
     await AsyncStorage.setItem(API_KEYS_KEY, JSON.stringify(next));
   };
 
   const togglePerm = (perm: string) => {
     setNewKeyPerms((prev) =>
-      prev.includes(perm) ? prev.filter((p) => p !== perm) : [...prev, perm]
+      prev.includes(perm) ? prev.filter((p) => p !== perm) : [...prev, perm],
     );
   };
 
@@ -89,11 +97,18 @@ export default function ApiKeysScreen() {
       style={{ flex: 1, backgroundColor: colors.background }}
       contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 32 }}
     >
-      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 16 }}>
-        <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 12 }}>
+      <View
+        style={{ flexDirection: "row", alignItems: "center", marginBottom: 16 }}
+      >
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={{ marginRight: 12 }}
+        >
           <IconSymbol name="chevron-left" size={24} color={colors.foreground} />
         </TouchableOpacity>
-        <Text style={{ fontSize: 22, fontWeight: "700", color: colors.foreground }}>
+        <Text
+          style={{ fontSize: 22, fontWeight: "700", color: colors.foreground }}
+        >
           API-Keys
         </Text>
       </View>
@@ -108,7 +123,9 @@ export default function ApiKeysScreen() {
           marginBottom: 16,
         }}
       >
-        <Text style={{ color: "#fff", fontWeight: "600" }}>+ Neuer API-Key</Text>
+        <Text style={{ color: "#fff", fontWeight: "600" }}>
+          + Neuer API-Key
+        </Text>
       </TouchableOpacity>
 
       {showCreate && (
@@ -122,7 +139,13 @@ export default function ApiKeysScreen() {
             borderColor: colors.border,
           }}
         >
-          <Text style={{ fontWeight: "600", marginBottom: 8, color: colors.foreground }}>
+          <Text
+            style={{
+              fontWeight: "600",
+              marginBottom: 8,
+              color: colors.foreground,
+            }}
+          >
             Neuen API-Key erstellen
           </Text>
           <TextInput
@@ -162,7 +185,9 @@ export default function ApiKeysScreen() {
               >
                 <Text
                   style={{
-                    color: newKeyPerms.includes(perm) ? "#fff" : colors.foreground,
+                    color: newKeyPerms.includes(perm)
+                      ? "#fff"
+                      : colors.foreground,
                     fontSize: 13,
                   }}
                 >
@@ -196,7 +221,9 @@ export default function ApiKeysScreen() {
             borderColor: "#f59e0b",
           }}
         >
-          <Text style={{ fontWeight: "600", marginBottom: 4, color: "#92400e" }}>
+          <Text
+            style={{ fontWeight: "600", marginBottom: 4, color: "#92400e" }}
+          >
             API-Key erstellt (einmalig angezeigt):
           </Text>
           <Text style={{ color: "#92400e", fontSize: 12 }} selectable>
@@ -206,7 +233,9 @@ export default function ApiKeysScreen() {
       )}
 
       {keys.length === 0 ? (
-        <Text style={{ color: colors.muted, textAlign: "center", marginTop: 32 }}>
+        <Text
+          style={{ color: colors.muted, textAlign: "center", marginTop: 32 }}
+        >
           Noch keine API-Keys vorhanden.
         </Text>
       ) : (
@@ -222,7 +251,9 @@ export default function ApiKeysScreen() {
               borderColor: colors.border,
             }}
           >
-            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
               <Text style={{ fontWeight: "600", color: colors.foreground }}>
                 {key.name}
               </Text>
@@ -256,7 +287,9 @@ export default function ApiKeysScreen() {
                 onPress={() => revokeKey(key.id)}
                 style={{ marginTop: 8 }}
               >
-                <Text style={{ color: "#dc2626", fontSize: 13 }}>Widerrufen</Text>
+                <Text style={{ color: "#dc2626", fontSize: 13 }}>
+                  Widerrufen
+                </Text>
               </TouchableOpacity>
             )}
           </View>

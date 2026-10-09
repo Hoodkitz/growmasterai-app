@@ -18,7 +18,6 @@ import {
 
 let RCPurchases: any = null;
 let RC_LOG_LEVEL: any = null;
-let RC_PACKAGE_TYPE: any = null;
 let _nativeModuleLoaded = false;
 
 function loadNativeModule(): boolean {
@@ -36,10 +35,10 @@ function loadNativeModule(): boolean {
   }
 
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const mod = require("react-native-purchases");
     RCPurchases = mod.default;
     RC_LOG_LEVEL = mod.LOG_LEVEL;
-    RC_PACKAGE_TYPE = mod.PACKAGE_TYPE;
     console.log("[Purchases] Native module loaded successfully");
     return true;
   } catch (error) {

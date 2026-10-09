@@ -3,10 +3,17 @@
  * Shows all reminders for a plant with quick actions
  */
 
-import { View, Text, TouchableOpacity, Switch, ScrollView } from 'react-native';
-import { useState, useEffect } from 'react';
-import { PlantReminder, getPlantReminders, toggleReminder, completeReminder, snoozeReminder, deleteReminder } from '@/lib/reminder-system';
-import { format } from 'date-fns';
+import { View, Text, TouchableOpacity, Switch, ScrollView } from "react-native";
+import { useState, useEffect, useCallback } from "react";
+import {
+  PlantReminder,
+  getPlantReminders,
+  toggleReminder,
+  completeReminder,
+  snoozeReminder,
+  deleteReminder,
+} from "@/lib/reminder-system";
+import { format } from "date-fns";
 
 interface ReminderListProps {
   plantId: string;
@@ -17,16 +24,16 @@ export function ReminderList({ plantId, onRefresh }: ReminderListProps) {
   const [reminders, setReminders] = useState<PlantReminder[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const loadReminders = async () => {
+  const loadReminders = useCallback(async () => {
     setLoading(true);
     const data = await getPlantReminders(plantId);
     setReminders(data);
     setLoading(false);
-  };
+  }, [plantId]);
 
   useEffect(() => {
     loadReminders();
-  }, [plantId]);
+  }, [plantId, loadReminders]);
 
   const handleToggle = async (reminderId: string) => {
     await toggleReminder(reminderId);
@@ -52,13 +59,18 @@ export function ReminderList({ plantId, onRefresh }: ReminderListProps) {
     onRefresh?.();
   };
 
-  const getReminderIcon = (type: PlantReminder['type']) => {
+  const getReminderIcon = (type: PlantReminder["type"]) => {
     switch (type) {
-      case 'watering': return '💧';
-      case 'feeding': return '🌿';
-      case 'training': return '✂️';
-      case 'inspection': return '🔍';
-      default: return '📌';
+      case "watering":
+        return "💧";
+      case "feeding":
+        return "🌿";
+      case "training":
+        return "✂️";
+      case "inspection":
+        return "🔍";
+      default:
+        return "📌";
     }
   };
 
@@ -90,7 +102,9 @@ export function ReminderList({ plantId, onRefresh }: ReminderListProps) {
           {/* Header */}
           <View className="flex-row items-center justify-between mb-2">
             <View className="flex-row items-center flex-1">
-              <Text className="text-2xl mr-2">{getReminderIcon(reminder.type)}</Text>
+              <Text className="text-2xl mr-2">
+                {getReminderIcon(reminder.type)}
+              </Text>
               <Text className="text-base font-semibold text-foreground flex-1">
                 {reminder.title}
               </Text>
@@ -98,20 +112,19 @@ export function ReminderList({ plantId, onRefresh }: ReminderListProps) {
             <Switch
               value={reminder.enabled}
               onValueChange={() => handleToggle(reminder.id)}
-              trackColor={{ false: '#D1D5DB', true: '#10B981' }}
-              thumbColor={reminder.enabled ? '#fff' : '#9CA3AF'}
+              trackColor={{ false: "#D1D5DB", true: "#10B981" }}
+              thumbColor={reminder.enabled ? "#fff" : "#9CA3AF"}
             />
           </View>
 
           {/* Message */}
-          <Text className="text-sm text-muted mb-2">
-            {reminder.message}
-          </Text>
+          <Text className="text-sm text-muted mb-2">{reminder.message}</Text>
 
           {/* Scheduled Time */}
           <Text className="text-xs text-muted mb-3">
-            Next: {format(reminder.scheduledTime, 'MMM d, h:mm a')}
-            {reminder.repeatDays && ` • Repeats every ${reminder.repeatDays} days`}
+            Next: {format(reminder.scheduledTime, "MMM d, h:mm a")}
+            {reminder.repeatDays &&
+              ` • Repeats every ${reminder.repeatDays} days`}
           </Text>
 
           {/* Quick Actions */}

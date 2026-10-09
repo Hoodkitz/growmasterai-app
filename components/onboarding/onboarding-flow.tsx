@@ -3,11 +3,11 @@
  * Guides new users through the app in 60 seconds
  */
 
-import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { useState } from 'react';
-import { router } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LinearGradient } from 'expo-linear-gradient';
+import { View, Text, TouchableOpacity } from "react-native";
+import { useState } from "react";
+import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface OnboardingStep {
   id: number;
@@ -20,37 +20,42 @@ interface OnboardingStep {
 const ONBOARDING_STEPS: OnboardingStep[] = [
   {
     id: 1,
-    title: '🌱 Willkommen!',
-    description: 'GrowMaster AI hilft dir, gesunde Cannabis-Pflanzen zu züchten. Ganz einfach mit deinem Handy.',
-    image: '🌿',
-    actionLabel: 'Los geht\'s',
+    title: "🌱 Willkommen!",
+    description:
+      "GrowMaster AI hilft dir, gesunde Cannabis-Pflanzen zu züchten. Ganz einfach mit deinem Handy.",
+    image: "🌿",
+    actionLabel: "Los geht's",
   },
   {
     id: 2,
-    title: '📸 Foto machen',
-    description: 'Mach ein Foto von deiner Pflanze. Die KI sagt dir sofort, ob alles okay ist oder was sie braucht.',
-    image: '📷',
-    actionLabel: 'Verstanden',
+    title: "📸 Foto machen",
+    description:
+      "Mach ein Foto von deiner Pflanze. Die KI sagt dir sofort, ob alles okay ist oder was sie braucht.",
+    image: "📷",
+    actionLabel: "Verstanden",
   },
   {
     id: 3,
-    title: '💬 Fragen stellen',
-    description: 'Frag einfach, wenn du Hilfe brauchst. Der KI-Coach antwortet rund um die Uhr.',
-    image: '🤖',
-    actionLabel: 'Fertig!',
+    title: "💬 Fragen stellen",
+    description:
+      "Frag einfach, wenn du Hilfe brauchst. Der KI-Coach antwortet rund um die Uhr.",
+    image: "🤖",
+    actionLabel: "Fertig!",
   },
 ];
 
-const ONBOARDING_KEY = '@growmaster_onboarding_completed';
+const ONBOARDING_KEY = "@growmaster_onboarding_completed";
 
 export async function getOnboardingStatus(): Promise<boolean> {
   try {
     const v = await AsyncStorage.getItem(ONBOARDING_KEY);
-    return v === 'true';
-  } catch { return false; }
+    return v === "true";
+  } catch {
+    return false;
+  }
 }
 export async function setOnboardingComplete(): Promise<void> {
-  await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
+  await AsyncStorage.setItem(ONBOARDING_KEY, "true");
 }
 export async function resetOnboarding(): Promise<void> {
   await AsyncStorage.removeItem(ONBOARDING_KEY);
@@ -68,24 +73,21 @@ export function OnboardingFlow() {
   };
 
   const handleSkip = async () => {
-    await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
-    router.replace('/(tabs)');
+    await AsyncStorage.setItem(ONBOARDING_KEY, "true");
+    router.replace("/(tabs)");
   };
 
   const completeOnboarding = async () => {
-    await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
+    await AsyncStorage.setItem(ONBOARDING_KEY, "true");
     // Navigate to plant setup wizard
-    router.replace('/onboarding/setup-first-plant');
+    router.replace("/onboarding/setup-first-plant");
   };
 
   const step = ONBOARDING_STEPS[currentStep];
 
   return (
     <View className="flex-1 bg-background">
-      <LinearGradient
-        colors={['#10B981', '#059669']}
-        className="flex-1"
-      >
+      <LinearGradient colors={["#10B981", "#059669"]} className="flex-1">
         {/* Skip Button */}
         <View className="absolute top-12 right-6 z-10">
           <TouchableOpacity onPress={handleSkip}>
@@ -117,9 +119,7 @@ export function OnboardingFlow() {
               <View
                 key={index}
                 className={`h-2 rounded-full mx-1 ${
-                  index === currentStep
-                    ? 'w-8 bg-white'
-                    : 'w-2 bg-white/40'
+                  index === currentStep ? "w-8 bg-white" : "w-2 bg-white/40"
                 }`}
               />
             ))}
@@ -131,7 +131,7 @@ export function OnboardingFlow() {
             className="bg-white rounded-2xl py-4 px-8 shadow-lg"
           >
             <Text className="text-primary text-center text-lg font-bold">
-              {step.actionLabel || 'Next'}
+              {step.actionLabel || "Next"}
             </Text>
           </TouchableOpacity>
         </View>

@@ -3,7 +3,6 @@ import {
   GoogleSignin,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
-import { Platform } from "react-native";
 import Constants from "expo-constants";
 
 // Read webClientId from app.config.ts (via expo-constants) or process.env

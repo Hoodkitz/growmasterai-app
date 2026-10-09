@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
-import { ScrollView, Text, View, TouchableOpacity, Alert, ActivityIndicator, Platform } from "react-native";
+import {
+  ScrollView,
+  Text,
+  View,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+  Platform,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
-import {
-  TIER_INFO,
-  TIER_LIMITS,
-  TIER_PRICING,
-} from "@/lib/subscription";
+import { TIER_INFO, TIER_LIMITS, TIER_PRICING } from "@/lib/subscription";
 import {
   initializePurchases,
   getTierOfferings,
@@ -17,7 +21,6 @@ import {
   restorePurchases,
   formatPrice,
   getSubscriptionStatus,
-  isPurchasesAvailable,
   getPurchaseErrorMessage,
   PRODUCT_IDS,
 } from "@/lib/purchases";
@@ -34,7 +37,9 @@ export default function PaywallScreen() {
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("yearly");
   const [isLoading, setIsLoading] = useState(false);
   const [restoring, setRestoring] = useState(false);
-  const [tierOfferings, setTierOfferings] = useState<Partial<Record<PaidTier, any>>>({});
+  const [tierOfferings, setTierOfferings] = useState<
+    Partial<Record<PaidTier, any>>
+  >({});
   const [selectedTier, setSelectedTier] = useState<PaidTier>("pro");
   const [rcReady, setRcReady] = useState(false);
 
@@ -57,11 +62,15 @@ export default function PaywallScreen() {
       }
     })();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Angebotene Tiers: nur solche mit konfiguriertem Offering/Paketen (Pro-Fallback ohne Premium)
-  const availableTiers: PaidTier[] = (["premium", "pro"] as const).filter((t) => !!tierOfferings[t]);
+  const availableTiers: PaidTier[] = (["premium", "pro"] as const).filter(
+    (t) => !!tierOfferings[t],
+  );
   const offerings = tierOfferings[selectedTier] ?? null;
 
   // Finde das richtige Paket aus dem Offering
@@ -70,12 +79,28 @@ export default function PaywallScreen() {
     const packages = offerings.availablePackages || [];
 
     if (billingPeriod === "lifetime") {
-      return offerings.lifetime ?? packages.find((p: any) => p.identifier === "$rc_lifetime" || p.product?.identifier === PRODUCT_IDS.LIFETIME) ?? null;
+      return (
+        offerings.lifetime ??
+        packages.find(
+          (p: any) =>
+            p.identifier === "$rc_lifetime" ||
+            p.product?.identifier === PRODUCT_IDS.LIFETIME,
+        ) ??
+        null
+      );
     }
     if (billingPeriod === "yearly") {
-      return offerings.annual ?? packages.find((p: any) => p.identifier === "$rc_annual") ?? null;
+      return (
+        offerings.annual ??
+        packages.find((p: any) => p.identifier === "$rc_annual") ??
+        null
+      );
     }
-    return offerings.monthly ?? packages.find((p: any) => p.identifier === "$rc_monthly") ?? null;
+    return (
+      offerings.monthly ??
+      packages.find((p: any) => p.identifier === "$rc_monthly") ??
+      null
+    );
   };
   const getSelectedPackage = () => getPackageFor(billingPeriod);
 
@@ -94,12 +119,15 @@ export default function PaywallScreen() {
           Alert.alert(
             "Kauf erfolgreich!",
             `Willkommen bei GrowMaster ${status.tier === "pro" ? "Pro" : "Premium"}! Alle Features sind jetzt freigeschaltet.`,
-            [{ text: "OK", onPress: () => router.back() }]
+            [{ text: "OK", onPress: () => router.back() }],
           );
         } else if (result.userCancelled) {
           // User hat abgebrochen — kein Alert nötig
         } else {
-          Alert.alert("Kauf fehlgeschlagen", getPurchaseErrorMessage({ message: result.error }));
+          Alert.alert(
+            "Kauf fehlgeschlagen",
+            getPurchaseErrorMessage({ message: result.error }),
+          );
         }
       } catch (error: any) {
         Alert.alert("Fehler", getPurchaseErrorMessage(error));
@@ -114,20 +142,23 @@ export default function PaywallScreen() {
       Alert.alert(
         "Nicht verfügbar",
         "In-App-Käufe konnten nicht initialisiert werden. Bitte stelle sicher, dass du eine aktive Internetverbindung hast und versuche es erneut.",
-        [{ text: "OK" }]
+        [{ text: "OK" }],
       );
     } else {
       Alert.alert(
         "Keine Pakete gefunden",
         "Die Abo-Pakete konnten nicht geladen werden. Bitte versuche es später erneut.",
-        [{ text: "OK" }]
+        [{ text: "OK" }],
       );
     }
   };
 
   const handleRestore = async () => {
     if (Platform.OS === "web") {
-      Alert.alert("Nicht verfügbar", "Käufe können nur in der mobilen App wiederhergestellt werden.");
+      Alert.alert(
+        "Nicht verfügbar",
+        "Käufe können nur in der mobilen App wiederhergestellt werden.",
+      );
       return;
     }
 
@@ -136,7 +167,10 @@ export default function PaywallScreen() {
       if (!rcReady) {
         const ok = await initializePurchases();
         if (!ok) {
-          Alert.alert("Fehler", "RevenueCat konnte nicht initialisiert werden.");
+          Alert.alert(
+            "Fehler",
+            "RevenueCat konnte nicht initialisiert werden.",
+          );
           setRestoring(false);
           return;
         }
@@ -146,11 +180,17 @@ export default function PaywallScreen() {
       if (result.success && result.hasActiveEntitlement) {
         const status = await getSubscriptionStatus();
         setTier(status.tier);
-        Alert.alert("Käufe wiederhergestellt!", `Dein Abo wurde wiederhergestellt.`);
+        Alert.alert(
+          "Käufe wiederhergestellt!",
+          `Dein Abo wurde wiederhergestellt.`,
+        );
       } else {
-        Alert.alert("Keine Käufe gefunden", "Es wurden keine aktiven Abonnements für dieses Konto gefunden.");
+        Alert.alert(
+          "Keine Käufe gefunden",
+          "Es wurden keine aktiven Abonnements für dieses Konto gefunden.",
+        );
       }
-    } catch (error) {
+    } catch {
       Alert.alert("Fehler", "Käufe konnten nicht wiederhergestellt werden.");
     } finally {
       setRestoring(false);
@@ -164,13 +204,41 @@ export default function PaywallScreen() {
 
   const fmt = (n: number) => (n === -1 ? "∞" : String(n));
   const comparisonRows: { label: string; free: string; pro: string }[] = [
-    { label: "Diagnosen/Tag", free: fmt(TIER_LIMITS.free.diagnosesPerDay), pro: fmt(TIER_LIMITS.pro.diagnosesPerDay) },
-    { label: "Coach-Nachrichten", free: fmt(TIER_LIMITS.free.coachMessagesPerDay), pro: fmt(TIER_LIMITS.pro.coachMessagesPerDay) },
-    { label: "Pflanzen", free: fmt(TIER_LIMITS.free.maxPlants), pro: fmt(TIER_LIMITS.pro.maxPlants) },
-    { label: "Journal-Einträge", free: fmt(TIER_LIMITS.free.maxJournalEntries), pro: fmt(TIER_LIMITS.pro.maxJournalEntries) },
-    { label: "Werbefrei", free: TIER_LIMITS.free.adFree ? "✓" : "—", pro: TIER_LIMITS.pro.adFree ? "✓" : "—" },
-    { label: "Daten-Export", free: TIER_LIMITS.free.exportData ? "✓" : "—", pro: TIER_LIMITS.pro.exportData ? "✓" : "—" },
-    { label: "Prioritäts-Support", free: TIER_LIMITS.free.prioritySupport ? "✓" : "—", pro: TIER_LIMITS.pro.prioritySupport ? "✓" : "—" },
+    {
+      label: "Diagnosen/Tag",
+      free: fmt(TIER_LIMITS.free.diagnosesPerDay),
+      pro: fmt(TIER_LIMITS.pro.diagnosesPerDay),
+    },
+    {
+      label: "Coach-Nachrichten",
+      free: fmt(TIER_LIMITS.free.coachMessagesPerDay),
+      pro: fmt(TIER_LIMITS.pro.coachMessagesPerDay),
+    },
+    {
+      label: "Pflanzen",
+      free: fmt(TIER_LIMITS.free.maxPlants),
+      pro: fmt(TIER_LIMITS.pro.maxPlants),
+    },
+    {
+      label: "Journal-Einträge",
+      free: fmt(TIER_LIMITS.free.maxJournalEntries),
+      pro: fmt(TIER_LIMITS.pro.maxJournalEntries),
+    },
+    {
+      label: "Werbefrei",
+      free: TIER_LIMITS.free.adFree ? "✓" : "—",
+      pro: TIER_LIMITS.pro.adFree ? "✓" : "—",
+    },
+    {
+      label: "Daten-Export",
+      free: TIER_LIMITS.free.exportData ? "✓" : "—",
+      pro: TIER_LIMITS.pro.exportData ? "✓" : "—",
+    },
+    {
+      label: "Prioritäts-Support",
+      free: TIER_LIMITS.free.prioritySupport ? "✓" : "—",
+      pro: TIER_LIMITS.pro.prioritySupport ? "✓" : "—",
+    },
   ];
 
   // Preis: Nutze RevenueCat wenn verfügbar, sonst Fallback-Preise
@@ -178,7 +246,8 @@ export default function PaywallScreen() {
     const pkg = getSelectedPackage();
     if (pkg) return formatPrice(pkg);
     if (billingPeriod === "lifetime") return "—";
-    const price = billingPeriod === "monthly" ? pricing.monthly : pricing.yearly;
+    const price =
+      billingPeriod === "monthly" ? pricing.monthly : pricing.yearly;
     return `€${price.toFixed(2)}`;
   };
 
@@ -190,7 +259,11 @@ export default function PaywallScreen() {
           <IconSymbol name="xmark.circle.fill" size={28} color={colors.muted} />
         </TouchableOpacity>
         <Text className="text-lg font-semibold text-foreground">Upgrade</Text>
-        <TouchableOpacity onPress={handleRestore} disabled={restoring} className="p-2">
+        <TouchableOpacity
+          onPress={handleRestore}
+          disabled={restoring}
+          className="p-2"
+        >
           {restoring ? (
             <ActivityIndicator size="small" color={colors.muted} />
           ) : (
@@ -201,7 +274,10 @@ export default function PaywallScreen() {
 
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 100 }}
+        contentContainerStyle={{
+          padding: 16,
+          paddingBottom: insets.bottom + 100,
+        }}
         showsVerticalScrollIndicator={false}
       >
         {/* Hero Section */}
@@ -220,7 +296,11 @@ export default function PaywallScreen() {
         {/* Current Plan Badge */}
         {currentTier !== "free" && (
           <View className="bg-primary/10 rounded-xl p-3 mb-4 flex-row items-center justify-center gap-2">
-            <IconSymbol name="checkmark.circle.fill" size={20} color={colors.primary} />
+            <IconSymbol
+              name="checkmark.circle.fill"
+              size={20}
+              color={colors.primary}
+            />
             <Text className="text-primary font-medium">
               Aktueller Plan: {TIER_INFO[currentTier].name}
             </Text>
@@ -233,7 +313,9 @@ export default function PaywallScreen() {
             className={`flex-1 py-3 rounded-lg ${billingPeriod === "monthly" ? "bg-primary" : ""}`}
             onPress={() => setBillingPeriod("monthly")}
           >
-            <Text className={`text-center font-medium ${billingPeriod === "monthly" ? "text-background" : "text-foreground"}`}>
+            <Text
+              className={`text-center font-medium ${billingPeriod === "monthly" ? "text-background" : "text-foreground"}`}
+            >
               Monatlich
             </Text>
           </TouchableOpacity>
@@ -242,10 +324,14 @@ export default function PaywallScreen() {
             onPress={() => setBillingPeriod("yearly")}
           >
             <View className="items-center">
-              <Text className={`font-medium ${billingPeriod === "yearly" ? "text-background" : "text-foreground"}`}>
+              <Text
+                className={`font-medium ${billingPeriod === "yearly" ? "text-background" : "text-foreground"}`}
+              >
                 Jährlich
               </Text>
-              <Text className={`text-xs ${billingPeriod === "yearly" ? "text-background/80" : "text-primary"}`}>
+              <Text
+                className={`text-xs ${billingPeriod === "yearly" ? "text-background/80" : "text-primary"}`}
+              >
                 Spare {pricing.savings}%
               </Text>
             </View>
@@ -255,7 +341,9 @@ export default function PaywallScreen() {
               className={`flex-1 py-3 rounded-lg ${billingPeriod === "lifetime" ? "bg-primary" : ""}`}
               onPress={() => setBillingPeriod("lifetime")}
             >
-              <Text className={`text-center font-medium ${billingPeriod === "lifetime" ? "text-background" : "text-foreground"}`}>
+              <Text
+                className={`text-center font-medium ${billingPeriod === "lifetime" ? "text-background" : "text-foreground"}`}
+              >
                 Lifetime
               </Text>
             </TouchableOpacity>
@@ -271,7 +359,9 @@ export default function PaywallScreen() {
                 className={`flex-1 py-3 rounded-lg ${selectedTier === t ? "bg-primary" : ""}`}
                 onPress={() => setSelectedTier(t)}
               >
-                <Text className={`text-center font-medium ${selectedTier === t ? "text-background" : "text-foreground"}`}>
+                <Text
+                  className={`text-center font-medium ${selectedTier === t ? "text-background" : "text-foreground"}`}
+                >
                   {TIER_INFO[t].name}
                 </Text>
               </TouchableOpacity>
@@ -283,34 +373,56 @@ export default function PaywallScreen() {
         <View className="rounded-2xl p-4 border-2 border-warning bg-warning/5 mb-6">
           <View className="mb-3">
             <View className="flex-row items-center gap-2">
-              <Text className="text-xl font-bold text-foreground">{TIER_INFO[selectedTier].name}</Text>
+              <Text className="text-xl font-bold text-foreground">
+                {TIER_INFO[selectedTier].name}
+              </Text>
               {selectedTier === "pro" && (
                 <View className="bg-warning px-2 py-0.5 rounded-full">
-                  <Text className="text-xs text-background font-medium">Unbegrenzt</Text>
+                  <Text className="text-xs text-background font-medium">
+                    Unbegrenzt
+                  </Text>
                 </View>
               )}
             </View>
-            <Text className="text-sm text-muted">{TIER_INFO[selectedTier].description}</Text>
+            <Text className="text-sm text-muted">
+              {TIER_INFO[selectedTier].description}
+            </Text>
           </View>
 
           <View className="flex-row items-baseline gap-1 mb-3">
-            <Text className="text-3xl font-bold text-foreground">{getDisplayPrice()}</Text>
-            <Text className="text-muted">{billingPeriod === "lifetime" ? "einmalig" : billingPeriod === "yearly" ? "/Jahr" : "/Monat"}</Text>
+            <Text className="text-3xl font-bold text-foreground">
+              {getDisplayPrice()}
+            </Text>
+            <Text className="text-muted">
+              {billingPeriod === "lifetime"
+                ? "einmalig"
+                : billingPeriod === "yearly"
+                  ? "/Jahr"
+                  : "/Monat"}
+            </Text>
           </View>
 
           <View className="gap-2">
-            {TIER_INFO[selectedTier].features.slice(0, 5).map((feature, index) => (
-              <View key={index} className="flex-row items-center gap-2">
-                <IconSymbol name="checkmark.circle.fill" size={16} color={colors.warning} />
-                <Text className="text-sm text-foreground">{feature}</Text>
-              </View>
-            ))}
+            {TIER_INFO[selectedTier].features
+              .slice(0, 5)
+              .map((feature, index) => (
+                <View key={index} className="flex-row items-center gap-2">
+                  <IconSymbol
+                    name="checkmark.circle.fill"
+                    size={16}
+                    color={colors.warning}
+                  />
+                  <Text className="text-sm text-foreground">{feature}</Text>
+                </View>
+              ))}
           </View>
         </View>
 
         {/* Feature Comparison (Werte aus TIER_LIMITS) */}
         <View className="bg-surface rounded-2xl p-4 border border-border mb-6">
-          <Text className="text-lg font-semibold text-foreground mb-4">Vergleich</Text>
+          <Text className="text-lg font-semibold text-foreground mb-4">
+            Vergleich
+          </Text>
 
           <View className="gap-3">
             {comparisonRows.map((row, i) => (
@@ -320,8 +432,12 @@ export default function PaywallScreen() {
               >
                 <Text className="text-foreground">{row.label}</Text>
                 <View className="flex-row gap-4">
-                  <Text className="text-muted w-16 text-center">{row.free}</Text>
-                  <Text className="text-warning w-16 text-center">{row.pro}</Text>
+                  <Text className="text-muted w-16 text-center">
+                    {row.free}
+                  </Text>
+                  <Text className="text-warning w-16 text-center">
+                    {row.pro}
+                  </Text>
                 </View>
               </View>
             ))}
@@ -335,11 +451,18 @@ export default function PaywallScreen() {
 
         {/* Hinweis statt nicht durchsetzbarer Garantie */}
         <View className="bg-primary/10 rounded-xl p-4 flex-row items-center gap-3 mb-6">
-          <IconSymbol name="checkmark.circle.fill" size={24} color={colors.primary} />
+          <IconSymbol
+            name="checkmark.circle.fill"
+            size={24}
+            color={colors.primary}
+          />
           <View className="flex-1">
-            <Text className="text-foreground font-medium">Erstattung nach Store-Richtlinien</Text>
+            <Text className="text-foreground font-medium">
+              Erstattung nach Store-Richtlinien
+            </Text>
             <Text className="text-sm text-muted">
-              Rückerstattungen richten sich nach den Bedingungen von Apple bzw. Google und werden dort beantragt.
+              Rückerstattungen richten sich nach den Bedingungen von Apple bzw.
+              Google und werden dort beantragt.
             </Text>
           </View>
         </View>
@@ -361,8 +484,14 @@ export default function PaywallScreen() {
 
         {/* Legal Text */}
         <Text className="text-xs text-muted text-center leading-5">
-          Die Zahlung wird über deinen {Platform.OS === "ios" ? "Apple" : Platform.OS === "android" ? "Google" : "App Store"} Account abgerechnet.
-          Abos verlängern sich automatisch, wenn es nicht mindestens 24 Stunden vor Ablauf gekündigt wird.
+          Die Zahlung wird über deinen{" "}
+          {Platform.OS === "ios"
+            ? "Apple"
+            : Platform.OS === "android"
+              ? "Google"
+              : "App Store"}{" "}
+          Account abgerechnet. Abos verlängern sich automatisch, wenn es nicht
+          mindestens 24 Stunden vor Ablauf gekündigt wird.
         </Text>
       </ScrollView>
 
@@ -385,7 +514,12 @@ export default function PaywallScreen() {
                 Pro starten
               </Text>
               <Text className="text-sm text-background/80">
-                {getDisplayPrice()}{billingPeriod === "lifetime" ? " einmalig" : billingPeriod === "yearly" ? "/Jahr" : "/Monat"}
+                {getDisplayPrice()}
+                {billingPeriod === "lifetime"
+                  ? " einmalig"
+                  : billingPeriod === "yearly"
+                    ? "/Jahr"
+                    : "/Monat"}
               </Text>
             </>
           )}

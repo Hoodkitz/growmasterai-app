@@ -43,10 +43,6 @@ const GamificationContext = createContext<GamificationContextType | undefined>(
   undefined,
 );
 
-const STATS_STORAGE_KEY = "@growmaster_stats";
-const ACHIEVEMENTS_STORAGE_KEY = "@growmaster_achievements";
-const LAST_LOGIN_KEY = "@growmaster_last_login";
-
 const DEFAULT_STATS: UserStats = {
   totalDiagnoses: 0,
   totalPlants: 0,
@@ -101,7 +97,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     if (user) {
       streakMutation.mutate();
     }
-  }, [user]);
+  }, [user, streakMutation]);
 
   const checkForNewAchievements = useCallback(async (): Promise<
     Achievement[]
@@ -118,7 +114,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     }
 
     return newAchievements;
-  }, [stats, unlockedIds, user]);
+  }, [stats, unlockedIds, user, statsQuery.data, unlockMutation]);
 
   // Compatibility shim for incrementStat (most stats are server managed now)
   const incrementStat = useCallback(

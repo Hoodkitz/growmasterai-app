@@ -16,7 +16,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
-import { TIER_INFO, TIER_LIMITS, TIER_PRICING } from "@/lib/subscription";
+import { TIER_INFO, TIER_LIMITS } from "@/lib/subscription";
 import { useAppAuth } from "@/lib/auth-context";
 import { ExpenseTracker } from "@/components/expenses/expense-tracker";
 import type { Expense } from "@/lib/cost-tracking";
@@ -29,7 +29,7 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const { tier, upgradeTo, dailyDiagnoses, dailyMessages, refresh } =
     useSubscription();
-  const { user, isAdmin, logout } = useAppAuth();
+  const { isAdmin } = useAppAuth();
   const [notifications, setNotificationsState] = useState(true);
   const [expenses, setExpenses] = useState<Expense[]>([]);
 
@@ -70,8 +70,6 @@ export default function SettingsScreen() {
       String(value),
     ).catch(() => {});
   };
-  const [darkMode, setDarkMode] = useState(true);
-
   const tierInfo = TIER_INFO[tier];
   const limits = TIER_LIMITS[tier];
 

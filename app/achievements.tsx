@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  ScrollView,
-  Text,
-  View,
-  TouchableOpacity,
-  FlatList,
-} from "react-native";
+import { ScrollView, Text, View, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScreenContainer } from "@/components/screen-container";
@@ -24,7 +18,7 @@ type TabType = "achievements" | "levels";
 export default function AchievementsScreen() {
   const router = useRouter();
   const colors = useColors();
-  const insets = useSafeAreaInsets();
+  useSafeAreaInsets();
   const {
     stats,
     points,

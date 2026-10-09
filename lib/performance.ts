@@ -2,10 +2,7 @@
  * Performance optimization utilities for GrowMaster AI
  */
 
-import { useEffect, useRef, useCallback } from "react";
-
-// React import (needed for hooks)
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Debounce function - delays execution until after wait milliseconds

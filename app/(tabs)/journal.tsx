@@ -6,8 +6,6 @@ import {
   TouchableOpacity,
   TextInput,
   Modal,
-  FlatList,
-  ActivityIndicator,
   Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -251,7 +249,7 @@ const STORAGE_KEY = "growmaster_journal_v2";
 
 export default function JournalScreen() {
   const colors = useColors();
-  const { tier } = useSubscription();
+  useSubscription();
   const { incrementStat, checkForNewAchievements } = useGamification();
 
   const [viewMode, setViewMode] = useState<ViewMode>("guide");

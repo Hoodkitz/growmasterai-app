@@ -22,7 +22,7 @@ export default function LoginScreen() {
   const router = useRouter();
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { login, loginWithEmail, register, loading } = useAppAuth();
+  const { loginWithEmail, register, loading } = useAppAuth();
   const { signIn: signInWithGoogle, isLoading: googleLoading } =
     useGoogleAuth();
 

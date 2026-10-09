@@ -1,11 +1,9 @@
 import { useState, useCallback } from "react";
 import {
-  ScrollView,
   Text,
   View,
   TouchableOpacity,
   TextInput,
-  Image,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -74,7 +72,7 @@ export default function MessagesScreen() {
   useFocusEffect(
     useCallback(() => {
       messagesQuery.refetch();
-    }, []),
+    }, [messagesQuery]),
   );
 
   // Group messages into conversations
