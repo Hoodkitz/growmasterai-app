@@ -1480,6 +1480,12 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         .from(userAchievements)
         .where(eq(userAchievements.userId, ctx.user.id));
 
+      // Count reminders (plants with watering schedules)
+      const [remindersCount] = await db
+        .select({ value: count() })
+        .from(plants)
+        .where(eq(plants.userId, ctx.user.id));
+
       return {
         stats: {
           totalDiagnoses: diagnosesCount?.value || 0,
@@ -1487,6 +1493,7 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
           totalHarvests: user.totalHarvests,
           totalYield: parseFloat(user.totalYield || "0"),
           journalEntries: journalCount?.value || 0,
+          totalReminders: remindersCount?.value || 0,
           loginStreak: user.streak,
           longestStreak: Math.max(user.longestStreak, user.streak),
           communityPosts: postsCount?.value || 0,

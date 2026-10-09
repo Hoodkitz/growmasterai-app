@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useCallback,
+} from "react";
 import { trpc } from "@/lib/trpc";
 import { useAppAuth } from "@/lib/auth-context";
 import {
@@ -32,7 +39,9 @@ interface GamificationContextType {
   updateLoginStreak: () => Promise<void>;
 }
 
-const GamificationContext = createContext<GamificationContextType | undefined>(undefined);
+const GamificationContext = createContext<GamificationContextType | undefined>(
+  undefined,
+);
 
 const STATS_STORAGE_KEY = "@growmaster_stats";
 const ACHIEVEMENTS_STORAGE_KEY = "@growmaster_achievements";
@@ -44,6 +53,7 @@ const DEFAULT_STATS: UserStats = {
   totalHarvests: 0,
   totalYield: 0,
   journalEntries: 0,
+  totalReminders: 0,
   loginStreak: 0,
   longestStreak: 0,
   communityPosts: 0,
@@ -57,7 +67,8 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
   const { user } = useAppAuth();
   const utils = trpc.useContext();
 
-  const [recentAchievement, setRecentAchievement] = useState<Achievement | null>(null);
+  const [recentAchievement, setRecentAchievement] =
+    useState<Achievement | null>(null);
 
   const statsQuery = trpc.achievements.getStats.useQuery(undefined, {
     enabled: !!user,
@@ -80,7 +91,9 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
   // Derived state
   const stats = statsQuery.data?.stats || DEFAULT_STATS;
   const unlockedAchievementsList = statsQuery.data?.unlockedAchievements || [];
-  const unlockedIds = unlockedAchievementsList.map((a: { achievementId: string }) => a.achievementId);
+  const unlockedIds = unlockedAchievementsList.map(
+    (a: { achievementId: string }) => a.achievementId,
+  );
   const points = stats.xp;
 
   // Initial load
@@ -90,7 +103,9 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
-  const checkForNewAchievements = useCallback(async (): Promise<Achievement[]> => {
+  const checkForNewAchievements = useCallback(async (): Promise<
+    Achievement[]
+  > => {
     if (!user || !statsQuery.data) return [];
 
     const newAchievements = checkAchievements(stats, unlockedIds);
@@ -106,13 +121,16 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
   }, [stats, unlockedIds, user]);
 
   // Compatibility shim for incrementStat (most stats are server managed now)
-  const incrementStat = useCallback(async (stat: keyof UserStats, amount: number = 1) => {
-    // If we were offline-first, we'd update local state.
-    // For now, assume server tracks actions (createPost, createDiagnosis)
-    // We could invalidate queries here if we knew what changed.
-    utils.achievements.getStats.invalidate();
-    checkForNewAchievements();
-  }, [utils, checkForNewAchievements]);
+  const incrementStat = useCallback(
+    async (stat: keyof UserStats, amount: number = 1) => {
+      // If we were offline-first, we'd update local state.
+      // For now, assume server tracks actions (createPost, createDiagnosis)
+      // We could invalidate queries here if we knew what changed.
+      utils.achievements.getStats.invalidate();
+      checkForNewAchievements();
+    },
+    [utils, checkForNewAchievements],
+  );
 
   const updateLoginStreak = useCallback(async () => {
     streakMutation.mutate();
@@ -125,12 +143,21 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
   const level = getLevelFromPoints(points);
   const levelProgress = getProgressToNextLevel(points);
 
-  const unlockedAchievements = ACHIEVEMENTS.filter(a => unlockedIds.includes(a.id)).map(a => {
-    const record = unlockedAchievementsList.find((u: { achievementId: string }) => u.achievementId === a.id) as { unlockedAt?: Date | string } | undefined;
-    return { ...a, unlockedAt: record?.unlockedAt ? new Date(record.unlockedAt) : new Date() };
+  const unlockedAchievements = ACHIEVEMENTS.filter((a) =>
+    unlockedIds.includes(a.id),
+  ).map((a) => {
+    const record = unlockedAchievementsList.find(
+      (u: { achievementId: string }) => u.achievementId === a.id,
+    ) as { unlockedAt?: Date | string } | undefined;
+    return {
+      ...a,
+      unlockedAt: record?.unlockedAt ? new Date(record.unlockedAt) : new Date(),
+    };
   });
 
-  const lockedAchievements = ACHIEVEMENTS.filter(a => !unlockedIds.includes(a.id));
+  const lockedAchievements = ACHIEVEMENTS.filter(
+    (a) => !unlockedIds.includes(a.id),
+  );
 
   return (
     <GamificationContext.Provider
@@ -156,7 +183,9 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
 export function useGamification() {
   const context = useContext(GamificationContext);
   if (context === undefined) {
-    throw new Error("useGamification must be used within a GamificationProvider");
+    throw new Error(
+      "useGamification must be used within a GamificationProvider",
+    );
   }
   return context;
 }

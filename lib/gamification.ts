@@ -8,7 +8,16 @@ export interface Achievement {
   points: number;
   category: "beginner" | "grower" | "expert" | "community" | "special";
   requirement: {
-    type: "diagnoses" | "plants" | "harvests" | "journal" | "streak" | "community" | "yield";
+    type:
+      | "diagnoses"
+      | "plants"
+      | "harvests"
+      | "journal"
+      | "streak"
+      | "community"
+      | "yield"
+      | "reminders"
+      | "helpful";
     count: number;
   };
   rarity: "common" | "rare" | "epic" | "legendary";
@@ -21,6 +30,7 @@ export interface UserStats {
   totalHarvests: number;
   totalYield: number; // in grams
   journalEntries: number;
+  totalReminders: number;
   loginStreak: number;
   longestStreak: number;
   communityPosts: number;
@@ -41,14 +51,38 @@ export interface UserLevel {
 export const LEVELS: UserLevel[] = [
   { level: 1, title: "Keimling", minPoints: 0, maxPoints: 99, badge: "🌱" },
   { level: 2, title: "Setzling", minPoints: 100, maxPoints: 299, badge: "🌿" },
-  { level: 3, title: "Jungpflanze", minPoints: 300, maxPoints: 599, badge: "🪴" },
+  {
+    level: 3,
+    title: "Jungpflanze",
+    minPoints: 300,
+    maxPoints: 599,
+    badge: "🪴",
+  },
   { level: 4, title: "Grower", minPoints: 600, maxPoints: 999, badge: "🌳" },
   { level: 5, title: "Experte", minPoints: 1000, maxPoints: 1999, badge: "🌲" },
   { level: 6, title: "Meister", minPoints: 2000, maxPoints: 3499, badge: "🏆" },
-  { level: 7, title: "Großmeister", minPoints: 3500, maxPoints: 5499, badge: "👑" },
+  {
+    level: 7,
+    title: "Großmeister",
+    minPoints: 3500,
+    maxPoints: 5499,
+    badge: "👑",
+  },
   { level: 8, title: "Legende", minPoints: 5500, maxPoints: 9999, badge: "⭐" },
-  { level: 9, title: "Mythisch", minPoints: 10000, maxPoints: 19999, badge: "💎" },
-  { level: 10, title: "Unsterblich", minPoints: 20000, maxPoints: Infinity, badge: "🔥" },
+  {
+    level: 9,
+    title: "Mythisch",
+    minPoints: 10000,
+    maxPoints: 19999,
+    badge: "💎",
+  },
+  {
+    level: 10,
+    title: "Unsterblich",
+    minPoints: 20000,
+    maxPoints: Infinity,
+    badge: "🔥",
+  },
 ];
 
 export const ACHIEVEMENTS: Achievement[] = [
@@ -81,6 +115,16 @@ export const ACHIEVEMENTS: Achievement[] = [
     points: 10,
     category: "beginner",
     requirement: { type: "journal", count: 1 },
+    rarity: "common",
+  },
+  {
+    id: "first_reminder",
+    title: "Organisiert",
+    description: "Erstelle deine erste Erinnerung",
+    icon: "⏰",
+    points: 10,
+    category: "beginner",
+    requirement: { type: "reminders", count: 1 },
     rarity: "common",
   },
 
@@ -155,6 +199,26 @@ export const ACHIEVEMENTS: Achievement[] = [
     requirement: { type: "harvests", count: 10 },
     rarity: "rare",
   },
+  {
+    id: "reminders_5",
+    title: "Pflege-Profi",
+    description: "Erstelle 5 Erinnerungen",
+    icon: "📋",
+    points: 25,
+    category: "grower",
+    requirement: { type: "reminders", count: 5 },
+    rarity: "common",
+  },
+  {
+    id: "reminders_20",
+    title: "Erinnerungs-Meister",
+    description: "Erstelle 20 Erinnerungen",
+    icon: "🗂️",
+    points: 75,
+    category: "grower",
+    requirement: { type: "reminders", count: 20 },
+    rarity: "rare",
+  },
 
   // Expert Achievements
   {
@@ -217,6 +281,16 @@ export const ACHIEVEMENTS: Achievement[] = [
     requirement: { type: "streak", count: 100 },
     rarity: "epic",
   },
+  {
+    id: "streak_365",
+    title: "Jahres-Legende",
+    description: "Logge dich 365 Tage in Folge ein",
+    icon: "💎",
+    points: 1000,
+    category: "expert",
+    requirement: { type: "streak", count: 365 },
+    rarity: "legendary",
+  },
 
   // Community Achievements
   {
@@ -249,6 +323,26 @@ export const ACHIEVEMENTS: Achievement[] = [
     requirement: { type: "community", count: 50 },
     rarity: "rare",
   },
+  {
+    id: "helpful_10",
+    title: "Helferlein",
+    description: "Hilf 10 Community-Mitgliedern",
+    icon: "🤝",
+    points: 50,
+    category: "community",
+    requirement: { type: "helpful", count: 10 },
+    rarity: "common",
+  },
+  {
+    id: "helpful_50",
+    title: "Community-Helfer",
+    description: "Hilf 50 Community-Mitgliedern",
+    icon: "🦸",
+    points: 200,
+    category: "community",
+    requirement: { type: "helpful", count: 50 },
+    rarity: "epic",
+  },
 
   // Special Achievements
   {
@@ -271,6 +365,16 @@ export const ACHIEVEMENTS: Achievement[] = [
     requirement: { type: "community", count: 0 },
     rarity: "legendary",
   },
+  {
+    id: "perfect_month",
+    title: "Perfekter Monat",
+    description: "Erfülle alle täglichen Aufgaben einen Monat lang",
+    icon: "🌟",
+    points: 500,
+    category: "special",
+    requirement: { type: "streak", count: 30 },
+    rarity: "legendary",
+  },
 ];
 
 export function getLevelFromPoints(points: number): UserLevel {
@@ -284,7 +388,8 @@ export function getLevelFromPoints(points: number): UserLevel {
 
 export function getProgressToNextLevel(points: number): number {
   const currentLevel = getLevelFromPoints(points);
-  const nextLevelIndex = LEVELS.findIndex(l => l.level === currentLevel.level) + 1;
+  const nextLevelIndex =
+    LEVELS.findIndex((l) => l.level === currentLevel.level) + 1;
 
   if (nextLevelIndex >= LEVELS.length) return 100;
 
@@ -292,10 +397,16 @@ export function getProgressToNextLevel(points: number): number {
   const pointsInCurrentLevel = points - currentLevel.minPoints;
   const pointsNeededForNextLevel = nextLevel.minPoints - currentLevel.minPoints;
 
-  return Math.min(100, Math.round((pointsInCurrentLevel / pointsNeededForNextLevel) * 100));
+  return Math.min(
+    100,
+    Math.round((pointsInCurrentLevel / pointsNeededForNextLevel) * 100),
+  );
 }
 
-export function checkAchievements(stats: UserStats, unlockedIds: string[]): Achievement[] {
+export function checkAchievements(
+  stats: UserStats,
+  unlockedIds: string[],
+): Achievement[] {
   const newlyUnlocked: Achievement[] = [];
 
   for (const achievement of ACHIEVEMENTS) {
@@ -320,11 +431,18 @@ export function checkAchievements(stats: UserStats, unlockedIds: string[]): Achi
         isUnlocked = stats.journalEntries >= achievement.requirement.count;
         break;
       case "streak":
-        isUnlocked = stats.loginStreak >= achievement.requirement.count ||
+        isUnlocked =
+          stats.loginStreak >= achievement.requirement.count ||
           stats.longestStreak >= achievement.requirement.count;
         break;
       case "community":
         isUnlocked = stats.communityPosts >= achievement.requirement.count;
+        break;
+      case "reminders":
+        isUnlocked = stats.totalReminders >= achievement.requirement.count;
+        break;
+      case "helpful":
+        isUnlocked = stats.helpfulAnswers >= achievement.requirement.count;
         break;
     }
 
@@ -338,19 +456,28 @@ export function checkAchievements(stats: UserStats, unlockedIds: string[]): Achi
 
 export function getRarityColor(rarity: Achievement["rarity"]): string {
   switch (rarity) {
-    case "common": return "#9CA3AF";
-    case "rare": return "#3B82F6";
-    case "epic": return "#8B5CF6";
-    case "legendary": return "#F59E0B";
+    case "common":
+      return "#9CA3AF";
+    case "rare":
+      return "#3B82F6";
+    case "epic":
+      return "#8B5CF6";
+    case "legendary":
+      return "#F59E0B";
   }
 }
 
 export function getCategoryLabel(category: Achievement["category"]): string {
   switch (category) {
-    case "beginner": return "Anfänger";
-    case "grower": return "Grower";
-    case "expert": return "Experte";
-    case "community": return "Community";
-    case "special": return "Spezial";
+    case "beginner":
+      return "Anfänger";
+    case "grower":
+      return "Grower";
+    case "expert":
+      return "Experte";
+    case "community":
+      return "Community";
+    case "special":
+      return "Spezial";
   }
 }
