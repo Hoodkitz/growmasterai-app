@@ -131,6 +131,8 @@ export default function RootLayout() {
                     <Stack.Screen name="tools" options={{ presentation: "modal" }} />
                     <Stack.Screen name="messages" options={{ presentation: "modal" }} />
                     <Stack.Screen name="legal" options={{ presentation: "modal" }} />
+                    <Stack.Screen name="api-keys" options={{ presentation: "modal" }} />
+                    <Stack.Screen name="webhooks" options={{ presentation: "modal" }} />
                     <Stack.Screen name="onboarding" options={{ presentation: "fullScreenModal", gestureEnabled: false }} />
                   </Stack>
                   <StatusBar style="light" />
