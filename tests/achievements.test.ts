@@ -66,6 +66,8 @@ describe("Achievements Module", () => {
         "streak",
         "community",
         "yield",
+        "reminders",
+        "helpful",
       ];
       ACHIEVEMENTS.forEach((achievement) => {
         expect(validTypes).toContain(achievement.requirement.type);
@@ -250,6 +252,7 @@ describe("Achievements Module", () => {
       totalHarvests: 0,
       totalYield: 0,
       journalEntries: 0,
+      totalReminders: 0,
       loginStreak: 0,
       longestStreak: 0,
       communityPosts: 0,
@@ -432,6 +435,7 @@ describe("Achievements Module", () => {
         totalHarvests: 10,
         totalYield: 1000,
         journalEntries: 5,
+        totalReminders: 0,
         loginStreak: 30,
         longestStreak: 30,
         communityPosts: 50,
@@ -472,6 +476,7 @@ describe("Achievements Module", () => {
         totalHarvests: 10,
         totalYield: 1000,
         journalEntries: 5,
+        totalReminders: 0,
         loginStreak: 100,
         longestStreak: 100,
         communityPosts: 50,
