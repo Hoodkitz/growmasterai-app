@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 
 // Mock AsyncStorage
 vi.mock("@react-native-async-storage/async-storage", () => ({
@@ -17,7 +17,7 @@ describe("Gamification System", () => {
 
       expect(ACHIEVEMENTS.length).toBeGreaterThan(0);
 
-      ACHIEVEMENTS.forEach(achievement => {
+      ACHIEVEMENTS.forEach((achievement) => {
         expect(achievement).toHaveProperty("id");
         expect(achievement).toHaveProperty("title");
         expect(achievement).toHaveProperty("description");
@@ -34,7 +34,7 @@ describe("Gamification System", () => {
     it("should have unique achievement IDs", async () => {
       const { ACHIEVEMENTS } = await import("../lib/gamification");
 
-      const ids = ACHIEVEMENTS.map(a => a.id);
+      const ids = ACHIEVEMENTS.map((a) => a.id);
       const uniqueIds = new Set(ids);
 
       expect(uniqueIds.size).toBe(ids.length);
@@ -44,16 +44,22 @@ describe("Gamification System", () => {
       const { ACHIEVEMENTS } = await import("../lib/gamification");
       const validRarities = ["common", "uncommon", "rare", "epic", "legendary"];
 
-      ACHIEVEMENTS.forEach(achievement => {
+      ACHIEVEMENTS.forEach((achievement) => {
         expect(validRarities).toContain(achievement.rarity);
       });
     });
 
     it("should have valid category values", async () => {
       const { ACHIEVEMENTS } = await import("../lib/gamification");
-      const validCategories = ["beginner", "grower", "expert", "community", "special"];
+      const validCategories = [
+        "beginner",
+        "grower",
+        "expert",
+        "community",
+        "special",
+      ];
 
-      ACHIEVEMENTS.forEach(achievement => {
+      ACHIEVEMENTS.forEach((achievement) => {
         expect(validCategories).toContain(achievement.category);
       });
     });
@@ -61,7 +67,7 @@ describe("Gamification System", () => {
 
   describe("Level System", () => {
     it("should return correct level for points", async () => {
-      const { getLevelFromPoints, LEVELS } = await import("../lib/gamification");
+      const { getLevelFromPoints } = await import("../lib/gamification");
 
       // Test level 1 (0-99 points)
       const level1 = getLevelFromPoints(50);
@@ -93,7 +99,7 @@ describe("Gamification System", () => {
 
       expect(LEVELS.length).toBeGreaterThan(0);
 
-      LEVELS.forEach(level => {
+      LEVELS.forEach((level) => {
         expect(level).toHaveProperty("level");
         expect(level).toHaveProperty("title");
         expect(level).toHaveProperty("badge");
@@ -107,7 +113,7 @@ describe("Gamification System", () => {
 
   describe("Achievement Checking", () => {
     it("should detect unlocked achievements based on stats", async () => {
-      const { checkAchievements, ACHIEVEMENTS } = await import("../lib/gamification");
+      const { checkAchievements } = await import("../lib/gamification");
 
       const stats = {
         totalDiagnoses: 5,
@@ -115,6 +121,7 @@ describe("Gamification System", () => {
         totalHarvests: 0,
         totalYield: 0,
         journalEntries: 0,
+        totalReminders: 0,
         loginStreak: 3,
         longestStreak: 3,
         communityPosts: 0,
@@ -131,7 +138,7 @@ describe("Gamification System", () => {
     });
 
     it("should not return already unlocked achievements", async () => {
-      const { checkAchievements, ACHIEVEMENTS } = await import("../lib/gamification");
+      const { checkAchievements } = await import("../lib/gamification");
 
       const stats = {
         totalDiagnoses: 10,
@@ -139,6 +146,7 @@ describe("Gamification System", () => {
         totalHarvests: 1,
         totalYield: 100,
         journalEntries: 5,
+        totalReminders: 0,
         loginStreak: 7,
         longestStreak: 7,
         communityPosts: 0,
@@ -150,13 +158,13 @@ describe("Gamification System", () => {
 
       // First check
       const firstCheck = checkAchievements(stats, []);
-      const unlockedIds = firstCheck.map(a => a.id);
+      const unlockedIds = firstCheck.map((a) => a.id);
 
       // Second check with same stats but already unlocked
       const secondCheck = checkAchievements(stats, unlockedIds);
 
       // Should not return any achievements that were already unlocked
-      secondCheck.forEach(achievement => {
+      secondCheck.forEach((achievement) => {
         expect(unlockedIds).not.toContain(achievement.id);
       });
     });
@@ -222,6 +230,8 @@ describe("Subscription System", () => {
     expect(TIER_PRICING).toHaveProperty("premium");
     expect(TIER_PRICING).toHaveProperty("pro");
     expect(TIER_PRICING.premium.monthly).toBeGreaterThan(0);
-    expect(TIER_PRICING.pro.monthly).toBeGreaterThan(TIER_PRICING.premium.monthly);
+    expect(TIER_PRICING.pro.monthly).toBeGreaterThan(
+      TIER_PRICING.premium.monthly,
+    );
   });
 });

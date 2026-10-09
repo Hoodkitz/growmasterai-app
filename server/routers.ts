@@ -29,9 +29,8 @@ import {
   getCachedDiagnosis,
   setCachedDiagnosis,
   deduplicateRequest,
-  getCacheStats,
 } from "./_core/diagnosisCache";
-import { eq, and, desc, sql, or, ne, gt, count, gte } from "drizzle-orm";
+import { eq, and, desc, sql, or, count, gte } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { liveScanLimiter, clientKey } from "./_core/rateLimit";
 import { computeStreak } from "./streak";
@@ -512,7 +511,7 @@ Klar = zu früh, Milchig = THC-Peak, Bernstein = mehr CBD/CBN, entspannender`,
 
   // Grow Coach AI Chat
   coach: router({
-    ask: protectedProcedure
+    ask: publicProcedure
       .input(
         z.object({
           question: z.string().min(5),

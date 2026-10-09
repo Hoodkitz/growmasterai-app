@@ -10,39 +10,63 @@ import type { ErrorDetails } from "@/lib/error-handling";
 import { useState, useEffect } from "react";
 
 interface ErrorDisplayProps {
-  error: ErrorDetails;
+  error?: ErrorDetails;
+  message?: string;
   onRetry?: () => void;
   onAction?: () => void;
   compact?: boolean;
 }
 
-export function ErrorDisplay({ error, onRetry, onAction, compact = false }: ErrorDisplayProps) {
+export function ErrorDisplay({
+  error,
+  message,
+  onRetry,
+  onAction,
+  compact = false,
+}: ErrorDisplayProps) {
   const colors = useColors();
-  const [retryCountdown, setRetryCountdown] = useState(error.retryDelay || 0);
+  const retryDelay = error?.retryDelay || 0;
+  const [retryCountdown, setRetryCountdown] = useState(retryDelay);
 
   useEffect(() => {
     if (retryCountdown > 0) {
-      const timer = setTimeout(() => setRetryCountdown(retryCountdown - 1), 1000);
+      const timer = setTimeout(
+        () => setRetryCountdown(retryCountdown - 1),
+        1000,
+      );
       return () => clearTimeout(timer);
     }
   }, [retryCountdown]);
 
-  const canRetry = error.retryable && (!error.retryDelay || retryCountdown === 0);
+  const canRetry =
+    (error?.retryable ?? true) && (!error?.retryDelay || retryCountdown === 0);
+  const title = error?.title ?? "Fehler";
+  const displayMessage =
+    error?.message ?? message ?? "Ein unbekannter Fehler ist aufgetreten.";
+  const actionLabel = error?.action;
 
   if (compact) {
     return (
       <View className="bg-error/10 rounded-xl p-3 border border-error/30">
         <View className="flex-row items-center gap-2 mb-2">
-          <IconSymbol name="exclamationmark.triangle.fill" size={18} color={colors.error} />
-          <Text className="flex-1 text-sm font-medium text-foreground">{error.title}</Text>
+          <IconSymbol
+            name="exclamationmark.triangle.fill"
+            size={18}
+            color={colors.error}
+          />
+          <Text className="flex-1 text-sm font-medium text-foreground">
+            {title}
+          </Text>
         </View>
-        <Text className="text-sm text-muted mb-2">{error.message}</Text>
+        <Text className="text-sm text-muted mb-2">{displayMessage}</Text>
         {onRetry && canRetry && (
           <TouchableOpacity
             className="bg-primary rounded-lg py-2 items-center"
             onPress={onRetry}
           >
-            <Text className="text-sm font-semibold text-white">Erneut versuchen</Text>
+            <Text className="text-sm font-semibold text-white">
+              Erneut versuchen
+            </Text>
           </TouchableOpacity>
         )}
         {retryCountdown > 0 && (
@@ -57,12 +81,20 @@ export function ErrorDisplay({ error, onRetry, onAction, compact = false }: Erro
   return (
     <View className="bg-surface rounded-2xl p-6 border border-border items-center gap-4">
       <View className="w-16 h-16 rounded-full bg-error/20 items-center justify-center">
-        <IconSymbol name="exclamationmark.triangle.fill" size={32} color={colors.error} />
+        <IconSymbol
+          name="exclamationmark.triangle.fill"
+          size={32}
+          color={colors.error}
+        />
       </View>
 
       <View className="items-center gap-2">
-        <Text className="text-xl font-bold text-foreground text-center">{error.title}</Text>
-        <Text className="text-base text-muted text-center leading-6">{error.message}</Text>
+        <Text className="text-xl font-bold text-foreground text-center">
+          {title}
+        </Text>
+        <Text className="text-base text-muted text-center leading-6">
+          {displayMessage}
+        </Text>
       </View>
 
       {retryCountdown > 0 && (
@@ -82,18 +114,20 @@ export function ErrorDisplay({ error, onRetry, onAction, compact = false }: Erro
             <View className="flex-row items-center gap-2">
               <IconSymbol name="arrow.clockwise" size={20} color="#fff" />
               <Text className="text-base font-semibold text-white">
-                {error.action || "Erneut versuchen"}
+                {actionLabel || "Erneut versuchen"}
               </Text>
             </View>
           </TouchableOpacity>
         )}
 
-        {onAction && error.action && !error.retryable && (
+        {onAction && actionLabel && !(error?.retryable ?? false) && (
           <TouchableOpacity
             className="bg-primary rounded-xl py-4 items-center"
             onPress={onAction}
           >
-            <Text className="text-base font-semibold text-white">{error.action}</Text>
+            <Text className="text-base font-semibold text-white">
+              {actionLabel}
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -104,12 +138,22 @@ export function ErrorDisplay({ error, onRetry, onAction, compact = false }: Erro
 /**
  * Inline error message (for smaller spaces)
  */
-export function InlineError({ message, onRetry }: { message: string; onRetry?: () => void }) {
+export function InlineError({
+  message,
+  onRetry,
+}: {
+  message: string;
+  onRetry?: () => void;
+}) {
   const colors = useColors();
 
   return (
     <View className="flex-row items-center gap-2 p-3 bg-error/10 rounded-lg border border-error/30">
-      <IconSymbol name="exclamationmark.circle.fill" size={20} color={colors.error} />
+      <IconSymbol
+        name="exclamationmark.circle.fill"
+        size={20}
+        color={colors.error}
+      />
       <Text className="flex-1 text-sm text-foreground">{message}</Text>
       {onRetry && (
         <TouchableOpacity onPress={onRetry}>

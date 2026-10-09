@@ -1,23 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "expo-router";
 
 const features = [
   {
     icon: "🌱",
     title: "KI-gestützte Analyse",
-    description: "Automatische Analyse deiner Pflanzen und Wachstumsbedingungen mit modernster KI-Technologie.",
+    description:
+      "Automatische Analyse deiner Pflanzen und Wachstumsbedingungen mit modernster KI-Technologie.",
   },
   {
     icon: "📊",
     title: "Detaillierte Berichte",
-    description: "Erhalte wertvolle Insights und Empfehlungen für optimales Wachstum.",
+    description:
+      "Erhalte wertvolle Insights und Empfehlungen für optimales Wachstum.",
   },
   {
     icon: "🔔",
     title: "Smarte Benachrichtigungen",
-    description: "Verpasse nie wieder den richtigen Zeitpunkt für Gießen, Düngen oder Ernten.",
+    description:
+      "Verpasse nie wieder den richtigen Zeitpunkt für Gießen, Düngen oder Ernten.",
   },
   {
     icon: "📱",
@@ -27,12 +30,14 @@ const features = [
   {
     icon: "🌍",
     title: "Community",
-    description: "Tausche dich mit anderen Gärtnern aus und teile deine Erfolge.",
+    description:
+      "Tausche dich mit anderen Gärtnern aus und teile deine Erfolge.",
   },
   {
     icon: "🔒",
     title: "Datenschutz",
-    description: "Deine Daten gehören dir. DSGVO-konform und sicher gespeichert.",
+    description:
+      "Deine Daten gehören dir. DSGVO-konform und sicher gespeichert.",
   },
 ];
 
@@ -90,7 +95,8 @@ export default function LandingPage() {
           GrowMaster AI
         </h1>
         <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-8">
-          Dein intelligenter Gartenassistent. KI-gestützte Analyse, detaillierte Berichte und smarte Empfehlungen für dein Wachstum.
+          Dein intelligenter Gartenassistent. KI-gestützte Analyse, detaillierte
+          Berichte und smarte Empfehlungen für dein Wachstum.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
@@ -115,9 +121,14 @@ export default function LandingPage() {
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
           {features.map((feature) => (
-            <div key={feature.title} className="bg-white rounded-2xl p-6 border border-slate-200">
+            <div
+              key={feature.title}
+              className="bg-white rounded-2xl p-6 border border-slate-200"
+            >
               <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">{feature.title}</h3>
+              <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                {feature.title}
+              </h3>
               <p className="text-slate-600 text-sm">{feature.description}</p>
             </div>
           ))}
@@ -131,10 +142,17 @@ export default function LandingPage() {
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
           {testimonials.map((testimonial) => (
-            <div key={testimonial.name} className="bg-white rounded-2xl p-6 border border-slate-200">
-              <p className="text-slate-600 text-sm mb-4 italic">"{testimonial.text}"</p>
+            <div
+              key={testimonial.name}
+              className="bg-white rounded-2xl p-6 border border-slate-200"
+            >
+              <p className="text-slate-600 text-sm mb-4 italic">
+                &ldquo;{testimonial.text}&rdquo;
+              </p>
               <div>
-                <p className="font-semibold text-slate-900">{testimonial.name}</p>
+                <p className="font-semibold text-slate-900">
+                  {testimonial.name}
+                </p>
                 <p className="text-slate-500 text-sm">{testimonial.role}</p>
               </div>
             </div>
@@ -152,9 +170,32 @@ export default function LandingPage() {
         </p>
         <div className="grid md:grid-cols-3 gap-8">
           {[
-            { name: "Free", price: "0", features: ["5 KI-Anfragen/Tag", "Basis-Analyse", "1 Projekt"] },
-            { name: "Pro", price: "19", features: ["Unbegrenzte Anfragen", "Erweiterte Berichte", "10 Projekte", "API-Zugang"], popular: true },
-            { name: "Enterprise", price: "99", features: ["Alles aus Pro", "Unbegrenzte Projekte", "Dedizierter Support", "Custom Integration"] },
+            {
+              name: "Free",
+              price: "0",
+              features: ["5 KI-Anfragen/Tag", "Basis-Analyse", "1 Projekt"],
+            },
+            {
+              name: "Pro",
+              price: "19",
+              features: [
+                "Unbegrenzte Anfragen",
+                "Erweiterte Berichte",
+                "10 Projekte",
+                "API-Zugang",
+              ],
+              popular: true,
+            },
+            {
+              name: "Enterprise",
+              price: "99",
+              features: [
+                "Alles aus Pro",
+                "Unbegrenzte Projekte",
+                "Dedizierter Support",
+                "Custom Integration",
+              ],
+            },
           ].map((plan) => (
             <div
               key={plan.name}
@@ -167,14 +208,21 @@ export default function LandingPage() {
                   Beliebt
                 </div>
               )}
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">{plan.name}</h3>
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                {plan.name}
+              </h3>
               <div className="mb-6">
-                <span className="text-4xl font-bold text-slate-900">€{plan.price}</span>
+                <span className="text-4xl font-bold text-slate-900">
+                  €{plan.price}
+                </span>
                 <span className="text-slate-500 ml-1">/Monat</span>
               </div>
               <ul className="space-y-3 mb-8">
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-2 text-sm text-slate-700">
+                  <li
+                    key={feature}
+                    className="flex items-start gap-2 text-sm text-slate-700"
+                  >
                     <span className="text-green-500 mt-0.5">✓</span>
                     {feature}
                   </li>
@@ -200,9 +248,13 @@ export default function LandingPage() {
         <div className="bg-green-600 rounded-2xl p-8 text-center text-white">
           <h2 className="text-3xl font-bold mb-4">Bereit zu wachsen?</h2>
           <p className="text-green-100 mb-6">
-            Starte jetzt kostenlos mit GrowMaster AI und sieh deinen Garten in einem neuen Licht.
+            Starte jetzt kostenlos mit GrowMaster AI und sieh deinen Garten in
+            einem neuen Licht.
           </p>
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
+          >
             <input
               type="email"
               value={email}
@@ -219,9 +271,7 @@ export default function LandingPage() {
               {loading ? "Lädt..." : "Kostenlos starten"}
             </button>
           </form>
-          {message && (
-            <p className="mt-4 text-green-100 text-sm">{message}</p>
-          )}
+          {message && <p className="mt-4 text-green-100 text-sm">{message}</p>}
         </div>
       </section>
 
@@ -230,9 +280,15 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-4 py-8 text-center text-slate-500 text-sm">
           <p>© 2026 GrowMaster AI. Alle Rechte vorbehalten.</p>
           <div className="flex justify-center gap-6 mt-4">
-            <a href="/impressum" className="hover:text-slate-700">Impressum</a>
-            <a href="/datenschutz" className="hover:text-slate-700">Datenschutz</a>
-            <a href="/agb" className="hover:text-slate-700">AGB</a>
+            <a href="/impressum" className="hover:text-slate-700">
+              Impressum
+            </a>
+            <a href="/datenschutz" className="hover:text-slate-700">
+              Datenschutz
+            </a>
+            <a href="/agb" className="hover:text-slate-700">
+              AGB
+            </a>
           </div>
         </div>
       </footer>

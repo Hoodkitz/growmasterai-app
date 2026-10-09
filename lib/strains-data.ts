@@ -608,4 +608,3 @@ export function getMedicalLabel(use: MedicalUse): string {
 
 // Reviews are now fetched from the backend via tRPC.
 // This type is kept for reference; actual review data comes from the API.
-export type { StrainReview };

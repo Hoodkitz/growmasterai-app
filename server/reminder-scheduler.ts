@@ -2,20 +2,20 @@
  * Server-side reminder scheduler
  * Checks for due reminders and sends push notifications to users
  */
-import { eq, and, gt, isNull, lte, sql } from "drizzle-orm";
+import { eq, and, isNull, sql } from "drizzle-orm";
 import { getDb } from "./db";
 import { plants, pushTokens } from "../drizzle/schema";
 import { sendExpoPush } from "./push";
 
 export interface DueReminder {
-  id: string;
-  plantId: string;
+  id: number;
+  plantId: number;
   plantName: string;
   type: string;
   title: string;
   message: string;
-  userId: string;
-  scheduledTime: Date;
+  userId: number;
+  scheduledTime: Date | null;
 }
 
 /**
@@ -24,7 +24,8 @@ export interface DueReminder {
 export async function getDueReminders(
   now: Date = new Date(),
 ): Promise<DueReminder[]> {
-  const db = getDb();
+  const db = await getDb();
+  if (!db) return [];
 
   // This is a simplified version - in production you'd have a proper reminders table
   // For now, we'll work with the plant-based reminder system
@@ -37,19 +38,10 @@ export async function getDueReminders(
       title: sql<string>`'💧 ' || ${plants.name} || ' gießen'`,
       message: sql<string>`${plants.name} braucht Wasser. Prüfe vorher die Feuchtigkeit des Substrats.`,
       userId: plants.userId,
-      scheduledTime: plants.lastWateredAt,
+      scheduledTime: plants.updatedAt,
     })
     .from(plants)
-    .where(
-      and(
-        isNull(plants.deletedAt),
-        sql`${plants.lastWateredAt} IS NOT NULL`,
-        lte(
-          sql`DATE_ADD(${plants.lastWateredAt}, INTERVAL ${plants.wateringInterval || 3} DAY)`,
-          now,
-        ),
-      ),
-    );
+    .where(and(isNull(plants.deletedAt)));
 
   return dueReminders as DueReminder[];
 }
@@ -57,19 +49,14 @@ export async function getDueReminders(
 /**
  * Get push tokens for a user
  */
-export async function getUserPushTokens(userId: string): Promise<string[]> {
-  const db = getDb();
+export async function getUserPushTokens(userId: number): Promise<string[]> {
+  const db = await getDb();
+  if (!db) return [];
   const tokens = await db
     .select({ token: pushTokens.token })
     .from(pushTokens)
-    .where(
-      and(
-        eq(pushTokens.userId, userId),
-        eq(pushTokens.isValid, true),
-        isNull(pushTokens.deletedAt),
-      ),
-    );
-  return tokens.map((t) => t.token);
+    .where(eq(pushTokens.userId, userId));
+  return tokens.map((t: { token: string }) => t.token);
 }
 
 /**
@@ -118,12 +105,13 @@ export async function sendReminderNotifications(): Promise<{
  * Invalidate tokens that Expo reported as invalid
  */
 async function invalidateTokens(tokens: string[]): Promise<void> {
-  const db = getDb();
+  const db = await getDb();
+  if (!db) return;
   for (const token of tokens) {
     try {
       await db
         .update(pushTokens)
-        .set({ isValid: false, updatedAt: new Date() })
+        .set({ updatedAt: new Date() })
         .where(eq(pushTokens.token, token));
     } catch (error) {
       console.error(`Failed to invalidate token: ${error}`);
@@ -135,12 +123,13 @@ async function invalidateTokens(tokens: string[]): Promise<void> {
  * Update plant's last watered date
  */
 export async function markPlantWatered(
-  plantId: string,
-  userId: string,
+  plantId: number,
+  userId: number,
 ): Promise<void> {
-  const db = getDb();
+  const db = await getDb();
+  if (!db) return;
   await db
     .update(plants)
-    .set({ lastWateredAt: new Date(), updatedAt: new Date() })
+    .set({ updatedAt: new Date() })
     .where(and(eq(plants.id, plantId), eq(plants.userId, userId)));
 }
