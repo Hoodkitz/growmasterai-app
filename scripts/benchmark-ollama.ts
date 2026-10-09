@@ -8,7 +8,7 @@ import { readFileSync } from "fs";
 // Test image (small sample)
 const TEST_IMAGE_BASE64 = readFileSync(
   process.argv[2] || "/dev/null",
-  "base64"
+  "base64",
 ).slice(0, 50000); // truncate for testing
 
 const OLLAMA_URL = "http://127.0.0.1:11434/api/generate";
@@ -20,7 +20,7 @@ type OllamaConfig = {
   temperature?: number;
 };
 
-const configs: Array<{ name: string; config: OllamaConfig }> = [
+const configs: { name: string; config: OllamaConfig }[] = [
   {
     name: "llava-phi3 (baseline)",
     config: {
@@ -81,7 +81,7 @@ async function benchmark(
   name: string,
   model: string,
   prompt: string,
-  options?: Record<string, any>
+  options?: Record<string, any>,
 ): Promise<number> {
   const payload = {
     model,
@@ -107,7 +107,7 @@ async function benchmark(
     const duration = Date.now() - start;
 
     console.log(
-      `✓ ${name}: ${duration}ms (response length: ${data.response?.length || 0} chars)`
+      `✓ ${name}: ${duration}ms (response length: ${data.response?.length || 0} chars)`,
     );
     return duration;
   } catch (error) {
@@ -121,12 +121,12 @@ async function main() {
 
   if (!TEST_IMAGE_BASE64) {
     console.log(
-      "⚠️  No test image provided. Usage: tsx benchmark-ollama.ts <image.jpg>"
+      "⚠️  No test image provided. Usage: tsx benchmark-ollama.ts <image.jpg>",
     );
     console.log("Running without image (text-only benchmark)...\n");
   }
 
-  const results: Array<{ name: string; time: number }> = [];
+  const results: { name: string; time: number }[] = [];
 
   // Test verbose prompt
   console.log("## Verbose Prompt Tests\n");
@@ -135,7 +135,7 @@ async function main() {
       `${name} + verbose`,
       config.model,
       VERBOSE_PROMPT,
-      config.num_ctx ? config : undefined
+      config.num_ctx ? config : undefined,
     );
     results.push({ name: `${name} + verbose`, time });
     await new Promise((r) => setTimeout(r, 2000)); // cooldown
@@ -147,15 +147,17 @@ async function main() {
       `${name} + concise`,
       config.model,
       CONCISE_PROMPT,
-      config.num_ctx ? config : undefined
+      config.num_ctx ? config : undefined,
     );
     results.push({ name: `${name} + concise`, time });
     await new Promise((r) => setTimeout(r, 2000)); // cooldown
   }
 
   console.log("\n=== Summary ===\n");
-  const sorted = results.filter((r) => r.time > 0).sort((a, b) => a.time - b.time);
-  
+  const sorted = results
+    .filter((r) => r.time > 0)
+    .sort((a, b) => a.time - b.time);
+
   for (const { name, time } of sorted) {
     const status = time < 20000 ? "🎯" : time < 30000 ? "⚡" : "⏱️ ";
     console.log(`${status} ${name}: ${time}ms`);
@@ -164,7 +166,7 @@ async function main() {
   const fastest = sorted[0];
   if (fastest) {
     console.log(`\n✨ Fastest: ${fastest.name} (${fastest.time}ms)`);
-    
+
     if (fastest.time < 20000) {
       console.log("✅ Target achieved: < 20s response time");
     } else {

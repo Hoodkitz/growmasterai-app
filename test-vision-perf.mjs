@@ -2,8 +2,6 @@
  * Test Ollama vision performance with actual image
  */
 
-import { readFileSync } from "fs";
-
 // Create a tiny test image (1x1 red pixel PNG)
 const testImage = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==";
 

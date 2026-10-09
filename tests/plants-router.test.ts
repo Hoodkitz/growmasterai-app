@@ -4,7 +4,6 @@ import {
   plantTimestamp,
   type SyncPlant,
   type SyncState,
-  type Tombstones,
 } from "../shared/plant-sync";
 
 describe("Plants Sync Module", () => {

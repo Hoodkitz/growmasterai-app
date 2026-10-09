@@ -1,10 +1,10 @@
-import { describe, expect, it, beforeEach, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { appRouter } from "../server/routers";
 import type { TrpcContext } from "../server/_core/context";
 
 /**
  * E2E Tests for Critical User Flows
- * 
+ *
  * Tests the three most critical user journeys:
  * 1. Coach (AI assistance)
  * 2. Diagnosis (plant health analysis)
@@ -70,7 +70,8 @@ describe("E2E Critical Flows", () => {
             {
               message: {
                 content: JSON.stringify({
-                  answer: "Die optimale Temperatur für Cannabis liegt zwischen 20-28°C.",
+                  answer:
+                    "Die optimale Temperatur für Cannabis liegt zwischen 20-28°C.",
                   tips: [
                     "Vermeide große Temperaturschwankungen",
                     "Nachttemperatur sollte 5-10°C kühler sein",
@@ -135,14 +136,14 @@ describe("E2E Critical Flows", () => {
       await expect(
         caller.diagnosis.analyze({
           images: ["img1", "img2", "img3", "img4", "img5"],
-        })
+        }),
       ).rejects.toThrow();
 
       // No images (min is 1)
       await expect(
         caller.diagnosis.analyze({
           images: [],
-        })
+        }),
       ).rejects.toThrow();
     });
 
@@ -160,7 +161,7 @@ describe("E2E Critical Flows", () => {
       // Gender detection is optional but should be valid if present
       if (result.plantGender) {
         expect(["male", "female", "hermaphrodite", "unknown"]).toContain(
-          result.plantGender
+          result.plantGender,
         );
       }
 

@@ -2,7 +2,10 @@
  * Performance optimization utilities for GrowMaster AI
  */
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from "react";
+
+// React import (needed for hooks)
+import { useState } from "react";
 
 /**
  * Debounce function - delays execution until after wait milliseconds
@@ -10,7 +13,7 @@ import { useEffect, useRef, useCallback } from 'react';
  */
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -33,7 +36,7 @@ export function debounce<T extends (...args: any[]) => any>(
  */
 export function throttle<T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let inThrottle: boolean;
   let lastResult: ReturnType<T>;
@@ -119,7 +122,7 @@ export const ImageOptimization = {
   getOptimalDimensions(
     width: number,
     height: number,
-    maxDimension: number = 1200
+    maxDimension: number = 1200,
   ): { width: number; height: number } {
     if (width <= maxDimension && height <= maxDimension) {
       return { width, height };
@@ -164,14 +167,13 @@ export const ListOptimization = {
   /**
    * Get estimated item size for FlatList optimization
    */
-  getItemLayout: (itemHeight: number) => (
-    data: any[] | null | undefined,
-    index: number
-  ) => ({
-    length: itemHeight,
-    offset: itemHeight * index,
-    index,
-  }),
+  getItemLayout:
+    (itemHeight: number) =>
+    (data: any[] | null | undefined, index: number) => ({
+      length: itemHeight,
+      offset: itemHeight * index,
+      index,
+    }),
 };
 
 /**
@@ -190,8 +192,8 @@ export const MemoryUtils = {
    * Cleanup large objects
    */
   cleanup(obj: any): void {
-    if (obj && typeof obj === 'object') {
-      Object.keys(obj).forEach(key => {
+    if (obj && typeof obj === "object") {
+      Object.keys(obj).forEach((key) => {
         delete obj[key];
       });
     }
@@ -229,7 +231,7 @@ export const PerformanceMonitor = {
     const result = fn();
     const duration = Date.now() - start;
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       console.log(`[Performance] ${name}: ${duration}ms`);
     }
 
@@ -244,13 +246,10 @@ export const PerformanceMonitor = {
     const result = await fn();
     const duration = Date.now() - start;
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       console.log(`[Performance] ${name}: ${duration}ms`);
     }
 
     return result;
   },
 };
-
-// React import (needed for hooks)
-import { useState } from 'react';

@@ -1,10 +1,9 @@
 import { Tabs } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { View } from "react-native";
+import { View, Platform } from "react-native";
 
 import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { Platform } from "react-native";
 import { useColors } from "@/hooks/use-colors";
 
 export default function TabLayout() {
@@ -45,13 +44,15 @@ export default function TabLayout() {
             <View style={{ alignItems: "center" }}>
               <IconSymbol size={26} name="house.fill" color={color} />
               {focused && (
-                <View style={{ 
-                  width: 4, 
-                  height: 4, 
-                  borderRadius: 2, 
-                  backgroundColor: colors.primary,
-                  marginTop: 4,
-                }} />
+                <View
+                  style={{
+                    width: 4,
+                    height: 4,
+                    borderRadius: 2,
+                    backgroundColor: colors.primary,
+                    marginTop: 4,
+                  }}
+                />
               )}
             </View>
           ),
@@ -65,13 +66,15 @@ export default function TabLayout() {
             <View style={{ alignItems: "center" }}>
               <IconSymbol size={26} name="camera.fill" color={color} />
               {focused && (
-                <View style={{ 
-                  width: 4, 
-                  height: 4, 
-                  borderRadius: 2, 
-                  backgroundColor: colors.primary,
-                  marginTop: 4,
-                }} />
+                <View
+                  style={{
+                    width: 4,
+                    height: 4,
+                    borderRadius: 2,
+                    backgroundColor: colors.primary,
+                    marginTop: 4,
+                  }}
+                />
               )}
             </View>
           ),
@@ -85,13 +88,15 @@ export default function TabLayout() {
             <View style={{ alignItems: "center" }}>
               <IconSymbol size={26} name="message.fill" color={color} />
               {focused && (
-                <View style={{ 
-                  width: 4, 
-                  height: 4, 
-                  borderRadius: 2, 
-                  backgroundColor: colors.primary,
-                  marginTop: 4,
-                }} />
+                <View
+                  style={{
+                    width: 4,
+                    height: 4,
+                    borderRadius: 2,
+                    backgroundColor: colors.primary,
+                    marginTop: 4,
+                  }}
+                />
               )}
             </View>
           ),
@@ -105,13 +110,15 @@ export default function TabLayout() {
             <View style={{ alignItems: "center" }}>
               <IconSymbol size={26} name="person.3.fill" color={color} />
               {focused && (
-                <View style={{ 
-                  width: 4, 
-                  height: 4, 
-                  borderRadius: 2, 
-                  backgroundColor: colors.primary,
-                  marginTop: 4,
-                }} />
+                <View
+                  style={{
+                    width: 4,
+                    height: 4,
+                    borderRadius: 2,
+                    backgroundColor: colors.primary,
+                    marginTop: 4,
+                  }}
+                />
               )}
             </View>
           ),
@@ -125,13 +132,15 @@ export default function TabLayout() {
             <View style={{ alignItems: "center" }}>
               <IconSymbol size={26} name="leaf.fill" color={color} />
               {focused && (
-                <View style={{ 
-                  width: 4, 
-                  height: 4, 
-                  borderRadius: 2, 
-                  backgroundColor: colors.primary,
-                  marginTop: 4,
-                }} />
+                <View
+                  style={{
+                    width: 4,
+                    height: 4,
+                    borderRadius: 2,
+                    backgroundColor: colors.primary,
+                    marginTop: 4,
+                  }}
+                />
               )}
             </View>
           ),

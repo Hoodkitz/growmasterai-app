@@ -40,7 +40,7 @@ try {
   execSync('npx tsc --noEmit', { cwd: path.join(__dirname, '..'), stdio: 'pipe' });
   console.log('  ✅ TypeScript compiles without errors');
   checks.push(true);
-} catch (error) {
+} catch {
   console.log('  ❌ TypeScript compilation errors');
   checks.push(false);
 }

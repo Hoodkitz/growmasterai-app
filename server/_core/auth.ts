@@ -1,50 +1,9 @@
 import type { Express, Request, Response } from "express";
-import {
-  getUserByOpenId,
-  upsertUser,
-  registerEmailUser,
-  verifyEmailLogin,
-} from "../db";
+import { getUserByOpenId, registerEmailUser, verifyEmailLogin } from "../db";
 import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
 import { COOKIE_NAME, ONE_YEAR_MS } from "../../shared/const.js";
 import { logSecurityEvent } from "./securityLogger";
-
-function getQueryParam(req: Request, key: string): string | undefined {
-  const value = req.query[key];
-  return typeof value === "string" ? value : undefined;
-}
-
-async function syncUser(userInfo: {
-  openId?: string | null;
-  name?: string | null;
-  email?: string | null;
-  loginMethod?: string | null;
-  platform?: string | null;
-}) {
-  if (!userInfo.openId) {
-    throw new Error("openId missing from user info");
-  }
-
-  const lastSignedIn = new Date();
-  await upsertUser({
-    openId: userInfo.openId,
-    name: userInfo.name || null,
-    email: userInfo.email ?? null,
-    loginMethod: userInfo.loginMethod ?? userInfo.platform ?? null,
-    lastSignedIn,
-  });
-  const saved = await getUserByOpenId(userInfo.openId);
-  return (
-    saved ?? {
-      openId: userInfo.openId,
-      name: userInfo.name,
-      email: userInfo.email,
-      loginMethod: userInfo.loginMethod ?? null,
-      lastSignedIn,
-    }
-  );
-}
 
 function buildUserResponse(
   user:

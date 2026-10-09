@@ -1,14 +1,22 @@
-import { useState } from "react";
-import { ScrollView, Text, View, TouchableOpacity, TextInput, Image, FlatList, KeyboardAvoidingView, Platform } from "react-native";
-import { useRouter } from "expo-router";
+import { useState, useCallback } from "react";
+import {
+  ScrollView,
+  Text,
+  View,
+  TouchableOpacity,
+  TextInput,
+  Image,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import { useRouter, useFocusEffect } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
 import { useAppAuth } from "@/lib/auth-context";
 import { trpc } from "@/lib/trpc";
-import { useFocusEffect } from "expo-router";
-import { useCallback } from "react";
 
 interface Message {
   id: string;
@@ -29,10 +37,6 @@ interface Conversation {
   online: boolean;
 }
 
-
-
-
-
 export default function MessagesScreen() {
   const router = useRouter();
   const colors = useColors();
@@ -40,7 +44,8 @@ export default function MessagesScreen() {
 
   const { user } = useAppAuth();
 
-  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
+  const [selectedConversation, setSelectedConversation] =
+    useState<Conversation | null>(null);
   const [newMessage, setNewMessage] = useState("");
 
   const messagesQuery = trpc.messages.list.useQuery(undefined, {
@@ -69,7 +74,7 @@ export default function MessagesScreen() {
   useFocusEffect(
     useCallback(() => {
       messagesQuery.refetch();
-    }, [])
+    }, []),
   );
 
   // Group messages into conversations
@@ -77,8 +82,10 @@ export default function MessagesScreen() {
   const conversationMessages: Record<string, Message[]> = {};
 
   if (messagesQuery.data && user) {
-    const sortedMessages = [...messagesQuery.data].sort((a, b) =>
-      new Date(a.message.createdAt).getTime() - new Date(b.message.createdAt).getTime()
+    const sortedMessages = [...messagesQuery.data].sort(
+      (a, b) =>
+        new Date(a.message.createdAt).getTime() -
+        new Date(b.message.createdAt).getTime(),
     );
 
     sortedMessages.forEach(({ message, sender, receiver }) => {
@@ -100,11 +107,11 @@ export default function MessagesScreen() {
           participantLevel: otherUser.level ?? 1,
           lastMessage: message.content,
           lastMessageTime: new Date(message.createdAt),
-          unreadCount: (!message.isRead && !isMe) ? 1 : 0,
+          unreadCount: !message.isRead && !isMe ? 1 : 0,
           online: false, // Need online status system
         });
       } else {
-        const conv = conversations.find(c => c.id === otherUserId);
+        const conv = conversations.find((c) => c.id === otherUserId);
         if (conv) {
           conv.lastMessage = message.content;
           conv.lastMessageTime = new Date(message.createdAt);
@@ -122,7 +129,9 @@ export default function MessagesScreen() {
   }
 
   // Sort conversations by last message
-  conversations.sort((a, b) => b.lastMessageTime.getTime() - a.lastMessageTime.getTime());
+  conversations.sort(
+    (a, b) => b.lastMessageTime.getTime() - a.lastMessageTime.getTime(),
+  );
 
   const currentMessages = selectedConversation
     ? conversationMessages[selectedConversation.id] || []
@@ -157,11 +166,19 @@ export default function MessagesScreen() {
       <ScreenContainer>
         <View className="flex-row items-center justify-between px-4 py-3 border-b border-border">
           <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2">
-            <IconSymbol name="chevron.left" size={24} color={colors.foreground} />
+            <IconSymbol
+              name="chevron.left"
+              size={24}
+              color={colors.foreground}
+            />
           </TouchableOpacity>
           <Text className="text-xl font-bold text-foreground">Nachrichten</Text>
           <TouchableOpacity className="p-2 -mr-2">
-            <IconSymbol name="square.and.pencil" size={24} color={colors.primary} />
+            <IconSymbol
+              name="square.and.pencil"
+              size={24}
+              color={colors.primary}
+            />
           </TouchableOpacity>
         </View>
 
@@ -170,15 +187,20 @@ export default function MessagesScreen() {
             <View className="w-20 h-20 rounded-full bg-primary/20 items-center justify-center mb-4">
               <IconSymbol name="lock.fill" size={40} color={colors.primary} />
             </View>
-            <Text className="text-xl font-bold text-foreground text-center mb-2">Premium Feature</Text>
+            <Text className="text-xl font-bold text-foreground text-center mb-2">
+              Premium Feature
+            </Text>
             <Text className="text-base text-muted text-center mb-6">
-              Direktnachrichten sind nur für Premium und Pro Mitglieder verfügbar.
+              Direktnachrichten sind nur für Premium und Pro Mitglieder
+              verfügbar.
             </Text>
             <TouchableOpacity
               className="bg-primary px-6 py-3 rounded-full"
               onPress={() => router.push("/paywall")}
             >
-              <Text className="text-base font-semibold text-white">Upgrade auf Premium</Text>
+              <Text className="text-base font-semibold text-white">
+                Upgrade auf Premium
+              </Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -203,19 +225,29 @@ export default function MessagesScreen() {
 
                 <View className="flex-1">
                   <View className="flex-row items-center gap-2">
-                    <Text className="text-base font-semibold text-foreground">{item.participantName}</Text>
+                    <Text className="text-base font-semibold text-foreground">
+                      {item.participantName}
+                    </Text>
                     <View className="bg-primary/20 px-2 py-0.5 rounded">
-                      <Text className="text-xs text-primary">Lvl {item.participantLevel}</Text>
+                      <Text className="text-xs text-primary">
+                        Lvl {item.participantLevel}
+                      </Text>
                     </View>
                   </View>
-                  <Text className="text-sm text-muted" numberOfLines={1}>{item.lastMessage}</Text>
+                  <Text className="text-sm text-muted" numberOfLines={1}>
+                    {item.lastMessage}
+                  </Text>
                 </View>
 
                 <View className="items-end gap-1">
-                  <Text className="text-xs text-muted">{formatTime(item.lastMessageTime)}</Text>
+                  <Text className="text-xs text-muted">
+                    {formatTime(item.lastMessageTime)}
+                  </Text>
                   {item.unreadCount > 0 && (
                     <View className="bg-primary w-5 h-5 rounded-full items-center justify-center">
-                      <Text className="text-xs font-bold text-white">{item.unreadCount}</Text>
+                      <Text className="text-xs font-bold text-white">
+                        {item.unreadCount}
+                      </Text>
                     </View>
                   )}
                 </View>
@@ -224,7 +256,9 @@ export default function MessagesScreen() {
             ListEmptyComponent={
               <View className="items-center justify-center py-12">
                 <Text className="text-4xl mb-4">💬</Text>
-                <Text className="text-base text-muted text-center">Noch keine Nachrichten</Text>
+                <Text className="text-base text-muted text-center">
+                  Noch keine Nachrichten
+                </Text>
                 <Text className="text-sm text-muted text-center mt-1">
                   Starte eine Unterhaltung mit anderen Growern!
                 </Text>
@@ -247,12 +281,18 @@ export default function MessagesScreen() {
         {/* Chat Header */}
         <View className="flex-row items-center gap-3 px-4 py-3 border-b border-border">
           <TouchableOpacity onPress={() => setSelectedConversation(null)}>
-            <IconSymbol name="chevron.left" size={24} color={colors.foreground} />
+            <IconSymbol
+              name="chevron.left"
+              size={24}
+              color={colors.foreground}
+            />
           </TouchableOpacity>
 
           <View className="relative">
             <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
-              <Text className="text-lg">{selectedConversation.participantAvatar}</Text>
+              <Text className="text-lg">
+                {selectedConversation.participantAvatar}
+              </Text>
             </View>
             {selectedConversation.online && (
               <View className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-success border-2 border-background" />
@@ -260,7 +300,9 @@ export default function MessagesScreen() {
           </View>
 
           <View className="flex-1">
-            <Text className="text-base font-semibold text-foreground">{selectedConversation.participantName}</Text>
+            <Text className="text-base font-semibold text-foreground">
+              {selectedConversation.participantName}
+            </Text>
             <Text className="text-xs text-muted">
               {selectedConversation.online ? "Online" : "Offline"}
             </Text>
@@ -280,17 +322,25 @@ export default function MessagesScreen() {
           renderItem={({ item }) => {
             const isMe = item.senderId === "me";
             return (
-              <View className={`mb-3 ${isMe ? 'items-end' : 'items-start'}`}>
+              <View className={`mb-3 ${isMe ? "items-end" : "items-start"}`}>
                 <View
-                  className={`max-w-[80%] rounded-2xl px-4 py-3 ${isMe ? 'bg-primary rounded-br-sm' : 'bg-surface border border-border rounded-bl-sm'
-                    }`}
+                  className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                    isMe
+                      ? "bg-primary rounded-br-sm"
+                      : "bg-surface border border-border rounded-bl-sm"
+                  }`}
                 >
-                  <Text className={`text-base ${isMe ? 'text-white' : 'text-foreground'}`}>
+                  <Text
+                    className={`text-base ${isMe ? "text-white" : "text-foreground"}`}
+                  >
                     {item.text}
                   </Text>
                 </View>
                 <Text className="text-xs text-muted mt-1">
-                  {item.timestamp.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}
+                  {item.timestamp.toLocaleTimeString("de-DE", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </Text>
               </View>
             );
@@ -316,11 +366,15 @@ export default function MessagesScreen() {
           </View>
 
           <TouchableOpacity
-            className={`p-2 rounded-full ${newMessage.trim() ? 'bg-primary' : 'bg-surface'}`}
+            className={`p-2 rounded-full ${newMessage.trim() ? "bg-primary" : "bg-surface"}`}
             onPress={sendMessage}
             disabled={!newMessage.trim()}
           >
-            <IconSymbol name="paperplane.fill" size={20} color={newMessage.trim() ? "#fff" : colors.muted} />
+            <IconSymbol
+              name="paperplane.fill"
+              size={20}
+              color={newMessage.trim() ? "#fff" : colors.muted}
+            />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

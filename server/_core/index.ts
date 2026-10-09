@@ -8,12 +8,7 @@ import { registerGoogleOAuthRoutes } from "./googleOAuth";
 import { registerRevenueCatRoutes } from "./revenuecat";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
-import { 
-  createRateLimiter, 
-  rateLimitMiddleware,
-  loginLimiter,
-  registerLimiter 
-} from "./rateLimit";
+import { createRateLimiter, rateLimitMiddleware } from "./rateLimit";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise((resolve) => {
@@ -53,22 +48,27 @@ async function startServer() {
 
   app.use((req, res, next) => {
     const origin = req.headers.origin;
-    
+
     // Check if origin is in allowlist
-    const isAllowed = origin && ALLOWED_ORIGINS.some(allowed => {
-      if (typeof allowed === 'string') {
-        return allowed === origin;
-      }
-      // RegExp pattern
-      return allowed instanceof RegExp && allowed.test(origin);
-    });
+    const isAllowed =
+      origin &&
+      ALLOWED_ORIGINS.some((allowed) => {
+        if (typeof allowed === "string") {
+          return allowed === origin;
+        }
+        // RegExp pattern
+        return allowed instanceof RegExp && allowed.test(origin);
+      });
 
     if (isAllowed && origin) {
       res.header("Access-Control-Allow-Origin", origin);
       res.header("Access-Control-Allow-Credentials", "true");
     }
-    
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+
+    res.header(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS",
+    );
     res.header(
       "Access-Control-Allow-Headers",
       "Origin, X-Requested-With, Content-Type, Accept, Authorization",
@@ -86,24 +86,18 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
   // SECURITY: Rate limiting for authentication endpoints
-  const oauthCallbackLimiter = createRateLimiter({ 
+  const oauthCallbackLimiter = createRateLimiter({
     windowMs: 15 * 60_000, // 15 minutes
-    max: 10 // 10 attempts per window
-  });
-
-  // General API rate limiter (more permissive)
-  const apiLimiter = createRateLimiter({
-    windowMs: 1 * 60_000, // 1 minute
-    max: 100 // 100 requests per minute
+    max: 10, // 10 attempts per window
   });
 
   registerOAuthRoutes(app);
   registerGoogleOAuthRoutes(app);
   registerRevenueCatRoutes(app);
-  
+
   // Apply rate limiting to OAuth callback routes
-  app.use('/oauth/callback', rateLimitMiddleware(oauthCallbackLimiter));
-  app.use('/oauth/google/callback', rateLimitMiddleware(oauthCallbackLimiter));
+  app.use("/oauth/callback", rateLimitMiddleware(oauthCallbackLimiter));
+  app.use("/oauth/google/callback", rateLimitMiddleware(oauthCallbackLimiter));
 
   app.get("/api/health", (_req, res) => {
     res.json({ ok: true, timestamp: Date.now() });

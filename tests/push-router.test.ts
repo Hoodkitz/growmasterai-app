@@ -5,7 +5,6 @@ import {
   isExpoPushToken,
   chunk,
   sendExpoPush,
-  type PushSendSummary,
 } from "../server/push";
 
 describe("Push Module", () => {

@@ -19,7 +19,12 @@ export type FileContent = {
   type: "file_url";
   file_url: {
     url: string;
-    mime_type?: "audio/mpeg" | "audio/wav" | "application/pdf" | "audio/mp4" | "video/mp4";
+    mime_type?:
+      | "audio/mpeg"
+      | "audio/wav"
+      | "application/pdf"
+      | "audio/mp4"
+      | "video/mp4";
   };
 };
 
@@ -50,7 +55,8 @@ export type ToolChoiceExplicit = {
   };
 };
 
-export type ToolChoice = ToolChoicePrimitive | ToolChoiceByName | ToolChoiceExplicit;
+export type ToolChoice =
+  ToolChoicePrimitive | ToolChoiceByName | ToolChoiceExplicit;
 
 export type InvokeParams = {
   messages: Message[];
@@ -78,15 +84,15 @@ export type InvokeResult = {
   id: string;
   created: number;
   model: string;
-  choices: Array<{
+  choices: {
     index: number;
     message: {
       role: Role;
-      content: string | Array<TextContent | ImageContent | FileContent>;
+      content: string | (TextContent | ImageContent | FileContent)[];
       tool_calls?: ToolCall[];
     };
     finish_reason: string | null;
-  }>;
+  }[];
   usage?: {
     prompt_tokens: number;
     completion_tokens: number;
@@ -107,63 +113,6 @@ export type ResponseFormat =
   | { type: "json_object" }
   | { type: "json_schema"; json_schema: JsonSchema };
 
-const ensureArray = (value: MessageContent | MessageContent[]): MessageContent[] =>
-  Array.isArray(value) ? value : [value];
-
-const normalizeContentPart = (part: MessageContent): TextContent | ImageContent | FileContent => {
-  if (typeof part === "string") {
-    return { type: "text", text: part };
-  }
-
-  if (part.type === "text") {
-    return part;
-  }
-
-  if (part.type === "image_url") {
-    return part;
-  }
-
-  if (part.type === "file_url") {
-    return part;
-  }
-
-  throw new Error("Unsupported message content part");
-};
-
-const normalizeMessage = (message: Message) => {
-  const { role, name, tool_call_id } = message;
-
-  if (role === "tool" || role === "function") {
-    const content = ensureArray(message.content)
-      .map((part) => (typeof part === "string" ? part : JSON.stringify(part)))
-      .join("\n");
-
-    return {
-      role,
-      name,
-      tool_call_id,
-      content,
-    };
-  }
-
-  const contentParts = ensureArray(message.content).map(normalizeContentPart);
-
-  // If there's only text content, collapse to a single string for compatibility
-  if (contentParts.length === 1 && contentParts[0].type === "text") {
-    return {
-      role,
-      name,
-      content: contentParts[0].text,
-    };
-  }
-
-  return {
-    role,
-    name,
-    content: contentParts,
-  };
-};
-
 const normalizeToolChoice = (
   toolChoice: ToolChoice | undefined,
   tools: Tool[] | undefined,
@@ -176,7 +125,9 @@ const normalizeToolChoice = (
 
   if (toolChoice === "required") {
     if (!tools || tools.length === 0) {
-      throw new Error("tool_choice 'required' was provided but no tools were configured");
+      throw new Error(
+        "tool_choice 'required' was provided but no tools were configured",
+      );
     }
 
     if (tools.length > 1) {
@@ -246,7 +197,7 @@ Gender:
 
 ${prompt.includes("Zusätzliche Notizen") ? prompt.match(/Zusätzliche Notizen.*?:/)?.[0] || "" : ""}`;
   }
-  
+
   // For other prompts, just trim excessive whitespace
   return prompt.trim().replace(/\n\n+/g, "\n\n");
 }
@@ -255,10 +206,12 @@ ${prompt.includes("Zusätzliche Notizen") ? prompt.match(/Zusätzliche Notizen.*
  * POST the payload to Gemini, walking a short fallback chain on transient
  * errors (429/5xx). One attempt per model keeps the worst case well under the
  * 100s upstream timeout; client errors (400/403/404) return immediately.
- * 
+ *
  * If all Gemini models fail with 503, falls back to local Ollama.
  */
-async function fetchWithRetry(payload: Record<string, unknown>): Promise<Response> {
+async function fetchWithRetry(
+  payload: Record<string, unknown>,
+): Promise<Response> {
   let lastResponse: Response | null = null;
 
   for (const model of GEMINI_FALLBACK_MODELS) {
@@ -282,7 +235,9 @@ async function fetchWithRetry(payload: Record<string, unknown>): Promise<Respons
   // If all Gemini models failed with 429/503, try local Ollama as final fallback
   if (lastResponse && [429, 503].includes(lastResponse.status)) {
     try {
-      console.log(`[Gemini ${lastResponse.status}] Falling back to local Ollama...`);
+      console.log(
+        `[Gemini ${lastResponse.status}] Falling back to local Ollama...`,
+      );
       const ollamaResponse = await fetchOllama(payload);
       if (ollamaResponse.ok) return ollamaResponse;
     } catch (e) {
@@ -297,12 +252,17 @@ async function fetchWithRetry(payload: Record<string, unknown>): Promise<Respons
  * Fallback to local Ollama when Gemini is overloaded.
  * Converts Gemini payload to Ollama format with optimized prompt.
  */
-async function fetchOllama(geminiPayload: Record<string, unknown>): Promise<Response> {
-  const contents = geminiPayload.contents as Array<{ parts: Array<{ text?: string; inlineData?: { data: string } }> }>;
-  const systemInstruction = geminiPayload.systemInstruction as { parts: Array<{ text: string }> } | undefined;
+async function fetchOllama(
+  geminiPayload: Record<string, unknown>,
+): Promise<Response> {
+  const contents = geminiPayload.contents as {
+    parts: { text?: string; inlineData?: { data: string } }[];
+  }[];
+  const systemInstruction = geminiPayload.systemInstruction as
+    { parts: { text: string }[] } | undefined;
 
   // Extract text prompt and images
-  let prompt = systemInstruction?.parts?.map(p => p.text).join("\n") || "";
+  let prompt = systemInstruction?.parts?.map((p) => p.text).join("\n") || "";
   const images: string[] = [];
 
   for (const content of contents) {
@@ -333,15 +293,17 @@ async function fetchOllama(geminiPayload: Record<string, unknown>): Promise<Resp
   if (!response.ok) return response;
 
   // Convert Ollama response to Gemini format
-  const ollamaData = await response.json() as { response: string };
+  const ollamaData = (await response.json()) as { response: string };
   const geminiFormat = {
-    candidates: [{
-      content: {
-        parts: [{ text: ollamaData.response }],
-        role: "model",
+    candidates: [
+      {
+        content: {
+          parts: [{ text: ollamaData.response }],
+          role: "model",
+        },
+        finishReason: "STOP",
       },
-      finishReason: "STOP",
-    }],
+    ],
     usageMetadata: {
       promptTokenCount: 0,
       candidatesTokenCount: 0,
@@ -379,8 +341,13 @@ const normalizeResponseFormat = ({
   | undefined => {
   const explicitFormat = responseFormat || response_format;
   if (explicitFormat) {
-    if (explicitFormat.type === "json_schema" && !explicitFormat.json_schema?.schema) {
-      throw new Error("responseFormat json_schema requires a defined schema object");
+    if (
+      explicitFormat.type === "json_schema" &&
+      !explicitFormat.json_schema?.schema
+    ) {
+      throw new Error(
+        "responseFormat json_schema requires a defined schema object",
+      );
     }
     return explicitFormat;
   }
@@ -408,8 +375,10 @@ const geminiRole = (role: Role): string => {
   return role;
 };
 
-const contentToParts = (content: MessageContent | MessageContent[]): Array<Record<string, unknown>> => {
-  const parts: Array<Record<string, unknown>> = [];
+const contentToParts = (
+  content: MessageContent | MessageContent[],
+): Record<string, unknown>[] => {
+  const parts: Record<string, unknown>[] = [];
   const items = Array.isArray(content) ? content : [content];
 
   for (const item of items) {
@@ -430,13 +399,18 @@ const contentToParts = (content: MessageContent | MessageContent[]): Array<Recor
   return parts;
 };
 
-const toolsToGemini = (tools: Tool[]): Array<Record<string, unknown>> => {
+const toolsToGemini = (tools: Tool[]): Record<string, unknown>[] => {
   return tools.map((tool) => ({
-    functionDeclarations: [{
-      name: tool.function.name,
-      description: tool.function.description || "",
-      parameters: tool.function.parameters || { type: "object", properties: {} },
-    }],
+    functionDeclarations: [
+      {
+        name: tool.function.name,
+        description: tool.function.description || "",
+        parameters: tool.function.parameters || {
+          type: "object",
+          properties: {},
+        },
+      },
+    ],
   }));
 };
 
@@ -481,7 +455,8 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
   if (normalizedResponseFormat) {
     if (normalizedResponseFormat.type === "json_schema") {
       generationConfig.responseMimeType = "application/json";
-      generationConfig.responseSchema = normalizedResponseFormat.json_schema.schema;
+      generationConfig.responseSchema =
+        normalizedResponseFormat.json_schema.schema;
     } else if (normalizedResponseFormat.type === "json_object") {
       generationConfig.responseMimeType = "application/json";
     }
@@ -500,7 +475,10 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     payload.tools = toolsToGemini(tools);
   }
 
-  const normalizedToolChoice = normalizeToolChoice(toolChoice || tool_choice, tools);
+  const normalizedToolChoice = normalizeToolChoice(
+    toolChoice || tool_choice,
+    tools,
+  );
   if (normalizedToolChoice && normalizedToolChoice !== "none") {
     payload.toolConfig = {
       functionCallingConfig: {
@@ -513,18 +491,22 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`LLM invoke failed: ${response.status} ${response.statusText} – ${errorText}`);
+    throw new Error(
+      `LLM invoke failed: ${response.status} ${response.statusText} – ${errorText}`,
+    );
   }
 
-  const data = await response.json() as Record<string, unknown>;
-  const candidates = data.candidates as Array<Record<string, unknown>> | undefined;
+  const data = (await response.json()) as Record<string, unknown>;
+  const candidates = data.candidates as Record<string, unknown>[] | undefined;
   const firstCandidate = candidates?.[0];
-  const content = firstCandidate?.content as Record<string, unknown> | undefined;
-  const parts = content?.parts as Array<Record<string, unknown>> | undefined;
+  const content = firstCandidate?.content as
+    Record<string, unknown> | undefined;
+  const parts = content?.parts as Record<string, unknown>[] | undefined;
 
-  const textParts = parts
-    ?.filter((p) => typeof p.text === "string")
-    .map((p) => p.text as string) || [];
+  const textParts =
+    parts
+      ?.filter((p) => typeof p.text === "string")
+      .map((p) => p.text as string) || [];
 
   const toolCalls = parts
     ?.filter((p) => p.functionCall)
@@ -533,7 +515,9 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
       type: "function" as const,
       function: {
         name: String((p.functionCall as Record<string, unknown>).name ?? ""),
-        arguments: JSON.stringify((p.functionCall as Record<string, unknown>).args || {}),
+        arguments: JSON.stringify(
+          (p.functionCall as Record<string, unknown>).args || {},
+        ),
       },
     }));
 
@@ -541,15 +525,17 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     id: `gemini-${Date.now()}`,
     created: Math.floor(Date.now() / 1000),
     model: GEMINI_MODEL,
-    choices: [{
-      index: 0,
-      message: {
-        role: "assistant" as const,
-        content: textParts.join(""),
-        tool_calls: toolCalls?.length ? toolCalls : undefined,
+    choices: [
+      {
+        index: 0,
+        message: {
+          role: "assistant" as const,
+          content: textParts.join(""),
+          tool_calls: toolCalls?.length ? toolCalls : undefined,
+        },
+        finish_reason: String(firstCandidate?.finishReason ?? "stop"),
       },
-      finish_reason: String(firstCandidate?.finishReason ?? "stop"),
-    }],
+    ],
     usage: data.usageMetadata as InvokeResult["usage"],
   };
 }

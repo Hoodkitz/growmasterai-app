@@ -1,6 +1,6 @@
 /**
  * GrowMaster AI - Vendor Outreach System
- * 
+ *
  * Automatisiertes System zur Akquise von Anbietern/Partnern.
  * Enthält Email-Templates und Outreach-Funktionen.
  */
@@ -10,7 +10,8 @@ export interface VendorContact {
   contactName?: string;
   email: string;
   website?: string;
-  type: "seedbank" | "growshop" | "headshop" | "nutrient" | "equipment" | "other";
+  type:
+    "seedbank" | "growshop" | "headshop" | "nutrient" | "equipment" | "other";
   country?: string;
   notes?: string;
 }
@@ -110,7 +111,8 @@ GrowMaster AI`,
     id: "equipment-initial",
     name: "Equipment-Hersteller - Erstanfrage",
     type: "initial",
-    subject: "Produktplatzierung in GrowMaster AI - [NUTZER_ANZAHL] potenzielle Kunden",
+    subject:
+      "Produktplatzierung in GrowMaster AI - [NUTZER_ANZAHL] potenzielle Kunden",
     body: `Sehr geehrte Damen und Herren,
 
 GrowMaster AI ist die meistgenutzte Grow-App im deutschsprachigen Raum. Unsere Nutzer suchen aktiv nach hochwertigem Equipment für ihren Anbau.
@@ -164,7 +166,8 @@ GrowMaster AI`,
     id: "advertising",
     name: "Werbepartnerschaft",
     type: "advertising",
-    subject: "Werben Sie in GrowMaster AI - Erreichen Sie [NUTZER_ANZAHL] Cannabis-Enthusiasten",
+    subject:
+      "Werben Sie in GrowMaster AI - Erreichen Sie [NUTZER_ANZAHL] Cannabis-Enthusiasten",
     body: `Sehr geehrte Damen und Herren,
 
 möchten Sie Ihre Produkte direkt an Cannabis-Anbauer vermarkten? GrowMaster AI bietet Ihnen die perfekte Plattform.
@@ -204,28 +207,124 @@ Werbepartnerschaften`,
 // Potenzielle Partner-Datenbank (Beispiel)
 export const POTENTIAL_PARTNERS: VendorContact[] = [
   // Samenbanken
-  { companyName: "Sensi Seeds", email: "info@sensiseeds.com", type: "seedbank", website: "https://sensiseeds.com", country: "NL" },
-  { companyName: "Royal Queen Seeds", email: "info@royalqueenseeds.com", type: "seedbank", website: "https://royalqueenseeds.com", country: "NL" },
-  { companyName: "Dutch Passion", email: "info@dutch-passion.com", type: "seedbank", website: "https://dutch-passion.com", country: "NL" },
-  { companyName: "Barney's Farm", email: "info@barneysfarm.com", type: "seedbank", website: "https://barneysfarm.com", country: "NL" },
-  { companyName: "Fast Buds", email: "info@fastbuds.com", type: "seedbank", website: "https://fastbuds.com", country: "ES" },
-  { companyName: "Seedsman", email: "affiliates@seedsman.com", type: "seedbank", website: "https://seedsman.com", country: "UK" },
-  { companyName: "Zamnesia", email: "affiliates@zamnesia.com", type: "seedbank", website: "https://zamnesia.com", country: "NL" },
-  
+  {
+    companyName: "Sensi Seeds",
+    email: "info@sensiseeds.com",
+    type: "seedbank",
+    website: "https://sensiseeds.com",
+    country: "NL",
+  },
+  {
+    companyName: "Royal Queen Seeds",
+    email: "info@royalqueenseeds.com",
+    type: "seedbank",
+    website: "https://royalqueenseeds.com",
+    country: "NL",
+  },
+  {
+    companyName: "Dutch Passion",
+    email: "info@dutch-passion.com",
+    type: "seedbank",
+    website: "https://dutch-passion.com",
+    country: "NL",
+  },
+  {
+    companyName: "Barney's Farm",
+    email: "info@barneysfarm.com",
+    type: "seedbank",
+    website: "https://barneysfarm.com",
+    country: "NL",
+  },
+  {
+    companyName: "Fast Buds",
+    email: "info@fastbuds.com",
+    type: "seedbank",
+    website: "https://fastbuds.com",
+    country: "ES",
+  },
+  {
+    companyName: "Seedsman",
+    email: "affiliates@seedsman.com",
+    type: "seedbank",
+    website: "https://seedsman.com",
+    country: "UK",
+  },
+  {
+    companyName: "Zamnesia",
+    email: "affiliates@zamnesia.com",
+    type: "seedbank",
+    website: "https://zamnesia.com",
+    country: "NL",
+  },
+
   // Growshops
-  { companyName: "Growland", email: "info@growland.net", type: "growshop", website: "https://growland.net", country: "DE" },
-  { companyName: "Grow-Shop24", email: "info@grow-shop24.de", type: "growshop", website: "https://grow-shop24.de", country: "DE" },
-  { companyName: "Headshop24", email: "info@headshop24.de", type: "headshop", website: "https://headshop24.de", country: "DE" },
-  
+  {
+    companyName: "Growland",
+    email: "info@growland.net",
+    type: "growshop",
+    website: "https://growland.net",
+    country: "DE",
+  },
+  {
+    companyName: "Grow-Shop24",
+    email: "info@grow-shop24.de",
+    type: "growshop",
+    website: "https://grow-shop24.de",
+    country: "DE",
+  },
+  {
+    companyName: "Headshop24",
+    email: "info@headshop24.de",
+    type: "headshop",
+    website: "https://headshop24.de",
+    country: "DE",
+  },
+
   // Equipment
-  { companyName: "SANlight", email: "info@sanlight.com", type: "equipment", website: "https://sanlight.com", country: "AT" },
-  { companyName: "Lumatek", email: "info@lumatek.com", type: "equipment", website: "https://lumatek.com", country: "UK" },
-  { companyName: "Secret Jardin", email: "info@secretjardin.com", type: "equipment", website: "https://secretjardin.com", country: "BE" },
-  
+  {
+    companyName: "SANlight",
+    email: "info@sanlight.com",
+    type: "equipment",
+    website: "https://sanlight.com",
+    country: "AT",
+  },
+  {
+    companyName: "Lumatek",
+    email: "info@lumatek.com",
+    type: "equipment",
+    website: "https://lumatek.com",
+    country: "UK",
+  },
+  {
+    companyName: "Secret Jardin",
+    email: "info@secretjardin.com",
+    type: "equipment",
+    website: "https://secretjardin.com",
+    country: "BE",
+  },
+
   // Nährstoffe
-  { companyName: "BioBizz", email: "info@biobizz.com", type: "nutrient", website: "https://biobizz.com", country: "NL" },
-  { companyName: "Advanced Nutrients", email: "info@advancednutrients.com", type: "nutrient", website: "https://advancednutrients.com", country: "CA" },
-  { companyName: "Canna", email: "info@canna.com", type: "nutrient", website: "https://canna.com", country: "NL" },
+  {
+    companyName: "BioBizz",
+    email: "info@biobizz.com",
+    type: "nutrient",
+    website: "https://biobizz.com",
+    country: "NL",
+  },
+  {
+    companyName: "Advanced Nutrients",
+    email: "info@advancednutrients.com",
+    type: "nutrient",
+    website: "https://advancednutrients.com",
+    country: "CA",
+  },
+  {
+    companyName: "Canna",
+    email: "info@canna.com",
+    type: "nutrient",
+    website: "https://canna.com",
+    country: "NL",
+  },
 ];
 
 /**
@@ -234,7 +333,7 @@ export const POTENTIAL_PARTNERS: VendorContact[] = [
 export function generateEmail(
   template: OutreachTemplate,
   vendor: VendorContact,
-  customData: Record<string, string> = {}
+  customData: Record<string, string> = {},
 ): { subject: string; body: string } {
   const replacements: Record<string, string> = {
     "[SHOP_NAME]": vendor.companyName,
@@ -247,7 +346,8 @@ export function generateEmail(
     "[COMMUNITY_ANZAHL]": customData.communityCount || "5.000+",
     "[SESSIONS]": customData.dailySessions || "15.000",
     "[NEUE_NUTZER]": customData.newUsers || "2.000",
-    "[PARTNER_LINK]": customData.partnerLink || "https://growmaster.app/partner",
+    "[PARTNER_LINK]":
+      customData.partnerLink || "https://growmaster.app/partner",
     ...customData,
   };
 
@@ -255,7 +355,10 @@ export function generateEmail(
   let body = template.body;
 
   Object.entries(replacements).forEach(([key, value]) => {
-    subject = subject.replace(new RegExp(key.replace(/[[\]]/g, "\\$&"), "g"), value);
+    subject = subject.replace(
+      new RegExp(key.replace(/[[\]]/g, "\\$&"), "g"),
+      value,
+    );
     body = body.replace(new RegExp(key.replace(/[[\]]/g, "\\$&"), "g"), value);
   });
 
@@ -268,17 +371,17 @@ export function generateEmail(
 export function createOutreachCampaign(
   vendors: VendorContact[],
   templateId: string,
-  customData: Record<string, string> = {}
-): Array<{
+  customData: Record<string, string> = {},
+): {
   vendor: VendorContact;
   email: { subject: string; body: string };
-}> {
-  const template = EMAIL_TEMPLATES.find(t => t.id === templateId);
+}[] {
+  const template = EMAIL_TEMPLATES.find((t) => t.id === templateId);
   if (!template) {
     throw new Error(`Template not found: ${templateId}`);
   }
 
-  return vendors.map(vendor => ({
+  return vendors.map((vendor) => ({
     vendor,
     email: generateEmail(template, vendor, customData),
   }));
@@ -287,8 +390,10 @@ export function createOutreachCampaign(
 /**
  * Filtert potenzielle Partner nach Typ
  */
-export function getPartnersByType(type: VendorContact["type"]): VendorContact[] {
-  return POTENTIAL_PARTNERS.filter(p => p.type === type);
+export function getPartnersByType(
+  type: VendorContact["type"],
+): VendorContact[] {
+  return POTENTIAL_PARTNERS.filter((p) => p.type === type);
 }
 
 /**
@@ -297,7 +402,7 @@ export function getPartnersByType(type: VendorContact["type"]): VendorContact[] 
 export function generateMailtoLink(
   email: string,
   subject: string,
-  body: string
+  body: string,
 ): string {
   const encodedSubject = encodeURIComponent(subject);
   const encodedBody = encodeURIComponent(body);
@@ -307,7 +412,8 @@ export function generateMailtoLink(
 /**
  * Outreach-Status Tracking
  */
-export type OutreachStatus = "pending" | "sent" | "opened" | "replied" | "converted" | "rejected";
+export type OutreachStatus =
+  "pending" | "sent" | "opened" | "replied" | "converted" | "rejected";
 
 export interface OutreachRecord {
   id: string;
@@ -322,24 +428,37 @@ export interface OutreachRecord {
 }
 
 /** Aggregiert Zähler pro Status (z. B. aus einer DB-GROUP-BY-Abfrage). */
-export function summarizeOutreach(rows: Array<{ status: OutreachStatus; n: number }>): {
+export function summarizeOutreach(
+  rows: { status: OutreachStatus; n: number }[],
+): {
   total: number;
   byStatus: Record<OutreachStatus, number>;
   conversionRate: number;
 } {
   const byStatus: Record<OutreachStatus, number> = {
-    pending: 0, sent: 0, opened: 0, replied: 0, converted: 0, rejected: 0,
+    pending: 0,
+    sent: 0,
+    opened: 0,
+    replied: 0,
+    converted: 0,
+    rejected: 0,
   };
   for (const r of rows) byStatus[r.status] += r.n;
   const total = Object.values(byStatus).reduce((a, b) => a + b, 0);
-  return { total, byStatus, conversionRate: total > 0 ? (byStatus.converted / total) * 100 : 0 };
+  return {
+    total,
+    byStatus,
+    conversionRate: total > 0 ? (byStatus.converted / total) * 100 : 0,
+  };
 }
 
 // In-Memory Tracking – nur noch für Tests/Offline-Vorschau.
 // Persistenz: Tabelle `vendorOutreach` + tRPC-Router `outreach` (server/routers.ts).
 const outreachRecords: OutreachRecord[] = [];
 
-export function trackOutreach(record: Omit<OutreachRecord, "id">): OutreachRecord {
+export function trackOutreach(
+  record: Omit<OutreachRecord, "id">,
+): OutreachRecord {
   const newRecord: OutreachRecord = {
     ...record,
     id: `outreach_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -348,8 +467,12 @@ export function trackOutreach(record: Omit<OutreachRecord, "id">): OutreachRecor
   return newRecord;
 }
 
-export function updateOutreachStatus(id: string, status: OutreachStatus, notes?: string): void {
-  const record = outreachRecords.find(r => r.id === id);
+export function updateOutreachStatus(
+  id: string,
+  status: OutreachStatus,
+  notes?: string,
+): void {
+  const record = outreachRecords.find((r) => r.id === id);
   if (record) {
     record.status = status;
     if (notes) record.notes = notes;
@@ -373,7 +496,7 @@ export function getOutreachStats(): {
     rejected: 0,
   };
 
-  outreachRecords.forEach(record => {
+  outreachRecords.forEach((record) => {
     byStatus[record.status]++;
   });
 

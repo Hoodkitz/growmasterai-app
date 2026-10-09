@@ -1,6 +1,6 @@
 /**
  * GrowMaster AI - Affiliate System
- * 
+ *
  * Dieses Modul verwaltet alle Affiliate-Partnerschaften und Links.
  * Die Affiliate-IDs müssen nach Registrierung bei den jeweiligen Partnern
  * in den Umgebungsvariablen hinterlegt werden.
@@ -10,12 +10,14 @@
 const AFFILIATE_IDS = {
   ZAMNESIA: process.env.EXPO_PUBLIC_AFFILIATE_ZAMNESIA || "growmaster",
   SENSISEEDS: process.env.EXPO_PUBLIC_AFFILIATE_SENSISEEDS || "growmaster",
-  DUTCH_HEADSHOP: process.env.EXPO_PUBLIC_AFFILIATE_DUTCH_HEADSHOP || "growmaster",
+  DUTCH_HEADSHOP:
+    process.env.EXPO_PUBLIC_AFFILIATE_DUTCH_HEADSHOP || "growmaster",
   RQS: process.env.EXPO_PUBLIC_AFFILIATE_RQS || "growmaster",
   SEEDSMAN: process.env.EXPO_PUBLIC_AFFILIATE_SEEDSMAN || "growmaster",
   AMAZON: process.env.EXPO_PUBLIC_AFFILIATE_AMAZON || "plantdoctor-21",
   GROWLAND: process.env.EXPO_PUBLIC_AFFILIATE_GROWLAND || "growmaster",
-  CANNACONNECTION: process.env.EXPO_PUBLIC_AFFILIATE_CANNACONNECTION || "growmaster",
+  CANNACONNECTION:
+    process.env.EXPO_PUBLIC_AFFILIATE_CANNACONNECTION || "growmaster",
   GROW_GURU: process.env.EXPO_PUBLIC_AFFILIATE_GROW_GURU || "087442201",
 };
 
@@ -160,9 +162,9 @@ export const AFFILIATE_PARTNERS: AffiliatePartner[] = [
 export function generateAffiliateLink(
   partnerId: string,
   path: string = "",
-  additionalParams?: Record<string, string>
+  additionalParams?: Record<string, string>,
 ): string {
-  const partner = AFFILIATE_PARTNERS.find(p => p.id === partnerId);
+  const partner = AFFILIATE_PARTNERS.find((p) => p.id === partnerId);
   if (!partner) {
     console.warn(`[Affiliates] Unknown partner: ${partnerId}`);
     return "";
@@ -170,12 +172,12 @@ export function generateAffiliateLink(
 
   const url = new URL(path || "/", partner.baseUrl);
   url.searchParams.set(partner.affiliateParam, partner.affiliateId);
-  
+
   // UTM-Parameter für Tracking
   url.searchParams.set("utm_source", "growmaster");
   url.searchParams.set("utm_medium", "app");
   url.searchParams.set("utm_campaign", "affiliate");
-  
+
   if (additionalParams) {
     Object.entries(additionalParams).forEach(([key, value]) => {
       url.searchParams.set(key, value);
@@ -190,19 +192,19 @@ export function generateAffiliateLink(
  */
 export function generateStrainAffiliateLink(
   strainName: string,
-  preferredPartner?: string
+  preferredPartner?: string,
 ): { url: string; partner: AffiliatePartner } | null {
   // Bevorzugten Partner oder ersten Seed-Partner wählen
   const partner = preferredPartner
-    ? AFFILIATE_PARTNERS.find(p => p.id === preferredPartner)
-    : AFFILIATE_PARTNERS.find(p => p.category === "seeds" && p.featured);
-  
+    ? AFFILIATE_PARTNERS.find((p) => p.id === preferredPartner)
+    : AFFILIATE_PARTNERS.find((p) => p.category === "seeds" && p.featured);
+
   if (!partner) return null;
 
   // Suchlink generieren
   const searchQuery = encodeURIComponent(strainName);
   let searchPath = "";
-  
+
   switch (partner.id) {
     case "zamnesia":
       searchPath = `/de/search?q=${searchQuery}`;
@@ -232,27 +234,28 @@ export function generateStrainAffiliateLink(
 export function generateEquipmentAffiliateLink(
   productName: string,
   category?: "lights" | "tents" | "nutrients" | "ventilation" | "general",
-  preferredPartner?: "amazon" | "grow-guru"
+  preferredPartner?: "amazon" | "grow-guru",
 ): { url: string; partner: AffiliatePartner } | null {
   // Partner-Auswahl: Bevorzugter Partner oder Featured Equipment Partner
   let partner: AffiliatePartner | undefined;
-  
+
   if (preferredPartner) {
-    partner = AFFILIATE_PARTNERS.find(p => p.id === preferredPartner);
+    partner = AFFILIATE_PARTNERS.find((p) => p.id === preferredPartner);
   }
-  
+
   // Fallback: Grow-Guru bevorzugen (featured), dann Amazon, dann irgendein Equipment-Partner
   if (!partner) {
-    partner = AFFILIATE_PARTNERS.find(p => p.id === "grow-guru" && p.featured)
-      || AFFILIATE_PARTNERS.find(p => p.id === "amazon")
-      || AFFILIATE_PARTNERS.find(p => p.category === "equipment");
+    partner =
+      AFFILIATE_PARTNERS.find((p) => p.id === "grow-guru" && p.featured) ||
+      AFFILIATE_PARTNERS.find((p) => p.id === "amazon") ||
+      AFFILIATE_PARTNERS.find((p) => p.category === "equipment");
   }
-  
+
   if (!partner) return null;
 
   const searchQuery = encodeURIComponent(productName);
   let searchPath = "";
-  
+
   if (partner.id === "amazon") {
     searchPath = `/s?k=${searchQuery}`;
     if (category === "lights") {
@@ -283,14 +286,16 @@ export interface AffiliateClickEvent {
 
 const clickHistory: AffiliateClickEvent[] = [];
 
-export function trackAffiliateClick(event: Omit<AffiliateClickEvent, "timestamp">): void {
+export function trackAffiliateClick(
+  event: Omit<AffiliateClickEvent, "timestamp">,
+): void {
   const fullEvent: AffiliateClickEvent = {
     ...event,
     timestamp: new Date(),
   };
-  
+
   clickHistory.push(fullEvent);
-  
+
   // In Produktion: An Analytics-Service senden
   console.log("[Affiliates] Click tracked:", fullEvent);
 }
@@ -304,24 +309,72 @@ export function getAffiliateClickHistory(): AffiliateClickEvent[] {
  */
 export const RECOMMENDED_PRODUCTS = {
   seedling: [
-    { name: "Propagator Set", category: "general" as const, description: "Anzuchtset für Keimlinge" },
-    { name: "Seedling Heat Mat", category: "general" as const, description: "Heizmatte für optimale Keimung" },
-    { name: "Jiffy Pellets", category: "general" as const, description: "Quelltabletten für Samen" },
+    {
+      name: "Propagator Set",
+      category: "general" as const,
+      description: "Anzuchtset für Keimlinge",
+    },
+    {
+      name: "Seedling Heat Mat",
+      category: "general" as const,
+      description: "Heizmatte für optimale Keimung",
+    },
+    {
+      name: "Jiffy Pellets",
+      category: "general" as const,
+      description: "Quelltabletten für Samen",
+    },
   ],
   vegetative: [
-    { name: "LED Grow Light 200W", category: "lights" as const, description: "Vollspektrum LED für Veg-Phase" },
-    { name: "Grow Tent 80x80", category: "tents" as const, description: "Growzelt für 2-4 Pflanzen" },
-    { name: "BioBizz Grow", category: "nutrients" as const, description: "Organischer Wachstumsdünger" },
+    {
+      name: "LED Grow Light 200W",
+      category: "lights" as const,
+      description: "Vollspektrum LED für Veg-Phase",
+    },
+    {
+      name: "Grow Tent 80x80",
+      category: "tents" as const,
+      description: "Growzelt für 2-4 Pflanzen",
+    },
+    {
+      name: "BioBizz Grow",
+      category: "nutrients" as const,
+      description: "Organischer Wachstumsdünger",
+    },
   ],
   flowering: [
-    { name: "LED Grow Light 400W", category: "lights" as const, description: "Starke LED für Blütephase" },
-    { name: "BioBizz Bloom", category: "nutrients" as const, description: "Organischer Blütedünger" },
-    { name: "Carbon Filter", category: "ventilation" as const, description: "Aktivkohlefilter gegen Geruch" },
+    {
+      name: "LED Grow Light 400W",
+      category: "lights" as const,
+      description: "Starke LED für Blütephase",
+    },
+    {
+      name: "BioBizz Bloom",
+      category: "nutrients" as const,
+      description: "Organischer Blütedünger",
+    },
+    {
+      name: "Carbon Filter",
+      category: "ventilation" as const,
+      description: "Aktivkohlefilter gegen Geruch",
+    },
   ],
   harvest: [
-    { name: "Trimming Scissors", category: "general" as const, description: "Präzisionsschere für Ernte" },
-    { name: "Drying Net", category: "general" as const, description: "Trockennetz für Blüten" },
-    { name: "Boveda Packs", category: "general" as const, description: "Feuchtigkeitsregler für Curing" },
+    {
+      name: "Trimming Scissors",
+      category: "general" as const,
+      description: "Präzisionsschere für Ernte",
+    },
+    {
+      name: "Drying Net",
+      category: "general" as const,
+      description: "Trockennetz für Blüten",
+    },
+    {
+      name: "Boveda Packs",
+      category: "general" as const,
+      description: "Feuchtigkeitsregler für Curing",
+    },
   ],
 };
 
@@ -329,17 +382,20 @@ export const RECOMMENDED_PRODUCTS = {
  * Holt empfohlene Produkte mit Affiliate-Links für eine Grow-Phase
  */
 export function getRecommendedProductsWithLinks(
-  phase: keyof typeof RECOMMENDED_PRODUCTS
-): Array<{
+  phase: keyof typeof RECOMMENDED_PRODUCTS,
+): {
   name: string;
   description: string;
   affiliateLink: string | null;
   partner: AffiliatePartner | null;
-}> {
+}[] {
   const products = RECOMMENDED_PRODUCTS[phase];
-  
-  return products.map(product => {
-    const result = generateEquipmentAffiliateLink(product.name, product.category);
+
+  return products.map((product) => {
+    const result = generateEquipmentAffiliateLink(
+      product.name,
+      product.category,
+    );
     return {
       name: product.name,
       description: product.description,

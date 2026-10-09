@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+import { invokeLLM } from "../server/_core/llm";
+
 // Mock the LLM module
 vi.mock("../server/_core/llm", () => ({
   invokeLLM: vi.fn(),
 }));
-
-import { invokeLLM } from "../server/_core/llm";
 
 describe("GrowMaster AI Server Routers", () => {
   beforeEach(() => {
@@ -20,8 +20,14 @@ describe("GrowMaster AI Server Routers", () => {
             message: {
               content: JSON.stringify({
                 problem: "Die Pflanze zeigt Anzeichen eines Stickstoffmangels",
-                recommendations: ["Erhöhe die Stickstoffzufuhr", "Überprüfe den pH-Wert"],
-                careTips: ["Regelmäßig gießen", "Luftfeuchtigkeit kontrollieren"],
+                recommendations: [
+                  "Erhöhe die Stickstoffzufuhr",
+                  "Überprüfe den pH-Wert",
+                ],
+                careTips: [
+                  "Regelmäßig gießen",
+                  "Luftfeuchtigkeit kontrollieren",
+                ],
                 severity: "medium",
               }),
             },
@@ -38,7 +44,7 @@ describe("GrowMaster AI Server Routers", () => {
 
       expect(result.choices[0].message.content).toBeDefined();
       const parsed = JSON.parse(result.choices[0].message.content as string);
-      
+
       expect(parsed).toHaveProperty("problem");
       expect(parsed).toHaveProperty("recommendations");
       expect(parsed).toHaveProperty("careTips");
@@ -77,8 +83,13 @@ describe("GrowMaster AI Server Routers", () => {
           {
             message: {
               content: JSON.stringify({
-                answer: "Für optimales Wachstum empfehle ich einen ausgewogenen NPK-Dünger.",
-                tips: ["Beobachte täglich", "Führe ein Journal", "Halte Bedingungen konstant"],
+                answer:
+                  "Für optimales Wachstum empfehle ich einen ausgewogenen NPK-Dünger.",
+                tips: [
+                  "Beobachte täglich",
+                  "Führe ein Journal",
+                  "Halte Bedingungen konstant",
+                ],
               }),
             },
           },
@@ -93,7 +104,7 @@ describe("GrowMaster AI Server Routers", () => {
 
       expect(result.choices[0].message.content).toBeDefined();
       const parsed = JSON.parse(result.choices[0].message.content as string);
-      
+
       expect(parsed).toHaveProperty("answer");
       expect(parsed).toHaveProperty("tips");
       expect(typeof parsed.answer).toBe("string");
@@ -128,7 +139,7 @@ describe("GrowMaster AI Server Routers", () => {
   describe("Response Schema Validation", () => {
     it("diagnosis severity should be one of low, medium, high", () => {
       const validSeverities = ["low", "medium", "high"];
-      
+
       validSeverities.forEach((severity) => {
         expect(["low", "medium", "high"]).toContain(severity);
       });

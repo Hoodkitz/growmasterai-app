@@ -1,6 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
-  SubscriptionTier,
   TIER_LIMITS,
   TIER_INFO,
   TIER_PRICING,
@@ -79,8 +78,12 @@ describe("Subscription System", () => {
     });
 
     it("should have yearly monthly equivalent less than monthly price", () => {
-      expect(TIER_PRICING.premium.yearlyMonthly).toBeLessThan(TIER_PRICING.premium.monthly);
-      expect(TIER_PRICING.pro.yearlyMonthly).toBeLessThan(TIER_PRICING.pro.monthly);
+      expect(TIER_PRICING.premium.yearlyMonthly).toBeLessThan(
+        TIER_PRICING.premium.monthly,
+      );
+      expect(TIER_PRICING.pro.yearlyMonthly).toBeLessThan(
+        TIER_PRICING.pro.monthly,
+      );
     });
   });
 
@@ -189,19 +192,25 @@ describe("Subscription System", () => {
   describe("Tier Hierarchy", () => {
     it("should have increasing limits from free to pro", () => {
       // Diagnoses
-      expect(TIER_LIMITS.free.diagnosesPerDay).toBeLessThan(TIER_LIMITS.premium.diagnosesPerDay);
-      
+      expect(TIER_LIMITS.free.diagnosesPerDay).toBeLessThan(
+        TIER_LIMITS.premium.diagnosesPerDay,
+      );
+
       // Messages
-      expect(TIER_LIMITS.free.coachMessagesPerDay).toBeLessThan(TIER_LIMITS.premium.coachMessagesPerDay);
-      
+      expect(TIER_LIMITS.free.coachMessagesPerDay).toBeLessThan(
+        TIER_LIMITS.premium.coachMessagesPerDay,
+      );
+
       // Plants
-      expect(TIER_LIMITS.free.maxPlants).toBeLessThan(TIER_LIMITS.premium.maxPlants);
+      expect(TIER_LIMITS.free.maxPlants).toBeLessThan(
+        TIER_LIMITS.premium.maxPlants,
+      );
     });
 
     it("should have premium features not available in free", () => {
       expect(TIER_LIMITS.free.advancedAnalysis).toBe(false);
       expect(TIER_LIMITS.premium.advancedAnalysis).toBe(true);
-      
+
       expect(TIER_LIMITS.free.exportData).toBe(false);
       expect(TIER_LIMITS.premium.exportData).toBe(true);
     });
