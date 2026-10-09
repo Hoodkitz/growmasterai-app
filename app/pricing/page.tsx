@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "expo-router";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
@@ -89,7 +89,9 @@ export default function PricingPage() {
       });
 
       if (res.status === 503) {
-        setError("Stripe ist aktuell nicht konfiguriert. Bitte versuche es später erneut.");
+        setError(
+          "Stripe ist aktuell nicht konfiguriert. Bitte versuche es später erneut.",
+        );
         return;
       }
 
@@ -104,7 +106,9 @@ export default function PricingPage() {
       }
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Ein unbekannter Fehler ist aufgetreten."
+        err instanceof Error
+          ? err.message
+          : "Ein unbekannter Fehler ist aufgetreten.",
       );
     } finally {
       setLoading(false);
@@ -119,7 +123,8 @@ export default function PricingPage() {
           Wähle deinen Plan
         </h1>
         <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-          Starte kostenlos und skaliere, wenn du bereit bist. Keine versteckten Kosten.
+          Starte kostenlos und skaliere, wenn du bereit bist. Keine versteckten
+          Kosten.
         </p>
       </div>
 
@@ -152,12 +157,17 @@ export default function PricingPage() {
                 <span className="text-4xl font-bold text-slate-900">
                   €{plan.price}
                 </span>
-                <span className="text-slate-500 ml-1">{plan.stripePriceId ? plan.period : ""}</span>
+                <span className="text-slate-500 ml-1">
+                  {plan.stripePriceId ? plan.period : ""}
+                </span>
               </div>
 
               <ul className="space-y-3 mb-8">
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-2 text-sm text-slate-700">
+                  <li
+                    key={feature}
+                    className="flex items-start gap-2 text-sm text-slate-700"
+                  >
                     <span className="text-green-500 mt-0.5">✓</span>
                     {feature}
                   </li>
@@ -180,8 +190,14 @@ export default function PricingPage() {
         </div>
 
         {error && (
-          <div className="mt-8 rounded-xl bg-red-50 border border-red-200 p-4 text-red-700 text-sm text-center">
-            {error}
+          <div className="mt-8 rounded-xl bg-red-50 border border-red-200 p-4 text-center">
+            <p className="text-red-700 text-sm mb-3">{error}</p>
+            <button
+              onClick={() => setError(null)}
+              className="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-sm font-medium transition-colors"
+            >
+              Erneut versuchen
+            </button>
           </div>
         )}
 

@@ -1,6 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ScrollView, Text, View, TouchableOpacity, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  ScrollView,
+  Text,
+  View,
+  TouchableOpacity,
+  TextInput,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
@@ -10,6 +19,7 @@ import { UpgradePrompt, UsageIndicator } from "@/components/upgrade-prompt";
 import { TIER_LIMITS } from "@/lib/subscription";
 import { InlineError } from "@/components/error-display";
 import { getCoachErrorMessage } from "@/lib/error-handling";
+import { CoachSkeletonLoader } from "@/components/skeleton-loaders";
 
 const COACH_STORAGE_KEY = "@growmaster_coach_messages";
 
@@ -29,8 +39,9 @@ export default function CoachScreen() {
     {
       id: "welcome",
       role: "assistant",
-      content: "Hallo! Ich bin dein Grow Coach. Stelle mir Fragen zu deinem Cannabis-Anbau und ich helfe dir mit Tipps und Ratschlägen.",
-    }
+      content:
+        "Hallo! Ich bin dein Grow Coach. Stelle mir Fragen zu deinem Cannabis-Anbau und ich helfe dir mit Tipps und Ratschlägen.",
+    },
   ]);
   const [input, setInput] = useState("");
   const [historyLoaded, setHistoryLoaded] = useState(false);
@@ -51,12 +62,19 @@ export default function CoachScreen() {
   // Persist conversation (last 100 messages)
   useEffect(() => {
     if (!historyLoaded) return;
-    AsyncStorage.setItem(COACH_STORAGE_KEY, JSON.stringify(messages.slice(-100))).catch((e) =>
-      console.error("Failed to save coach history:", e),
-    );
+    AsyncStorage.setItem(
+      COACH_STORAGE_KEY,
+      JSON.stringify(messages.slice(-100)),
+    ).catch((e) => console.error("Failed to save coach history:", e));
   }, [messages, historyLoaded]);
 
-  const { tier, dailyMessages, canMessage, useMessage: consumeMessage, remainingMessages } = useSubscription();
+  const {
+    tier,
+    dailyMessages,
+    canMessage,
+    useMessage: consumeMessage,
+    remainingMessages,
+  } = useSubscription();
   const limits = TIER_LIMITS[tier];
 
   const coachMutation = trpc.coach.ask.useMutation({
@@ -67,8 +85,11 @@ export default function CoachScreen() {
         content: data.answer,
         tips: data.tips,
       };
-      setMessages(prev => [...prev, assistantMessage]);
-      setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
+      setMessages((prev) => [...prev, assistantMessage]);
+      setTimeout(
+        () => scrollViewRef.current?.scrollToEnd({ animated: true }),
+        100,
+      );
     },
     onError: (error, variables) => {
       console.error("Coach error:", error);
@@ -80,8 +101,11 @@ export default function CoachScreen() {
         error: errorDetails,
         retryQuestion: variables.question,
       };
-      setMessages(prev => [...prev, errorMessage]);
-      setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
+      setMessages((prev) => [...prev, errorMessage]);
+      setTimeout(
+        () => scrollViewRef.current?.scrollToEnd({ animated: true }),
+        100,
+      );
     },
   });
 
@@ -100,29 +124,40 @@ export default function CoachScreen() {
       content: input.trim(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     const question = input.trim();
     setInput("");
 
     // Scroll to bottom
-    setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
+    setTimeout(
+      () => scrollViewRef.current?.scrollToEnd({ animated: true }),
+      100,
+    );
 
     coachMutation.mutate({ question });
   };
 
   const retryMessage = (messageId: string, question: string) => {
     // Remove the error message
-    setMessages(prev => prev.filter(m => m.id !== messageId));
-    
+    setMessages((prev) => prev.filter((m) => m.id !== messageId));
+
     // Retry the question
     coachMutation.mutate({ question });
   };
+
+  if (!historyLoaded) {
+    return (
+      <ScreenContainer>
+        <CoachSkeletonLoader />
+      </ScreenContainer>
+    );
+  }
 
   const canSendMessage = canMessage();
 
   return (
     <ScreenContainer>
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={100}
@@ -130,14 +165,16 @@ export default function CoachScreen() {
         {/* Header */}
         <View className="p-4 border-b border-border">
           <Text className="text-2xl font-bold text-foreground">Grow Coach</Text>
-          <Text className="text-base text-muted">Dein persönlicher Anbau-Experte</Text>
-          
+          <Text className="text-base text-muted">
+            Dein persönlicher Anbau-Experte
+          </Text>
+
           {/* Usage Indicator */}
           {limits.coachMessagesPerDay !== -1 && (
             <View className="mt-3">
-              <UsageIndicator 
-                used={dailyMessages} 
-                limit={limits.coachMessagesPerDay} 
+              <UsageIndicator
+                used={dailyMessages}
+                limit={limits.coachMessagesPerDay}
                 label="Nachrichten heute"
               />
             </View>
@@ -147,8 +184,8 @@ export default function CoachScreen() {
         {/* Limit Reached Warning */}
         {!canSendMessage && (
           <View className="p-4">
-            <UpgradePrompt 
-              feature="Nachrichten" 
+            <UpgradePrompt
+              feature="Nachrichten"
               limit={limits.coachMessagesPerDay}
               remaining={remainingMessages}
             />
@@ -156,43 +193,53 @@ export default function CoachScreen() {
         )}
 
         {/* Messages */}
-        <ScrollView 
+        <ScrollView
           ref={scrollViewRef}
           className="flex-1 p-4"
           contentContainerStyle={{ gap: 16 }}
           showsVerticalScrollIndicator={false}
         >
           {messages.map((message) => (
-            <View 
+            <View
               key={message.id}
               className={`max-w-[85%] ${message.role === "user" ? "self-end" : "self-start"}`}
             >
-              <View 
+              <View
                 className={`rounded-2xl p-4 ${
-                  message.role === "user" 
-                    ? "bg-primary rounded-br-sm" 
+                  message.role === "user"
+                    ? "bg-primary rounded-br-sm"
                     : "bg-surface border border-border rounded-bl-sm"
                 }`}
               >
-                <Text className={`text-base ${message.role === "user" ? "text-background" : "text-foreground"}`}>
+                <Text
+                  className={`text-base ${message.role === "user" ? "text-background" : "text-foreground"}`}
+                >
                   {message.content}
                 </Text>
               </View>
-              
+
               {message.tips && message.tips.length > 0 && (
                 <View className="mt-2 bg-primary/10 rounded-xl p-3 gap-2">
-                  <Text className="text-sm font-semibold text-primary">Praktische Tipps:</Text>
+                  <Text className="text-sm font-semibold text-primary">
+                    Praktische Tipps:
+                  </Text>
                   {message.tips.map((tip, index) => (
                     <View key={index} className="flex-row items-start gap-2">
-                      <IconSymbol name="checkmark.circle.fill" size={16} color={colors.primary} />
-                      <Text className="flex-1 text-sm text-foreground">{tip}</Text>
+                      <IconSymbol
+                        name="checkmark.circle.fill"
+                        size={16}
+                        color={colors.primary}
+                      />
+                      <Text className="flex-1 text-sm text-foreground">
+                        {tip}
+                      </Text>
                     </View>
                   ))}
                 </View>
               )}
             </View>
           ))}
-          
+
           {coachMutation.isPending && (
             <View className="self-start bg-surface border border-border rounded-2xl rounded-bl-sm p-4">
               <ActivityIndicator color={colors.primary} />
@@ -216,12 +263,16 @@ export default function CoachScreen() {
                 returnKeyType="send"
                 onSubmitEditing={sendMessage}
               />
-              <TouchableOpacity 
-                className={`w-12 h-12 rounded-full items-center justify-center ${input.trim() ? 'bg-primary' : 'bg-muted/30'}`}
+              <TouchableOpacity
+                className={`w-12 h-12 rounded-full items-center justify-center ${input.trim() ? "bg-primary" : "bg-muted/30"}`}
                 onPress={sendMessage}
                 disabled={!input.trim() || coachMutation.isPending}
               >
-                <IconSymbol name="paperplane.fill" size={20} color={input.trim() ? "#fff" : colors.muted} />
+                <IconSymbol
+                  name="paperplane.fill"
+                  size={20}
+                  color={input.trim() ? "#fff" : colors.muted}
+                />
               </TouchableOpacity>
             </View>
           )}

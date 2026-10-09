@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { 
-  Text, 
-  View, 
-  TouchableOpacity, 
-  StyleSheet, 
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
   Platform,
   ActivityIndicator,
   Animated,
@@ -28,6 +28,7 @@ import { trpc } from "@/lib/trpc";
 import { ErrorDisplay } from "@/components/error-display";
 import { AIProcessingIndicator } from "@/components/loading-state";
 import { getDiagnosisErrorMessage } from "@/lib/error-handling";
+import { DiagnoseSkeletonLoader } from "@/components/skeleton-loaders";
 
 const { width, height } = Dimensions.get("window");
 
@@ -55,21 +56,30 @@ export default function DiagnoseScreen() {
   const router = useRouter();
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { tier, dailyDiagnoses, canDiagnose, useDiagnosis: consumeDiagnosis, remainingDiagnoses } = useSubscription();
+  const {
+    tier,
+    dailyDiagnoses,
+    canDiagnose,
+    useDiagnosis: consumeDiagnosis,
+    remainingDiagnoses,
+  } = useSubscription();
   const limits = TIER_LIMITS[tier];
   const [permission, requestPermission] = useCameraPermissions();
-  
+
   const [mode, setMode] = useState<"camera" | "gallery" | "result">("camera");
   const [facing, setFacing] = useState<CameraType>("back");
   const [liveAnalysisActive, setLiveAnalysisActive] = useState(false);
   const [overlays, setOverlays] = useState<AnalysisOverlay[]>([]);
-  const [selectedOverlay, setSelectedOverlay] = useState<AnalysisOverlay | null>(null);
+  const [selectedOverlay, setSelectedOverlay] =
+    useState<AnalysisOverlay | null>(null);
   const [images, setImages] = useState<string[]>([]);
   const [notes, setNotes] = useState("");
   const [diagnosis, setDiagnosis] = useState<DiagnosisResult | null>(null);
-  const [diagnosisError, setDiagnosisError] = useState<ReturnType<typeof getDiagnosisErrorMessage> | null>(null);
+  const [diagnosisError, setDiagnosisError] = useState<ReturnType<
+    typeof getDiagnosisErrorMessage
+  > | null>(null);
   const [hasScannedOnce, setHasScannedOnce] = useState(false);
-  
+
   const cameraRef = useRef<CameraView>(null);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const scanLineAnim = useRef(new Animated.Value(0)).current;
@@ -79,7 +89,7 @@ export default function DiagnoseScreen() {
       setDiagnosis(data);
       setDiagnosisError(null);
       setMode("result");
-      
+
       // Auto-play voice response immediately for smooth flow
       if (data.voiceResponse) {
         // Stop any ongoing speech first
@@ -105,16 +115,32 @@ export default function DiagnoseScreen() {
     if (liveAnalysisActive) {
       Animated.loop(
         Animated.sequence([
-          Animated.timing(pulseAnim, { toValue: 1.2, duration: 1000, useNativeDriver: true }),
-          Animated.timing(pulseAnim, { toValue: 1, duration: 1000, useNativeDriver: true }),
-        ])
+          Animated.timing(pulseAnim, {
+            toValue: 1.2,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ]),
       ).start();
-      
+
       Animated.loop(
         Animated.sequence([
-          Animated.timing(scanLineAnim, { toValue: 1, duration: 2000, useNativeDriver: true }),
-          Animated.timing(scanLineAnim, { toValue: 0, duration: 0, useNativeDriver: true }),
-        ])
+          Animated.timing(scanLineAnim, {
+            toValue: 1,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(scanLineAnim, {
+            toValue: 0,
+            duration: 0,
+            useNativeDriver: true,
+          }),
+        ]),
       ).start();
     } else {
       pulseAnim.setValue(1);
@@ -131,8 +157,18 @@ export default function DiagnoseScreen() {
       setOverlays([]);
       return;
     }
-    const COLORS = { cut: "#F59E0B", issue: "#EF4444", healthy: "#22C55E", tip: "#3B82F6" } as const;
-    const PREFIX = { cut: "✂️ ", issue: "⚠️ ", healthy: "✓ ", tip: "💡 " } as const;
+    const COLORS = {
+      cut: "#F59E0B",
+      issue: "#EF4444",
+      healthy: "#22C55E",
+      tip: "#3B82F6",
+    } as const;
+    const PREFIX = {
+      cut: "✂️ ",
+      issue: "⚠️ ",
+      healthy: "✓ ",
+      tip: "💡 ",
+    } as const;
     let cancelled = false;
 
     const scan = async () => {
@@ -185,13 +221,13 @@ export default function DiagnoseScreen() {
 
   const takePicture = async () => {
     if (!cameraRef.current || !canStartDiagnosis) return;
-    
+
     try {
       const photo = await cameraRef.current.takePictureAsync({
         base64: true,
         quality: 0.8,
       });
-      
+
       if (photo) {
         setImages([photo.uri]);
         setHasScannedOnce(true); // Enable live analysis after first scan
@@ -204,7 +240,7 @@ export default function DiagnoseScreen() {
 
   const pickImage = async () => {
     if (!canStartDiagnosis) return;
-    
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsMultipleSelection: true,
@@ -222,9 +258,9 @@ export default function DiagnoseScreen() {
   const startDiagnosis = async (base64Images?: string[]) => {
     const canUse = await consumeDiagnosis();
     if (!canUse) return;
-    
+
     let imagesToAnalyze = base64Images;
-    
+
     if (!imagesToAnalyze) {
       imagesToAnalyze = await Promise.all(
         images.map(async (uri) => {
@@ -236,7 +272,7 @@ export default function DiagnoseScreen() {
           } catch {
             return uri;
           }
-        })
+        }),
       );
     }
 
@@ -262,17 +298,23 @@ export default function DiagnoseScreen() {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "high": return colors.error;
-      case "medium": return colors.warning;
-      default: return colors.success;
+      case "high":
+        return colors.error;
+      case "medium":
+        return colors.warning;
+      default:
+        return colors.success;
     }
   };
 
   const getSeverityLabel = (severity: string) => {
     switch (severity) {
-      case "high": return "Hoch";
-      case "medium": return "Mittel";
-      default: return "Niedrig";
+      case "high":
+        return "Hoch";
+      case "medium":
+        return "Mittel";
+      default:
+        return "Niedrig";
     }
   };
 
@@ -282,6 +324,15 @@ export default function DiagnoseScreen() {
       <View className="flex-1 bg-background items-center justify-center">
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
+    );
+  }
+
+  // Loading state during diagnosis
+  if (diagnosisMutation.isPending) {
+    return (
+      <ScreenContainer className="p-4">
+        <DiagnoseSkeletonLoader />
+      </ScreenContainer>
     );
   }
 
@@ -297,11 +348,13 @@ export default function DiagnoseScreen() {
         <Text className="text-base text-muted text-center mb-6">
           Um Pflanzen zu analysieren, benötigen wir Zugriff auf deine Kamera.
         </Text>
-        <TouchableOpacity 
+        <TouchableOpacity
           className="bg-primary px-6 py-3 rounded-full"
           onPress={requestPermission}
         >
-          <Text className="text-base font-semibold text-white">Zugriff erlauben</Text>
+          <Text className="text-base font-semibold text-white">
+            Zugriff erlauben
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -311,7 +364,10 @@ export default function DiagnoseScreen() {
   if (mode === "result" && diagnosisError) {
     return (
       <ScreenContainer className="p-4">
-        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          showsVerticalScrollIndicator={false}
+        >
           <View className="flex-1 justify-center gap-6">
             <ErrorDisplay
               error={diagnosisError}
@@ -327,7 +383,9 @@ export default function DiagnoseScreen() {
               className="bg-surface rounded-xl py-3 items-center border border-border"
               onPress={resetDiagnosis}
             >
-              <Text className="text-base font-medium text-foreground">Neue Analyse starten</Text>
+              <Text className="text-base font-medium text-foreground">
+                Neue Analyse starten
+              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -339,12 +397,19 @@ export default function DiagnoseScreen() {
   if (mode === "result" && diagnosis) {
     return (
       <ScreenContainer className="p-4">
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+        >
           <View className="flex-1 gap-6">
             <View className="flex-row items-center justify-between">
               <View className="gap-1">
-                <Text className="text-2xl font-bold text-foreground">Analyse-Ergebnis</Text>
-                <Text className="text-base text-muted">KI-gestützte Pflanzendiagnose</Text>
+                <Text className="text-2xl font-bold text-foreground">
+                  Analyse-Ergebnis
+                </Text>
+                <Text className="text-base text-muted">
+                  KI-gestützte Pflanzendiagnose
+                </Text>
               </View>
               {/* Voice Replay Button */}
               {diagnosis.voiceResponse && (
@@ -359,7 +424,11 @@ export default function DiagnoseScreen() {
                     });
                   }}
                 >
-                  <IconSymbol name="speaker.wave.2.fill" size={24} color={colors.primary} />
+                  <IconSymbol
+                    name="speaker.wave.2.fill"
+                    size={24}
+                    color={colors.primary}
+                  />
                 </TouchableOpacity>
               )}
             </View>
@@ -367,19 +436,33 @@ export default function DiagnoseScreen() {
             <View className="bg-primary/10 rounded-2xl p-4 border border-primary/30 gap-3">
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center gap-2">
-                  <IconSymbol name="checkmark.circle.fill" size={24} color={colors.primary} />
-                  <Text className="text-lg font-semibold text-foreground">Problem identifiziert</Text>
+                  <IconSymbol
+                    name="checkmark.circle.fill"
+                    size={24}
+                    color={colors.primary}
+                  />
+                  <Text className="text-lg font-semibold text-foreground">
+                    Problem identifiziert
+                  </Text>
                 </View>
-                <View 
+                <View
                   className="px-3 py-1 rounded-full"
-                  style={{ backgroundColor: getSeverityColor(diagnosis.severity) + "30" }}
+                  style={{
+                    backgroundColor:
+                      getSeverityColor(diagnosis.severity) + "30",
+                  }}
                 >
-                  <Text style={{ color: getSeverityColor(diagnosis.severity) }} className="text-sm font-medium">
+                  <Text
+                    style={{ color: getSeverityColor(diagnosis.severity) }}
+                    className="text-sm font-medium"
+                  >
                     {getSeverityLabel(diagnosis.severity)}
                   </Text>
                 </View>
               </View>
-              <Text className="text-base text-foreground leading-6">{diagnosis.problem}</Text>
+              <Text className="text-base text-foreground leading-6">
+                {diagnosis.problem}
+              </Text>
             </View>
 
             {/* Plant Gender Badge */}
@@ -389,14 +472,20 @@ export default function DiagnoseScreen() {
                   <View className="flex-row items-center gap-3">
                     <View className="w-12 h-12 rounded-full bg-primary/20 items-center justify-center">
                       <Text className="text-2xl">
-                        {diagnosis.plantGender === "female" ? "♀️" : diagnosis.plantGender === "male" ? "♂️" : "⚧"}
+                        {diagnosis.plantGender === "female"
+                          ? "♀️"
+                          : diagnosis.plantGender === "male"
+                            ? "♂️"
+                            : "⚧"}
                       </Text>
                     </View>
                     <View>
                       <Text className="text-lg font-semibold text-foreground">
-                        {diagnosis.plantGender === "female" ? "Weibliche Pflanze" : 
-                         diagnosis.plantGender === "male" ? "Männliche Pflanze" : 
-                         "Hermaphrodit"}
+                        {diagnosis.plantGender === "female"
+                          ? "Weibliche Pflanze"
+                          : diagnosis.plantGender === "male"
+                            ? "Männliche Pflanze"
+                            : "Hermaphrodit"}
                       </Text>
                       {diagnosis.genderConfidence && (
                         <Text className="text-sm text-muted">
@@ -411,13 +500,19 @@ export default function DiagnoseScreen() {
 
             {diagnosis.recommendations.length > 0 && (
               <View className="bg-surface rounded-2xl p-4 border border-border gap-3">
-                <Text className="text-lg font-semibold text-foreground">Empfehlungen</Text>
+                <Text className="text-lg font-semibold text-foreground">
+                  Empfehlungen
+                </Text>
                 {diagnosis.recommendations.map((rec, index) => (
                   <View key={index} className="flex-row items-start gap-3">
                     <View className="w-6 h-6 rounded-full bg-primary/20 items-center justify-center mt-0.5">
-                      <Text className="text-xs font-bold text-primary">{index + 1}</Text>
+                      <Text className="text-xs font-bold text-primary">
+                        {index + 1}
+                      </Text>
                     </View>
-                    <Text className="flex-1 text-base text-foreground">{rec}</Text>
+                    <Text className="flex-1 text-base text-foreground">
+                      {rec}
+                    </Text>
                   </View>
                 ))}
               </View>
@@ -425,21 +520,31 @@ export default function DiagnoseScreen() {
 
             {diagnosis.careTips.length > 0 && (
               <View className="bg-surface rounded-2xl p-4 border border-border gap-3">
-                <Text className="text-lg font-semibold text-foreground">Pflege-Tipps</Text>
+                <Text className="text-lg font-semibold text-foreground">
+                  Pflege-Tipps
+                </Text>
                 {diagnosis.careTips.map((tip, index) => (
                   <View key={index} className="flex-row items-start gap-3">
-                    <IconSymbol name="checkmark.circle.fill" size={20} color={colors.success} />
-                    <Text className="flex-1 text-base text-foreground">{tip}</Text>
+                    <IconSymbol
+                      name="checkmark.circle.fill"
+                      size={20}
+                      color={colors.success}
+                    />
+                    <Text className="flex-1 text-base text-foreground">
+                      {tip}
+                    </Text>
                   </View>
                 ))}
               </View>
             )}
 
-            <TouchableOpacity 
+            <TouchableOpacity
               className="rounded-xl p-4 items-center bg-primary"
               onPress={resetDiagnosis}
             >
-              <Text className="text-base font-semibold text-background">Neue Analyse</Text>
+              <Text className="text-base font-semibold text-background">
+                Neue Analyse
+              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -451,23 +556,34 @@ export default function DiagnoseScreen() {
   if (mode === "gallery") {
     return (
       <ScreenContainer className="p-4">
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+        >
           <View className="flex-1 gap-6">
             <View className="flex-row items-center gap-3">
               <TouchableOpacity onPress={resetDiagnosis}>
-                <IconSymbol name="chevron.left" size={24} color={colors.foreground} />
+                <IconSymbol
+                  name="chevron.left"
+                  size={24}
+                  color={colors.foreground}
+                />
               </TouchableOpacity>
               <View className="flex-1">
-                <Text className="text-2xl font-bold text-foreground">Bilder analysieren</Text>
-                <Text className="text-base text-muted">{images.length} Bild(er) ausgewählt</Text>
+                <Text className="text-2xl font-bold text-foreground">
+                  Bilder analysieren
+                </Text>
+                <Text className="text-base text-muted">
+                  {images.length} Bild(er) ausgewählt
+                </Text>
               </View>
             </View>
 
             {limits.diagnosesPerDay !== -1 && (
               <View className="bg-surface rounded-xl p-3 border border-border">
-                <UsageIndicator 
-                  used={dailyDiagnoses} 
-                  limit={limits.diagnosesPerDay} 
+                <UsageIndicator
+                  used={dailyDiagnoses}
+                  limit={limits.diagnosesPerDay}
                   label="Diagnosen heute"
                 />
               </View>
@@ -477,18 +593,26 @@ export default function DiagnoseScreen() {
               {images.map((uri, index) => (
                 <View key={index} className="relative">
                   <Image source={{ uri }} className="w-24 h-24 rounded-xl" />
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-error items-center justify-center"
-                    onPress={() => setImages(prev => prev.filter((_, i) => i !== index))}
+                    onPress={() =>
+                      setImages((prev) => prev.filter((_, i) => i !== index))
+                    }
                   >
-                    <IconSymbol name="xmark.circle.fill" size={16} color="#fff" />
+                    <IconSymbol
+                      name="xmark.circle.fill"
+                      size={16}
+                      color="#fff"
+                    />
                   </TouchableOpacity>
                 </View>
               ))}
             </View>
 
             <View className="bg-surface rounded-2xl p-4 border border-border gap-3">
-              <Text className="text-base font-semibold text-foreground">Notizen (optional)</Text>
+              <Text className="text-base font-semibold text-foreground">
+                Notizen (optional)
+              </Text>
               <TextInput
                 className="bg-background rounded-xl p-3 text-foreground min-h-[80px] border border-border"
                 placeholder="Beschreibe Symptome oder Bedenken..."
@@ -500,15 +624,17 @@ export default function DiagnoseScreen() {
               />
             </View>
 
-            <TouchableOpacity 
-              className={`rounded-xl p-4 items-center ${canStartDiagnosis ? 'bg-primary' : 'bg-muted/30'}`}
+            <TouchableOpacity
+              className={`rounded-xl p-4 items-center ${canStartDiagnosis ? "bg-primary" : "bg-muted/30"}`}
               onPress={() => startDiagnosis()}
               disabled={diagnosisMutation.isPending || !canStartDiagnosis}
             >
               {diagnosisMutation.isPending ? (
                 <AIProcessingIndicator feature="diagnosis" compact />
               ) : (
-                <Text className={`text-base font-semibold ${canStartDiagnosis ? 'text-background' : 'text-muted'}`}>
+                <Text
+                  className={`text-base font-semibold ${canStartDiagnosis ? "text-background" : "text-muted"}`}
+                >
                   Analyse starten
                 </Text>
               )}
@@ -522,24 +648,26 @@ export default function DiagnoseScreen() {
   // Camera mode (default)
   return (
     <View className="flex-1 bg-black">
-      <CameraView 
+      <CameraView
         ref={cameraRef}
-        style={StyleSheet.absoluteFill} 
+        style={StyleSheet.absoluteFill}
         facing={facing}
       >
         {/* Scan Line Animation */}
         {liveAnalysisActive && (
-          <Animated.View 
+          <Animated.View
             style={[
               styles.scanLine,
               {
-                transform: [{
-                  translateY: scanLineAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, height - 250],
-                  })
-                }]
-              }
+                transform: [
+                  {
+                    translateY: scanLineAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, height - 250],
+                    }),
+                  },
+                ],
+              },
             ]}
           />
         )}
@@ -553,25 +681,49 @@ export default function DiagnoseScreen() {
               {
                 left: overlay.x * width - 20,
                 top: overlay.y * (height - 200) + insets.top,
-              }
+              },
             ]}
-            onPress={() => setSelectedOverlay(selectedOverlay?.id === overlay.id ? null : overlay)}
+            onPress={() =>
+              setSelectedOverlay(
+                selectedOverlay?.id === overlay.id ? null : overlay,
+              )
+            }
           >
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.overlayDot,
-                { 
+                {
                   backgroundColor: overlay.color,
-                  transform: [{ scale: selectedOverlay?.id === overlay.id ? 1.3 : 1 }]
-                }
+                  transform: [
+                    { scale: selectedOverlay?.id === overlay.id ? 1.3 : 1 },
+                  ],
+                },
               ]}
             >
-              {overlay.type === "cut" && <IconSymbol name="scissors" size={16} color="#fff" />}
-              {overlay.type === "healthy" && <IconSymbol name="checkmark.circle.fill" size={16} color="#fff" />}
-              {overlay.type === "tip" && <IconSymbol name="sparkles" size={16} color="#fff" />}
-              {overlay.type === "issue" && <IconSymbol name="exclamationmark.triangle.fill" size={16} color="#fff" />}
+              {overlay.type === "cut" && (
+                <IconSymbol name="scissors" size={16} color="#fff" />
+              )}
+              {overlay.type === "healthy" && (
+                <IconSymbol
+                  name="checkmark.circle.fill"
+                  size={16}
+                  color="#fff"
+                />
+              )}
+              {overlay.type === "tip" && (
+                <IconSymbol name="sparkles" size={16} color="#fff" />
+              )}
+              {overlay.type === "issue" && (
+                <IconSymbol
+                  name="exclamationmark.triangle.fill"
+                  size={16}
+                  color="#fff"
+                />
+              )}
             </Animated.View>
-            <View style={[styles.overlayPulse, { borderColor: overlay.color }]} />
+            <View
+              style={[styles.overlayPulse, { borderColor: overlay.color }]}
+            />
           </TouchableOpacity>
         ))}
 
@@ -579,44 +731,86 @@ export default function DiagnoseScreen() {
         {selectedOverlay && (
           <View style={[styles.overlayInfo, { bottom: insets.bottom + 200 }]}>
             <View className="flex-row items-center gap-2 mb-2">
-              <View 
+              <View
                 className="w-8 h-8 rounded-full items-center justify-center"
                 style={{ backgroundColor: selectedOverlay.color }}
               >
-                {selectedOverlay.type === "cut" && <IconSymbol name="scissors" size={16} color="#fff" />}
-                {selectedOverlay.type === "healthy" && <IconSymbol name="checkmark.circle.fill" size={16} color="#fff" />}
-                {selectedOverlay.type === "tip" && <IconSymbol name="sparkles" size={16} color="#fff" />}
+                {selectedOverlay.type === "cut" && (
+                  <IconSymbol name="scissors" size={16} color="#fff" />
+                )}
+                {selectedOverlay.type === "healthy" && (
+                  <IconSymbol
+                    name="checkmark.circle.fill"
+                    size={16}
+                    color="#fff"
+                  />
+                )}
+                {selectedOverlay.type === "tip" && (
+                  <IconSymbol name="sparkles" size={16} color="#fff" />
+                )}
               </View>
-              <Text className="text-base font-bold text-white flex-1">{selectedOverlay.label}</Text>
+              <Text className="text-base font-bold text-white flex-1">
+                {selectedOverlay.label}
+              </Text>
               <TouchableOpacity onPress={() => setSelectedOverlay(null)}>
-                <IconSymbol name="xmark.circle.fill" size={24} color="rgba(255,255,255,0.6)" />
+                <IconSymbol
+                  name="xmark.circle.fill"
+                  size={24}
+                  color="rgba(255,255,255,0.6)"
+                />
               </TouchableOpacity>
             </View>
-            <Text className="text-sm text-white/80 leading-5">{selectedOverlay.description}</Text>
+            <Text className="text-sm text-white/80 leading-5">
+              {selectedOverlay.description}
+            </Text>
           </View>
         )}
 
         {/* Corner Frame */}
         <View style={styles.frameContainer}>
-          <View style={[styles.corner, styles.topLeft, { borderColor: liveAnalysisActive ? "#10B981" : "#fff" }]} />
-          <View style={[styles.corner, styles.topRight, { borderColor: liveAnalysisActive ? "#10B981" : "#fff" }]} />
-          <View style={[styles.corner, styles.bottomLeft, { borderColor: liveAnalysisActive ? "#10B981" : "#fff" }]} />
-          <View style={[styles.corner, styles.bottomRight, { borderColor: liveAnalysisActive ? "#10B981" : "#fff" }]} />
+          <View
+            style={[
+              styles.corner,
+              styles.topLeft,
+              { borderColor: liveAnalysisActive ? "#10B981" : "#fff" },
+            ]}
+          />
+          <View
+            style={[
+              styles.corner,
+              styles.topRight,
+              { borderColor: liveAnalysisActive ? "#10B981" : "#fff" },
+            ]}
+          />
+          <View
+            style={[
+              styles.corner,
+              styles.bottomLeft,
+              { borderColor: liveAnalysisActive ? "#10B981" : "#fff" },
+            ]}
+          />
+          <View
+            style={[
+              styles.corner,
+              styles.bottomRight,
+              { borderColor: liveAnalysisActive ? "#10B981" : "#fff" },
+            ]}
+          />
         </View>
       </CameraView>
 
       {/* Top Header */}
-      <View 
+      <View
         className="absolute left-0 right-0 flex-row items-center justify-between px-4"
         style={{ top: insets.top + 8 }}
       >
-        <TouchableOpacity 
+        <TouchableOpacity
           className="w-10 h-10 rounded-full bg-black/50 items-center justify-center"
           onPress={() => router.push("/(tabs)")}
         >
           <IconSymbol name="chevron.left" size={24} color="#fff" />
         </TouchableOpacity>
-        
+
         <View className="flex-row items-center gap-2 bg-black/50 px-3 py-1.5 rounded-full">
           {liveAnalysisActive && (
             <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
@@ -627,35 +821,39 @@ export default function DiagnoseScreen() {
             {liveAnalysisActive ? "Live-Analyse aktiv" : "Kamera bereit"}
           </Text>
         </View>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           className="w-10 h-10 rounded-full bg-black/50 items-center justify-center"
           onPress={() => setFacing(facing === "back" ? "front" : "back")}
         >
-          <IconSymbol name="arrow.triangle.2.circlepath" size={22} color="#fff" />
+          <IconSymbol
+            name="arrow.triangle.2.circlepath"
+            size={22}
+            color="#fff"
+          />
         </TouchableOpacity>
       </View>
 
       {/* Bottom Controls */}
-      <View 
+      <View
         className="absolute left-0 right-0 bg-black/80"
         style={{ bottom: 0, paddingBottom: insets.bottom + 16 }}
       >
         {!canStartDiagnosis && (
           <View className="px-4 mb-4">
-            <UpgradePrompt 
-              feature="Diagnosen" 
+            <UpgradePrompt
+              feature="Diagnosen"
               limit={limits.diagnosesPerDay}
               remaining={remainingDiagnoses}
             />
           </View>
         )}
-        
+
         <View className="px-4">
           {/* Live Analysis Toggle - Only show after first scan */}
           {hasScannedOnce && (
             <View className="flex-row justify-center gap-4 mb-4">
-              <TouchableOpacity 
+              <TouchableOpacity
                 className={`px-4 py-2 rounded-full flex-row items-center gap-2 ${liveAnalysisActive ? "bg-primary" : "bg-white/20"}`}
                 onPress={toggleLiveAnalysis}
                 disabled={!canStartDiagnosis}
@@ -663,15 +861,17 @@ export default function DiagnoseScreen() {
               >
                 <IconSymbol name="viewfinder" size={18} color="#fff" />
                 <Text className="text-sm font-medium text-white">
-                  {liveAnalysisActive ? "Live-Analyse stoppen" : "Live-Analyse starten"}
+                  {liveAnalysisActive
+                    ? "Live-Analyse stoppen"
+                    : "Live-Analyse starten"}
                 </Text>
               </TouchableOpacity>
             </View>
           )}
-          
+
           {/* Capture Controls */}
           <View className="flex-row items-center justify-center gap-8">
-            <TouchableOpacity 
+            <TouchableOpacity
               className="w-14 h-14 rounded-full bg-white/20 items-center justify-center"
               onPress={pickImage}
               disabled={!canStartDiagnosis}
@@ -679,8 +879,8 @@ export default function DiagnoseScreen() {
             >
               <IconSymbol name="photo.fill" size={26} color="#fff" />
             </TouchableOpacity>
-            
-            <TouchableOpacity 
+
+            <TouchableOpacity
               className="w-20 h-20 rounded-full bg-white items-center justify-center"
               onPress={takePicture}
               disabled={!canStartDiagnosis || diagnosisMutation.isPending}
@@ -692,10 +892,10 @@ export default function DiagnoseScreen() {
                 <View className="w-16 h-16 rounded-full border-4 border-black/20" />
               )}
             </TouchableOpacity>
-            
+
             <View className="w-14 h-14" />
           </View>
-          
+
           {/* Usage Info */}
           {limits.diagnosesPerDay !== -1 && (
             <View className="mt-4 items-center">

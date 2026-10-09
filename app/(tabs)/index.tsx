@@ -21,6 +21,8 @@ import { useAppAuth } from "@/lib/auth-context";
 import { useGamification } from "@/lib/gamification-context";
 import { getMoonAge, getMoonPhase } from "@/lib/grow-tools";
 import { PLANTS_KEY } from "@/lib/plants-storage";
+import { HomeSkeletonLoader } from "@/components/skeleton-loaders";
+import { ErrorDisplay } from "@/components/error-display";
 
 interface HomePlant {
   id: string;
@@ -105,6 +107,27 @@ export default function HomeScreen() {
     xp: points,
     streak: stats.loginStreak ?? 0,
   };
+
+  if (adsQuery.isLoading) {
+    return (
+      <ScreenContainer className="p-4">
+        <HomeSkeletonLoader />
+      </ScreenContainer>
+    );
+  }
+
+  if (adsQuery.isError) {
+    return (
+      <ScreenContainer className="p-4">
+        <ErrorDisplay
+          message={
+            adsQuery.error?.message ?? "Daten konnten nicht geladen werden."
+          }
+          onRetry={() => adsQuery.refetch()}
+        />
+      </ScreenContainer>
+    );
+  }
 
   return (
     <ScreenContainer>
