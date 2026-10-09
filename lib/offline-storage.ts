@@ -24,7 +24,7 @@ export interface OfflineAction {
  */
 export async function isOnline(): Promise<boolean> {
   const state = await NetInfo.fetch();
-  return state.isConnected === true;
+  return state.isConnected === true && state.isInternetReachable === true;
 }
 
 /**

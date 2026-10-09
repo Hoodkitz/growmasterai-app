@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { useState, useEffect, useCallback, useRef } from "react";
 
 // ─── Minimal hook runner (React-free) ────────────────────────────────────────
 
@@ -9,7 +8,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 
 import {
   isOnline,
-  useNetworkStatus,
   getOfflineQueue,
   queueOfflineAction,
   syncOfflineActions,
@@ -138,10 +136,8 @@ describe("useOfflineMode", () => {
     mockNetInfoState.isConnected = true;
     mockNetInfoState.isInternetReachable = false;
 
-    // isOnline checks isConnected only, but a stricter check would use both
     const online = await isOnline();
-    // Current implementation: isConnected === true → online
-    expect(online).toBe(true);
+    expect(online).toBe(false);
   });
 
   it("caches data and retrieves it via getCachedData", async () => {
