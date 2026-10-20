@@ -1,7 +1,7 @@
 import { COOKIE_NAME, ONE_YEAR_MS } from "../../shared/const.js";
 import type { Express, Request, Response } from "express";
 import { google } from "googleapis";
-import { getUserByOpenId, upsertUser } from "../db";
+import { getUserByOpenId, resolveGoogleOpenId, upsertUser } from "../db";
 import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
 
@@ -21,6 +21,25 @@ const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_SECRET,
   "" // Redirect URI wird dynamisch gesetzt
 );
+
+// iOS-Client-ID (eigenes GCP-Projekt): native iOS-ID-Tokens tragen sie als aud.
+// Muss zu iosClientId in app.config.ts / lib/google-auth.ts passen.
+const GOOGLE_IOS_CLIENT_ID =
+  process.env.GOOGLE_IOS_CLIENT_ID ||
+  "824654272024-pamt0fdjln1o6imm97sttuflf0secn89.apps.googleusercontent.com";
+
+/**
+ * Netzwerk-/Upstream-Fehler (z. B. Zertifikatsabruf bei Google) statt eines
+ * ungültigen Tokens.
+ */
+function isUpstreamError(error: unknown): boolean {
+  const e = error as { name?: string; code?: unknown } | null;
+  return (
+    e?.name === "GaxiosError" ||
+    e?.name === "FetchError" ||
+    typeof e?.code === "string"
+  );
+}
 
 /**
  * Generiert die Authorization URL für Google OAuth
@@ -59,10 +78,14 @@ async function getGoogleUserInfo(accessToken: string) {
   });
 
   const { data } = await oauth2.userinfo.get();
-  
+
+  // Die E-Mail verknüpft Konten — nur von Google verifizierte Adressen akzeptieren
+  if (!data.email || !data.verified_email) {
+    throw new Error("Google-Konto hat keine verifizierte E-Mail-Adresse");
+  }
+
   return {
-    openId: data.email || "", // Email als OpenID verwenden
-    email: data.email || "",
+    email: data.email,
     name: data.name || "",
     picture: data.picture || "",
   };
@@ -72,23 +95,29 @@ async function getGoogleUserInfo(accessToken: string) {
  * Synchronisiert Google-User in lokaler DB
  */
 async function syncGoogleUser(userInfo: {
-  openId: string;
   email: string;
   name: string;
   picture?: string;
 }) {
   const lastSignedIn = new Date();
-  await upsertUser({
-    openId: userInfo.openId,
-    name: userInfo.name || null,
-    email: userInfo.email,
-    loginMethod: "google",
-    lastSignedIn,
-  });
+  // Gleiche E-Mail → gleiches Konto wie beim E-Mail/Passwort-Login
+  const openId = await resolveGoogleOpenId(userInfo.email);
+  const existing = await getUserByOpenId(openId);
+  await upsertUser(
+    existing
+      ? { openId, lastSignedIn }
+      : {
+          openId,
+          name: userInfo.name || null,
+          email: userInfo.email.trim().toLowerCase(),
+          loginMethod: "google",
+          lastSignedIn,
+        },
+  );
 
-  const saved = await getUserByOpenId(userInfo.openId);
+  const saved = await getUserByOpenId(openId);
   return saved ?? {
-    openId: userInfo.openId,
+    openId,
     name: userInfo.name,
     email: userInfo.email,
     loginMethod: "google",
@@ -292,7 +321,7 @@ export function registerGoogleOAuthRoutes(app: Express) {
       return;
     }
 
-    // Muss die Web-Client-ID sein, die die App als webClientId nutzt (aud des ID-Tokens)
+    // aud des ID-Tokens: Web-Client-ID (= webClientId der App, Android) bzw. iOS-Client-ID
     if (!process.env.GOOGLE_CLIENT_ID) {
       console.error("[Google OAuth] GOOGLE_CLIENT_ID ist nicht gesetzt");
       res.status(500).json({ error: "Google-Anmeldung ist auf dem Server nicht konfiguriert" });
@@ -303,16 +332,22 @@ export function registerGoogleOAuthRoutes(app: Express) {
     try {
       const ticket = await oauth2Client.verifyIdToken({
         idToken,
-        audience: process.env.GOOGLE_CLIENT_ID,
+        audience: [process.env.GOOGLE_CLIENT_ID, GOOGLE_IOS_CLIENT_ID],
       });
       payload = ticket.getPayload();
     } catch (error) {
+      if (isUpstreamError(error)) {
+        // z. B. Google-Zertifikate nicht abrufbar — kein Fehler des Clients
+        console.error("[Google OAuth] Could not reach Google to verify ID token:", error);
+        res.status(503).json({ error: "Google-Anmeldung derzeit nicht erreichbar. Bitte versuche es später erneut." });
+        return;
+      }
       console.error("[Google OAuth] ID-Token verification failed:", error);
       res.status(401).json({ error: "Ungültiges Google ID-Token" });
       return;
     }
 
-    // E-Mail dient als openId — nur von Google verifizierte Adressen akzeptieren
+    // Die E-Mail verknüpft Konten — nur von Google verifizierte Adressen akzeptieren
     if (!payload?.email || !payload.email_verified) {
       res.status(401).json({ error: "Google-Konto hat keine verifizierte E-Mail-Adresse" });
       return;
@@ -321,7 +356,6 @@ export function registerGoogleOAuthRoutes(app: Express) {
     try {
 
       const userInfo = {
-        openId: payload.email,
         email: payload.email,
         name: payload.name || clientUserInfo?.name || "",
         picture: payload.picture || clientUserInfo?.photo || "",

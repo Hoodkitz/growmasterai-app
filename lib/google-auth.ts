@@ -43,6 +43,15 @@ function ensureConfigured() {
 // Auto-configure on module load
 ensureConfigured();
 
+// Clears the SDK's cached Google account so the next sign-in shows the account picker.
+export async function signOutFromGoogle() {
+  try {
+    await GoogleSignin.signOut();
+  } catch (error) {
+    console.error("Google Sign-Out Fehler:", error);
+  }
+}
+
 export function useGoogleAuth() {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -75,13 +84,5 @@ export function useGoogleAuth() {
     }
   };
 
-  const signOut = async () => {
-    try {
-      await GoogleSignin.signOut();
-    } catch (error) {
-      console.error("Google Sign-Out Fehler:", error);
-    }
-  };
-
-  return { signIn, signOut, isLoading };
+  return { signIn, signOut: signOutFromGoogle, isLoading };
 }

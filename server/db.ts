@@ -158,6 +158,14 @@ export async function registerEmailUser(
     .where(eq(userCredentials.email, normalized))
     .limit(1);
   if (existing.length > 0) throw new Error("EMAIL_EXISTS");
+  // Google-only account with this address: registering a password here would
+  // grant access to it without proving mailbox ownership.
+  if (
+    (await getUserByOpenId(openId)) ||
+    (await getUserByOpenId(normalized))
+  ) {
+    throw new Error("EMAIL_EXISTS");
+  }
   try {
     await db
       .insert(userCredentials)
@@ -184,6 +192,44 @@ export async function registerEmailUser(
     lastSignedIn: new Date(),
   });
   return (await getUserByOpenId(openId))!;
+}
+
+/**
+ * Resolves the users.openId for a Google-verified email so that Google and
+ * email/password logins with the same address share one account.
+ */
+export async function resolveGoogleOpenId(email: string): Promise<string> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const normalized = email.trim().toLowerCase();
+  const [cred] = await db
+    .select({
+      openId: userCredentials.openId,
+      emailVerifiedAt: userCredentials.emailVerifiedAt,
+    })
+    .from(userCredentials)
+    .where(eq(userCredentials.email, normalized))
+    .limit(1);
+  if (cred) {
+    if (!cred.emailVerifiedAt) {
+      // Google just proved mailbox ownership. An unverified password may have
+      // been set by someone else (account pre-hijacking), so invalidate it;
+      // the owner can set a new one via "Passwort vergessen".
+      await db
+        .update(userCredentials)
+        .set({
+          passwordHash: hashPassword(randomBytes(32).toString("hex")),
+          emailVerifiedAt: new Date(),
+        })
+        .where(eq(userCredentials.openId, cred.openId));
+    }
+    return cred.openId;
+  }
+  // Legacy Google accounts used the raw email as openId.
+  if (normalized.length <= 64 && (await getUserByOpenId(normalized))) {
+    return normalized;
+  }
+  return emailOpenId(normalized);
 }
 
 /** Returns the user if credentials match, otherwise null. */
