@@ -1,0 +1,58 @@
+name: Android APK (local EAS build)
+
+# Baut die Preview-APK auf einem GitHub-Runner statt in der EAS-Cloud
+# (zählt nicht gegen das EAS-Build-Kontingent). Nutzt die bei Expo
+# hinterlegten Credentials, damit die Signatur (SHA-1) zu Google Sign-In passt.
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "EAS build profile"
+        default: preview
+        required: true
+
+jobs:
+  apk:
+    name: Build APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Expo/EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build APK
+        run: eas build --local --non-interactive --platform android --profile ${{ inputs.profile }} --output growmaster.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: growmaster-apk
+          path: growmaster.apk
+          retention-days: 14
