@@ -22,7 +22,7 @@ export default function LoginScreen() {
   const router = useRouter();
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { loginWithEmail, register, loading } = useAppAuth();
+  const { loginWithEmail, loginWithGoogle, register, loading } = useAppAuth();
   const { signIn: signInWithGoogle, isLoading: googleLoading } =
     useGoogleAuth();
 
@@ -35,10 +35,10 @@ export default function LoginScreen() {
   const handleSocialLogin = async (provider: "google") => {
     if (provider === "google") {
       try {
-        const userInfo = await signInWithGoogle();
-        if (userInfo) {
-          router.replace("/(tabs)");
-        }
+        const idToken = await signInWithGoogle();
+        if (!idToken) return; // cancelled
+        await loginWithGoogle(idToken);
+        router.replace("/(tabs)");
       } catch (error) {
         Alert.alert(
           "Fehler",

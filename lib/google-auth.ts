@@ -46,13 +46,20 @@ ensureConfigured();
 export function useGoogleAuth() {
   const [isLoading, setIsLoading] = useState(false);
 
-  const signIn = async () => {
+  // Returns the Google ID token, or null if the user cancelled.
+  const signIn = async (): Promise<string | null> => {
     ensureConfigured();
     setIsLoading(true);
     try {
       await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      return userInfo;
+      const response = await GoogleSignin.signIn();
+      if (response.type === "cancelled") return null;
+      if (!response.data.idToken) {
+        throw new Error(
+          "Kein ID-Token von Google erhalten. Ist die webClientId korrekt konfiguriert?",
+        );
+      }
+      return response.data.idToken;
     } catch (error: any) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         throw new Error("Anmeldung abgebrochen.");

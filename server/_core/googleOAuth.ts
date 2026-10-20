@@ -292,17 +292,33 @@ export function registerGoogleOAuthRoutes(app: Express) {
       return;
     }
 
+    // Muss die Web-Client-ID sein, die die App als webClientId nutzt (aud des ID-Tokens)
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      console.error("[Google OAuth] GOOGLE_CLIENT_ID ist nicht gesetzt");
+      res.status(500).json({ error: "Google-Anmeldung ist auf dem Server nicht konfiguriert" });
+      return;
+    }
+
+    let payload;
     try {
-      // ID-Token verifizieren
       const ticket = await oauth2Client.verifyIdToken({
         idToken,
         audience: process.env.GOOGLE_CLIENT_ID,
       });
+      payload = ticket.getPayload();
+    } catch (error) {
+      console.error("[Google OAuth] ID-Token verification failed:", error);
+      res.status(401).json({ error: "Ungültiges Google ID-Token" });
+      return;
+    }
 
-      const payload = ticket.getPayload();
-      if (!payload || !payload.email) {
-        throw new Error("Ungültiges ID-Token");
-      }
+    // E-Mail dient als openId — nur von Google verifizierte Adressen akzeptieren
+    if (!payload?.email || !payload.email_verified) {
+      res.status(401).json({ error: "Google-Konto hat keine verifizierte E-Mail-Adresse" });
+      return;
+    }
+
+    try {
 
       const userInfo = {
         openId: payload.email,
@@ -336,9 +352,9 @@ export function registerGoogleOAuthRoutes(app: Express) {
       });
 
     } catch (error) {
-      console.error("[Google OAuth] ID-Token verification failed:", error);
+      console.error("[Google OAuth] Native login failed:", error);
       res.status(500).json({
-        error: "ID-Token Verifizierung fehlgeschlagen",
+        error: "Google-Anmeldung fehlgeschlagen",
         details: error instanceof Error ? error.message : String(error),
       });
     }
