@@ -132,6 +132,17 @@ export async function emailAuth(
   return { sessionToken: result.app_session_id, user: result.user };
 }
 
+// Exchange a Google ID token (native Google Sign-In) for an app session
+export async function googleAuth(
+  idToken: string,
+): Promise<{ sessionToken: string; user: any }> {
+  const result = await apiCall<{ sessionToken: string; user: any }>(
+    "/api/auth/google/token",
+    { method: "POST", body: JSON.stringify({ idToken }) },
+  );
+  return { sessionToken: result.sessionToken, user: result.user };
+}
+
 // Logout
 export async function logout(): Promise<void> {
   await apiCall<void>("/api/auth/logout", {

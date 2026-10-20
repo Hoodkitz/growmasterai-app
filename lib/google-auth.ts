@@ -43,16 +43,32 @@ function ensureConfigured() {
 // Auto-configure on module load
 ensureConfigured();
 
+// Clears the SDK's cached Google account so the next sign-in shows the account picker.
+export async function signOutFromGoogle() {
+  try {
+    await GoogleSignin.signOut();
+  } catch (error) {
+    console.error("Google Sign-Out Fehler:", error);
+  }
+}
+
 export function useGoogleAuth() {
   const [isLoading, setIsLoading] = useState(false);
 
-  const signIn = async () => {
+  // Returns the Google ID token, or null if the user cancelled.
+  const signIn = async (): Promise<string | null> => {
     ensureConfigured();
     setIsLoading(true);
     try {
       await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      return userInfo;
+      const response = await GoogleSignin.signIn();
+      if (response.type === "cancelled") return null;
+      if (!response.data.idToken) {
+        throw new Error(
+          "Kein ID-Token von Google erhalten. Ist die webClientId korrekt konfiguriert?",
+        );
+      }
+      return response.data.idToken;
     } catch (error: any) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         throw new Error("Anmeldung abgebrochen.");
@@ -68,13 +84,5 @@ export function useGoogleAuth() {
     }
   };
 
-  const signOut = async () => {
-    try {
-      await GoogleSignin.signOut();
-    } catch (error) {
-      console.error("Google Sign-Out Fehler:", error);
-    }
-  };
-
-  return { signIn, signOut, isLoading };
+  return { signIn, signOut: signOutFromGoogle, isLoading };
 }

@@ -22,9 +22,10 @@ export default function LoginScreen() {
   const router = useRouter();
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { loginWithEmail, register, loading } = useAppAuth();
-  const { signIn: signInWithGoogle, isLoading: googleLoading } =
-    useGoogleAuth();
+  const { loginWithEmail, loginWithGoogle, register, loading } = useAppAuth();
+  const { signIn: signInWithGoogle } = useGoogleAuth();
+  // Covers the native picker *and* the server session exchange
+  const [googleBusy, setGoogleBusy] = useState(false);
 
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
@@ -34,16 +35,20 @@ export default function LoginScreen() {
 
   const handleSocialLogin = async (provider: "google") => {
     if (provider === "google") {
+      if (googleBusy) return;
+      setGoogleBusy(true);
       try {
-        const userInfo = await signInWithGoogle();
-        if (userInfo) {
-          router.replace("/(tabs)");
-        }
+        const idToken = await signInWithGoogle();
+        if (!idToken) return; // cancelled
+        await loginWithGoogle(idToken);
+        router.replace("/(tabs)");
       } catch (error) {
         Alert.alert(
           "Fehler",
           error instanceof Error ? error.message : "Anmeldung fehlgeschlagen.",
         );
+      } finally {
+        setGoogleBusy(false);
       }
     }
   };
@@ -135,9 +140,9 @@ export default function LoginScreen() {
           <TouchableOpacity
             className="bg-surface border border-border rounded-xl p-4 items-center mb-4 flex-row justify-center gap-3"
             onPress={() => handleSocialLogin("google")}
-            disabled={googleLoading}
+            disabled={googleBusy || loading}
           >
-            {googleLoading ? (
+            {googleBusy ? (
               <ActivityIndicator color={colors.primary} />
             ) : (
               <>

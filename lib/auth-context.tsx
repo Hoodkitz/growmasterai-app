@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 import * as Linking from "expo-linking";
@@ -7,6 +7,7 @@ import * as Api from "@/lib/_core/api";
 import * as Auth from "@/lib/_core/auth";
 import { initializePurchases, identifyUser, logoutUser } from "@/lib/purchases";
 import { APP_ID, OAUTH_PORTAL_URL, getLoginUrl } from "@/constants/oauth";
+import { signOutFromGoogle } from "@/lib/google-auth";
 
 interface UserProfile {
   id: string;
@@ -26,6 +27,7 @@ interface AuthContextType {
   loading: boolean;
   login: (provider: "google" | "apple" | "email") => Promise<void>;
   loginWithEmail: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: (idToken: string) => Promise<void>;
   register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (data: Partial<UserProfile>) => Promise<void>;
@@ -40,6 +42,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const manusAuth = useManusAuth();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const userRef = useRef(user);
+  userRef.current = user;
 
   // Load saved auth state
   useEffect(() => {
@@ -49,13 +53,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Sync with Manus auth
   useEffect(() => {
     if (manusAuth.user && manusAuth.isAuthenticated) {
+      // Keep provider/name set by applyServerSession for the same account
+      const current = userRef.current?.id === manusAuth.user.openId ? userRef.current : null;
+      const email = (manusAuth.user.email || "").toLowerCase();
       const profile: UserProfile = {
         id: manusAuth.user.openId,
-        email: manusAuth.user.email || "",
-        name: manusAuth.user.name || "User",
-        role: ADMIN_EMAILS.includes(manusAuth.user.email || "") ? "admin" : "user",
-        provider: "manus",
-        createdAt: new Date(),
+        email,
+        name: current?.name || manusAuth.user.name || "User",
+        role: ADMIN_EMAILS.includes(email) ? "admin" : "user",
+        provider: current?.provider ?? "manus",
+        createdAt: current?.createdAt ?? new Date(),
       };
       setUser(profile);
       saveAuthState(profile);
@@ -111,10 +118,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const applyServerSession = async (
-    mode: "login" | "register",
-    payload: { email: string; password: string; name?: string },
+    { sessionToken, user: serverUser }: { sessionToken: string; user: any },
+    provider: "email" | "google",
   ) => {
-    const { sessionToken, user: serverUser } = await Api.emailAuth(mode, payload);
     await Auth.setSessionToken(sessionToken);
     await Auth.setUserInfo({
       id: serverUser.id,
@@ -124,13 +130,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loginMethod: serverUser.loginMethod,
       lastSignedIn: new Date(serverUser.lastSignedIn || Date.now()),
     });
-    const email = (serverUser.email || payload.email).toLowerCase();
+    const email = (serverUser.email || "").toLowerCase();
     const profile: UserProfile = {
       id: serverUser.openId,
       email,
       name: serverUser.name || email.split("@")[0],
       role: ADMIN_EMAILS.includes(email) ? "admin" : "user",
-      provider: "email",
+      provider,
       createdAt: new Date(),
     };
     setUser(profile);
@@ -157,7 +163,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginWithEmail = async (email: string, password: string) => {
     setLoading(true);
     try {
-      await applyServerSession("login", { email: email.trim(), password });
+      const session = await Api.emailAuth("login", { email: email.trim(), password });
+      await applyServerSession(session, "email");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loginWithGoogle = async (idToken: string) => {
+    setLoading(true);
+    try {
+      await applyServerSession(await Api.googleAuth(idToken), "google");
     } finally {
       setLoading(false);
     }
@@ -166,7 +182,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (email: string, password: string, name: string) => {
     setLoading(true);
     try {
-      await applyServerSession("register", { email: email.trim(), password, name: name.trim() });
+      const session = await Api.emailAuth("register", {
+        email: email.trim(),
+        password,
+        name: name.trim(),
+      });
+      await applyServerSession(session, "email");
     } finally {
       setLoading(false);
     }
@@ -180,7 +201,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       setUser(null);
       await saveAuthState(null);
-      if (Platform.OS !== "web") await logoutUser(); // RevenueCat → anonym (loggt Fehler selbst)
+      if (Platform.OS !== "web") {
+        await signOutFromGoogle(); // sonst wählt der nächste Google-Login stumm dasselbe Konto
+        await logoutUser(); // RevenueCat → anonym (loggt Fehler selbst)
+      }
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
@@ -206,6 +230,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading: loading || manusAuth.loading,
         login,
         loginWithEmail,
+        loginWithGoogle,
         register,
         logout,
         updateProfile,
