@@ -1313,6 +1313,7 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         const db = await getDb();
         if (!db) return [];
         const now = new Date();
+        // Anzeigen sind optional: ein DB-Fehler darf die Screens nicht als Fehler anzeigen
         return db
           .select({
             id: adBanners.id,
@@ -1333,7 +1334,11 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
             ),
           )
           .orderBy(sql`RAND()`)
-          .limit(input.limit);
+          .limit(input.limit)
+          .catch((error) => {
+            console.error("[ads.active] query failed:", error?.cause ?? error);
+            return [];
+          });
       }),
 
     // Tracking (öffentlich, nur Zähler; Abrechnung/totalSpent bewusst NICHT hier, da unauthentifiziert manipulierbar)
