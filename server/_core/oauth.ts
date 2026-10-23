@@ -1,6 +1,12 @@
+import { validatePassword } from "./security";
 import { COOKIE_NAME, ONE_YEAR_MS } from "../../shared/const.js";
 import type { Express, Request, Response } from "express";
-import { getUserByOpenId, upsertUser, registerEmailUser, verifyEmailLogin } from "../db";
+import {
+  getUserByOpenId,
+  upsertUser,
+  registerEmailUser,
+  verifyEmailLogin,
+} from "../db";
 import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
 import {
@@ -100,7 +106,10 @@ export function registerOAuthRoutes(app: Express) {
       });
 
       const cookieOptions = getSessionCookieOptions(req);
-      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+      res.cookie(COOKIE_NAME, sessionToken, {
+        ...cookieOptions,
+        maxAge: ONE_YEAR_MS,
+      });
 
       // Redirect to the frontend URL (Expo web on port 8081)
       // Cookie is set with parent domain so it works across both 3000 and 8081 subdomains
@@ -135,7 +144,10 @@ export function registerOAuthRoutes(app: Express) {
       });
 
       const cookieOptions = getSessionCookieOptions(req);
-      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+      res.cookie(COOKIE_NAME, sessionToken, {
+        ...cookieOptions,
+        maxAge: ONE_YEAR_MS,
+      });
 
       res.json({
         app_session_id: sessionToken,
@@ -147,64 +159,102 @@ export function registerOAuthRoutes(app: Express) {
     }
   });
 
-  async function issueEmailSession(req: Request, res: Response, user: NonNullable<Awaited<ReturnType<typeof getUserByOpenId>>>) {
+  async function issueEmailSession(
+    req: Request,
+    res: Response,
+    user: NonNullable<Awaited<ReturnType<typeof getUserByOpenId>>>,
+  ) {
     const sessionToken = await sdk.createSessionToken(user.openId, {
       name: user.name || user.email || "User",
       expiresInMs: ONE_YEAR_MS,
     });
     const cookieOptions = getSessionCookieOptions(req);
-    res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+    res.cookie(COOKIE_NAME, sessionToken, {
+      ...cookieOptions,
+      maxAge: ONE_YEAR_MS,
+    });
     res.json({ app_session_id: sessionToken, user: buildUserResponse(user) });
   }
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  app.post("/api/auth/register", rateLimitMiddleware(registerLimiter), async (req: Request, res: Response) => {
-    const { email, password, name } = (req.body ?? {}) as Record<string, unknown>;
-    if (typeof email !== "string" || !EMAIL_RE.test(email.trim()) || email.length > 320) {
-      res.status(400).json({ error: "Ungültige E-Mail-Adresse" });
-      return;
-    }
-    if (typeof password !== "string" || password.length < 8 || password.length > 200) {
-      res.status(400).json({ error: "Das Passwort muss mindestens 8 Zeichen lang sein" });
-      return;
-    }
-    const displayName = typeof name === "string" && name.trim() ? name.trim().slice(0, 100) : email.split("@")[0];
-    try {
-      const user = await registerEmailUser(email, password, displayName);
-      // Verification mail is best effort: registration must not fail if mail is unavailable.
-      void sendVerificationMail(email.trim().toLowerCase(), user.openId).catch((e) =>
-        console.error("[Auth] Verification mail failed", e instanceof Error ? e.message : e),
-      );
-      await issueEmailSession(req, res, user);
-    } catch (error) {
-      if (error instanceof Error && error.message === "EMAIL_EXISTS") {
-        res.status(409).json({ error: "Diese E-Mail ist bereits registriert" });
+  app.post(
+    "/api/auth/register",
+    rateLimitMiddleware(registerLimiter),
+    async (req: Request, res: Response) => {
+      const { email, password, name } = (req.body ?? {}) as Record<
+        string,
+        unknown
+      >;
+      if (
+        typeof email !== "string" ||
+        !EMAIL_RE.test(email.trim()) ||
+        email.length > 320
+      ) {
+        res.status(400).json({ error: "Ungültige E-Mail-Adresse" });
         return;
       }
-      console.error("[Auth] Register failed", error);
-      res.status(500).json({ error: "Registrierung fehlgeschlagen" });
-    }
-  });
+      if (typeof password !== "string" || !validatePassword(password).valid) {
+        res.status(400).json({ error: validatePassword(password).error });
+        return;
+      }
+      const displayName =
+        typeof name === "string" && name.trim()
+          ? name.trim().slice(0, 100)
+          : email.split("@")[0];
+      try {
+        const user = await registerEmailUser(email, password, displayName);
+        // Verification mail is best effort: registration must not fail if mail is unavailable.
+        void sendVerificationMail(
+          email.trim().toLowerCase(),
+          user.openId,
+        ).catch((e) =>
+          console.error(
+            "[Auth] Verification mail failed",
+            e instanceof Error ? e.message : e,
+          ),
+        );
+        await issueEmailSession(req, res, user);
+      } catch (error) {
+        if (error instanceof Error && error.message === "EMAIL_EXISTS") {
+          res
+            .status(409)
+            .json({ error: "Diese E-Mail ist bereits registriert" });
+          return;
+        }
+        console.error("[Auth] Register failed", error);
+        res.status(500).json({ error: "Registrierung fehlgeschlagen" });
+      }
+    },
+  );
 
-  app.post("/api/auth/login", rateLimitMiddleware(loginLimiter), async (req: Request, res: Response) => {
-    const { email, password } = (req.body ?? {}) as Record<string, unknown>;
-    if (typeof email !== "string" || typeof password !== "string" || !email || !password) {
-      res.status(400).json({ error: "E-Mail und Passwort erforderlich" });
-      return;
-    }
-    try {
-      const user = await verifyEmailLogin(email, password);
-      if (!user) {
-        res.status(401).json({ error: "E-Mail oder Passwort falsch" });
+  app.post(
+    "/api/auth/login",
+    rateLimitMiddleware(loginLimiter),
+    async (req: Request, res: Response) => {
+      const { email, password } = (req.body ?? {}) as Record<string, unknown>;
+      if (
+        typeof email !== "string" ||
+        typeof password !== "string" ||
+        !email ||
+        !password
+      ) {
+        res.status(400).json({ error: "E-Mail und Passwort erforderlich" });
         return;
       }
-      await issueEmailSession(req, res, user);
-    } catch (error) {
-      console.error("[Auth] Login failed", error);
-      res.status(500).json({ error: "Anmeldung fehlgeschlagen" });
-    }
-  });
+      try {
+        const user = await verifyEmailLogin(email, password);
+        if (!user) {
+          res.status(401).json({ error: "E-Mail oder Passwort falsch" });
+          return;
+        }
+        await issueEmailSession(req, res, user);
+      } catch (error) {
+        console.error("[Auth] Login failed", error);
+        res.status(500).json({ error: "Anmeldung fehlgeschlagen" });
+      }
+    },
+  );
 
   async function sendVerificationMail(email: string, openId: string) {
     const token = await createAuthToken(openId, "email_verify");
@@ -228,7 +278,11 @@ export function registerOAuthRoutes(app: Express) {
     });
   }
 
-  const GENERIC_MAIL_RESPONSE = { success: true, message: "Falls ein Konto mit dieser E-Mail existiert, haben wir dir eine Nachricht gesendet." };
+  const GENERIC_MAIL_RESPONSE = {
+    success: true,
+    message:
+      "Falls ein Konto mit dieser E-Mail existiert, haben wir dir eine Nachricht gesendet.",
+  };
 
   /**
    * Shared handler for forgot-password / resend-verification. Always answers identically
@@ -240,12 +294,21 @@ export function registerOAuthRoutes(app: Express) {
   ) {
     return async (req: Request, res: Response) => {
       const { email } = (req.body ?? {}) as Record<string, unknown>;
-      if (typeof email !== "string" || !EMAIL_RE.test(email.trim()) || email.length > 320) {
+      if (
+        typeof email !== "string" ||
+        !EMAIL_RE.test(email.trim()) ||
+        email.length > 320
+      ) {
         res.status(400).json({ error: "Ungültige E-Mail-Adresse" });
         return;
       }
       if (ENV.isProduction && !isMailConfigured()) {
-        res.status(503).json({ error: "E-Mail-Versand ist auf dem Server nicht konfiguriert. Bitte kontaktiere den Support." });
+        res
+          .status(503)
+          .json({
+            error:
+              "E-Mail-Versand ist auf dem Server nicht konfiguriert. Bitte kontaktiere den Support.",
+          });
         return;
       }
       const normalized = email.trim().toLowerCase();
@@ -253,9 +316,13 @@ export function registerOAuthRoutes(app: Express) {
       if (!emailLimiter.check(normalized).allowed) return; // silently dropped
       try {
         const cred = await getCredentialByEmail(normalized);
-        if (cred) await action(normalized, cred.openId, Boolean(cred.emailVerifiedAt));
+        if (cred)
+          await action(normalized, cred.openId, Boolean(cred.emailVerifiedAt));
       } catch (error) {
-        console.error("[Auth] Mail request failed", error instanceof Error ? error.message : error);
+        console.error(
+          "[Auth] Mail request failed",
+          error instanceof Error ? error.message : error,
+        );
       }
     };
   }
@@ -263,60 +330,75 @@ export function registerOAuthRoutes(app: Express) {
   app.post(
     "/api/auth/forgot-password",
     rateLimitMiddleware(forgotPasswordLimiter),
-    mailRequestHandler(forgotPasswordEmailLimiter, (email, openId) => sendResetMail(email, openId)),
+    mailRequestHandler(forgotPasswordEmailLimiter, (email, openId) =>
+      sendResetMail(email, openId),
+    ),
   );
 
   app.post(
     "/api/auth/resend-verification",
     rateLimitMiddleware(forgotPasswordLimiter),
-    mailRequestHandler(forgotPasswordEmailLimiter, async (email, openId, verified) => {
-      if (!verified) await sendVerificationMail(email, openId);
-    }),
+    mailRequestHandler(
+      forgotPasswordEmailLimiter,
+      async (email, openId, verified) => {
+        if (!verified) await sendVerificationMail(email, openId);
+      },
+    ),
   );
 
-  app.post("/api/auth/reset-password", rateLimitMiddleware(resetPasswordLimiter), async (req: Request, res: Response) => {
-    const { token, password } = (req.body ?? {}) as Record<string, unknown>;
-    if (typeof token !== "string" || !token || token.length > 200) {
-      res.status(400).json({ error: "Ungültiger oder abgelaufener Link" });
-      return;
-    }
-    if (typeof password !== "string" || password.length < 8 || password.length > 200) {
-      res.status(400).json({ error: "Das Passwort muss mindestens 8 Zeichen lang sein" });
-      return;
-    }
-    try {
-      const openId = await consumeAuthToken(token, "password_reset");
-      if (!openId) {
+  app.post(
+    "/api/auth/reset-password",
+    rateLimitMiddleware(resetPasswordLimiter),
+    async (req: Request, res: Response) => {
+      const { token, password } = (req.body ?? {}) as Record<string, unknown>;
+      if (typeof token !== "string" || !token || token.length > 200) {
         res.status(400).json({ error: "Ungültiger oder abgelaufener Link" });
         return;
       }
-      await setPasswordAndVerify(openId, password);
-      res.json({ success: true });
-    } catch (error) {
-      console.error("[Auth] Reset password failed", error);
-      res.status(500).json({ error: "Passwort konnte nicht zurückgesetzt werden" });
-    }
-  });
+      if (typeof password !== "string" || !validatePassword(password).valid) {
+        res.status(400).json({ error: validatePassword(password).error });
+        return;
+      }
+      try {
+        const openId = await consumeAuthToken(token, "password_reset");
+        if (!openId) {
+          res.status(400).json({ error: "Ungültiger oder abgelaufener Link" });
+          return;
+        }
+        await setPasswordAndVerify(openId, password);
+        res.json({ success: true });
+      } catch (error) {
+        console.error("[Auth] Reset password failed", error);
+        res
+          .status(500)
+          .json({ error: "Passwort konnte nicht zurückgesetzt werden" });
+      }
+    },
+  );
 
-  app.post("/api/auth/verify-email", rateLimitMiddleware(verifyEmailLimiter), async (req: Request, res: Response) => {
-    const { token } = (req.body ?? {}) as Record<string, unknown>;
-    if (typeof token !== "string" || !token || token.length > 200) {
-      res.status(400).json({ error: "Ungültiger oder abgelaufener Link" });
-      return;
-    }
-    try {
-      const openId = await consumeAuthToken(token, "email_verify");
-      if (!openId) {
+  app.post(
+    "/api/auth/verify-email",
+    rateLimitMiddleware(verifyEmailLimiter),
+    async (req: Request, res: Response) => {
+      const { token } = (req.body ?? {}) as Record<string, unknown>;
+      if (typeof token !== "string" || !token || token.length > 200) {
         res.status(400).json({ error: "Ungültiger oder abgelaufener Link" });
         return;
       }
-      await markEmailVerified(openId);
-      res.json({ success: true });
-    } catch (error) {
-      console.error("[Auth] Verify email failed", error);
-      res.status(500).json({ error: "Verifizierung fehlgeschlagen" });
-    }
-  });
+      try {
+        const openId = await consumeAuthToken(token, "email_verify");
+        if (!openId) {
+          res.status(400).json({ error: "Ungültiger oder abgelaufener Link" });
+          return;
+        }
+        await markEmailVerified(openId);
+        res.json({ success: true });
+      } catch (error) {
+        console.error("[Auth] Verify email failed", error);
+        res.status(500).json({ error: "Verifizierung fehlgeschlagen" });
+      }
+    },
+  );
 
   app.post("/api/auth/logout", (req: Request, res: Response) => {
     const cookieOptions = getSessionCookieOptions(req);

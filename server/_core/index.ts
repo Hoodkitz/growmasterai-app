@@ -8,6 +8,7 @@ import { registerGoogleOAuthRoutes } from "./googleOAuth";
 import { registerRevenueCatRoutes } from "./revenuecat";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
+import { csrfOriginGuard } from "./security";
 import { createRateLimiter, rateLimitMiddleware } from "./rateLimit";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -81,6 +82,9 @@ async function startServer() {
     }
     next();
   });
+
+  // SECURITY: CSRF defence via Origin check for state-changing requests
+  app.use(csrfOriginGuard(ALLOWED_ORIGINS as (string | RegExp)[]));
 
   // SECURITY: baseline response headers (no extra dependency needed for an API server)
   app.disable("x-powered-by");
