@@ -3,7 +3,7 @@
 ## Angaben gemäß § 5 TMG
 
 **GrowMaster AI**
-[Ihr vollständiger Name / Firmenname]
+Julien Paarmann
 [Straße und Hausnummer]
 [PLZ Ort]
 Deutschland
@@ -16,7 +16,7 @@ Deutschland
 
 ## Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV
 
-[Ihr vollständiger Name]
+Julien Paarmann
 [Adresse wie oben]
 
 ## EU-Streitschlichtung
@@ -49,4 +49,4 @@ Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden 
 
 ---
 
-*Stand: Januar 2026*
+_Stand: Januar 2026_
