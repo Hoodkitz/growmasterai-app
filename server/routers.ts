@@ -1,3 +1,4 @@
+import { sanitizeUserInput } from "./_core/security";
 import { z } from "zod";
 import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
@@ -159,7 +160,7 @@ Wenn die Pflanze gesund aussieht, beschreibe ihren guten Zustand und gib allgeme
                   {
                     type: "text" as const,
                     text: input.notes
-                      ? `Analysiere diese Cannabis-Pflanze. Zusätzliche Notizen vom Nutzer: ${input.notes}`
+                      ? `Analysiere diese Cannabis-Pflanze. Zusätzliche Notizen vom Nutzer: ${sanitizeUserInput(input.notes)}`
                       : "Analysiere diese Cannabis-Pflanze und identifiziere alle Probleme oder Auffälligkeiten.",
                   },
                   ...imageContents,
@@ -386,7 +387,7 @@ Gib bis zu 3 mögliche Sorten an, sortiert nach Wahrscheinlichkeit.`,
                 {
                   type: "text" as const,
                   text: input.additionalInfo
-                    ? `Identifiziere diese Cannabis-Sorte. Zusätzliche Info: ${input.additionalInfo}`
+                    ? `Identifiziere diese Cannabis-Sorte. Zusätzliche Info: ${sanitizeUserInput(input.additionalInfo)}`
                     : "Identifiziere diese Cannabis-Sorte.",
                 },
                 {
@@ -466,7 +467,7 @@ Klar = zu früh, Milchig = THC-Peak, Bernstein = mehr CBD/CBN, entspannender`,
               content: [
                 {
                   type: "text" as const,
-                  text: `Analysiere die Erntereife dieser Cannabis-Pflanze.${input.strainInfo ? ` Sorte: ${input.strainInfo}` : ""}${input.floweringWeek ? ` Blütewoche: ${input.floweringWeek}` : ""}`,
+                  text: `Analysiere die Erntereife dieser Cannabis-Pflanze.${input.strainInfo ? ` Sorte: ${sanitizeUserInput(input.strainInfo, 200)}` : ""}${input.floweringWeek ? ` Blütewoche: ${input.floweringWeek}` : ""}`,
                 },
                 {
                   type: "image_url" as const,
