@@ -10,7 +10,7 @@ Deutschland
 
 ## Kontakt
 
-- **E-Mail:** support@growmaster.app
+- **E-Mail:** team@growmaster.app
 - **Website:** https://growmaster.app
 
 ## Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV

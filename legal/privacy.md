@@ -49,7 +49,7 @@ Julien Paarmann
 Klausing 19
 13627 Berlin
 
-E-Mail: support@growmaster.app
+E-Mail: team@growmaster.app
 
 Verantwortliche Stelle ist die natürliche oder juristische Person, die allein oder gemeinsam mit anderen über die Zwecke und Mittel der Verarbeitung von personenbezogenen Daten entscheidet.
 
@@ -192,7 +192,7 @@ Sie haben folgende Rechte:
 - **Recht auf Datenübertragbarkeit** (Art. 20 DSGVO)
 - **Widerspruchsrecht** (Art. 21 DSGVO)
 
-Zur Ausübung Ihrer Rechte kontaktieren Sie uns unter: support@growmaster.app
+Zur Ausübung Ihrer Rechte kontaktieren Sie uns unter: team@growmaster.app
 
 ## 9. Änderungen dieser Datenschutzerklärung
 

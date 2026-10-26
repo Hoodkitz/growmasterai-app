@@ -16,7 +16,7 @@ Klausing 19
 13627 Berlin
 Deutschland
 
-E-Mail: support@growmaster.app
+E-Mail: team@growmaster.app
 
 ## 3. Leistungsbeschreibung
 

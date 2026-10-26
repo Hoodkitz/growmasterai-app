@@ -107,7 +107,7 @@ KEYWORDS (max. 100 chars):
 cannabis,grow,plant,ai,diagnosis,coach,journal,community,tracker,assistant
 
 SUPPORT:
-Email: support@growmaster.app
+Email: team@growmaster.app
 Website: https://hoodkitz.github.io/growmasterai-legal/
 
 CATEGORIES:

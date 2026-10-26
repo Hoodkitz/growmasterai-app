@@ -8,12 +8,12 @@ Diese Anleitung erklärt, wie du In-App-Käufe im Sandbox-Modus testen kannst, o
 
 RevenueCat und Google Play bieten Sandbox-Umgebungen, in denen du den kompletten Kaufprozess testen kannst. Sandbox-Käufe werden nicht berechnet und Abos erneuern sich in beschleunigten Intervallen.
 
-| Sandbox-Verhalten | Produktions-Verhalten |
-|-------------------|----------------------|
-| Keine echte Zahlung | Echte Zahlung |
+| Sandbox-Verhalten                       | Produktions-Verhalten                  |
+| --------------------------------------- | -------------------------------------- |
+| Keine echte Zahlung                     | Echte Zahlung                          |
 | Monatliches Abo erneuert alle 5 Minuten | Monatliches Abo erneuert nach 30 Tagen |
 | Jährliches Abo erneuert alle 30 Minuten | Jährliches Abo erneuert nach 365 Tagen |
-| Max. 6 Erneuerungen | Unbegrenzte Erneuerungen |
+| Max. 6 Erneuerungen                     | Unbegrenzte Erneuerungen               |
 
 ---
 
@@ -26,7 +26,7 @@ RevenueCat und Google Play bieten Sandbox-Umgebungen, in denen du den kompletten
 3. Füge die E-Mail-Adressen deiner Tester hinzu:
    ```
    dein-test-account@gmail.com
-   support@growmaster.app
+   team@growmaster.app
    ```
 4. Setze **License response** auf: `RESPOND_NORMALLY`
 5. Klicke **"Save changes"**
@@ -55,6 +55,7 @@ Für Sandbox-Tests muss die App über einen Test-Track installiert werden:
 ### 2.2 Account prüfen
 
 Stelle sicher, dass auf dem Testgerät:
+
 1. Der richtige Google-Account als **primärer Account** eingeloggt ist
 2. Der Account als License Tester in der Play Console registriert ist
 3. Die App über den Play Store (nicht via APK-Sideload) installiert wurde
@@ -73,6 +74,7 @@ Stelle sicher, dass auf dem Testgerät:
 6. Bestätige den Kauf
 
 **Erwartetes Ergebnis:**
+
 - Kauf wird sofort bestätigt
 - Entitlement "GrowMaster AI Pro" ist aktiv
 - Keine echte Zahlung erfolgt
@@ -86,6 +88,7 @@ Stelle sicher, dass auf dem Testgerät:
 4. Tippe auf **"Käufe wiederherstellen"**
 
 **Erwartetes Ergebnis:**
+
 - Vorherige Käufe werden wiederhergestellt
 - Pro-Status ist wieder aktiv
 
@@ -97,6 +100,7 @@ Stelle sicher, dass auf dem Testgerät:
 4. Tippe auf **"Abo kündigen"**
 
 **Erwartetes Ergebnis:**
+
 - Abo wird zum Ende der Laufzeit gekündigt
 - In der App: `willRenew` ist `false`
 - Nach Ablauf: Entitlement wird entfernt
@@ -113,6 +117,7 @@ RevenueCat bietet ein separates Dashboard für Sandbox-Transaktionen:
 4. Aktiviere den Filter **"Sandbox"**
 
 Hier siehst du:
+
 - Alle Test-Transaktionen
 - Aktive Entitlements
 - Subscription-Status
@@ -142,6 +147,7 @@ adb logcat | grep -E "\[Purchases\]|\[PurchaseContext\]"
 ### 5.2 Erwartete Log-Ausgaben
 
 **Bei App-Start:**
+
 ```
 [Purchases] RevenueCat initialized successfully with key: test_tEDiR...
 [Purchases] Current offering: default
@@ -152,12 +158,14 @@ adb logcat | grep -E "\[Purchases\]|\[PurchaseContext\]"
 ```
 
 **Bei Kauf:**
+
 ```
 [Purchases] Attempting purchase: $rc_monthly
 [Purchases] Purchase successful! Pro active: true
 ```
 
 **Bei Restore:**
+
 ```
 [Purchases] Restoring purchases...
 [Purchases] Restore successful! Pro active: true
@@ -172,6 +180,7 @@ adb logcat | grep -E "\[Purchases\]|\[PurchaseContext\]"
 **Ursache:** Produkt nicht aktiv oder nicht mit RevenueCat verknüpft
 
 **Lösung:**
+
 1. Prüfe in Google Play Console ob Produkt aktiviert ist
 2. Prüfe in RevenueCat ob Produkt importiert wurde
 3. Warte 24 Stunden (Google Play API Verzögerung)
@@ -181,6 +190,7 @@ adb logcat | grep -E "\[Purchases\]|\[PurchaseContext\]"
 **Ursache:** App nicht über Play Store installiert
 
 **Lösung:**
+
 1. Deinstalliere die App
 2. Installiere über Internal Testing Track
 3. Stelle sicher dass der richtige Account eingeloggt ist
@@ -190,6 +200,7 @@ adb logcat | grep -E "\[Purchases\]|\[PurchaseContext\]"
 **Ursache:** Entitlement nicht mit Produkt verknüpft
 
 **Lösung:**
+
 1. Gehe zu RevenueCat → Products
 2. Prüfe ob "GrowMaster AI Pro" Entitlement zugewiesen ist
 3. Führe "Restore Purchases" in der App aus
@@ -199,6 +210,7 @@ adb logcat | grep -E "\[Purchases\]|\[PurchaseContext\]"
 **Ursache:** Service Account Credentials fehlen oder falsch
 
 **Lösung:**
+
 1. Prüfe Google Cloud Service Account
 2. Prüfe Berechtigungen in Play Console
 3. Lade JSON-Key erneut in RevenueCat hoch
@@ -210,21 +222,25 @@ adb logcat | grep -E "\[Purchases\]|\[PurchaseContext\]"
 Führe alle Tests durch bevor du live gehst:
 
 ### Kauf-Tests
+
 - [ ] Monatliches Abo kaufen
 - [ ] Jährliches Abo kaufen
 - [ ] Lifetime kaufen
 - [ ] Kauf abbrechen (User cancels)
 
 ### Restore-Tests
+
 - [ ] Käufe nach Neuinstallation wiederherstellen
 - [ ] Käufe nach Logout/Login wiederherstellen
 
 ### Entitlement-Tests
+
 - [ ] Pro-Features nach Kauf verfügbar
 - [ ] Pro-Features nach Restore verfügbar
 - [ ] Free-Limits nach Kündigung aktiv
 
 ### Edge Cases
+
 - [ ] Offline-Kauf (Gerät offline während Kauf)
 - [ ] Doppelter Kauf-Versuch
 - [ ] Wechsel zwischen Abo-Typen
@@ -251,15 +267,15 @@ Wenn alle Tests erfolgreich sind:
 
 ## Zusammenfassung
 
-| Test | Status |
-|------|--------|
-| License Tester eingerichtet | ⬜ |
-| Internal Testing Track aktiv | ⬜ |
-| Monatliches Abo getestet | ⬜ |
-| Jährliches Abo getestet | ⬜ |
-| Lifetime getestet | ⬜ |
-| Restore getestet | ⬜ |
-| Kündigung getestet | ⬜ |
-| RevenueCat Dashboard geprüft | ⬜ |
+| Test                         | Status |
+| ---------------------------- | ------ |
+| License Tester eingerichtet  | ⬜     |
+| Internal Testing Track aktiv | ⬜     |
+| Monatliches Abo getestet     | ⬜     |
+| Jährliches Abo getestet      | ⬜     |
+| Lifetime getestet            | ⬜     |
+| Restore getestet             | ⬜     |
+| Kündigung getestet           | ⬜     |
+| RevenueCat Dashboard geprüft | ⬜     |
 
 Markiere jeden Test als erledigt (✅) wenn erfolgreich!
