@@ -1,7 +1,7 @@
 # Google Play Store Listing - GrowMaster AI (English)
 
 ## App Name
-GrowMaster AI - Cannabis Grow Assistant
+GrowMaster AI: Grow Assistant
 
 ## Short Description (max 80 chars)
 AI plant diagnosis, grow coach & community for cannabis cultivation
