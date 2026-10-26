@@ -20,7 +20,7 @@ const googleSigninPlugin = Constants.expoConfig?.plugins?.find(
 const webClientId =
   googleSigninPlugin?.[1]?.webClientId ||
   process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ||
-  "366301588725-dnado2jdl944lm823n51jnf31fnta60v.apps.googleusercontent.com";
+  "824654272024-hsn4lf8tvrumuhtvsqvcrc91bm3fgun0.apps.googleusercontent.com";
 
 const iosClientId =
   googleSigninPlugin?.[1]?.iosClientId ||
