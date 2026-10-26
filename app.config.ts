@@ -128,7 +128,7 @@ const config: ExpoConfig = {
         iosUrlScheme:
           "com.googleusercontent.apps.824654272024-pamt0fdjln1o6imm97sttuflf0secn89",
         webClientId:
-          "824654272024-hsn4lf8tvrumuhtvsqvcrc91bm3fgun0.apps.googleusercontent.com",
+          "824654272024-v2aqku5lr4t7ldqqsrdtr1n9bn60g6hn.apps.googleusercontent.com",
         android: {
           googleServicesFile: "./android/app/google-services.json",
         },
