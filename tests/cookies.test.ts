@@ -14,11 +14,17 @@ function mockReq(overrides: {
 }
 
 describe("getSessionCookieOptions", () => {
-  it("returns httpOnly and sameSite none for all requests", () => {
-    const opts = getSessionCookieOptions(mockReq({}));
+  it("returns httpOnly and sameSite none over https", () => {
+    const opts = getSessionCookieOptions(mockReq({ protocol: "https" }));
     expect(opts.httpOnly).toBe(true);
     expect(opts.sameSite).toBe("none");
     expect(opts.path).toBe("/");
+  });
+
+  it("falls back to sameSite lax over plain http (browsers drop SameSite=None without Secure)", () => {
+    const opts = getSessionCookieOptions(mockReq({}));
+    expect(opts.httpOnly).toBe(true);
+    expect(opts.sameSite).toBe("lax");
   });
 
   it("sets secure=true for https protocol", () => {
