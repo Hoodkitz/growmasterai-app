@@ -12,8 +12,8 @@ Anbieter der App ist:
 
 **GrowMaster AI**
 Julien Paarmann
-[Adresse]
-[PLZ Ort]
+Klausing 19
+13627 Berlin
 Deutschland
 
 E-Mail: support@growmaster.app

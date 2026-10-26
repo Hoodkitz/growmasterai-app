@@ -46,8 +46,8 @@ Die verantwortliche Stelle für die Datenverarbeitung in dieser App ist:
 
 **GrowMaster AI**
 Julien Paarmann
-[Adresse]
-[PLZ Ort]
+Klausing 19
+13627 Berlin
 
 E-Mail: support@growmaster.app
 
