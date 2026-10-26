@@ -73,6 +73,7 @@ export default function CoachScreen() {
     dailyMessages,
     canMessage,
     useMessage: consumeMessage,
+    refundMessage,
     remainingMessages,
   } = useSubscription();
   const limits = TIER_LIMITS[tier];
@@ -93,6 +94,8 @@ export default function CoachScreen() {
     },
     onError: (error, variables) => {
       console.error("Coach error:", error);
+      // Fehlgeschlagene Anfrage zählt nicht gegen das Tageslimit
+      refundMessage().catch(() => {});
       const errorDetails = getCoachErrorMessage(error);
       const errorMessage: Message = {
         id: Date.now().toString(),
@@ -137,7 +140,8 @@ export default function CoachScreen() {
     coachMutation.mutate({ question });
   };
 
-  const retryMessage = (messageId: string, question: string) => {
+  const retryMessage = async (messageId: string, question: string) => {
+    if (!(await consumeMessage())) return;
     // Remove the error message
     setMessages((prev) => prev.filter((m) => m.id !== messageId));
 
