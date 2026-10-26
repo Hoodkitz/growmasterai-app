@@ -184,7 +184,7 @@ Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrec
 
 ### 12.2 Gerichtsstand
 
-Soweit gesetzlich zulässig, ist Gerichtsstand [Ihr Ort].
+Soweit gesetzlich zulässig, ist Gerichtsstand Berlin.
 
 ### 12.3 Salvatorische Klausel
 
