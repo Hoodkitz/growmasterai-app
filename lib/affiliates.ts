@@ -404,3 +404,19 @@ export function getRecommendedProductsWithLinks(
     };
   });
 }
+
+/**
+ * Shop link for a remedy suggestion from a diagnosis. Only the plain search term is used.
+ * The Amazon tag comes solely from EXPO_PUBLIC_AFFILIATE_AMAZON; without it the link still
+ * works but is not an affiliate link (isAffiliate=false), so the UI must not label it as ad.
+ */
+export function buildRemedyLink(
+  searchTerm: string,
+  tag: string | undefined = process.env.EXPO_PUBLIC_AFFILIATE_AMAZON,
+): { url: string; isAffiliate: boolean } {
+  const url = new URL("/s", "https://www.amazon.de");
+  url.searchParams.set("k", searchTerm.slice(0, 80));
+  const cleanTag = (tag ?? "").trim();
+  if (cleanTag) url.searchParams.set("tag", cleanTag);
+  return { url: url.toString(), isAffiliate: cleanTag.length > 0 };
+}
