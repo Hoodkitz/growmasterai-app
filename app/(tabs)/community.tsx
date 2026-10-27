@@ -20,8 +20,8 @@ import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
 import { useGamification } from "@/lib/gamification-context";
 import {
-  CLUBS,
-  CLUB_SEARCH_URL,
+  BUNDESLAENDER,
+  clubSearchUrl,
   safeClubUrl,
   sortedClubs,
 } from "@/lib/clubs-data";
@@ -513,32 +513,32 @@ export default function CommunityScreen() {
                     </View>
                   );
                 })}
-                {CLUBS.length === 0 ? (
-                  <View className="bg-surface rounded-xl border border-border p-6 items-center">
-                    <IconSymbol
-                      name="map.fill"
-                      size={40}
-                      color={colors.muted}
-                    />
-                    <Text className="text-base font-semibold text-foreground mt-3">
-                      Noch keine Clubs eingetragen
-                    </Text>
-                    <Text className="text-xs text-muted text-center mt-1">
-                      Wir tragen Anbauvereinigungen nur nach Prüfung ein. Bis
-                      dahin kannst du in deiner Nähe suchen.
-                    </Text>
-                  </View>
-                ) : null}
-                <TouchableOpacity
-                  className="py-3 items-center"
-                  onPress={() =>
-                    Linking.openURL(CLUB_SEARCH_URL).catch(() => {})
-                  }
-                >
-                  <Text className="text-sm font-medium text-primary">
-                    Anbauvereinigungen im Internet suchen
+                <View className="bg-surface rounded-xl border border-border p-4 gap-1">
+                  <Text className="text-base font-semibold text-foreground">
+                    Anbauvereinigungen nach Bundesland
                   </Text>
-                </TouchableOpacity>
+                  <Text className="text-xs text-muted mb-2">
+                    Es gibt kein zentrales Verzeichnis, die Erlaubnis erteilen
+                    die Länder. Wir verlinken eine Suche, tragen aber keine
+                    ungeprüften Clubs ein.
+                  </Text>
+                  {BUNDESLAENDER.map((land) => (
+                    <TouchableOpacity
+                      key={land}
+                      className="py-2 border-t border-border flex-row items-center justify-between"
+                      onPress={() =>
+                        Linking.openURL(clubSearchUrl(land)).catch(() => {})
+                      }
+                    >
+                      <Text className="text-sm text-foreground">{land}</Text>
+                      <IconSymbol
+                        name="chevron.right"
+                        size={16}
+                        color={colors.muted}
+                      />
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </View>
             )}
           </View>
@@ -958,9 +958,6 @@ export default function CommunityScreen() {
                     size={48}
                     color={colors.primary}
                   />
-                  <View className="absolute bottom-2 right-2 bg-black/70 px-2 py-0.5 rounded">
-                    <Text className="text-xs text-white">{video.duration}</Text>
-                  </View>
                   {video.isPremium && tier === "free" && (
                     <View className="absolute inset-0 bg-black/50 items-center justify-center">
                       <IconSymbol name="lock.fill" size={32} color="#fff" />
@@ -1117,21 +1114,6 @@ export default function CommunityScreen() {
                         </Text>
                       </View>
                     </View>
-                  </View>
-                  <View className="items-end">
-                    <View className="flex-row items-center gap-1">
-                      <IconSymbol
-                        name="star.fill"
-                        size={14}
-                        color={colors.warning}
-                      />
-                      <Text className="text-sm font-medium text-foreground">
-                        {strain.rating}
-                      </Text>
-                    </View>
-                    <Text className="text-xs text-muted">
-                      {strain.reviewCount} Reviews
-                    </Text>
                   </View>
                 </View>
 

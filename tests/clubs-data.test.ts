@@ -21,3 +21,13 @@ describe("clubs-data", () => {
     ]);
   });
 });
+
+describe("clubSearchUrl", () => {
+  it("builds an encoded https search link per Land", async () => {
+    const { clubSearchUrl, BUNDESLAENDER } = await import("../lib/clubs-data");
+    expect(BUNDESLAENDER).toHaveLength(16);
+    const url = clubSearchUrl("Thüringen");
+    expect(url.startsWith("https://www.google.com/search?q=")).toBe(true);
+    expect(url).toContain(encodeURIComponent("Thüringen"));
+  });
+});

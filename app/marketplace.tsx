@@ -18,7 +18,12 @@ import { STRAINS_DATABASE } from "@/lib/strains-data";
 
 type TabType = "shop" | "auctions" | "raffles" | "deals" | "strains";
 type CategoryType =
-  "all" | "seeds" | "equipment" | "nutrients" | "accessories" | "other";
+  | "all"
+  | "seeds"
+  | "equipment"
+  | "nutrients"
+  | "accessories"
+  | "other";
 
 const CATEGORIES = [
   { id: "all", label: "Alle", icon: "square.grid.2x2.fill" },
@@ -516,16 +521,6 @@ export default function MarketplaceScreen() {
                         <Text className="text-xs text-muted">CBD:</Text>
                         <Text className="text-xs font-medium text-foreground">
                           {strain.cbdMin}-{strain.cbdMax}%
-                        </Text>
-                      </View>
-                      <View className="flex-row items-center gap-1">
-                        <IconSymbol
-                          name="star.fill"
-                          size={12}
-                          color={colors.warning}
-                        />
-                        <Text className="text-xs font-medium text-foreground">
-                          {strain.rating}
                         </Text>
                       </View>
                     </View>

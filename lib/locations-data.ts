@@ -313,10 +313,6 @@ export interface TutorialVideo {
   title: string;
   description: string;
   youtubeSearchQuery: string; // opens a real YouTube search (no unverified video IDs)
-  channel: string;
-  channelAvatar?: string;
-  duration: string;
-  views: number;
   category:
     | "basics"
     | "advanced"
@@ -336,9 +332,6 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
     description:
       "Alles was du für deinen ersten Grow wissen musst. Von der Samenauswahl bis zur Ernte.",
     youtubeSearchQuery: "Cannabis Anbau für Anfänger Kompletter Guide",
-    channel: "GrowGuide DE",
-    duration: "45:23",
-    views: 234567,
     category: "basics",
     difficulty: "beginner",
     language: "de",
@@ -349,9 +342,6 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
     description:
       "LED vs. HPS - Welche Lampe ist die richtige? Lichtspektrum und Abstände erklärt.",
     youtubeSearchQuery: "Die perfekte Beleuchtung für Indoor Growing",
-    channel: "Indoor Grow Pro",
-    duration: "28:15",
-    views: 156789,
     category: "equipment",
     difficulty: "intermediate",
     language: "de",
@@ -362,9 +352,6 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
     description:
       "Spinnmilben, Trauermücken, Thripse - So wirst du sie los ohne Chemie.",
     youtubeSearchQuery: "Schädlinge erkennen und bekämpfen",
-    channel: "GrowGuide DE",
-    duration: "32:45",
-    views: 98765,
     category: "problems",
     difficulty: "intermediate",
     language: "de",
@@ -375,9 +362,6 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
     description:
       "Der wichtigste Schritt für Qualität. So holst du das Maximum aus deiner Ernte.",
     youtubeSearchQuery: "Ernte, Trocknung und Aushärtung",
-    channel: "Cannabis Kultur",
-    duration: "38:20",
-    views: 187654,
     category: "harvest",
     difficulty: "beginner",
     language: "de",
@@ -388,9 +372,6 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
     description:
       "Screen of Green erklärt. Schritt für Schritt zur perfekten Canopy.",
     youtubeSearchQuery: "SCROG Technik Maximale Erträge",
-    channel: "Advanced Growing",
-    duration: "42:10",
-    views: 76543,
     category: "advanced",
     difficulty: "advanced",
     language: "de",
@@ -401,9 +382,6 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
     title: "Nährstoffmangel erkennen - Blattdiagnose",
     description: "Gelbe Blätter? Braune Flecken? Lerne die Symptome zu deuten.",
     youtubeSearchQuery: "Nährstoffmangel erkennen Blattdiagnose",
-    channel: "GrowGuide DE",
-    duration: "25:30",
-    views: 145678,
     category: "problems",
     difficulty: "beginner",
     language: "de",
@@ -414,9 +392,6 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
     description:
       "Robuste, ertragreiche Sorten die Fehler verzeihen. Top 10 Empfehlungen.",
     youtubeSearchQuery: "Die besten Sorten für Anfänger 2024",
-    channel: "Strain Reviews DE",
-    duration: "18:45",
-    views: 234567,
     category: "strains",
     difficulty: "beginner",
     language: "de",
@@ -426,9 +401,6 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
     title: "Hydroponik Setup für Einsteiger",
     description: "DWC, NFT, Ebb & Flow - Welches System passt zu dir?",
     youtubeSearchQuery: "Hydroponik Setup für Einsteiger",
-    channel: "Hydro Grow",
-    duration: "52:15",
-    views: 65432,
     category: "equipment",
     difficulty: "advanced",
     language: "de",

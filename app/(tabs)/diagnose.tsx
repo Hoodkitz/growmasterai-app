@@ -56,6 +56,16 @@ interface DiagnosisResult {
   remedies?: Remedy[];
 }
 
+const GENDER_FOCUS =
+  "Schwerpunkt: Geschlechtsbestimmung (männlich, weiblich oder zwittrig). Sage ehrlich 'unknown', wenn keine Vorblüten, Pollensäcke oder Stempel eindeutig sichtbar sind.";
+
+function buildNotes(notes: string, genderMode: boolean): string | undefined {
+  const text = [genderMode ? GENDER_FOCUS : "", notes]
+    .filter(Boolean)
+    .join(" ");
+  return text || undefined;
+}
+
 export default function DiagnoseScreen() {
   const router = useRouter();
   const colors = useColors();
@@ -79,6 +89,7 @@ export default function DiagnoseScreen() {
     useState<AnalysisOverlay | null>(null);
   const [images, setImages] = useState<string[]>([]);
   const [notes, setNotes] = useState("");
+  const [genderMode, setGenderMode] = useState(false);
   const [diagnosis, setDiagnosis] = useState<DiagnosisResult | null>(null);
   const [diagnosisError, setDiagnosisError] = useState<ReturnType<
     typeof getDiagnosisErrorMessage
@@ -285,7 +296,7 @@ export default function DiagnoseScreen() {
 
     diagnosisMutation.mutate({
       images: imagesToAnalyze,
-      notes: notes || undefined,
+      notes: buildNotes(notes, genderMode),
     });
   };
 
@@ -294,6 +305,7 @@ export default function DiagnoseScreen() {
     Speech.stop();
     setImages([]);
     setNotes("");
+    setGenderMode(false);
     setDiagnosis(null);
     setDiagnosisError(null);
     setMode("camera");
@@ -471,6 +483,22 @@ export default function DiagnoseScreen() {
                 {diagnosis.problem}
               </Text>
             </View>
+
+            {genderMode &&
+              (!diagnosis.plantGender ||
+                diagnosis.plantGender === "unknown") && (
+                <View className="bg-surface rounded-2xl p-4 border border-border">
+                  <Text className="text-base font-semibold text-foreground">
+                    Geschlecht nicht erkennbar
+                  </Text>
+                  <Text className="text-sm text-muted mt-1">
+                    Auf dem Foto sind keine eindeutigen Merkmale zu sehen. Das
+                    Geschlecht zeigt sich meist erst 3-6 Wochen nach Beginn der
+                    Blüte (oder ab der 12/12-Umstellung) an den Knoten. Mach
+                    dann ein scharfes Nahfoto dieser Stellen.
+                  </Text>
+                </View>
+              )}
 
             {/* Plant Gender Badge */}
             {diagnosis.plantGender && diagnosis.plantGender !== "unknown" && (
@@ -666,6 +694,29 @@ export default function DiagnoseScreen() {
                 </View>
               ))}
             </View>
+
+            <TouchableOpacity
+              accessibilityRole="switch"
+              accessibilityState={{ checked: genderMode }}
+              className={`rounded-2xl p-4 border flex-row items-center gap-3 ${genderMode ? "bg-primary/10 border-primary" : "bg-surface border-border"}`}
+              onPress={() => setGenderMode((v) => !v)}
+            >
+              <Text className="text-2xl">⚧</Text>
+              <View className="flex-1">
+                <Text className="text-base font-semibold text-foreground">
+                  Geschlecht bestimmen
+                </Text>
+                <Text className="text-xs text-muted">
+                  Foto von Blütenansätzen an den Knoten (Vorblüten). Vor der
+                  Blüte ist das Geschlecht nicht sicher erkennbar.
+                </Text>
+              </View>
+              <IconSymbol
+                name={genderMode ? "checkmark.circle.fill" : "circle"}
+                size={24}
+                color={genderMode ? colors.primary : colors.muted}
+              />
+            </TouchableOpacity>
 
             <View className="bg-surface rounded-2xl p-4 border border-border gap-3">
               <Text className="text-base font-semibold text-foreground">

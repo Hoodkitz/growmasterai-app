@@ -54,8 +54,6 @@ export interface Strain {
   vulnerabilities: string[];
   genetics: string;
   breeder: string;
-  rating: number;
-  reviewCount: number;
   imageUrl?: string;
   affiliateLinks: AffiliateLink[];
   isPremium?: boolean;
@@ -127,8 +125,6 @@ export const STRAINS_DATABASE: Strain[] = [
     ],
     genetics: "Afghani x Thai",
     breeder: "Sensi Seeds",
-    rating: 4.8,
-    reviewCount: 1245,
     affiliateLinks: [
       {
         shop: "Sensi Seeds",
@@ -179,8 +175,6 @@ export const STRAINS_DATABASE: Strain[] = [
     ],
     genetics: "Brazilian Sativa x South Indian Indica",
     breeder: "Green House Seeds",
-    rating: 4.7,
-    reviewCount: 2156,
     affiliateLinks: [
       {
         shop: "Dutch Passion",
@@ -232,8 +226,6 @@ export const STRAINS_DATABASE: Strain[] = [
     ],
     genetics: "Chem's Sister x Sour Dubb x Chocolate Diesel",
     breeder: "GG Strains",
-    rating: 4.9,
-    reviewCount: 3421,
     isPremium: true,
     affiliateLinks: [
       {
@@ -286,8 +278,6 @@ export const STRAINS_DATABASE: Strain[] = [
     ],
     genetics: "Blueberry x Haze",
     breeder: "DJ Short",
-    rating: 4.6,
-    reviewCount: 1876,
     affiliateLinks: [
       {
         shop: "Royal Queen Seeds",
@@ -340,8 +330,6 @@ export const STRAINS_DATABASE: Strain[] = [
     ],
     genetics: "Chemdawg x Hindu Kush",
     breeder: "Unknown",
-    rating: 4.7,
-    reviewCount: 2543,
     isPremium: true,
     affiliateLinks: [
       {
@@ -394,8 +382,6 @@ export const STRAINS_DATABASE: Strain[] = [
     ],
     genetics: "South Asian x Jamaican x Hawaiian",
     breeder: "Soma Seeds",
-    rating: 4.5,
-    reviewCount: 1654,
     affiliateLinks: [
       {
         shop: "Royal Queen Seeds",
@@ -446,8 +432,6 @@ export const STRAINS_DATABASE: Strain[] = [
     ],
     genetics: "Critical x Ruderalis",
     breeder: "Royal Queen Seeds",
-    rating: 4.4,
-    reviewCount: 987,
     affiliateLinks: [
       {
         shop: "Royal Queen Seeds",
@@ -499,8 +483,6 @@ export const STRAINS_DATABASE: Strain[] = [
     ],
     genetics: "OG Kush x Durban Poison",
     breeder: "Cookie Family",
-    rating: 4.8,
-    reviewCount: 2876,
     isPremium: true,
     affiliateLinks: [
       {

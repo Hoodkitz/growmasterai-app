@@ -10,9 +10,6 @@ export interface Club {
 
 export const CLUBS: Club[] = [];
 
-export const CLUB_SEARCH_URL =
-  "https://www.google.com/search?q=Cannabis+Anbauvereinigung+in+meiner+N%C3%A4he";
-
 export function safeClubUrl(value?: string): string | undefined {
   const url = value?.trim();
   return url && /^https?:\/\//i.test(url) ? url : undefined;
@@ -23,4 +20,30 @@ export function sortedClubs(clubs: Club[] = CLUBS): Club[] {
     (a, b) =>
       a.city.localeCompare(b.city, "de") || a.name.localeCompare(b.name, "de"),
   );
+}
+
+// Permits are issued by each Land, and there is no central public register.
+// Instead of listing clubs we cannot verify, link to a search per Land.
+export const BUNDESLAENDER = [
+  "Baden-Württemberg",
+  "Bayern",
+  "Berlin",
+  "Brandenburg",
+  "Bremen",
+  "Hamburg",
+  "Hessen",
+  "Mecklenburg-Vorpommern",
+  "Niedersachsen",
+  "Nordrhein-Westfalen",
+  "Rheinland-Pfalz",
+  "Saarland",
+  "Sachsen",
+  "Sachsen-Anhalt",
+  "Schleswig-Holstein",
+  "Thüringen",
+] as const;
+
+export function clubSearchUrl(land: string): string {
+  const q = `Anbauvereinigungen Cannabis ${land} Erlaubnis Behörde Verzeichnis`;
+  return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
 }
