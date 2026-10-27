@@ -1,1 +1,1833 @@
-[]
+[
+  {
+    "id": "training-klima-ideal-keimung-01",
+    "topic": "Ideale Bedingungen: Keimphase",
+    "phases": ["germination"],
+    "tags": [
+      "keimung",
+      "temperatur",
+      "luftfeuchtigkeit",
+      "luftfeuchte",
+      "rlf",
+      "samen",
+      "grad"
+    ],
+    "text": "Laut Video sind in der Keimphase (bis zum Durchbrechen der Erdoberfläche) 21-25 Grad und über 70 % Luftfeuchtigkeit ideal.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 42
+  },
+  {
+    "id": "training-klima-ideal-saemling-02",
+    "topic": "Ideale Bedingungen: Sämlingsphase",
+    "phases": ["seedling"],
+    "tags": [
+      "sämling",
+      "keimling",
+      "temperatur",
+      "luftfeuchtigkeit",
+      "luftfeuchte",
+      "rlf"
+    ],
+    "text": "Beim Sämling ändert sich die Temperatur kaum; die Luftfeuchtigkeit soll nach dem Keimen 70 % nicht mehr überschreiten.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 50
+  },
+  {
+    "id": "training-klima-ideal-wuchs-03",
+    "topic": "Ideale Bedingungen: Wuchsphase",
+    "phases": ["vegetative"],
+    "tags": [
+      "wuchs",
+      "wachstum",
+      "temperatur",
+      "luftfeuchtigkeit",
+      "luftfeuchte",
+      "rlf",
+      "wärmer"
+    ],
+    "text": "In der Wuchsphase darf es laut Video etwas wärmer und etwas trockener sein als beim Sämling.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 56
+  },
+  {
+    "id": "training-klima-ideal-bluete-04",
+    "topic": "Ideale Bedingungen: Blütebeginn",
+    "phases": ["flowering"],
+    "tags": [
+      "blüte",
+      "blütephase",
+      "temperatur",
+      "luftfeuchtigkeit",
+      "luftfeuchte",
+      "rlf",
+      "umstellen"
+    ],
+    "text": "Mit dem Einleiten der Blüte soll die Luftfeuchtigkeit 55 % nicht mehr überschreiten, die Temperatur liegt vorerst wieder bei 20-26 Grad.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 61
+  },
+  {
+    "id": "training-klima-spaete-bluete-05",
+    "topic": "Späte Blüte kühler und trockener",
+    "phases": ["flowering"],
+    "tags": [
+      "späte blüte",
+      "kühler",
+      "trockener",
+      "harz",
+      "terpene",
+      "luftfeuchtigkeit"
+    ],
+    "text": "In der späteren Blüte kann man optimieren, indem man es noch einmal trockener und kühler werden lässt; laut Sprecher erhöht das die Harzproduktion und schützt die Terpene.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 70
+  },
+  {
+    "id": "training-klima-dunkelphase-06",
+    "topic": "Temperatur in der Dunkelphase",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "dunkelphase",
+      "nacht",
+      "temperatur",
+      "kühler",
+      "luftfeuchtigkeit",
+      "5 grad"
+    ],
+    "text": "In der Dunkelphase darf es gut 5 Grad kühler sein; dadurch steigt automatisch die Luftfeuchtigkeit, was ebenfalls erlaubt ist.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 81
+  },
+  {
+    "id": "training-klima-temp-rlf-07",
+    "topic": "Temperatur und relative Luftfeuchte",
+    "phases": ["germination", "seedling", "vegetative", "flowering"],
+    "tags": [
+      "luftfeuchtigkeit",
+      "luftfeuchte",
+      "rlf",
+      "temperatur",
+      "wärmer",
+      "hygrometer"
+    ],
+    "text": "Wird die Luft wärmer, sinkt die relative Luftfeuchtigkeit; wird sie kühler, steigt sie. Wärmere Luft kann mehr Wasserdampf speichern.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 98
+  },
+  {
+    "id": "training-klima-entfeuchter-heizt-08",
+    "topic": "Entfeuchter trocknet und wärmt",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "entfeuchter",
+      "luftentfeuchter",
+      "luftfeuchtigkeit",
+      "keller",
+      "temperatur"
+    ],
+    "text": "Ein Entfeuchter senkt die relative Luftfeuchtigkeit direkt und indirekt, weil er die Luft zugleich nicht unwesentlich erwärmt.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 573
+  },
+  {
+    "id": "training-vpd-definition-09",
+    "topic": "Was ist der VPD?",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "vpd",
+      "dampfdruckdefizit",
+      "luftfeuchtigkeit",
+      "temperatur",
+      "tabelle"
+    ],
+    "text": "VPD (Vapour Pressure Deficit, Dampfdruckdefizit) ist die Differenz zwischen der vorhandenen und der maximal möglichen Feuchtigkeit der Luft, meist in kPa. Man liest ihn aus Temperatur und Luftfeuchtigkeit an einer Tabelle ab; je höher der VPD, desto stärker die Trocknungsleistung der Luft.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 259
+  },
+  {
+    "id": "training-vpd-zu-hoch-10",
+    "topic": "Zu hoher VPD",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "vpd",
+      "spaltöffnungen",
+      "transpiration",
+      "zu trocken",
+      "co2",
+      "welk"
+    ],
+    "text": "Bei zu hohem VPD schließt die Pflanze ihre Spaltöffnungen, um nicht auszutrocknen; das ist ungünstig, weil darüber auch CO2 aufgenommen wird.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 347
+  },
+  {
+    "id": "training-vpd-zu-niedrig-11",
+    "topic": "Zu niedriger VPD",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "vpd",
+      "zu feucht",
+      "transpiration",
+      "wurzeln",
+      "nährstoffe",
+      "schimmel",
+      "krankheiten"
+    ],
+    "text": "Ist der VPD zu niedrig (zu feucht und/oder kühl), transpiriert die Pflanze weniger, die Wurzeln nehmen weniger Wasser samt Nährstoffen auf, und eine ständig feuchte Umgebung begünstigt Krankheiten und Befall.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 375
+  },
+  {
+    "id": "training-vpd-blatttemperatur-12",
+    "topic": "Blatttemperatur und VPD",
+    "phases": ["vegetative", "flowering"],
+    "tags": ["vpd", "blatttemperatur", "infrarotthermometer", "led", "tabelle"],
+    "text": "Die gängige Annahme, die Blatttemperatur unter LEDs liege etwa 2 Grad unter der Umgebungstemperatur, scheint laut Sprecher einigermaßen gut zu passen. Schon 1 Grad Unterschied verändert den VPD aber enorm; wer es genau wissen will, soll messen.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 424
+  },
+  {
+    "id": "training-vpd-meinung-einfache-werte-13",
+    "topic": "VPD: Grenzen im Alltag",
+    "phases": ["seedling", "flowering"],
+    "tags": [
+      "vpd",
+      "temperatur",
+      "luftfeuchtigkeit",
+      "terpene",
+      "25 grad",
+      "einfache werte"
+    ],
+    "text": "Der Sprecher findet, dass man sich besonders am Anfang eher an den einfachen Werten für Temperatur und Luftfeuchtigkeit orientieren sollte, weil der VPD auch 15 Grad beim Sämling oder 30 Grad in der späten Blüte zulassen würde. Terpene nehmen laut ihm ab 25 Grad Schaden.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 463
+  },
+  {
+    "id": "training-vpd-hitzewelle-befeuchter-14",
+    "topic": "Heiß und trocken: Luftbefeuchter",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "hitze",
+      "hitzewelle",
+      "trocken",
+      "luftbefeuchter",
+      "klimagerät",
+      "28 grad",
+      "vpd"
+    ],
+    "text": "Bei 28-29 Grad und nur 35-40 % Luftfeuchtigkeit kann ein Luftbefeuchter, der 10-15 % mehr Luftfeuchtigkeit bringt, eine günstigere und stromsparendere Hilfe als ein Klimagerät sein, damit die Pflanzen wieder besser transpirieren.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 522
+  },
+  {
+    "id": "training-klima-licht-nachts-15",
+    "topic": "Lichtphase auf die Nachtstunden legen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "lichtphase",
+      "nacht",
+      "temperatur",
+      "lichtzeit",
+      "zeitschaltuhr",
+      "kühler"
+    ],
+    "text": "Fast immer ist es vorteilhaft, die Lichtphase auf die Nachtstunden zu legen, weil man so die tendenziell kühleren Nachtstunden nutzt, wenn der Raum belüftet ist.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 633
+  },
+  {
+    "id": "training-klima-saemling-feuchte-tricks-16",
+    "topic": "Luftfeuchte für Sämlinge erhöhen",
+    "phases": ["seedling"],
+    "tags": [
+      "sämling",
+      "luftfeuchtigkeit",
+      "wasserschale",
+      "handtuch",
+      "heizmatte",
+      "keller"
+    ],
+    "text": "Im Wohnraum reicht für Sämlinge meist eine Schale Wasser, ein feuchtes Handtuch oder etwas Wasser in der Zeltwanne bei abgeschaltetem oder niedrig laufendem Lüfter. Im Keller passt es meist mit Heizmatte und geschlossenem Zelt ohne Lüfter; das Zelt regelmäßig öffnen.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 666
+  },
+  {
+    "id": "training-klima-wuchs-regeln-17",
+    "topic": "Klima in der Wuchsphase regeln",
+    "phases": ["vegetative"],
+    "tags": [
+      "wuchs",
+      "lüfter",
+      "drehzahl",
+      "lampenleistung",
+      "abstand",
+      "temperatur",
+      "luftfeuchtigkeit"
+    ],
+    "text": "In der Wuchsphase lassen sich die Werte meist über Lüfterdrehzahl und Lampenleistung regeln; ist es zu kühl, Lampe hochdrehen, sonst den Abstand erhöhen. Die Pflanzen sind in dieser Phase am resistentesten.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 691
+  },
+  {
+    "id": "training-klima-zweite-bluete-klimagerat-18",
+    "topic": "Zweite Blütehälfte im Sommer",
+    "phases": ["flowering"],
+    "tags": [
+      "späte blüte",
+      "sommer",
+      "klimagerät",
+      "hitze",
+      "25 grad",
+      "entfeuchter"
+    ],
+    "text": "In der zweiten Blütehälfte läuft es laut Sprecher im Sommer fast immer auf ein Klimagerät hinaus; selbst im kühlen Keller sprengen eine hoch eingestellte Lampe und ein Entfeuchter die 25 Grad schnell.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 741
+  },
+  {
+    "id": "training-klima-startzeit-spaetsommer-19",
+    "topic": "Bester Starttermin Indoor",
+    "phases": ["germination", "vegetative"],
+    "tags": ["start", "jahreszeit", "spätsommer", "herbst", "klima", "indoor"],
+    "text": "Der Sprecher nennt den Spätsommer als idealen Start für den Indoor-Grow, weil es von August bis November von Woche zu Woche kühler und trockener wird.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 766
+  },
+  {
+    "id": "training-klima-mix-automatics-20",
+    "topic": "Mitte für gemischte Automatics",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "autoflower",
+      "automatic",
+      "3 pflanzen",
+      "kreislauf",
+      "temperatur",
+      "luftfeuchtigkeit",
+      "verschiedenes alter"
+    ],
+    "text": "Für mehrere Automatics in unterschiedlichem Alter in einem Zelt empfiehlt der Sprecher eine gesunde Mitte von 21-25 Grad und 45-55 % Luftfeuchtigkeit.",
+    "videoId": "tOoXo28r2Lw",
+    "videoTitle": "Temperatur und Luftfeuchtigkeit im Growzelt richtig einstellen | VPD als Hilfsmittel",
+    "channel": "Der Hanf lebt",
+    "start": 796
+  },
+  {
+    "id": "training-abluft-aufbau-zelt-21",
+    "topic": "Abluft: Lüfter und Filter im Zelt",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "abluft",
+      "lüfter",
+      "aktivkohlefilter",
+      "akf",
+      "zelt",
+      "profil",
+      "montage"
+    ],
+    "text": "Meist kommen Lüfter und Aktivkohlefilter ins Zelt. Bis 80x80 hängt man beide an je ein eigenes Profil, in größeren Zelten oft an dasselbe; im 40x40 oder 50x50 passt nur der Filter hinein, der Lüfter sitzt außerhalb.",
+    "videoId": "Mzg2e8L3gKU",
+    "videoTitle": "Abluft der Growbox installieren | Innen oder außen? | Ab wann? | Belüftung Anleitung, Aufbau",
+    "channel": "Der Hanf lebt",
+    "start": 11
+  },
+  {
+    "id": "training-abluft-akf-geruch-22",
+    "topic": "Aktivkohlefilter dient dem Geruch",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "aktivkohlefilter",
+      "akf",
+      "geruch",
+      "filter",
+      "gestank",
+      "abluft"
+    ],
+    "text": "Der Aktivkohlefilter dient laut Video lediglich der Geruchsbeseitigung und ist technisch kein Muss, man werde ihn aber schätzen.",
+    "videoId": "Mzg2e8L3gKU",
+    "videoTitle": "Abluft der Growbox installieren | Innen oder außen? | Ab wann? | Belüftung Anleitung, Aufbau",
+    "channel": "Der Hanf lebt",
+    "start": 55
+  },
+  {
+    "id": "training-abluft-rohr-vorher-23",
+    "topic": "Luftrohre vor der Montage anbringen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "abluft",
+      "luftrohr",
+      "aktivkohlefilter",
+      "montage",
+      "schlauch",
+      "aufbau"
+    ],
+    "text": "Luftrohr am Filter und am Lüfter am besten vor dem Aufhängen im Zelt befestigen; alle Rohrverbindungen, die vor der Montage möglich sind, sollte man vorher machen.",
+    "videoId": "Mzg2e8L3gKU",
+    "videoTitle": "Abluft der Growbox installieren | Innen oder außen? | Ab wann? | Belüftung Anleitung, Aufbau",
+    "channel": "Der Hanf lebt",
+    "start": 72
+  },
+  {
+    "id": "training-abluft-lueftergroesse-24",
+    "topic": "Faustformel Abluftleistung",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "abluft",
+      "lüfter",
+      "m³",
+      "leistung",
+      "watt",
+      "led",
+      "größe",
+      "rohrventilator"
+    ],
+    "text": "Als Faustformel soll die Abluft in m³ mindestens der LED-Leistung in Watt entsprechen; mehr als das Doppelte ist selten nötig. Ein 2-stufiger Lüfter mit 145 und 187 m³ passt laut Sprecher für ein 60x60-Zelt mit 100-150 Watt.",
+    "videoId": "Mzg2e8L3gKU",
+    "videoTitle": "Abluft der Growbox installieren | Innen oder außen? | Ab wann? | Belüftung Anleitung, Aufbau",
+    "channel": "Der Hanf lebt",
+    "start": 388
+  },
+  {
+    "id": "training-abluft-start-nach-wochen-25",
+    "topic": "Ab wann Abluft laufen lassen",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "abluft",
+      "start",
+      "sämling",
+      "luftfeuchtigkeit",
+      "lüfter aus",
+      "erste wochen"
+    ],
+    "text": "Der Sprecher befürwortet, die Abluft in den ersten 2-3 Wochen auszulassen, damit sich die Luftfeuchtigkeit leichter erhöhen lässt; Frischluftbedarf und Geruch sind dann noch gering. Routinierte Gärtner lassen den Lüfter oft von Beginn an auf kleiner Stufe laufen, meist mit Luftbefeuchter.",
+    "videoId": "Mzg2e8L3gKU",
+    "videoTitle": "Abluft der Growbox installieren | Innen oder außen? | Ab wann? | Belüftung Anleitung, Aufbau",
+    "channel": "Der Hanf lebt",
+    "start": 438
+  },
+  {
+    "id": "training-abluft-vor-led-installieren-26",
+    "topic": "Lüfter und Filter vor der LED installieren",
+    "phases": ["seedling"],
+    "tags": [
+      "abluft",
+      "lüfter",
+      "filter",
+      "led",
+      "aufbau",
+      "reihenfolge",
+      "installieren"
+    ],
+    "text": "Lüfter und Aktivkohlefilter sollte man, auch wenn sie erst später gebraucht werden, vor der LED installieren, sonst müsste man sie wieder herausnehmen oder sie wären im Weg.",
+    "videoId": "Mzg2e8L3gKU",
+    "videoTitle": "Abluft der Growbox installieren | Innen oder außen? | Ab wann? | Belüftung Anleitung, Aufbau",
+    "channel": "Der Hanf lebt",
+    "start": 500
+  },
+  {
+    "id": "training-abluft-leise-27",
+    "topic": "Abluft leise bekommen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "abluft",
+      "leise",
+      "lautstärke",
+      "lüfter",
+      "dämmen",
+      "überdimensioniert",
+      "geräusch"
+    ],
+    "text": "Die gängigste und effektivste Methode für leise Abluft ist laut Sprecher, einen überdimensionierten, hochwertigen Lüfter auf niedriger Stufe laufen zu lassen; weniger Drehzahl bedeutet weniger Lärm. Das erfordert meist eine gewisse Investition.",
+    "videoId": "Mzg2e8L3gKU",
+    "videoTitle": "Abluft der Growbox installieren | Innen oder außen? | Ab wann? | Belüftung Anleitung, Aufbau",
+    "channel": "Der Hanf lebt",
+    "start": 562
+  },
+  {
+    "id": "training-abluft-lueftersteuerung-grenzen-28",
+    "topic": "Controller kann Umgebung nicht ersetzen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "controller",
+      "lüftersteuerung",
+      "temperatur",
+      "luftfeuchtigkeit",
+      "keller",
+      "entfeuchter",
+      "heizung"
+    ],
+    "text": "Ein Controller kann die Bedingungen über die Lüfterdrehzahl nur so weit korrigieren, wie es die Umgebung zulässt; ein kalter oder sehr feuchter Keller braucht Heizung oder Entfeuchter. Passt die Umgebung weitgehend, verbessert die Steuerung das Ergebnis.",
+    "videoId": "Mzg2e8L3gKU",
+    "videoTitle": "Abluft der Growbox installieren | Innen oder außen? | Ab wann? | Belüftung Anleitung, Aufbau",
+    "channel": "Der Hanf lebt",
+    "start": 598
+  },
+  {
+    "id": "training-abluft-zuluft-regel-29",
+    "topic": "Zuluft: doppelte Fläche",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "zuluft",
+      "frischluft",
+      "abluft",
+      "öffnung",
+      "unterdruck",
+      "lichtfalle",
+      "100mm"
+    ],
+    "text": "Zuluft entsteht meist durch den Unterdruck im Zelt und offene Öffnungen. Eine alte Faustregel: die doppelte Fläche an Zuluft wie Abluft, bei einem 100-mm-Lüfter also zwei offene 100-mm-Öffnungen.",
+    "videoId": "Mzg2e8L3gKU",
+    "videoTitle": "Abluft der Growbox installieren | Innen oder außen? | Ab wann? | Belüftung Anleitung, Aufbau",
+    "channel": "Der Hanf lebt",
+    "start": 671
+  },
+  {
+    "id": "training-abluft-aktive-zuluft-30",
+    "topic": "Aktive Zuluft",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "zuluft",
+      "aktive zuluft",
+      "zulüfter",
+      "staub",
+      "filter",
+      "zeltwand",
+      "lichtfalle"
+    ],
+    "text": "Gegen Lichteintritt gibt es Lichtfallen, einen Light Baffle oder aktive Zuluft; dafür reicht in der Regel die Hälfte der Abluftleistung. Das verhindert das Einbäulen der Zeltwände und erlaubt einen Filter vor dem Zulüfter gegen Staub auf den Blüten.",
+    "videoId": "Mzg2e8L3gKU",
+    "videoTitle": "Abluft der Growbox installieren | Innen oder außen? | Ab wann? | Belüftung Anleitung, Aufbau",
+    "channel": "Der Hanf lebt",
+    "start": 699
+  },
+  {
+    "id": "training-abluft-unten-raus-31",
+    "topic": "Abluft unten statt oben",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "abluft",
+      "luftfeuchtigkeit senken",
+      "lüfter außen",
+      "warm",
+      "trocken",
+      "keller"
+    ],
+    "text": "Bei außen angebrachtem Lüfter kann man die Luft unten absaugen und oben ansaugen; im Test wurde es dadurch etwas wärmer und trockener. Der Sprecher nennt das keinen revolutionären Unterschied und ersetzt keinen Entfeuchter, es sei am ehesten im kühleren, feuchteren Keller eine Überlegung wert.",
+    "videoId": "Mzg2e8L3gKU",
+    "videoTitle": "Abluft der Growbox installieren | Innen oder außen? | Ab wann? | Belüftung Anleitung, Aufbau",
+    "channel": "Der Hanf lebt",
+    "start": 300
+  },
+  {
+    "id": "training-entlauben-zeitpunkte-32",
+    "topic": "Entlauben: Zeitpunkte",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "entlauben",
+      "defoliation",
+      "beschneiden",
+      "blüteneinleitung",
+      "tag 21",
+      "tag 41",
+      "zeitplan"
+    ],
+    "text": "Der Sprecher entlaubt und beschneidet je nach Genetik 2-3 Mal: etwa 3 Tage vor dem Einleiten der Blüte, an Tag 21 der Blüte und bei guter Reaktion noch einmal an Tag 41. So hat die Pflanze zwischen den Eingriffen Zeit, sich zu erholen.",
+    "videoId": "cB_JZnNdPQg",
+    "videoTitle": "Wie man seine Pflanze für mehr Ertrag trainiert | High Stress Training *",
+    "channel": "Vince and Weed",
+    "start": 55
+  },
+  {
+    "id": "training-entlauben-ziel-licht-33",
+    "topic": "Entlauben: Licht tief in die Pflanze",
+    "phases": ["flowering"],
+    "tags": [
+      "entlauben",
+      "licht",
+      "blätterdach",
+      "schatten",
+      "sonnensegel",
+      "ertrag",
+      "auslichten"
+    ],
+    "text": "Ziel ist laut Sprecher, dass das Licht tief in die Pflanze eindringt. Dafür schneidet er von oben nach unten die großen Blätter (\"Sonnensegel\") weg, die den Trieben darunter Schatten spenden.",
+    "videoId": "cB_JZnNdPQg",
+    "videoTitle": "Wie man seine Pflanze für mehr Ertrag trainiert | High Stress Training *",
+    "channel": "Vince and Weed",
+    "start": 300
+  },
+  {
+    "id": "training-entlauben-gerupftes-huhn-34",
+    "topic": "Nach dem Entlauben: Pushback",
+    "phases": ["flowering"],
+    "tags": [
+      "entlauben",
+      "pushback",
+      "erholung",
+      "anfänger",
+      "angst",
+      "blätter wachsen nach"
+    ],
+    "text": "Nach dem Auslichten sieht die Pflanze laut Sprecher wie ein gerupftes Hühnchen aus, sie kommt aber zurück (\"Pushback\"). Deshalb sind die Abstände zwischen den Terminen wichtig.",
+    "videoId": "cB_JZnNdPQg",
+    "videoTitle": "Wie man seine Pflanze für mehr Ertrag trainiert | High Stress Training *",
+    "channel": "Vince and Weed",
+    "start": 152
+  },
+  {
+    "id": "training-entlauben-streckung-35",
+    "topic": "Streckung nach 12/12 einkalkulieren",
+    "phases": ["flowering"],
+    "tags": [
+      "streckung",
+      "12/12",
+      "blüteneinleitung",
+      "höhe",
+      "training",
+      "entlauben"
+    ],
+    "text": "Nach dem Umstellen der Zeitschaltuhr auf 12/12 streckte sich die Pflanze in 21 Tagen an manchen Stellen um gute 30 cm; das muss man beim Trainieren, Entlauben und Auslichten einkalkulieren.",
+    "videoId": "cB_JZnNdPQg",
+    "videoTitle": "Wie man seine Pflanze für mehr Ertrag trainiert | High Stress Training *",
+    "channel": "Vince and Weed",
+    "start": 245
+  },
+  {
+    "id": "training-entlauben-verschattet-verschwendet-36",
+    "topic": "Verschattete Triebe sind verschwendete Energie",
+    "phases": ["flowering"],
+    "tags": [
+      "entlauben",
+      "schatten",
+      "energie",
+      "triebe",
+      "training",
+      "effizient",
+      "ertrag"
+    ],
+    "text": "Jedes Blatt und jeder Stängel, der am Ende im Schatten liegt, ist laut Sprecher verschwendete Energie; deshalb sei Trainieren effizient.",
+    "videoId": "cB_JZnNdPQg",
+    "videoTitle": "Wie man seine Pflanze für mehr Ertrag trainiert | High Stress Training *",
+    "channel": "Vince and Weed",
+    "start": 284
+  },
+  {
+    "id": "training-entlauben-rote-linie-37",
+    "topic": "Untere Zone radikal freischneiden",
+    "phases": ["flowering"],
+    "tags": [
+      "lollipopping",
+      "entlauben",
+      "untere triebe",
+      "schatten",
+      "markierung",
+      "freischneiden"
+    ],
+    "text": "Der Sprecher legt gedanklich eine Linie fest und entfernt darunter radikal jedes Blatt, jeden Blütenansatz und jeden Trieb, weil alles darunter dauerhaft im Schatten liegt und nur Energie, Dünger und Biomasse kostet.",
+    "videoId": "cB_JZnNdPQg",
+    "videoTitle": "Wie man seine Pflanze für mehr Ertrag trainiert | High Stress Training *",
+    "channel": "Vince and Weed",
+    "start": 565
+  },
+  {
+    "id": "training-entlauben-oberste-blaetter-lassen-38",
+    "topic": "Oberste Blätter am Trieb lassen",
+    "phases": ["flowering"],
+    "tags": ["entlauben", "blätter", "trieb", "nährstofftransport", "wasser"],
+    "text": "An jedem Trieb lässt der Sprecher die obersten drei Blätter stehen, die laut ihm für den Transport von Wasser und Nährstoffen nach oben zuständig sind.",
+    "videoId": "cB_JZnNdPQg",
+    "videoTitle": "Wie man seine Pflanze für mehr Ertrag trainiert | High Stress Training *",
+    "channel": "Vince and Weed",
+    "start": 370
+  },
+  {
+    "id": "training-entlauben-handtest-39",
+    "topic": "Handtest: Noch einmal entlauben?",
+    "phases": ["flowering"],
+    "tags": [
+      "entlauben",
+      "handtest",
+      "licht",
+      "blätterdach",
+      "daumenregel",
+      "nachschneiden"
+    ],
+    "text": "Daumenregel: Sieht man beim Blick von oben die eigene Hand durch das Blätterdach, ist alles gut; ist sie nicht zu sehen und alles im Schatten, ist ein weiteres Entlauben nötig. Am besten beurteilt man das im Zelt mit der eigenen Lichtquelle.",
+    "videoId": "cB_JZnNdPQg",
+    "videoTitle": "Wie man seine Pflanze für mehr Ertrag trainiert | High Stress Training *",
+    "channel": "Vince and Weed",
+    "start": 722
+  },
+  {
+    "id": "training-topping-buschig-auslichten-40",
+    "topic": "Mehrfach getoppt wird buschig",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "topping",
+      "buschig",
+      "triebe",
+      "auslichten",
+      "wuchsphase",
+      "köpfen"
+    ],
+    "text": "Eine in der Wuchsphase früh zwei- bis dreimal getoppte Pflanze wird so buschig mit vielen Trieben, dass sie später unbedingt ausgelichtet werden muss.",
+    "videoId": "cB_JZnNdPQg",
+    "videoTitle": "Wie man seine Pflanze für mehr Ertrag trainiert | High Stress Training *",
+    "channel": "Vince and Weed",
+    "start": 131
+  },
+  {
+    "id": "training-licht-sanlight-ppfd-messen-41",
+    "topic": "Lichtstärke messen und Handy-Apps",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "ppfd",
+      "lichtmessung",
+      "messgerät",
+      "photone",
+      "handy",
+      "app",
+      "led",
+      "µmol"
+    ],
+    "text": "Laut Sprecher sind Kameras und Sensoren von Handys nicht für Lichtmessung ausgelegt; er vertraut einem Sensor, dessen einzige Aufgabe die Messung ist, mehr. Apps können dennoch recht genau sein und brauchen teils einen Diffusor.",
+    "videoId": "My2j0376Paw",
+    "videoTitle": "SANlight Evo Serie Abstand zur Pflanze | Dimmstufen | Ausleuchtung",
+    "channel": "Der Hanf lebt",
+    "start": 170
+  },
+  {
+    "id": "training-licht-sanlight-saemling-abstand-42",
+    "topic": "Lampenabstand für Sämlinge (SANlight Evo 3-60)",
+    "phases": ["seedling"],
+    "tags": [
+      "abstand",
+      "sämling",
+      "led",
+      "dimmen",
+      "ppfd",
+      "µmol",
+      "zelt geschlossen"
+    ],
+    "text": "Bei der Evo 3-60 (40 % gedimmt) liefern etwa 120 cm Abstand bei offenem Zelt rund 110 µmol/s, bei geschlossenem Zelt über 200: Das geschlossene Zelt macht fast 100 % Unterschied. Für Sämlinge ging der Sprecher bis auf 140 cm (etwa 170 µmol/s geschlossen).",
+    "videoId": "My2j0376Paw",
+    "videoTitle": "SANlight Evo Serie Abstand zur Pflanze | Dimmstufen | Ausleuchtung",
+    "channel": "Der Hanf lebt",
+    "start": 413
+  },
+  {
+    "id": "training-licht-sanlight-wuchs-abstand-43",
+    "topic": "Lampenabstand in der Wuchsphase (SANlight Evo 3-60)",
+    "phases": ["vegetative"],
+    "tags": [
+      "abstand",
+      "wuchsphase",
+      "led",
+      "dimmen",
+      "40 prozent",
+      "ppfd",
+      "µmol"
+    ],
+    "text": "Laut Sprecher entspricht 80 cm Abstand (etwa 315 µmol/s bei 40 %) dem Übergang von Sämlings- zu Wuchsphase; bei 36-37 cm sind es fast 520 µmol/s, nach seiner Einschätzung genug bis zum Ende der Wuchsphase.",
+    "videoId": "My2j0376Paw",
+    "videoTitle": "SANlight Evo Serie Abstand zur Pflanze | Dimmstufen | Ausleuchtung",
+    "channel": "Der Hanf lebt",
+    "start": 486
+  },
+  {
+    "id": "training-licht-sanlight-bluete-abstand-44",
+    "topic": "Lampenabstand zur Blüte (SANlight Evo 3-60)",
+    "phases": ["flowering"],
+    "tags": ["abstand", "blüte", "led", "dimmen", "60 prozent", "ppfd", "µmol"],
+    "text": "Zum Start der Blüte stellte der Sprecher auf 60 % und etwas weniger als 60 cm Abstand (565 µmol/s); im Laufe der Blüte wird der Abstand reduziert, bei ca. 35 cm sind es fast 820 µmol/s. Er würde den Abstand in kleineren Schritten verringern.",
+    "videoId": "My2j0376Paw",
+    "videoTitle": "SANlight Evo Serie Abstand zur Pflanze | Dimmstufen | Ausleuchtung",
+    "channel": "Der Hanf lebt",
+    "start": 524
+  },
+  {
+    "id": "training-licht-dimmer-typen-45",
+    "topic": "Magnet- und Bluetooth-Dimmer",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "dimmer",
+      "dimmen",
+      "magnetdimmer",
+      "bluetooth",
+      "led",
+      "minimum 40"
+    ],
+    "text": "Der Sprecher rät zum Bluetooth-Dimmer, weil der günstigere Magnetdimmer ein Minimum von 40 % hat, was für Sämlinge zu hell sein kann.",
+    "videoId": "My2j0376Paw",
+    "videoTitle": "SANlight Evo Serie Abstand zur Pflanze | Dimmstufen | Ausleuchtung",
+    "channel": "Der Hanf lebt",
+    "start": 398
+  },
+  {
+    "id": "training-entlauben-hygiene-46",
+    "topic": "Hygiene beim Entlauben",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "entlauben",
+      "hygiene",
+      "schere",
+      "isopropanol",
+      "desinfizieren",
+      "schimmel",
+      "eimer"
+    ],
+    "text": "Hygiene ist beim Entlauben das Wichtigste: Kleidung wechseln, nicht zwischen anderen Pflanzen herumlaufen, die Schere mit Isopropanol desinfizieren und die Blätter in einem Eimer sammeln, damit nichts im Growraum liegen bleibt.",
+    "videoId": "Oynl_hqjeOo",
+    "videoTitle": "Die Entlaubung | Tutorial | einfach erklärt",
+    "channel": "Growmotion",
+    "start": 12
+  },
+  {
+    "id": "training-entlauben-stiel-ganz-entfernen-47",
+    "topic": "Stiel komplett abtrennen",
+    "phases": ["vegetative", "flowering"],
+    "tags": ["entlauben", "stiel", "schimmel", "stängelreste", "abbrechen"],
+    "text": "Beim Entfernen von Blättern keinen Stiel an der Pflanze stehen lassen: Der Rest stirbt ab, und dort kann sich Schimmel bilden. Kleine Reste vom Schnitt sollten auch vom Topf entfernt werden.",
+    "videoId": "Oynl_hqjeOo",
+    "videoTitle": "Die Entlaubung | Tutorial | einfach erklärt",
+    "channel": "Growmotion",
+    "start": 76
+  },
+  {
+    "id": "training-lollipopping-untere-triebe-48",
+    "topic": "Untere Triebe entfernen (Lollipopping)",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "lollipopping",
+      "untere triebe",
+      "energie",
+      "blüte",
+      "entlauben",
+      "schwache blätter"
+    ],
+    "text": "Untere Triebe, die laut Sprecher später nicht bis nach oben kommen und der Pflanze nur Energie rauben, werden entfernt; ebenso die schwachen Sonnenblätter unten, damit sich die Energie nach oben konzentriert.",
+    "videoId": "Oynl_hqjeOo",
+    "videoTitle": "Die Entlaubung | Tutorial | einfach erklärt",
+    "channel": "Growmotion",
+    "start": 108
+  },
+  {
+    "id": "training-entlauben-warum-luft-49",
+    "topic": "Warum Entlauben: Licht und Luftzirkulation",
+    "phases": ["flowering"],
+    "tags": [
+      "entlauben",
+      "licht",
+      "luftzirkulation",
+      "stauluft",
+      "pilze",
+      "schimmel",
+      "blüten"
+    ],
+    "text": "Entlauben bringt gleichmäßig Licht an alle Blüten und sorgt für Luftzirkulation zwischen den Trieben, um Staunässe zu vermeiden, die laut Sprecher Pilzen wie Botrytis den Weg bereiten könnte.",
+    "videoId": "Oynl_hqjeOo",
+    "videoTitle": "Die Entlaubung | Tutorial | einfach erklärt",
+    "channel": "Growmotion",
+    "start": 174
+  },
+  {
+    "id": "training-entlauben-wachstumsphase-50",
+    "topic": "Entlauben in Wachstumsphase und Blüte",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "entlauben",
+      "lollipopping",
+      "wuchsphase",
+      "dritte woche",
+      "blüte",
+      "wachstumsschub"
+    ],
+    "text": "In der Wachstumsphase entlaubt der Sprecher einmal, kombiniert mit Lollipopping. In der Blüte entlaubt er in der dritten Woche, weil die Pflanze dann ihren größten Wachstumsschub hat und die meisten Blätter bildet.",
+    "videoId": "Oynl_hqjeOo",
+    "videoTitle": "Die Entlaubung | Tutorial | einfach erklärt",
+    "channel": "Growmotion",
+    "start": 254
+  },
+  {
+    "id": "training-entlauben-welche-blaetter-51",
+    "topic": "Welche Blätter entfernen?",
+    "phases": ["flowering"],
+    "tags": [
+      "entlauben",
+      "sonnenblätter",
+      "gelbe blätter",
+      "beschädigt",
+      "schatten",
+      "blüten frei"
+    ],
+    "text": "Entfernt werden vor allem große Sonnenblätter, die Blüten verdecken, Blätter im Schatten sowie gelbe oder beschädigte Blätter.",
+    "videoId": "Oynl_hqjeOo",
+    "videoTitle": "Die Entlaubung | Tutorial | einfach erklärt",
+    "channel": "Growmotion",
+    "start": 300
+  },
+  {
+    "id": "training-entlauben-maximal-30-52",
+    "topic": "Nicht zu viel Blattmasse entfernen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "entlauben",
+      "20 bis 30 prozent",
+      "blattmasse",
+      "stress",
+      "soft defoliation",
+      "wachstum stoppt"
+    ],
+    "text": "Nicht mehr als 20-30 % der Blattmasse wegnehmen, sonst kann die Pflanze zwei bis drei Tage nicht wachsen. Statt einem großen Eingriff können zwei kleinere (\"Soft Defoliation\") helfen.",
+    "videoId": "Oynl_hqjeOo",
+    "videoTitle": "Die Entlaubung | Tutorial | einfach erklärt",
+    "channel": "Growmotion",
+    "start": 333
+  },
+  {
+    "id": "training-ppfd-richtwerte-53",
+    "topic": "PPFD-Richtwerte je Phase",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "ppfd",
+      "lichtstärke",
+      "beleuchtungsstärke",
+      "sämling",
+      "steckling",
+      "wuchs",
+      "blüte",
+      "led"
+    ],
+    "text": "Laut Video: Stecklinge und Sämlinge 100-200 PPFD, Wuchs 400-600 PPFD, Blüte 800 bis maximal 1000 PPFD, jeweils ohne zusätzliches CO2. CO2 ist laut Sprecher nichts für Anfänger.",
+    "videoId": "yOJbPlE8Czc",
+    "videoTitle": "Cannabis Anfänger Leitfaden Welche Lichtstärke in welcher Kulturphase für  die besten Ergebnisse .",
+    "channel": "WEED LAND",
+    "start": 110
+  },
+  {
+    "id": "training-ppfd-watt-faustformel-54",
+    "topic": "Grobe Watt-zu-PPFD-Faustformel",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "ppfd",
+      "watt",
+      "60x60",
+      "faustformel",
+      "lichtstärke",
+      "handy app",
+      "led"
+    ],
+    "text": "Als grobe Faustformel für ein 60x60-Zelt nennt der Sprecher bei einer 160-Watt-Lampe auf Vollast etwa 1000 PPFD (Blüte), im Wuchsmodus auf 100 % etwa 500 PPFD und auf 40-50 % gedimmt etwa 200 PPFD (Sämlinge). Handy-Apps zur PPFD-Messung sind sehr grob, aber besser als nichts.",
+    "videoId": "yOJbPlE8Czc",
+    "videoTitle": "Cannabis Anfänger Leitfaden Welche Lichtstärke in welcher Kulturphase für  die besten Ergebnisse .",
+    "channel": "WEED LAND",
+    "start": 166
+  },
+  {
+    "id": "training-licht-zu-viel-saemling-55",
+    "topic": "Zu viel Licht: Sämlinge vs. später",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "lichtstress",
+      "lichtverbrennung",
+      "zu viel licht",
+      "sämling",
+      "steckling",
+      "led"
+    ],
+    "text": "Bei deutlich zu viel Licht können vor allem empfindliche Stecklinge und Sämlinge Lichtverbrennungen erleiden. In Wuchs und Blüte besteht laut Sprecher kaum Gefahr, es wird nur Energie verschwendet und die Stromrechnung steigt.",
+    "videoId": "yOJbPlE8Czc",
+    "videoTitle": "Cannabis Anfänger Leitfaden Welche Lichtstärke in welcher Kulturphase für  die besten Ergebnisse .",
+    "channel": "WEED LAND",
+    "start": 223
+  },
+  {
+    "id": "training-licht-zu-wenig-vergeilen-56",
+    "topic": "Zu wenig Licht: Vergeilen",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "vergeilen",
+      "spargelwuchs",
+      "zu wenig licht",
+      "lang",
+      "dünn",
+      "stängel",
+      "led"
+    ],
+    "text": "Bei deutlich zu wenig Licht entsteht Geilwuchs (Spargelwuchs): Die Pflanze schießt in die Höhe, die Stängel werden lang und dünn. Im Zweifel ist es laut Sprecher besser, etwas zu viel als etwas zu wenig Licht zu geben.",
+    "videoId": "yOJbPlE8Czc",
+    "videoTitle": "Cannabis Anfänger Leitfaden Welche Lichtstärke in welcher Kulturphase für  die besten Ergebnisse .",
+    "channel": "WEED LAND",
+    "start": 276
+  },
+  {
+    "id": "training-licht-vergeilen-retten-57",
+    "topic": "Vergeilte Pflanze retten",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "vergeilen",
+      "spargelwuchs",
+      "retten",
+      "umtopfen",
+      "runterbinden",
+      "scrog"
+    ],
+    "text": "Gegen vergeilte Pflanzen nennt der Sprecher als Tricks: in einen größeren Topf und tiefer einpflanzen, herunterbinden oder in ein Netz einflechten (Scrog). Besser ist es aber, den Fehler gar nicht erst zu machen.",
+    "videoId": "yOJbPlE8Czc",
+    "videoTitle": "Cannabis Anfänger Leitfaden Welche Lichtstärke in welcher Kulturphase für  die besten Ergebnisse .",
+    "channel": "WEED LAND",
+    "start": 305
+  },
+  {
+    "id": "training-licht-ertrag-1500-58",
+    "topic": "Licht und Ertrag: Obergrenze",
+    "phases": ["flowering"],
+    "tags": [
+      "ertrag",
+      "ppfd",
+      "1500",
+      "lichtstärke",
+      "effizienz",
+      "gramm pro watt",
+      "led"
+    ],
+    "text": "Laut Sprecher gilt \"Licht gibt Gewicht\", aber nur bis maximal 1500 PPFD, darüber ist das Aufnahmemaximum der Pflanze erreicht. Das beste Verhältnis von Ertrag zu Energie erreicht man eher bei geringerem Energieeinsatz; doppelte Wattzahl bringt nicht den doppelten Ertrag.",
+    "videoId": "yOJbPlE8Czc",
+    "videoTitle": "Cannabis Anfänger Leitfaden Welche Lichtstärke in welcher Kulturphase für  die besten Ergebnisse .",
+    "channel": "WEED LAND",
+    "start": 341
+  },
+  {
+    "id": "training-licht-blueten-struktur-59",
+    "topic": "Lichtstärke und Blütenstruktur",
+    "phases": ["flowering"],
+    "tags": [
+      "lichtstärke",
+      "blüten",
+      "kompakt",
+      "fluffig",
+      "dichte",
+      "led",
+      "ppfd"
+    ],
+    "text": "Mit geringer Lichtstärke in der Blüte bekommt man laut Sprecher fluffige, leichte Blüten bei gutem Verhältnis von Energie zu Ertrag; bei höherer Lichtstärke und passender Düngung werden die Blüten deutlich kompakter und fester.",
+    "videoId": "yOJbPlE8Czc",
+    "videoTitle": "Cannabis Anfänger Leitfaden Welche Lichtstärke in welcher Kulturphase für  die besten Ergebnisse .",
+    "channel": "WEED LAND",
+    "start": 433
+  },
+  {
+    "id": "training-training-warum-60",
+    "topic": "Warum Pflanzen trainieren?",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "training",
+      "lst",
+      "topping",
+      "licht",
+      "wuchsform",
+      "ertrag",
+      "hauptspitze"
+    ],
+    "text": "Mit Training greift man in die natürliche Wuchsform ein, um Licht besser zu nutzen und das Wachstum besser zu verteilen. Hanf wächst natürlich wie ein kleiner Baum mit dominantem Haupttrieb, Indoor liegen dadurch viele Seitentriebe im Schatten.",
+    "videoId": "qP2OvKkt8_0",
+    "videoTitle": "Toppen, LST, Lollipopping, uvm. - Trainingstechniken im Detail",
+    "channel": "CannaZen",
+    "start": 17
+  },
+  {
+    "id": "training-topping-grundlagen-61",
+    "topic": "Topping: Prinzip, Vor- und Nachteile",
+    "phases": ["vegetative"],
+    "tags": [
+      "topping",
+      "toppen",
+      "köpfen",
+      "wachstumsspitze",
+      "seitentriebe",
+      "buschig",
+      "hauptcola"
+    ],
+    "text": "Beim Toppen wird die Wachstumsspitze entfernt, die Pflanze steckt ihre Energie in mehrere Seitentriebe statt einer Hauptcola. Vorteile: buschigeres Wachstum, gleichmäßigere Bud-Größen, bessere Lichtverteilung; Nachteile: kurzer Wachstumsstopp und Stress.",
+    "videoId": "qP2OvKkt8_0",
+    "videoTitle": "Toppen, LST, Lollipopping, uvm. - Trainingstechniken im Detail",
+    "channel": "CannaZen",
+    "start": 89
+  },
+  {
+    "id": "training-topping-zeitpunkt-62",
+    "topic": "Topping: Wann und wo schneiden?",
+    "phases": ["vegetative"],
+    "tags": [
+      "topping",
+      "toppen",
+      "knoten",
+      "nodien",
+      "zeitpunkt",
+      "wuchswoche",
+      "wann"
+    ],
+    "text": "Typisch wird über dem dritten oder vierten Knoten abgeschnitten. Als Richtlinie toppt man, wenn die Pflanze den fünften oder sechsten Knoten ausbildet, ein guter Zeitraum ist die zweite bis vierte Wuchswoche. Entscheidend ist, dass die Pflanze gesund, vital und etabliert ist (etwa vier bis sechs Nodien) und nicht ein fester Tag.",
+    "videoId": "qP2OvKkt8_0",
+    "videoTitle": "Toppen, LST, Lollipopping, uvm. - Trainingstechniken im Detail",
+    "channel": "CannaZen",
+    "start": 118
+  },
+  {
+    "id": "training-lst-grundlagen-63",
+    "topic": "LST: Prinzip und Vorteile",
+    "phases": ["vegetative"],
+    "tags": [
+      "lst",
+      "low stress training",
+      "runterbinden",
+      "biegen",
+      "seitentriebe",
+      "flache blütendecke",
+      "autoflower"
+    ],
+    "text": "Beim LST wird nichts abgeschnitten; die Triebe werden vorsichtig heruntergebogen und fixiert. Die Seitentriebe bekommen dann so viel Licht wie die Spitze und wachsen stärker. Vorteile: sehr wenig Stress, anfängergeeignet, auch für Autoflowers; Nachteil: Geduld und häufiges Nachjustieren. Ziel ist eine flache, gleichmäßige Blütendecke.",
+    "videoId": "qP2OvKkt8_0",
+    "videoTitle": "Toppen, LST, Lollipopping, uvm. - Trainingstechniken im Detail",
+    "channel": "CannaZen",
+    "start": 182
+  },
+  {
+    "id": "training-lst-zeitpunkt-64",
+    "topic": "LST: Wann beginnen und aufhören?",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "lst",
+      "runterbinden",
+      "zeitpunkt",
+      "biegsam",
+      "verholzt",
+      "stretch",
+      "pflanzendraht"
+    ],
+    "text": "Das Wichtigste ist, dass die Triebe noch biegsam sind; sie verhärten von unten nach oben. Man kann schon nach der ersten Woche beginnen, die Sprecher bevorzugen ab der zweiten bis dritten Wuchswoche. Nach dem Stretch macht man kaum noch LST, und bei verholzten Trieben, die brechen könnten, hört man auf.",
+    "videoId": "qP2OvKkt8_0",
+    "videoTitle": "Toppen, LST, Lollipopping, uvm. - Trainingstechniken im Detail",
+    "channel": "CannaZen",
+    "start": 252
+  },
+  {
+    "id": "training-lst-draht-65",
+    "topic": "LST mit Pflanzendraht",
+    "phases": ["vegetative"],
+    "tags": [
+      "lst",
+      "pflanzendraht",
+      "draht",
+      "topf",
+      "fixieren",
+      "runterbinden"
+    ],
+    "text": "Die Sprecher binden den Haupttrieb mit Pflanzendraht herunter und stabilisieren ihn am Topf. Die Spitze wächst wieder zum Licht, und später kann man die Seitentriebe mit neuen Drähten Stück für Stück ebenfalls nach unten binden.",
+    "videoId": "qP2OvKkt8_0",
+    "videoTitle": "Toppen, LST, Lollipopping, uvm. - Trainingstechniken im Detail",
+    "channel": "CannaZen",
+    "start": 301
+  },
+  {
+    "id": "training-entlauben-solarpanel-66",
+    "topic": "Entlauben: Blätter sind Solarpanele",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "entlauben",
+      "defoliation",
+      "ausdünnen",
+      "fächerblätter",
+      "photosynthese",
+      "übertreiben"
+    ],
+    "text": "Entlauben ist wie Ausdünnen; die Sprecher warnen, dass viele Grower übertreiben, denn die Blätter sind die Energiequelle (Photosynthese) der Pflanze. Oft reicht es, einzelne Blätter zu entfernen, statt die ganze Pflanze zu entlauben.",
+    "videoId": "qP2OvKkt8_0",
+    "videoTitle": "Toppen, LST, Lollipopping, uvm. - Trainingstechniken im Detail",
+    "channel": "CannaZen",
+    "start": 382
+  },
+  {
+    "id": "training-entlauben-wann-sinnvoll-67",
+    "topic": "Entlauben: Wann sinnvoll, wann nicht?",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "entlauben",
+      "sinnvoll",
+      "buds verdeckt",
+      "luftzirkulation",
+      "gestresst",
+      "kleinpflanzen"
+    ],
+    "text": "Sinnvoll ist Entlauben, wenn Blätter wichtige Buds verdecken oder die Luftzirkulation stark einschränken. Nicht sinnvoll ist es bei Kleinpflanzen, gestressten Pflanzen oder nur der Optik wegen.",
+    "videoId": "qP2OvKkt8_0",
+    "videoTitle": "Toppen, LST, Lollipopping, uvm. - Trainingstechniken im Detail",
+    "channel": "CannaZen",
+    "start": 423
+  },
+  {
+    "id": "training-entlauben-zeitpunkte-spaet-68",
+    "topic": "Entlauben: Zeitpunkte nach Phase",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "entlauben",
+      "blütetag 21",
+      "spätblüte",
+      "stretch",
+      "zeitpunkt",
+      "wann"
+    ],
+    "text": "Ab mittlerer und später Wuchsphase kann man hier und da Blätter entfernen; nach der Umstellung auf Blüte folgt eine größere Entlaubung nach dem Stretch etwa an Blütetag 21. In der Spätblüte würden die Sprecher möglichst gar nichts mehr an den Pflanzen machen.",
+    "videoId": "qP2OvKkt8_0",
+    "videoTitle": "Toppen, LST, Lollipopping, uvm. - Trainingstechniken im Detail",
+    "channel": "CannaZen",
+    "start": 446
+  },
+  {
+    "id": "training-lollipopping-grundlagen-69",
+    "topic": "Lollipopping: Prinzip und Zeitpunkt",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "lollipopping",
+      "lollipop",
+      "untere triebe",
+      "popcorn buds",
+      "luftzirkulation",
+      "blütetag 21"
+    ],
+    "text": "Beim Lollipopping werden nur untere Triebe und manchmal Blätter entfernt, weil dort zu wenig Licht für dichte Blüten ankommt und nur kleine Popcorn-Buds entstehen. Vorteile: bessere Luftzirkulation, Fokus auf hochwertige obere Buds; zu starkes Lollipopping kann den Ertrag verringern. Die meisten warten bis nach dem Stretch (etwa Blütetag 21); zu früh geschnitten können wieder Bud-Sites entstehen, zu spät stresst es mehr.",
+    "videoId": "qP2OvKkt8_0",
+    "videoTitle": "Toppen, LST, Lollipopping, uvm. - Trainingstechniken im Detail",
+    "channel": "CannaZen",
+    "start": 482
+  },
+  {
+    "id": "training-supercropping-grundlagen-70",
+    "topic": "Supercropping",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "supercropping",
+      "super cropping",
+      "stängel",
+      "knicken",
+      "biegen",
+      "90 grad",
+      "stress"
+    ],
+    "text": "Beim Supercropping wird der Stängel mit den Fingern 3-4 cm weich gedrückt, in beide Richtungen, und dann um 90 Grad gebogen. Die Pflanze repariert das schnell und bildet meist einen besonders stabilen Knoten. Danach den Trieb mit Draht nach unten und oben stabilisieren, damit er nicht abknickt oder zurück nach oben geht.",
+    "videoId": "qP2OvKkt8_0",
+    "videoTitle": "Toppen, LST, Lollipopping, uvm. - Trainingstechniken im Detail",
+    "channel": "CannaZen",
+    "start": 603
+  },
+  {
+    "id": "training-supercropping-notfall-71",
+    "topic": "Supercropping eher als Notlösung",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "supercropping",
+      "notlösung",
+      "zu hoher trieb",
+      "platz",
+      "zelt",
+      "höhe"
+    ],
+    "text": "Die Sprecher sehen Supercropping eher als Notlösung, etwa wenn der Platz im Zelt ausgeht oder trotz Topping ein Trieb deutlich höher wächst als die anderen. Sie haben es einmal sogar nach dem Stretch gemacht, empfehlen das aber eigentlich nicht.",
+    "videoId": "qP2OvKkt8_0",
+    "videoTitle": "Toppen, LST, Lollipopping, uvm. - Trainingstechniken im Detail",
+    "channel": "CannaZen",
+    "start": 688
+  },
+  {
+    "id": "training-mainlining-hinweis-72",
+    "topic": "Mainlining kostet viel Zeit",
+    "phases": ["vegetative"],
+    "tags": [
+      "mainlining",
+      "manifolding",
+      "topping",
+      "symmetrisch",
+      "colas",
+      "aufwand"
+    ],
+    "text": "Beim Mainlining wird die Pflanze mehrfach getoppt und symmetrisch aufgebaut, was 12, 16, 32 oder sogar 128 gleichmäßige Colas ergeben kann. Es braucht laut Sprechern viel Zeit und Planung und steigert nicht den Ertrag.",
+    "videoId": "qP2OvKkt8_0",
+    "videoTitle": "Toppen, LST, Lollipopping, uvm. - Trainingstechniken im Detail",
+    "channel": "CannaZen",
+    "start": 727
+  },
+  {
+    "id": "training-auto-bluete-alter-73",
+    "topic": "Autoflower blüht nach Alter",
+    "phases": ["germination", "seedling", "vegetative", "flowering"],
+    "tags": [
+      "autoflower",
+      "automatic",
+      "ruderalis",
+      "blüte",
+      "alter",
+      "lichtzyklus",
+      "12/12"
+    ],
+    "text": "Laut Sprecher blühen photoperiodische Pflanzen, wenn die Tageslänge etwa 12 Stunden unterschreitet, die Ruderalis dagegen einfach, wenn sie ein gewisses Alter erreicht hat. Deshalb muss man bei Autoflowers das Licht nicht umstellen.",
+    "videoId": "0hSQHTVt_Cc",
+    "videoTitle": "Cannabis Autoflower  : Alles was du wissen solltest bevor du eine Automatic anbaust . Für Einsteiger",
+    "channel": "WEED LAND",
+    "start": 301
+  },
+  {
+    "id": "training-auto-duengung-gleich-74",
+    "topic": "Autoflower: Nährstoffbedarf",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "autoflower",
+      "automatic",
+      "dünger",
+      "nährstoffe",
+      "düngung",
+      "bedarf"
+    ],
+    "text": "Laut Sprecher braucht eine Autoflower von Tag eins bis zur Ernte die gleichen Nährstoffe wie eine andere Pflanze, weil sie die gleichen Zellen und die gleiche Masse aufbauen muss; große Unterschiede gibt es kaum.",
+    "videoId": "0hSQHTVt_Cc",
+    "videoTitle": "Cannabis Autoflower  : Alles was du wissen solltest bevor du eine Automatic anbaust . Für Einsteiger",
+    "channel": "WEED LAND",
+    "start": 476
+  },
+  {
+    "id": "training-auto-ertrag-nicht-gleich-75",
+    "topic": "Autoflower: gleicher Ertrag wie Photo?",
+    "phases": ["flowering"],
+    "tags": [
+      "autoflower",
+      "automatic",
+      "ertrag",
+      "fotoperiodisch",
+      "photo",
+      "vergleich"
+    ],
+    "text": "Auf die Frage, ob eine Automatic in gleicher Zeit den gleichen Ertrag wie eine fotoperiodische Pflanze bringt, sagt der Sprecher, davon könne man nicht ausgehen. Die Namen im Samenkatalog (regulär, feminisiert, automatic) täuschen darüber hinweg, dass Autos eine eingekreuzte Ruderalis enthalten.",
+    "videoId": "0hSQHTVt_Cc",
+    "videoTitle": "Cannabis Autoflower  : Alles was du wissen solltest bevor du eine Automatic anbaust . Für Einsteiger",
+    "channel": "WEED LAND",
+    "start": 554
+  },
+  {
+    "id": "training-auto-vor-nachteile-76",
+    "topic": "Autoflower: Vor- und Nachteile",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "autoflower",
+      "automatic",
+      "vorteile",
+      "nachteile",
+      "größe",
+      "zwerg",
+      "dwarf",
+      "kleiner platz"
+    ],
+    "text": "Nach Aussage der Sprecher ist die Größe bei Autos vorgegeben und meist nicht riesig, Zwergsorten sind sehr klein; der Vorteil ist, dass man das Licht nicht umstellen muss, der Nachteil ein möglicher Verlust bei Geschmack und Qualität. Für sehr wenig Platz sind Dwarf-Sorten ideal.",
+    "videoId": "0hSQHTVt_Cc",
+    "videoTitle": "Cannabis Autoflower  : Alles was du wissen solltest bevor du eine Automatic anbaust . Für Einsteiger",
+    "channel": "WEED LAND",
+    "start": 861
+  },
+  {
+    "id": "training-auto-anfaenger-meinung-77",
+    "topic": "Autoflower für Einsteiger: Meinung",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "autoflower",
+      "automatic",
+      "anfänger",
+      "einsteiger",
+      "klein",
+      "60x60",
+      "abstellkammer",
+      "schnell"
+    ],
+    "text": "Ein Sprecher meint, dass sich für Anfänger der Einstieg mit einer Automatic lohnt, weil sie in vieler Hinsicht einfacher ist. Ein anderer sagt, wer wenig Platz und Erfahrung hat (z. B. eine 60er Box), habe mit einer Dwarf-Auto eine gute Wahl, weil wenig schiefgeht und die Ernte schnell kommt; mit steigender Erfahrung und Qualitätsanspruch solle man sich eher davon verabschieden.",
+    "videoId": "0hSQHTVt_Cc",
+    "videoTitle": "Cannabis Autoflower  : Alles was du wissen solltest bevor du eine Automatic anbaust . Für Einsteiger",
+    "channel": "WEED LAND",
+    "start": 772
+  },
+  {
+    "id": "training-auto-indoor-schneller-78",
+    "topic": "Autoflower indoor schneller fertig",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "autoflower",
+      "automatic",
+      "indoor",
+      "outdoor",
+      "balkon",
+      "schneller",
+      "licht"
+    ],
+    "text": "Ein Sprecher beobachtete, dass seine Automatic indoor schneller fertig wird als draußen; außerdem sei das Licht in der Box ein gutes Stück stärker als auf dem Balkon.",
+    "videoId": "0hSQHTVt_Cc",
+    "videoTitle": "Cannabis Autoflower  : Alles was du wissen solltest bevor du eine Automatic anbaust . Für Einsteiger",
+    "channel": "WEED LAND",
+    "start": 1187
+  },
+  {
+    "id": "training-auto-stecklinge-79",
+    "topic": "Stecklinge von Autoflowers",
+    "phases": ["vegetative"],
+    "tags": [
+      "autoflower",
+      "automatic",
+      "steckling",
+      "stecklinge",
+      "klonen",
+      "mutterpflanze",
+      "wuchsphase"
+    ],
+    "text": "Von einer Autoflower kann man nur solange Stecklinge schneiden, wie sie in der Wuchsphase ist; schneidet man zu spät, fängt der Steckling kurz nach dem Bewurzeln schon an zu blühen. Der Sprecher sieht darin technisch machbar, aber wenig Sinn.",
+    "videoId": "0hSQHTVt_Cc",
+    "videoTitle": "Cannabis Autoflower  : Alles was du wissen solltest bevor du eine Automatic anbaust . Für Einsteiger",
+    "channel": "WEED LAND",
+    "start": 1236
+  },
+  {
+    "id": "training-auto-lichtzeit-endtopf-80",
+    "topic": "Autoflower: Lichtzeit und Endtopf",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "autoflower",
+      "automatic",
+      "lichtzeit",
+      "18/6",
+      "20 stunden",
+      "endtopf",
+      "umtopfen",
+      "vorziehen"
+    ],
+    "text": "Das Vorziehen läuft wie bei fotoperiodischen Pflanzen; der Unterschied sind die Lichtzeiten, Autos wollen 18 bis 20 Stunden beleuchtet werden. Der Sprecher setzt die kleinen Setzlinge direkt in den Endtopf, Umtopfen vor Wurzelringen sei aber genauso möglich.",
+    "videoId": "0hSQHTVt_Cc",
+    "videoTitle": "Cannabis Autoflower  : Alles was du wissen solltest bevor du eine Automatic anbaust . Für Einsteiger",
+    "channel": "WEED LAND",
+    "start": 1740
+  },
+  {
+    "id": "training-auto-topfgroesse-81",
+    "topic": "Topfgröße bei Autoflowers",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "autoflower",
+      "automatic",
+      "topf",
+      "topfgröße",
+      "wurzelstress",
+      "kübel",
+      "ertrag"
+    ],
+    "text": "Ein zu kleiner Topf behindert laut Sprecher jede Pflanze, auch eine Automatic: wenig Erde und Nährstoffe, dazu Wurzelstress. Mehr Topf heißt aber nicht proportional mehr Ertrag, das sei keine Exponentialfunktion.",
+    "videoId": "0hSQHTVt_Cc",
+    "videoTitle": "Cannabis Autoflower  : Alles was du wissen solltest bevor du eine Automatic anbaust . Für Einsteiger",
+    "channel": "WEED LAND",
+    "start": 69
+  },
+  {
+    "id": "training-auto-verzeihen-82",
+    "topic": "Verzeihen Autoflowers weniger?",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "autoflower",
+      "automatic",
+      "fehler",
+      "anfällig",
+      "robust",
+      "nährstoffe",
+      "kälte"
+    ],
+    "text": "Zum Gerücht, Automatics verzeihen Fehler weniger, sagt ein Sprecher, von der Nährstoffseite verhalte sich die Pflanze wie jede andere; beide halten es aus Sicht der Herkunft der Ruderalis (Russland, kältere Temperaturen) eher für möglich, dass sie robuster sind. Pauschal lasse sich die Aussage nicht treffen, da es sehr viele verschiedene Autos gibt.",
+    "videoId": "0hSQHTVt_Cc",
+    "videoTitle": "Cannabis Autoflower  : Alles was du wissen solltest bevor du eine Automatic anbaust . Für Einsteiger",
+    "channel": "WEED LAND",
+    "start": 1301
+  },
+  {
+    "id": "training-zelt-folie-ausdampfen-83",
+    "topic": "Zeltfolie ausdampfen lassen",
+    "phases": ["germination"],
+    "tags": [
+      "zelt",
+      "zeltfolie",
+      "aufbau",
+      "ausdampfen",
+      "geruch",
+      "chemie",
+      "plastik",
+      "growbox"
+    ],
+    "text": "Der Sprecher sagt, bei allen getesteten Zelten roch die Folie direkt nach dem Auspacken nach Kunststoff und Chemie. Sein Rat: die Folie mindestens einen Tag, besser ein Wochenende, auf Balkon oder Terrasse ausdampfen lassen.",
+    "videoId": "5fcU3xxMut4",
+    "videoTitle": "Growbox Aufbauanleitung und richtig einrichten | effizient, sicher | Legalisierung Eigenanbau",
+    "channel": "Der Hanf lebt",
+    "start": 30
+  },
+  {
+    "id": "training-zelt-gerueest-aufbau-84",
+    "topic": "Zeltgerüst aufbauen",
+    "phases": ["germination"],
+    "tags": [
+      "zelt",
+      "aufbau",
+      "gerüst",
+      "profile",
+      "eckverbindungen",
+      "decke",
+      "growbox"
+    ],
+    "text": "Das Grundgerüst eines quadratischen Zelts besteht aus 8 Querprofilen, 8 zweiteiligen Höhenprofilen, 8 Eckverbindungen und je nach Hersteller 2 oder 4 Aufhängeprofilen; man startet mit Boden und Decke. Die Decke zuerst in jeder Ecke nur auflegen und dann Ecke für Ecke eindrücken.",
+    "videoId": "5fcU3xxMut4",
+    "videoTitle": "Growbox Aufbauanleitung und richtig einrichten | effizient, sicher | Legalisierung Eigenanbau",
+    "channel": "Der Hanf lebt",
+    "start": 46
+  },
+  {
+    "id": "training-zelt-wanne-vor-folie-85",
+    "topic": "Innenwanne vor der Folie einlegen",
+    "phases": ["germination"],
+    "tags": [
+      "zelt",
+      "innenwanne",
+      "zeltfolie",
+      "aufbau",
+      "gerüst",
+      "umlegen",
+      "aufhängeprofile"
+    ],
+    "text": "Der Sprecher rät, die Innenwanne vor dem Überziehen der Zeltfolie zu montieren, nachher sei es umständlich. Beim Überziehen legt er das Gerüst um, beginnt mit dem Boden und stellt es wieder auf; die Aufhängeprofile gibt er auf, wenn die Folie über dem Boden, aber noch nicht über der Decke ist.",
+    "videoId": "5fcU3xxMut4",
+    "videoTitle": "Growbox Aufbauanleitung und richtig einrichten | effizient, sicher | Legalisierung Eigenanbau",
+    "channel": "Der Hanf lebt",
+    "start": 112
+  },
+  {
+    "id": "training-abluft-akf-lueftermontage-86",
+    "topic": "AKF und Lüfter im Zelt befestigen",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "aktivkohlefilter",
+      "akf",
+      "lüfter",
+      "schlingen",
+      "befestigen",
+      "60x60",
+      "vorfilterflies",
+      "luftrohr"
+    ],
+    "text": "Für den Aktivkohlefilter kommt ein kürzeres Luftrohr (rund 60-70 cm) an den Anschluss, das im Zelt mit der saugenden Seite des Lüfters verbunden wird; an die blasende Seite ein längeres Rohr. Die Zeltschlingen werden von unten nach oben durch die hintere, dann von oben nach unten durch die vordere Öffnung geführt, und beim Zuziehen soll keine Saugfläche des Filters verdeckt sein.",
+    "videoId": "5fcU3xxMut4",
+    "videoTitle": "Growbox Aufbauanleitung und richtig einrichten | effizient, sicher | Legalisierung Eigenanbau",
+    "channel": "Der Hanf lebt",
+    "start": 189
+  },
+  {
+    "id": "training-abluft-wohin-zeltgroesse-87",
+    "topic": "Wohin mit der Abluft?",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "abluft",
+      "zeltgröße",
+      "fenster",
+      "raum",
+      "60x60",
+      "80x80",
+      "100x100",
+      "lüften"
+    ],
+    "text": "Laut Sprecher reicht es bei Zelten bis 50x50, den Raum regelmäßig zu lüften oder eine Tür offen zu haben. Ab 60x60 sollte zumindest ein Fenster im Raum gekippt sein, bis höchstens 80x80 kann die Abluft in den Raum, ab 100x100 besser direkt aus dem Fenster.",
+    "videoId": "5fcU3xxMut4",
+    "videoTitle": "Growbox Aufbauanleitung und richtig einrichten | effizient, sicher | Legalisierung Eigenanbau",
+    "channel": "Der Hanf lebt",
+    "start": 340
+  },
+  {
+    "id": "training-umluft-ventilatoren-88",
+    "topic": "Ventilatoren für Luftbewegung im Zelt",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "ventilator",
+      "umluft",
+      "luftbewegung",
+      "luftfeuchtigkeit",
+      "schimmel",
+      "clipfan",
+      "wind"
+    ],
+    "text": "Wind ist laut Sprecher essenziell, um die Luftfeuchtigkeit in Zaum zu halten. Einen Ventilator lässt er unterhalb, einen weiteren auf Stufe 1 parallel über dem Blätterdach durchgehend laufen, damit die Luft in Bewegung bleibt und kein Schimmel entsteht; Laufzeiten mit dem Hygrometer abgleichen.",
+    "videoId": "5fcU3xxMut4",
+    "videoTitle": "Growbox Aufbauanleitung und richtig einrichten | effizient, sicher | Legalisierung Eigenanbau",
+    "channel": "Der Hanf lebt",
+    "start": 401
+  },
+  {
+    "id": "training-umluft-windbrand-89",
+    "topic": "Ventilator: Windbrand vermeiden",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "ventilator",
+      "windbrand",
+      "umluft",
+      "wind",
+      "pflanzen",
+      "positionen"
+    ],
+    "text": "Ein Ventilator kann mit Abstand auf die Pflanzen gerichtet werden, sodass sie sich leicht bewegen. Wer neu einrichtet, ist laut Sprecher mit zwei Ventilatoren gut bedient, wovon mindestens einer durchgehend laufen sollte; die Positionen immer wieder wechseln, damit einzelne Pflanzen keinen Windbrand bekommen.",
+    "videoId": "5fcU3xxMut4",
+    "videoTitle": "Growbox Aufbauanleitung und richtig einrichten | effizient, sicher | Legalisierung Eigenanbau",
+    "channel": "Der Hanf lebt",
+    "start": 441
+  },
+  {
+    "id": "training-zuluft-light-baffle-gefiltert-90",
+    "topic": "Lichtdichte und gefilterte Zuluft",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "zuluft",
+      "light baffle",
+      "lichtfalle",
+      "gefilterte zuluft",
+      "licht",
+      "zelt",
+      "öffnung"
+    ],
+    "text": "Damit durch die Zuluftöffnungen kein Licht ein- oder austritt, empfiehlt der Sprecher einen Light Baffle. Für Selbstversorger im 3-Pflanzen-Kreislauf würde er den Pflanzen zudem gefilterte Zuluft gönnen.",
+    "videoId": "5fcU3xxMut4",
+    "videoTitle": "Growbox Aufbauanleitung und richtig einrichten | effizient, sicher | Legalisierung Eigenanbau",
+    "channel": "Der Hanf lebt",
+    "start": 471
+  },
+  {
+    "id": "training-lampe-aufhaengen-91",
+    "topic": "Lampe im Zelt aufhängen",
+    "phases": ["seedling"],
+    "tags": [
+      "lampe",
+      "aufhängung",
+      "karabiner",
+      "band",
+      "profil",
+      "zelt",
+      "led"
+    ],
+    "text": "Ohne extra Haken ist laut Sprecher in einem Zelt die einzige Möglichkeit, den Karabiner am Ende des Bands einmal ums Profil zu geben und das Band einzuhaken, beidseitig auf etwa gleicher Höhe. Die Aufhängungen sind nicht immer selbsterklärend.",
+    "videoId": "5fcU3xxMut4",
+    "videoTitle": "Growbox Aufbauanleitung und richtig einrichten | effizient, sicher | Legalisierung Eigenanbau",
+    "channel": "Der Hanf lebt",
+    "start": 365
+  },
+  {
+    "id": "training-entlauben-definition-vorteile-92",
+    "topic": "Defoliation: Was und warum",
+    "phases": ["flowering"],
+    "tags": [
+      "defoliation",
+      "entlauben",
+      "fächerblätter",
+      "licht",
+      "luftzirkulation",
+      "schimmel",
+      "schädlinge",
+      "energie"
+    ],
+    "text": "Defoliation ist das gezielte Entfernen großer Fächerblätter, die Licht, Luft und Energie blockieren. Vorteile laut Video: mehr Licht an Blüten und unteren Trieben, bessere Luftzirkulation mit weniger Schimmel- und Schädlingsgefahr, und die Pflanze steckt keine Energie mehr in riesige Blätter.",
+    "videoId": "3fLHAQVh9M4",
+    "videoTitle": "Defoliation richtig gemacht | Step-by-Step Anleitung für mehr Blüten",
+    "channel": "Dampfkugel",
+    "start": 184
+  },
+  {
+    "id": "training-entlauben-welche-sauber-93",
+    "topic": "Defoliation: Blätter wählen, sauber arbeiten",
+    "phases": ["flowering"],
+    "tags": [
+      "entlauben",
+      "defoliation",
+      "schere",
+      "sauber",
+      "krankheiten",
+      "beschattet",
+      "luftzirkulation"
+    ],
+    "text": "Entfernt werden vor allem Blätter, die Blütenstände komplett beschatten, Blätter mit kaum Licht und alles, was die Luftzirkulation blockiert. Mit sauberen Scheren arbeiten, um keine Krankheiten zu übertragen.",
+    "videoId": "3fLHAQVh9M4",
+    "videoTitle": "Defoliation richtig gemacht | Step-by-Step Anleitung für mehr Blüten",
+    "channel": "Dampfkugel",
+    "start": 250
+  },
+  {
+    "id": "training-entlauben-schutzbrille-94",
+    "topic": "Schutzbrille bei LED-Licht",
+    "phases": ["flowering"],
+    "tags": [
+      "schutzbrille",
+      "augen",
+      "led",
+      "licht",
+      "entlauben",
+      "sonnenbrille",
+      "sicherheit"
+    ],
+    "text": "Beim Arbeiten unter LED-Licht rät der Sprecher, die Augen zu schonen und eine Schutzbrille zu tragen; zur Not reicht erst einmal eine Sonnenbrille.",
+    "videoId": "3fLHAQVh9M4",
+    "videoTitle": "Defoliation richtig gemacht | Step-by-Step Anleitung für mehr Blüten",
+    "channel": "Dampfkugel",
+    "start": 331
+  },
+  {
+    "id": "training-entlauben-regelmaessig-95",
+    "topic": "Regelmäßig entlauben statt spät",
+    "phases": ["flowering"],
+    "tags": [
+      "entlauben",
+      "regelmäßig",
+      "zaghaft",
+      "urwald",
+      "auslichten",
+      "kein muss"
+    ],
+    "text": "Der Sprecher nimmt beim Entlauben oft zu wenig weg und ärgert sich danach. Er rät, es regelmäßig zu machen und nicht zu lange zu warten, damit man nicht einen ganzen Urwald auslichten muss; Defoliation sei kein Muss, aber ein starkes Werkzeug.",
+    "videoId": "3fLHAQVh9M4",
+    "videoTitle": "Defoliation richtig gemacht | Step-by-Step Anleitung für mehr Blüten",
+    "channel": "Dampfkugel",
+    "start": 286
+  },
+  {
+    "id": "training-bluete-foto-vs-auto-96",
+    "topic": "Blüteeinleitung: Foto vs. Auto",
+    "phases": ["flowering"],
+    "tags": [
+      "blüteneinleitung",
+      "12/12",
+      "18/6",
+      "autoflower",
+      "photoperiodisch",
+      "lichtzyklus",
+      "umstellen"
+    ],
+    "text": "Eine fotoperiodische Pflanze geht in die Blüte, wenn der Lichtzyklus von 18 Stunden (Sommer) auf 12 Stunden (Herbst) sinkt, egal ob indoor oder outdoor. Automatics gehen dagegen selbstständig in die Blüte, ob bei 18, 12 oder 24 Stunden Licht.",
+    "videoId": "0MxKQJDGrOk",
+    "videoTitle": "Anbau für Anfänger: Blütephase 😨 Das musst du über Blüten wissen!",
+    "channel": "Pott Planter",
+    "start": 121
+  },
+  {
+    "id": "training-bluete-vorbluete-erkennen-97",
+    "topic": "Vorblüte erkennen",
+    "phases": ["flowering"],
+    "tags": [
+      "vorblüte",
+      "erkennen",
+      "weiße härchen",
+      "nodien",
+      "knotenpunkt",
+      "blüte",
+      "geschlecht"
+    ],
+    "text": "Die Vorblüte erkennt man an kleinen, meist hellen, fast weißen Härchen am Stamm im Knotenpunkt, wo Blätter und Seitentriebe ansetzen (Nodien).",
+    "videoId": "0MxKQJDGrOk",
+    "videoTitle": "Anbau für Anfänger: Blütephase 😨 Das musst du über Blüten wissen!",
+    "channel": "Pott Planter",
+    "start": 256
+  },
+  {
+    "id": "training-bluete-pollensaecke-kontrolle-98",
+    "topic": "Männliche Blüten und Zwitter kontrollieren",
+    "phases": ["flowering"],
+    "tags": [
+      "pollensäcke",
+      "zwitter",
+      "männlich",
+      "kontrolle",
+      "isolieren",
+      "bestäubung",
+      "samen"
+    ],
+    "text": "Runde, sackartige Gebilde statt weißer Härchen sind laut Sprecher Pollensäcke. Er rät, die Pflanze täglich auf männliche oder weibliche Blüten zu kontrollieren und solche Pflanzen als Anfänger schnell zu isolieren; sonst können die weiblichen Blüten bestäubt werden und Samen bilden.",
+    "videoId": "0MxKQJDGrOk",
+    "videoTitle": "Anbau für Anfänger: Blütephase 😨 Das musst du über Blüten wissen!",
+    "channel": "Pott Planter",
+    "start": 288
+  },
+  {
+    "id": "training-bluete-stretch-99",
+    "topic": "Stretch in der Blüte",
+    "phases": ["flowering"],
+    "tags": [
+      "stretch",
+      "streckung",
+      "blüte",
+      "höhe",
+      "wachstum",
+      "doppelt",
+      "dreifach"
+    ],
+    "text": "In der Blüte stellt sich das Wachstum um (Stretch): Der Blütenstand schießt hoch, je nach Sorte und Pflege kann die Pflanze noch das Doppelte, manche sogar das Dreifache an Höhe zulegen.",
+    "videoId": "0MxKQJDGrOk",
+    "videoTitle": "Anbau für Anfänger: Blütephase 😨 Das musst du über Blüten wissen!",
+    "channel": "Pott Planter",
+    "start": 418
+  },
+  {
+    "id": "training-bluete-blaetter-buds-100",
+    "topic": "Blätter, Buds und Geruch in der Blüte",
+    "phases": ["flowering"],
+    "tags": [
+      "blüte",
+      "blätter",
+      "schmaler",
+      "spitzer",
+      "buds",
+      "geruch",
+      "trichome",
+      "zuckerblätter"
+    ],
+    "text": "In der Vorblüte werden die Blätter viel schmaler und spitzer. In der Blüte werden die Blütenstände in Höhe und Breite größer, der Geruch intensiver, und die Pflanze bildet Trichome; die schmalen, spitzen Blätter nennt der Sprecher Zuckerblätter.",
+    "videoId": "0MxKQJDGrOk",
+    "videoTitle": "Anbau für Anfänger: Blütephase 😨 Das musst du über Blüten wissen!",
+    "channel": "Pott Planter",
+    "start": 544
+  }
+]
