@@ -39,7 +39,7 @@ const OVERPASS_HEADERS = {
   "User-Agent": "GrowMasterAI/1.0 (https://growmaster.app)",
 };
 export const SHOP_SEARCH_RADIUS_M = 25000;
-export const SHOP_CACHE_KEY = "radar_shops_cache_v1";
+export const SHOP_CACHE_KEY = "radar_shops_cache_v2";
 export const SHOP_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 // Cache is reused if user moved less than this (km)
 export const SHOP_CACHE_MAX_DRIFT_KM = 3;
