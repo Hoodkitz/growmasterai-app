@@ -6,6 +6,9 @@
  * in den Umgebungsvariablen hinterlegt werden.
  */
 
+/** Amazon-PartnerNet-Kennung des Betreibers (amazon.de). */
+const AMAZON_PARTNER_TAG = "plantdoctor-21";
+
 // Affiliate IDs aus Umgebungsvariablen (nach Registrierung eintragen)
 const AFFILIATE_IDS = {
   ZAMNESIA: process.env.EXPO_PUBLIC_AFFILIATE_ZAMNESIA || "growmaster",
@@ -14,7 +17,7 @@ const AFFILIATE_IDS = {
     process.env.EXPO_PUBLIC_AFFILIATE_DUTCH_HEADSHOP || "growmaster",
   RQS: process.env.EXPO_PUBLIC_AFFILIATE_RQS || "growmaster",
   SEEDSMAN: process.env.EXPO_PUBLIC_AFFILIATE_SEEDSMAN || "growmaster",
-  AMAZON: process.env.EXPO_PUBLIC_AFFILIATE_AMAZON || "plantdoctor-21",
+  AMAZON: process.env.EXPO_PUBLIC_AFFILIATE_AMAZON || AMAZON_PARTNER_TAG,
   GROWLAND: process.env.EXPO_PUBLIC_AFFILIATE_GROWLAND || "growmaster",
   CANNACONNECTION:
     process.env.EXPO_PUBLIC_AFFILIATE_CANNACONNECTION || "growmaster",
@@ -407,12 +410,14 @@ export function getRecommendedProductsWithLinks(
 
 /**
  * Shop link for a remedy suggestion from a diagnosis. Only the plain search term is used.
- * The Amazon tag comes solely from EXPO_PUBLIC_AFFILIATE_AMAZON; without it the link still
- * works but is not an affiliate link (isAffiliate=false), so the UI must not label it as ad.
+ * The Amazon tag is EXPO_PUBLIC_AFFILIATE_AMAZON, falling back to the operator's partner tag.
+ * With an empty tag the link still works but is not an affiliate link (isAffiliate=false),
+ * so the UI must not label it as ad.
  */
 export function buildRemedyLink(
   searchTerm: string,
-  tag: string | undefined = process.env.EXPO_PUBLIC_AFFILIATE_AMAZON,
+  tag: string | undefined = process.env.EXPO_PUBLIC_AFFILIATE_AMAZON ??
+    AMAZON_PARTNER_TAG,
 ): { url: string; isAffiliate: boolean } {
   const url = new URL("/s", "https://www.amazon.de");
   url.searchParams.set("k", searchTerm.slice(0, 80));
