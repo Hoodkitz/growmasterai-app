@@ -65,6 +65,7 @@ export default function DiagnoseScreen() {
     dailyDiagnoses,
     canDiagnose,
     useDiagnosis: consumeDiagnosis,
+    refundDiagnosis,
     remainingDiagnoses,
   } = useSubscription();
   const limits = TIER_LIMITS[tier];
@@ -107,6 +108,8 @@ export default function DiagnoseScreen() {
     },
     onError: (error) => {
       console.error("Diagnosis error:", error);
+      // Fehlgeschlagene Analyse zählt nicht gegen das Tageslimit
+      refundDiagnosis().catch(() => {});
       const errorDetails = getDiagnosisErrorMessage(error);
       setDiagnosisError(errorDetails);
       setDiagnosis(null);

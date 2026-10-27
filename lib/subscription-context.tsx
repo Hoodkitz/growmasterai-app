@@ -15,6 +15,7 @@ import {
   setSubscriptionTier as saveSubscriptionTier,
   getDailyUsage,
   incrementDiagnoses,
+  decrementDiagnoses,
   incrementMessages,
   decrementMessages,
   canUseDiagnosis,
@@ -49,6 +50,7 @@ interface SubscriptionContextType {
   useDiagnosis: () => Promise<boolean>;
   useMessage: () => Promise<boolean>;
   refundMessage: () => Promise<void>;
+  refundDiagnosis: () => Promise<void>;
 
   // Remaining counts
   remainingDiagnoses: number | null;
@@ -140,6 +142,10 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     return true;
   }, [tier, dailyMessages]);
 
+  const refundDiagnosis = useCallback(async () => {
+    setDailyDiagnoses(await decrementDiagnoses());
+  }, []);
+
   const refundMessage = useCallback(async () => {
     setDailyMessages(await decrementMessages());
   }, []);
@@ -164,6 +170,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         useDiagnosis,
         useMessage,
         refundMessage,
+        refundDiagnosis,
         remainingDiagnoses,
         remainingMessages,
         refresh,
