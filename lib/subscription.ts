@@ -57,7 +57,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
 };
 
 // Accounts with all limits lifted (owner/testing)
-const UNLIMITED_EMAILS = ["hoodkitz@gmail.com"];
+const UNLIMITED_EMAILS = ["hoodkitz@gmail.com", "julpaarmann@gmail.com"];
 
 export function isUnlimitedAccount(email?: string | null): boolean {
   return !!email && UNLIMITED_EMAILS.includes(email.trim().toLowerCase());
