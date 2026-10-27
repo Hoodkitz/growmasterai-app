@@ -5,6 +5,8 @@ import {
   View,
   TouchableOpacity,
   Dimensions,
+  Alert,
+  Platform,
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
@@ -77,7 +79,27 @@ export default function HomeScreen() {
 
   // Onboarding-Check wird in _layout.tsx gemacht, hier nicht erneut
 
-  const { user, isAuthenticated } = useAppAuth();
+  const { user, isAuthenticated, logout } = useAppAuth();
+
+  const handleLogout = () => {
+    const doLogout = async () => {
+      await logout();
+      router.replace("/login");
+    };
+    if (Platform.OS === "web") {
+      if (window.confirm("Möchtest du dich wirklich abmelden?"))
+        void doLogout();
+      return;
+    }
+    Alert.alert("Abmelden", "Möchtest du dich wirklich abmelden?", [
+      { text: "Abbrechen", style: "cancel" },
+      {
+        text: "Abmelden",
+        style: "destructive",
+        onPress: () => void doLogout(),
+      },
+    ]);
+  };
   const { points, level, levelProgress, stats } = useGamification();
   const moon = getMoonPhase();
   const moonAge = getMoonAge();
@@ -227,16 +249,30 @@ export default function HomeScreen() {
                 </Text>
               </View>
             </View>
-            <TouchableOpacity
-              className="w-10 h-10 rounded-full bg-surface items-center justify-center"
-              onPress={() => router.push("/settings")}
-            >
-              <IconSymbol
-                name="bell.fill"
-                size={22}
-                color={colors.foreground}
-              />
-            </TouchableOpacity>
+            <View className="flex-row items-center gap-2">
+              {isAuthenticated ? (
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  accessibilityLabel="Abmelden"
+                  className="px-3 h-10 rounded-full bg-surface items-center justify-center"
+                  onPress={handleLogout}
+                >
+                  <Text className="text-sm font-semibold text-error">
+                    Abmelden
+                  </Text>
+                </TouchableOpacity>
+              ) : null}
+              <TouchableOpacity
+                className="w-10 h-10 rounded-full bg-surface items-center justify-center"
+                onPress={() => router.push("/settings")}
+              >
+                <IconSymbol
+                  name="bell.fill"
+                  size={22}
+                  color={colors.foreground}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 

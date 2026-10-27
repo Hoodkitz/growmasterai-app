@@ -163,8 +163,10 @@ export default function CoachScreen() {
     <ScreenContainer>
       <KeyboardAvoidingView
         className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={100}
+        // Android is edge-to-edge (no window resize), so "padding" is needed there too;
+        // the view measures its own position, so no extra offset.
+        behavior="padding"
+        keyboardVerticalOffset={0}
       >
         {/* Header */}
         <View className="p-4 border-b border-border">
