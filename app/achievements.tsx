@@ -242,6 +242,7 @@ export default function AchievementsScreen() {
           {/* Category Filter */}
           <ScrollView
             horizontal
+            style={{ flexGrow: 0 }}
             showsHorizontalScrollIndicator={false}
             className="px-4 py-3"
           >

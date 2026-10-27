@@ -338,6 +338,7 @@ export default function AdminScreen() {
         {/* Tabs */}
         <ScrollView
           horizontal
+          style={{ flexGrow: 0 }}
           showsHorizontalScrollIndicator={false}
           className="-mx-4 px-4"
         >

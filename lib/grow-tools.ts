@@ -464,3 +464,29 @@ export function parseNumberOr(value: string, fallback: number): number {
   const n = Number(trimmed);
   return Number.isFinite(n) ? n : fallback;
 }
+
+export interface LightPowerResult {
+  kwhPerDay: number;
+  kwhPerMonth: number;
+  costPerDay: number;
+  costPerMonth: number;
+  wattPerM2: number | null;
+}
+
+/** Electricity use and cost of a grow light, plus power density if the area is known. */
+export function calculateLightPower(
+  watts: number,
+  hoursPerDay: number,
+  pricePerKwh: number,
+  areaM2?: number,
+): LightPowerResult {
+  const kwhPerDay = (Math.max(0, watts) / 1000) * Math.max(0, hoursPerDay);
+  const price = Math.max(0, pricePerKwh);
+  return {
+    kwhPerDay,
+    kwhPerMonth: kwhPerDay * 30,
+    costPerDay: kwhPerDay * price,
+    costPerMonth: kwhPerDay * 30 * price,
+    wattPerM2: areaM2 && areaM2 > 0 ? watts / areaM2 : null,
+  };
+}

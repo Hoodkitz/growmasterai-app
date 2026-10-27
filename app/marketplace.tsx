@@ -42,6 +42,7 @@ export default function MarketplaceScreen() {
   const [activeTab, setActiveTab] = useState<TabType>("shop");
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showAllStrains, setShowAllStrains] = useState(false);
 
   const productsQuery = trpc.marketplace.listProducts.useQuery({
     category: selectedCategory === "all" ? undefined : selectedCategory,
@@ -109,6 +110,7 @@ export default function MarketplaceScreen() {
       {/* Tabs */}
       <ScrollView
         horizontal
+        style={{ flexGrow: 0 }}
         showsHorizontalScrollIndicator={false}
         className="px-4 py-3 border-b border-border"
       >
@@ -159,6 +161,7 @@ export default function MarketplaceScreen() {
             {/* Categories */}
             <ScrollView
               horizontal
+              style={{ flexGrow: 0 }}
               showsHorizontalScrollIndicator={false}
               className="mb-4"
             >
@@ -469,10 +472,13 @@ export default function MarketplaceScreen() {
               🌿 Sorten-Datenbank
             </Text>
             <Text className="text-sm text-muted">
-              Die besten Sorten mit Bewertungen und Kauflinks
+              Beliebte Sorten mit Kauflinks
             </Text>
 
-            {STRAINS_DATABASE.slice(0, 6).map((strain) => (
+            {(showAllStrains
+              ? STRAINS_DATABASE
+              : STRAINS_DATABASE.slice(0, 6)
+            ).map((strain) => (
               <TouchableOpacity
                 key={strain.id}
                 className="bg-surface rounded-xl p-4 border border-border"
@@ -576,11 +582,18 @@ export default function MarketplaceScreen() {
               </TouchableOpacity>
             ))}
 
-            <TouchableOpacity className="bg-surface rounded-xl p-4 border border-border items-center">
-              <Text className="text-base font-semibold text-primary">
-                Alle Sorten anzeigen →
-              </Text>
-            </TouchableOpacity>
+            {STRAINS_DATABASE.length > 6 ? (
+              <TouchableOpacity
+                className="bg-surface rounded-xl p-4 border border-border items-center"
+                onPress={() => setShowAllStrains((v) => !v)}
+              >
+                <Text className="text-base font-semibold text-primary">
+                  {showAllStrains
+                    ? "Weniger anzeigen ↑"
+                    : `Alle ${STRAINS_DATABASE.length} Sorten anzeigen →`}
+                </Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
         )}
 

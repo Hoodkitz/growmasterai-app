@@ -553,6 +553,7 @@ export default function CommunityScreen() {
             {/* Category Filter */}
             <ScrollView
               horizontal
+              style={{ flexGrow: 0 }}
               showsHorizontalScrollIndicator={false}
               className="-mx-4 px-4"
             >
@@ -870,6 +871,7 @@ export default function CommunityScreen() {
         {/* Submenü: Tutorials, Events, Sorten */}
         <ScrollView
           horizontal
+          style={{ flexGrow: 0 }}
           showsHorizontalScrollIndicator={false}
           className="px-4 my-4"
           contentContainerStyle={{ gap: 8 }}
@@ -911,6 +913,7 @@ export default function CommunityScreen() {
             {/* Category Filter */}
             <ScrollView
               horizontal
+              style={{ flexGrow: 0 }}
               showsHorizontalScrollIndicator={false}
               className="-mx-4 px-4"
             >
@@ -1030,6 +1033,7 @@ export default function CommunityScreen() {
             {/* Filter */}
             <ScrollView
               horizontal
+              style={{ flexGrow: 0 }}
               showsHorizontalScrollIndicator={false}
               className="-mx-4 px-4"
             >
@@ -1146,6 +1150,7 @@ export default function CommunityScreen() {
                     </Text>
                     <ScrollView
                       horizontal
+                      style={{ flexGrow: 0 }}
                       showsHorizontalScrollIndicator={false}
                     >
                       <View className="flex-row gap-2">

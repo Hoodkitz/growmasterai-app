@@ -19,6 +19,7 @@ import {
   getLightSchedule,
   estimateYield,
   calculateWatering,
+  calculateLightPower,
 } from "@/lib/grow-tools";
 
 type ToolTab = "calendar" | "vpd" | "nutrients" | "light" | "yield" | "water";
@@ -46,6 +47,9 @@ export default function ToolsScreen() {
     "seedling" | "vegetative" | "flowering" | "autoflower"
   >("vegetative");
   const [ppfd, setPpfd] = useState("400");
+  const [lampWatts, setLampWatts] = useState("200");
+  const [tentArea, setTentArea] = useState("1");
+  const [kwhPrice, setKwhPrice] = useState("0.35");
 
   // Yield Estimator State
   const [lightWatts, setLightWatts] = useState("400");
@@ -118,6 +122,7 @@ export default function ToolsScreen() {
       {/* Tab Selector */}
       <ScrollView
         horizontal
+        style={{ flexGrow: 0 }}
         showsHorizontalScrollIndicator={false}
         className="px-4 mb-4"
       >
@@ -531,6 +536,85 @@ export default function ToolsScreen() {
               <Text className="text-sm text-foreground">
                 {lightSchedule.recommendation}
               </Text>
+            </View>
+
+            <View className="bg-surface rounded-2xl p-4 border border-border gap-4">
+              <Text className="text-lg font-bold text-foreground">
+                Stromverbrauch &amp; Leistung
+              </Text>
+              <View className="flex-row gap-3">
+                <View className="flex-1">
+                  <Text className="text-sm text-muted mb-2">
+                    Lampe (echte Watt)
+                  </Text>
+                  <TextInput
+                    className="bg-background rounded-xl p-3 text-foreground border border-border"
+                    keyboardType="numeric"
+                    value={lampWatts}
+                    onChangeText={setLampWatts}
+                  />
+                </View>
+                <View className="flex-1">
+                  <Text className="text-sm text-muted mb-2">Fläche (m²)</Text>
+                  <TextInput
+                    className="bg-background rounded-xl p-3 text-foreground border border-border"
+                    keyboardType="numeric"
+                    value={tentArea}
+                    onChangeText={setTentArea}
+                  />
+                </View>
+                <View className="flex-1">
+                  <Text className="text-sm text-muted mb-2">€ pro kWh</Text>
+                  <TextInput
+                    className="bg-background rounded-xl p-3 text-foreground border border-border"
+                    keyboardType="numeric"
+                    value={kwhPrice}
+                    onChangeText={setKwhPrice}
+                  />
+                </View>
+              </View>
+              {(() => {
+                const power = calculateLightPower(
+                  parseNumberOr(lampWatts, 0),
+                  lightSchedule.lightHours,
+                  parseNumberOr(kwhPrice, 0),
+                  parseNumberOr(tentArea, 0),
+                );
+                const fmt = (n: number, d = 2) =>
+                  n.toFixed(d).replace(".", ",");
+                return (
+                  <View className="gap-2">
+                    <View className="flex-row justify-between">
+                      <Text className="text-sm text-muted">Pro Tag</Text>
+                      <Text className="text-sm text-foreground">
+                        {fmt(power.kwhPerDay)} kWh · {fmt(power.costPerDay)} €
+                      </Text>
+                    </View>
+                    <View className="flex-row justify-between">
+                      <Text className="text-sm text-muted">
+                        Pro Monat (30 Tage)
+                      </Text>
+                      <Text className="text-sm font-semibold text-foreground">
+                        {fmt(power.kwhPerMonth, 1)} kWh ·{" "}
+                        {fmt(power.costPerMonth)} €
+                      </Text>
+                    </View>
+                    {power.wattPerM2 !== null ? (
+                      <View className="flex-row justify-between">
+                        <Text className="text-sm text-muted">Leistung/m²</Text>
+                        <Text className="text-sm text-foreground">
+                          {fmt(power.wattPerM2, 0)} W/m²
+                        </Text>
+                      </View>
+                    ) : null}
+                    <Text className="text-xs text-muted">
+                      Richtwert für LED: ca. 150-300 W/m² in Vegetation, 300-500
+                      W/m² in Blüte. Grundlage ist die Lichtdauer der gewählten
+                      Phase ({lightSchedule.lightHours} h).
+                    </Text>
+                  </View>
+                );
+              })()}
             </View>
           </View>
         )}
