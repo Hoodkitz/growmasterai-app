@@ -315,6 +315,13 @@ const PRODUCT_ASINS: Record<string, string> = {
   "Mini-Gewächshaus / Anzuchtbox": "B09L4T4P5K",
   Feuchtigkeitsmesser: "B08V85KVWX",
   Bodenfeuchtigkeitsmesser: "B08V85KVWX",
+  Growzelt: "B07KM46T6W",
+  "Dimmbare LED-Pflanzenlampe": "B0F22F1MJT",
+  "Stofftöpfe (Fabric Pots)": "B0F6MQTW2T",
+  "Trocknungsnetz zum Aufhängen": "B0DRKNCH6F",
+  "Aktivkohlefilter mit Abluft": "B08RZ3WH7N",
+  Neemöl: "B09W9S27X6",
+  Gelbtafeln: "B0B9H1JJ83",
 };
 
 /** ASIN of the operator's chosen product for a remedy, if there is one. */
