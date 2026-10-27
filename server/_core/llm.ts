@@ -56,7 +56,9 @@ export type ToolChoiceExplicit = {
 };
 
 export type ToolChoice =
-  ToolChoicePrimitive | ToolChoiceByName | ToolChoiceExplicit;
+  | ToolChoicePrimitive
+  | ToolChoiceByName
+  | ToolChoiceExplicit;
 
 export type InvokeParams = {
   messages: Message[];
@@ -160,8 +162,12 @@ const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-3.7-flash";
 const GEMINI_FALLBACK_MODELS = [
   GEMINI_MODEL,
   "gemini-3.5-flash",
-  "gemini-flash-latest",
+  "gemini-2.5-flash",
 ];
+
+// A model that hangs must not eat the whole request budget: give up on it
+// and move to the next one in the chain.
+const GEMINI_ATTEMPT_TIMEOUT_MS = 30_000;
 
 const resolveApiUrl = (model: string) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${ENV.geminiApiKey}`;
@@ -215,11 +221,21 @@ async function fetchWithRetry(
   let lastResponse: Response | null = null;
 
   for (const model of GEMINI_FALLBACK_MODELS) {
-    const response = await fetch(resolveApiUrl(model), {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    let response: Response;
+    try {
+      response = await fetch(resolveApiUrl(model), {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(GEMINI_ATTEMPT_TIMEOUT_MS),
+      });
+    } catch (e) {
+      console.warn(
+        `[Gemini ${model}] request failed, trying next model:`,
+        String(e),
+      );
+      continue;
+    }
 
     if (response.ok) return response;
 
@@ -245,7 +261,10 @@ async function fetchWithRetry(
     }
   }
 
-  return lastResponse as Response;
+  if (!lastResponse) {
+    throw new Error("Gemini request failed or timed out on every model");
+  }
+  return lastResponse;
 }
 
 /**
@@ -259,7 +278,8 @@ async function fetchOllama(
     parts: { text?: string; inlineData?: { data: string } }[];
   }[];
   const systemInstruction = geminiPayload.systemInstruction as
-    { parts: { text: string }[] } | undefined;
+    | { parts: { text: string }[] }
+    | undefined;
 
   // Extract text prompt and images
   let prompt = systemInstruction?.parts?.map((p) => p.text).join("\n") || "";
@@ -500,7 +520,8 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
   const candidates = data.candidates as Record<string, unknown>[] | undefined;
   const firstCandidate = candidates?.[0];
   const content = firstCandidate?.content as
-    Record<string, unknown> | undefined;
+    | Record<string, unknown>
+    | undefined;
   const parts = content?.parts as Record<string, unknown>[] | undefined;
 
   const textParts =

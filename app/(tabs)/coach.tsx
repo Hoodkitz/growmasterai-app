@@ -7,8 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
+  Keyboard,
 } from "react-native";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
@@ -35,6 +34,37 @@ interface Message {
 export default function CoachScreen() {
   const colors = useColors();
   const scrollViewRef = useRef<ScrollView>(null);
+  const inputBarRef = useRef<View>(null);
+  const [keyboardLift, setKeyboardLift] = useState(0);
+  const keyboardLiftRef = useRef(0);
+
+  // Lift the input bar above the keyboard. Window resizing differs between
+  // devices/edge-to-edge modes, so measure the real overlap instead of
+  // guessing an offset: whatever the keyboard still covers gets added as padding.
+  useEffect(() => {
+    const setLift = (v: number) => {
+      keyboardLiftRef.current = v;
+      setKeyboardLift(v);
+    };
+    const show = Keyboard.addListener("keyboardDidShow", (e) => {
+      const keyboardTop = e.endCoordinates.screenY;
+      setTimeout(() => {
+        inputBarRef.current?.measureInWindow((_x, y, _w, h) => {
+          const overlap = y + h - keyboardTop;
+          setLift(Math.max(0, keyboardLiftRef.current + overlap));
+          setTimeout(
+            () => scrollViewRef.current?.scrollToEnd({ animated: true }),
+            50,
+          );
+        });
+      }, 50);
+    });
+    const hide = Keyboard.addListener("keyboardDidHide", () => setLift(0));
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, []);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
@@ -161,13 +191,7 @@ export default function CoachScreen() {
 
   return (
     <ScreenContainer>
-      <KeyboardAvoidingView
-        className="flex-1"
-        // Android is edge-to-edge (no window resize), so "padding" is needed there too;
-        // the view measures its own position, so no extra offset.
-        behavior="padding"
-        keyboardVerticalOffset={0}
-      >
+      <View className="flex-1">
         {/* Header */}
         <View className="p-4 border-b border-border">
           <Text className="text-2xl font-bold text-foreground">Grow Coach</Text>
@@ -254,7 +278,12 @@ export default function CoachScreen() {
         </ScrollView>
 
         {/* Input */}
-        <View className="p-4 border-t border-border bg-background">
+        <View
+          ref={inputBarRef}
+          collapsable={false}
+          className="p-4 border-t border-border bg-background"
+          style={{ marginBottom: keyboardLift }}
+        >
           {!canSendMessage ? (
             <UpgradePrompt feature="Nachrichten" compact />
           ) : (
@@ -283,7 +312,7 @@ export default function CoachScreen() {
             </View>
           )}
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </ScreenContainer>
   );
 }
