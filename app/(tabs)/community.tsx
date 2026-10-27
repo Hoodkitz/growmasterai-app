@@ -19,7 +19,12 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
 import { useGamification } from "@/lib/gamification-context";
-import { UpgradePrompt } from "@/components/upgrade-prompt";
+import {
+  CLUBS,
+  CLUB_SEARCH_URL,
+  safeClubUrl,
+  sortedClubs,
+} from "@/lib/clubs-data";
 import { AdBanner } from "@/components/ad-banner";
 import { formatRelativeTime, formatTimeRemaining } from "@/lib/community";
 import {
@@ -130,9 +135,7 @@ export default function CommunityScreen() {
   const auctionsList = (auctionsQuery.data || []).slice(0, 5);
   const rafflesList = (rafflesQuery.data || []).slice(0, 5);
   const dealsList = dealsQuery.data || [];
-  const [radarTab, setRadarTab] = useState<"members" | "shops" | "clubs">(
-    "shops",
-  );
+  const [radarTab, setRadarTab] = useState<"shops" | "clubs">("shops");
   const [shopsResult, setShopsResult] = useState<NearbyShopsResult | null>(
     null,
   );
@@ -263,7 +266,6 @@ export default function CommunityScreen() {
               {[
                 { id: "shops", label: "Shops", icon: "cart.fill" },
                 { id: "clubs", label: "Clubs", icon: "person.3.fill" },
-                { id: "members", label: "Grower", icon: "person.fill" },
               ].map((tab) => (
                 <TouchableOpacity
                   key={tab.id}
@@ -288,9 +290,7 @@ export default function CommunityScreen() {
               ))}
             </View>
 
-            {radarTab === "members" && tier === "free" ? (
-              <UpgradePrompt feature="Member Radar" />
-            ) : radarTab === "shops" ? (
+            {radarTab === "shops" ? (
               <View className="gap-3">
                 {!shopsResult && !shopsLoading && (
                   <View className="bg-surface rounded-xl border border-border p-6 items-center">
@@ -483,18 +483,62 @@ export default function CommunityScreen() {
                   )}
               </View>
             ) : (
-              <View className="bg-surface rounded-xl border border-border p-6 items-center">
-                <IconSymbol name="map.fill" size={40} color={colors.muted} />
-                <Text className="text-base font-semibold text-foreground mt-3">
-                  {radarTab === "clubs"
-                    ? "Keine Clubs in deiner Nähe"
-                    : "Keine Mitglieder in deiner Nähe"}
-                </Text>
-                <Text className="text-xs text-muted text-center mt-1">
-                  {radarTab === "clubs"
-                    ? "Für Clubs gibt es derzeit keine verlässliche Datenquelle, daher zeigen wir hier nichts an."
-                    : "Es werden keine Standorte von Mitgliedern geteilt, daher zeigen wir hier nichts an."}
-                </Text>
+              <View className="gap-3">
+                {sortedClubs().map((club) => {
+                  const url = safeClubUrl(club.website);
+                  return (
+                    <View
+                      key={`${club.city}-${club.name}`}
+                      className="bg-surface rounded-xl border border-border p-4"
+                    >
+                      <Text className="text-base font-semibold text-foreground">
+                        {club.name}
+                      </Text>
+                      <Text className="text-sm text-muted">{club.city}</Text>
+                      {club.note ? (
+                        <Text className="text-xs text-muted mt-1">
+                          {club.note}
+                        </Text>
+                      ) : null}
+                      {url ? (
+                        <TouchableOpacity
+                          className="mt-2"
+                          onPress={() => Linking.openURL(url).catch(() => {})}
+                        >
+                          <Text className="text-sm font-medium text-primary">
+                            Webseite öffnen
+                          </Text>
+                        </TouchableOpacity>
+                      ) : null}
+                    </View>
+                  );
+                })}
+                {CLUBS.length === 0 ? (
+                  <View className="bg-surface rounded-xl border border-border p-6 items-center">
+                    <IconSymbol
+                      name="map.fill"
+                      size={40}
+                      color={colors.muted}
+                    />
+                    <Text className="text-base font-semibold text-foreground mt-3">
+                      Noch keine Clubs eingetragen
+                    </Text>
+                    <Text className="text-xs text-muted text-center mt-1">
+                      Wir tragen Anbauvereinigungen nur nach Prüfung ein. Bis
+                      dahin kannst du in deiner Nähe suchen.
+                    </Text>
+                  </View>
+                ) : null}
+                <TouchableOpacity
+                  className="py-3 items-center"
+                  onPress={() =>
+                    Linking.openURL(CLUB_SEARCH_URL).catch(() => {})
+                  }
+                >
+                  <Text className="text-sm font-medium text-primary">
+                    Anbauvereinigungen im Internet suchen
+                  </Text>
+                </TouchableOpacity>
               </View>
             )}
           </View>
