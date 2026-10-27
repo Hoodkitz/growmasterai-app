@@ -2,6 +2,7 @@ import React, {
   createContext,
   useContext,
   useState,
+  useRef,
   useEffect,
   ReactNode,
   useCallback,
@@ -93,11 +94,20 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
   const points = stats.xp;
 
   // Initial load
+  // Once per signed-in user. Depending on the mutation object itself re-ran this
+  // on every state change (pending -> success -> ...), an endless request loop.
+  const streakSentFor = useRef<string | null>(null);
+  const userId = user?.id ?? null;
   useEffect(() => {
-    if (user) {
-      streakMutation.mutate();
+    if (!userId) {
+      streakSentFor.current = null;
+      return;
     }
-  }, [user, streakMutation]);
+    if (streakSentFor.current === userId) return;
+    streakSentFor.current = userId;
+    streakMutation.mutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
 
   const checkForNewAchievements = useCallback(async (): Promise<
     Achievement[]

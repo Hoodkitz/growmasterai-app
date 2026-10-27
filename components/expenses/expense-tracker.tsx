@@ -216,6 +216,7 @@ export function ExpenseTracker({
           </Text>
           <ScrollView
             horizontal
+            style={{ flexGrow: 0 }}
             showsHorizontalScrollIndicator={false}
             className="mb-4"
           >

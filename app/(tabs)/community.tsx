@@ -19,7 +19,12 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
 import { useGamification } from "@/lib/gamification-context";
-import { UpgradePrompt } from "@/components/upgrade-prompt";
+import {
+  BUNDESLAENDER,
+  clubSearchUrl,
+  safeClubUrl,
+  sortedClubs,
+} from "@/lib/clubs-data";
 import { AdBanner } from "@/components/ad-banner";
 import { formatRelativeTime, formatTimeRemaining } from "@/lib/community";
 import {
@@ -40,13 +45,18 @@ import {
 import { minimumNextBid } from "@/lib/auction-rules";
 import {
   STRAINS_DATABASE,
+  strainSearchUrl,
   getDifficultyLabel,
   getDifficultyColor,
   getTypeLabel,
   getTypeColor,
+  getRatioLabel,
+  getThcLabel,
 } from "@/lib/strains-data";
 import { CommunitySkeletonLoader } from "@/components/skeleton-loaders";
 import { ErrorDisplay } from "@/components/error-display";
+import { PhaseTipsList } from "@/components/phase-tips-list";
+import { TIP_PHASE_LABEL, TipPhase, tipsForPhase } from "@/lib/phase-tips";
 
 const { width } = Dimensions.get("window");
 
@@ -130,9 +140,7 @@ export default function CommunityScreen() {
   const auctionsList = (auctionsQuery.data || []).slice(0, 5);
   const rafflesList = (rafflesQuery.data || []).slice(0, 5);
   const dealsList = dealsQuery.data || [];
-  const [radarTab, setRadarTab] = useState<"members" | "shops" | "clubs">(
-    "shops",
-  );
+  const [radarTab, setRadarTab] = useState<"shops" | "clubs">("shops");
   const [shopsResult, setShopsResult] = useState<NearbyShopsResult | null>(
     null,
   );
@@ -181,6 +189,8 @@ export default function CommunityScreen() {
     placeBidMutation.mutate({ auctionId, amount });
   };
   const [tutorialCategory, setTutorialCategory] = useState<string>("all");
+  const [expandedStrain, setExpandedStrain] = useState<string | null>(null);
+  const [tipPhase, setTipPhase] = useState<TipPhase | null>(null);
   const [strainFilter, setStrainFilter] = useState<
     "all" | "beginner" | "indica" | "sativa"
   >("all");
@@ -263,7 +273,6 @@ export default function CommunityScreen() {
               {[
                 { id: "shops", label: "Shops", icon: "cart.fill" },
                 { id: "clubs", label: "Clubs", icon: "person.3.fill" },
-                { id: "members", label: "Grower", icon: "person.fill" },
               ].map((tab) => (
                 <TouchableOpacity
                   key={tab.id}
@@ -288,9 +297,7 @@ export default function CommunityScreen() {
               ))}
             </View>
 
-            {radarTab === "members" && tier === "free" ? (
-              <UpgradePrompt feature="Member Radar" />
-            ) : radarTab === "shops" ? (
+            {radarTab === "shops" ? (
               <View className="gap-3">
                 {!shopsResult && !shopsLoading && (
                   <View className="bg-surface rounded-xl border border-border p-6 items-center">
@@ -483,18 +490,62 @@ export default function CommunityScreen() {
                   )}
               </View>
             ) : (
-              <View className="bg-surface rounded-xl border border-border p-6 items-center">
-                <IconSymbol name="map.fill" size={40} color={colors.muted} />
-                <Text className="text-base font-semibold text-foreground mt-3">
-                  {radarTab === "clubs"
-                    ? "Keine Clubs in deiner Nähe"
-                    : "Keine Mitglieder in deiner Nähe"}
-                </Text>
-                <Text className="text-xs text-muted text-center mt-1">
-                  {radarTab === "clubs"
-                    ? "Für Clubs gibt es derzeit keine verlässliche Datenquelle, daher zeigen wir hier nichts an."
-                    : "Es werden keine Standorte von Mitgliedern geteilt, daher zeigen wir hier nichts an."}
-                </Text>
+              <View className="gap-3">
+                {sortedClubs().map((club) => {
+                  const url = safeClubUrl(club.website);
+                  return (
+                    <View
+                      key={`${club.city}-${club.name}`}
+                      className="bg-surface rounded-xl border border-border p-4"
+                    >
+                      <Text className="text-base font-semibold text-foreground">
+                        {club.name}
+                      </Text>
+                      <Text className="text-sm text-muted">{club.city}</Text>
+                      {club.note ? (
+                        <Text className="text-xs text-muted mt-1">
+                          {club.note}
+                        </Text>
+                      ) : null}
+                      {url ? (
+                        <TouchableOpacity
+                          className="mt-2"
+                          onPress={() => Linking.openURL(url).catch(() => {})}
+                        >
+                          <Text className="text-sm font-medium text-primary">
+                            Webseite öffnen
+                          </Text>
+                        </TouchableOpacity>
+                      ) : null}
+                    </View>
+                  );
+                })}
+                <View className="bg-surface rounded-xl border border-border p-4 gap-1">
+                  <Text className="text-base font-semibold text-foreground">
+                    Anbauvereinigungen nach Bundesland
+                  </Text>
+                  <Text className="text-xs text-muted mb-2">
+                    Es gibt kein zentrales Verzeichnis, die Erlaubnis erteilen
+                    die Länder. Wir verlinken eine Suche, tragen aber keine
+                    ungeprüften Clubs ein.
+                  </Text>
+                  {BUNDESLAENDER.map((land) => (
+                    <TouchableOpacity
+                      key={land}
+                      className="py-2 border-t border-border flex-row items-center justify-between"
+                      onPress={() =>
+                        Linking.openURL(clubSearchUrl(land)).catch(() => {})
+                      }
+                    >
+                      <Text className="text-sm text-foreground">{land}</Text>
+                      <IconSymbol
+                        name="chevron.right"
+                        size={16}
+                        color={colors.muted}
+                      />
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </View>
             )}
           </View>
@@ -509,6 +560,7 @@ export default function CommunityScreen() {
             {/* Category Filter */}
             <ScrollView
               horizontal
+              style={{ flexGrow: 0 }}
               showsHorizontalScrollIndicator={false}
               className="-mx-4 px-4"
             >
@@ -826,6 +878,7 @@ export default function CommunityScreen() {
         {/* Submenü: Tutorials, Events, Sorten */}
         <ScrollView
           horizontal
+          style={{ flexGrow: 0 }}
           showsHorizontalScrollIndicator={false}
           className="px-4 my-4"
           contentContainerStyle={{ gap: 8 }}
@@ -867,6 +920,7 @@ export default function CommunityScreen() {
             {/* Category Filter */}
             <ScrollView
               horizontal
+              style={{ flexGrow: 0 }}
               showsHorizontalScrollIndicator={false}
               className="-mx-4 px-4"
             >
@@ -877,6 +931,8 @@ export default function CommunityScreen() {
                   { id: "problems", label: "Probleme" },
                   { id: "harvest", label: "Ernte" },
                   { id: "equipment", label: "Equipment" },
+                  { id: "advanced", label: "Fortgeschritten" },
+                  { id: "strains", label: "Sorten" },
                 ].map((cat) => (
                   <TouchableOpacity
                     key={cat.id}
@@ -897,6 +953,38 @@ export default function CommunityScreen() {
               </View>
             </ScrollView>
 
+            {/* Tips by phase */}
+            <View className="bg-surface rounded-xl border border-border p-4 gap-3">
+              <Text className="text-base font-semibold text-foreground">
+                💡 Tipps nach Phase
+              </Text>
+              <View className="flex-row flex-wrap gap-2">
+                {(Object.keys(TIP_PHASE_LABEL) as TipPhase[]).map((phase) => (
+                  <TouchableOpacity
+                    key={phase}
+                    className={`px-3 py-1.5 rounded-full ${tipPhase === phase ? "bg-primary" : "bg-background border border-border"}`}
+                    onPress={() =>
+                      setTipPhase((cur) => (cur === phase ? null : phase))
+                    }
+                  >
+                    <Text
+                      className={`text-sm ${tipPhase === phase ? "text-white" : "text-foreground"}`}
+                    >
+                      {TIP_PHASE_LABEL[phase]}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              {tipPhase ? (
+                <PhaseTipsList tips={tipsForPhase(tipPhase)} />
+              ) : (
+                <Text className="text-xs text-muted">
+                  Wähle eine Phase. Jeder Tipp verlinkt die Stelle im Video, in
+                  der er erklärt wird.
+                </Text>
+              )}
+            </View>
+
             {/* Video List */}
             {filteredTutorials.map((video) => (
               <TouchableOpacity
@@ -914,9 +1002,6 @@ export default function CommunityScreen() {
                     size={48}
                     color={colors.primary}
                   />
-                  <View className="absolute bottom-2 right-2 bg-black/70 px-2 py-0.5 rounded">
-                    <Text className="text-xs text-white">{video.duration}</Text>
-                  </View>
                   {video.isPremium && tier === "free" && (
                     <View className="absolute inset-0 bg-black/50 items-center justify-center">
                       <IconSymbol name="lock.fill" size={32} color="#fff" />
@@ -932,8 +1017,8 @@ export default function CommunityScreen() {
                     {video.title}
                   </Text>
                   <View className="flex-row items-center gap-2">
-                    <Text className="text-xs text-muted">
-                      Auf YouTube suchen
+                    <Text className="text-xs text-muted" numberOfLines={1}>
+                      {video.channel} · YouTube
                     </Text>
                     <View
                       className={`px-2 py-0.5 rounded-full ${
@@ -989,6 +1074,7 @@ export default function CommunityScreen() {
             {/* Filter */}
             <ScrollView
               horizontal
+              style={{ flexGrow: 0 }}
               showsHorizontalScrollIndicator={false}
               className="-mx-4 px-4"
             >
@@ -1021,12 +1107,20 @@ export default function CommunityScreen() {
               <TouchableOpacity
                 key={strain.id}
                 className="bg-surface rounded-xl p-4 border border-border"
+                activeOpacity={0.8}
+                onPress={() =>
+                  setExpandedStrain((cur) =>
+                    cur === strain.id ? null : strain.id,
+                  )
+                }
               >
                 <View className="flex-row items-start gap-3">
                   <View
                     className="w-14 h-14 rounded-xl items-center justify-center"
                     style={{
-                      backgroundColor: getTypeColor(strain.type) + "20",
+                      backgroundColor:
+                        (strain.type ? getTypeColor(strain.type) : "#6B7280") +
+                        "20",
                     }}
                   >
                     <Text className="text-2xl">🌿</Text>
@@ -1043,104 +1137,143 @@ export default function CommunityScreen() {
                       )}
                     </View>
                     <View className="flex-row items-center gap-2 mt-1">
-                      <View
-                        className="px-2 py-0.5 rounded-full"
-                        style={{
-                          backgroundColor: getTypeColor(strain.type) + "20",
-                        }}
-                      >
-                        <Text
-                          className="text-xs"
-                          style={{ color: getTypeColor(strain.type) }}
-                        >
-                          {getTypeLabel(strain.type)}
-                        </Text>
-                      </View>
-                      <View
-                        className="px-2 py-0.5 rounded-full"
-                        style={{
-                          backgroundColor:
-                            getDifficultyColor(strain.difficulty) + "20",
-                        }}
-                      >
-                        <Text
-                          className="text-xs"
+                      {strain.type ? (
+                        <View
+                          className="px-2 py-0.5 rounded-full"
                           style={{
-                            color: getDifficultyColor(strain.difficulty),
+                            backgroundColor: getTypeColor(strain.type) + "20",
                           }}
                         >
-                          {getDifficultyLabel(strain.difficulty)}
-                        </Text>
-                      </View>
+                          <Text
+                            className="text-xs"
+                            style={{ color: getTypeColor(strain.type) }}
+                          >
+                            {getTypeLabel(strain.type)}
+                          </Text>
+                        </View>
+                      ) : null}
+                      {strain.difficulty ? (
+                        <View
+                          className="px-2 py-0.5 rounded-full"
+                          style={{
+                            backgroundColor:
+                              getDifficultyColor(strain.difficulty) + "20",
+                          }}
+                        >
+                          <Text
+                            className="text-xs"
+                            style={{
+                              color: getDifficultyColor(strain.difficulty),
+                            }}
+                          >
+                            {getDifficultyLabel(strain.difficulty)}
+                          </Text>
+                        </View>
+                      ) : null}
                     </View>
-                  </View>
-                  <View className="items-end">
-                    <View className="flex-row items-center gap-1">
-                      <IconSymbol
-                        name="star.fill"
-                        size={14}
-                        color={colors.warning}
-                      />
-                      <Text className="text-sm font-medium text-foreground">
-                        {strain.rating}
-                      </Text>
-                    </View>
-                    <Text className="text-xs text-muted">
-                      {strain.reviewCount} Reviews
+                    <Text className="text-xs text-muted mt-1">
+                      {strain.breeder}
+                      {strain.genetics ? ` · ${strain.genetics}` : ""}
                     </Text>
+                    {getRatioLabel(strain) ? (
+                      <Text className="text-xs text-muted">
+                        {getRatioLabel(strain)}
+                      </Text>
+                    ) : null}
                   </View>
                 </View>
 
-                <View className="flex-row items-center gap-4 mt-3 pt-3 border-t border-border">
+                <View className="flex-row flex-wrap items-center gap-4 mt-3 pt-3 border-t border-border">
                   <View>
                     <Text className="text-xs text-muted">THC</Text>
                     <Text className="text-sm font-medium text-foreground">
-                      {strain.thcMin}-{strain.thcMax}%
+                      {getThcLabel(strain) ?? "k. A."}
                     </Text>
                   </View>
                   <View>
                     <Text className="text-xs text-muted">Blüte</Text>
                     <Text className="text-sm font-medium text-foreground">
-                      {strain.floweringWeeks} Wo.
+                      {strain.floweringText ?? "k. A."}
                     </Text>
                   </View>
                   <View>
                     <Text className="text-xs text-muted">Ertrag</Text>
                     <Text className="text-sm font-medium text-foreground">
-                      {strain.yieldIndoor}g/m²
+                      {strain.yieldIndoor ?? strain.yieldOutdoor ?? "k. A."}
                     </Text>
                   </View>
                 </View>
 
-                {/* Affiliate Links */}
-                {strain.affiliateLinks.length > 0 && (
-                  <View className="mt-3 pt-3 border-t border-border">
-                    <Text className="text-xs text-muted mb-2">
-                      🛒 Samen kaufen:
-                    </Text>
-                    <ScrollView
-                      horizontal
-                      showsHorizontalScrollIndicator={false}
-                    >
-                      <View className="flex-row gap-2">
-                        {strain.affiliateLinks.map((link, index) => (
-                          <TouchableOpacity
-                            key={index}
-                            className="bg-primary/10 px-3 py-2 rounded-lg flex-row items-center gap-2"
-                            onPress={() => Linking.openURL(link.url)}
-                          >
-                            <Text className="text-sm font-medium text-primary">
-                              {link.shop}
-                            </Text>
-                            <Text className="text-xs text-muted">
-                              €{link.price}
-                            </Text>
-                          </TouchableOpacity>
+                {expandedStrain === strain.id ? (
+                  <View className="mt-3 pt-3 border-t border-border gap-2">
+                    {strain.flavours?.length ? (
+                      <Text className="text-sm text-foreground">
+                        <Text className="text-muted">Aroma: </Text>
+                        {strain.flavours.join(", ")}
+                      </Text>
+                    ) : null}
+                    {strain.heightIndoor || strain.heightOutdoor ? (
+                      <Text className="text-sm text-foreground">
+                        <Text className="text-muted">Höhe: </Text>
+                        {[
+                          strain.heightIndoor &&
+                            `indoor ${strain.heightIndoor}`,
+                          strain.heightOutdoor &&
+                            `outdoor ${strain.heightOutdoor}`,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </Text>
+                    ) : null}
+                    {strain.harvestOutdoor ? (
+                      <Text className="text-sm text-foreground">
+                        <Text className="text-muted">Ernte outdoor: </Text>
+                        {strain.harvestOutdoor}
+                      </Text>
+                    ) : null}
+                    {strain.tips?.length ? (
+                      <View className="gap-1 mt-1">
+                        <Text className="text-sm font-semibold text-foreground">
+                          💡 Anbau-Tipps
+                        </Text>
+                        {strain.tips.map((tip, i) => (
+                          <Text key={i} className="text-sm text-foreground">
+                            • {tip}
+                          </Text>
                         ))}
                       </View>
-                    </ScrollView>
+                    ) : null}
+                    <Text className="text-xs text-muted">
+                      Angaben laut Hersteller ({strain.breeder}), ohne Gewähr.
+                    </Text>
+                    <TouchableOpacity onPress={() => setActiveTab("tutorials")}>
+                      <Text className="text-sm font-medium text-primary">
+                        🎬 Anbau-Videos ansehen →
+                      </Text>
+                    </TouchableOpacity>
                   </View>
+                ) : (
+                  <Text className="text-xs text-muted mt-3">
+                    Antippen für Anbau-Tipps
+                  </Text>
                 )}
+
+                <View className="flex-row gap-4 mt-3 pt-3 border-t border-border">
+                  <TouchableOpacity
+                    onPress={() => Linking.openURL(strain.source)}
+                  >
+                    <Text className="text-sm font-medium text-primary">
+                      Quelle: {strain.breeder}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => Linking.openURL(strainSearchUrl(strain))}
+                  >
+                    <Text className="text-sm font-medium text-primary">
+                      🔎 Samen suchen
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </TouchableOpacity>
             ))}
           </View>

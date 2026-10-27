@@ -1,529 +1,899 @@
-// Cannabis Strain Database with ratings and affiliate links
+// Strain database. Every entry is taken from the breeder's own product page (see `source`).
+// Only facts stated there are stored; anything the page does not state is left out
+// (no invented ratings, prices, effects or grow tips). Add new strains the same way.
 
 export type StrainType = "indica" | "sativa" | "hybrid";
 export type Difficulty = "beginner" | "intermediate" | "advanced" | "expert";
-export type Effect =
-  | "relaxed"
-  | "euphoric"
-  | "creative"
-  | "energetic"
-  | "sleepy"
-  | "hungry"
-  | "focused"
-  | "uplifted";
-export type Flavor =
-  | "sweet"
-  | "earthy"
-  | "citrus"
-  | "pine"
-  | "berry"
-  | "diesel"
-  | "skunk"
-  | "tropical"
-  | "spicy"
-  | "cheese";
-export type MedicalUse =
-  | "pain"
-  | "anxiety"
-  | "depression"
-  | "insomnia"
-  | "appetite"
-  | "nausea"
-  | "inflammation"
-  | "stress";
 
 export interface Strain {
   id: string;
   name: string;
-  type: StrainType;
-  thcMin: number;
-  thcMax: number;
-  cbdMin: number;
-  cbdMax: number;
-  difficulty: Difficulty;
-  floweringWeeks: number;
-  yieldIndoor: string; // g/m²
-  yieldOutdoor: string; // g/plant
-  heightIndoor: string;
-  heightOutdoor: string;
-  effects: Effect[];
-  flavors: Flavor[];
-  medicalUses: MedicalUse[];
-  description: string;
-  growTips: string[];
-  vulnerabilities: string[];
-  genetics: string;
   breeder: string;
-  rating: number;
-  reviewCount: number;
-  imageUrl?: string;
-  affiliateLinks: AffiliateLink[];
+  /** Breeder page the facts below come from. */
+  source: string;
+  type?: StrainType;
+  sativaPct?: number;
+  indicaPct?: number;
+  genetics?: string;
+  /** "up to" value as stated by the breeder, in percent. */
+  thcMax?: number;
+  /** Exact value as stated by the breeder, in percent. */
+  thcExact?: number;
+  /** Indoor flowering time as stated, e.g. "45–50 Tage". */
+  floweringText?: string;
+  yieldIndoor?: string;
+  yieldOutdoor?: string;
+  heightIndoor?: string;
+  heightOutdoor?: string;
+  harvestOutdoor?: string;
+  /** Breeder's climate recommendation for outdoor growing. */
+  climate?: "short" | "long";
+  /** Flavour notes as listed by the breeder (translated). */
+  flavours?: string[];
+  /** Hints derived from the breeder's data sheet / product text, not invented. */
+  tips?: string[];
+  /** Only set when the breeder rates the strain as easy / for novices. */
+  difficulty?: Difficulty;
   isPremium?: boolean;
 }
 
-export interface AffiliateLink {
-  shop: string;
-  url: string;
-  price: number;
-  currency: string;
-  seedCount: number;
-  type: "regular" | "feminized" | "autoflower";
-}
-
-export interface StrainReview {
-  id: string;
-  strainId: string;
-  userId: string;
-  userName: string;
-  rating: number;
-  difficulty: Difficulty;
-  yieldRating: number;
-  tasteRating: number;
-  effectRating: number;
-  comment: string;
-  images?: string[];
-  createdAt: Date;
-  helpful: number;
-}
-
-// Affiliate partner shops
-export const AFFILIATE_SHOPS = [
-  { id: "sensiseeds", name: "Sensi Seeds", logo: "🌱", commission: 15 },
-  { id: "royalqueen", name: "Royal Queen Seeds", logo: "👑", commission: 12 },
-  { id: "dutchpassion", name: "Dutch Passion", logo: "🇳🇱", commission: 10 },
-  { id: "barneys", name: "Barney's Farm", logo: "🚜", commission: 12 },
-  { id: "fastbuds", name: "Fast Buds", logo: "⚡", commission: 15 },
-];
-
 export const STRAINS_DATABASE: Strain[] = [
   {
-    id: "northern-lights",
-    name: "Northern Lights",
-    type: "indica",
-    thcMin: 16,
-    thcMax: 21,
-    cbdMin: 0.1,
-    cbdMax: 0.3,
-    difficulty: "beginner",
-    floweringWeeks: 7,
-    yieldIndoor: "500-550",
-    yieldOutdoor: "600-650",
-    heightIndoor: "100-120cm",
-    heightOutdoor: "180-220cm",
-    effects: ["relaxed", "sleepy", "euphoric", "hungry"],
-    flavors: ["sweet", "earthy", "pine"],
-    medicalUses: ["insomnia", "pain", "stress", "anxiety"],
-    description:
-      "Northern Lights ist eine der bekanntesten und beliebtesten Indica-Sorten weltweit. Sie ist bekannt für ihre entspannende Wirkung und ihren süßen, erdigen Geschmack. Perfekt für Anfänger aufgrund ihrer Robustheit.",
-    growTips: [
-      "Sehr widerstandsfähig gegen Schimmel und Schädlinge",
-      "Ideal für SOG und SCROG Methoden",
-      "Niedrige Geruchsentwicklung während der Blüte",
-      "Reagiert gut auf LST (Low Stress Training)",
-    ],
-    vulnerabilities: [
-      "Kann bei Überwässerung Wurzelfäule entwickeln",
-      "Empfindlich gegenüber extremer Hitze über 30°C",
-    ],
-    genetics: "Afghani x Thai",
+    id: "northern-lights-sensi",
+    name: "Northern Lights (fem.)",
     breeder: "Sensi Seeds",
-    rating: 4.8,
-    reviewCount: 1245,
-    affiliateLinks: [
-      {
-        shop: "Sensi Seeds",
-        url: "https://sensiseeds.com/northern-lights",
-        price: 29.99,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-      {
-        shop: "Royal Queen Seeds",
-        url: "https://royalqueenseeds.com/northern-lights",
-        price: 25.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-    ],
-  },
-  {
-    id: "white-widow",
-    name: "White Widow",
-    type: "hybrid",
-    thcMin: 18,
-    thcMax: 25,
-    cbdMin: 0.1,
-    cbdMax: 0.2,
-    difficulty: "beginner",
-    floweringWeeks: 8,
-    yieldIndoor: "450-500",
-    yieldOutdoor: "550-600",
-    heightIndoor: "80-100cm",
-    heightOutdoor: "150-180cm",
-    effects: ["euphoric", "creative", "energetic", "uplifted"],
-    flavors: ["earthy", "pine", "spicy"],
-    medicalUses: ["depression", "stress", "pain", "appetite"],
-    description:
-      "White Widow ist ein legendärer Hybrid aus den Niederlanden. Bekannt für ihre weißen, harzigen Blüten und den ausgewogenen, erhebenden Effekt. Eine der meistverkauften Sorten seit den 90er Jahren.",
-    growTips: [
-      "Sehr harzreich - ideal für Extrakte",
-      "Kompakte Struktur, gut für kleine Räume",
-      "Verträgt Temperaturschwankungen gut",
-      "Moderate Nährstoffzufuhr empfohlen",
-    ],
-    vulnerabilities: [
-      "Kann bei hoher Luftfeuchtigkeit Schimmel entwickeln",
-      "Starker Geruch in der Blütephase",
-    ],
-    genetics: "Brazilian Sativa x South Indian Indica",
-    breeder: "Green House Seeds",
-    rating: 4.7,
-    reviewCount: 2156,
-    affiliateLinks: [
-      {
-        shop: "Dutch Passion",
-        url: "https://dutch-passion.com/white-widow",
-        price: 32.5,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-      {
-        shop: "Royal Queen Seeds",
-        url: "https://royalqueenseeds.com/white-widow",
-        price: 27.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-    ],
-  },
-  {
-    id: "gorilla-glue",
-    name: "Gorilla Glue #4",
-    type: "hybrid",
-    thcMin: 25,
-    thcMax: 30,
-    cbdMin: 0.1,
-    cbdMax: 0.1,
-    difficulty: "intermediate",
-    floweringWeeks: 9,
-    yieldIndoor: "500-600",
-    yieldOutdoor: "600-700",
-    heightIndoor: "120-150cm",
-    heightOutdoor: "200-250cm",
-    effects: ["relaxed", "euphoric", "sleepy", "hungry"],
-    flavors: ["diesel", "earthy", "pine"],
-    medicalUses: ["pain", "insomnia", "stress", "depression"],
-    description:
-      "Gorilla Glue #4 ist eine extrem potente Sorte mit sehr hohem THC-Gehalt. Der Name kommt von den extrem klebrigen, harzigen Blüten. Mehrfacher Cannabis Cup Gewinner.",
-    growTips: [
-      "Benötigt Stützen wegen schwerer Blüten",
-      "Hoher Nährstoffbedarf in der Blüte",
-      "Regelmäßiges Entlauben empfohlen",
-      "Längere Trocknungszeit für besten Geschmack",
-    ],
-    vulnerabilities: [
-      "Anfällig für Spinnmilben",
-      "Kann bei Überdüngung verbrennen",
-      "Starke Geruchsentwicklung - Kohlefilter nötig",
-    ],
-    genetics: "Chem's Sister x Sour Dubb x Chocolate Diesel",
-    breeder: "GG Strains",
-    rating: 4.9,
-    reviewCount: 3421,
-    isPremium: true,
-    affiliateLinks: [
-      {
-        shop: "Barney's Farm",
-        url: "https://barneysfarm.com/gorilla-glue",
-        price: 45.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-      {
-        shop: "Fast Buds",
-        url: "https://fastbuds.com/gorilla-glue-auto",
-        price: 35.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "autoflower",
-      },
-    ],
-  },
-  {
-    id: "blue-dream",
-    name: "Blue Dream",
-    type: "sativa",
-    thcMin: 17,
-    thcMax: 24,
-    cbdMin: 0.1,
-    cbdMax: 0.2,
-    difficulty: "beginner",
-    floweringWeeks: 9,
-    yieldIndoor: "500-550",
-    yieldOutdoor: "600-700",
-    heightIndoor: "150-180cm",
-    heightOutdoor: "200-300cm",
-    effects: ["euphoric", "creative", "uplifted", "relaxed"],
-    flavors: ["berry", "sweet", "citrus"],
-    medicalUses: ["depression", "pain", "stress", "anxiety"],
-    description:
-      "Blue Dream ist eine der beliebtesten Sorten in den USA. Sie bietet einen sanften, ausgewogenen High mit süßem Beerengeschmack. Ideal für den Tag.",
-    growTips: [
-      "Wächst schnell und kräftig",
-      "Gut für SCROG wegen langer Seitentriebe",
-      "Verträgt höhere Temperaturen gut",
-      "Outdoor-Ernte Ende Oktober",
-    ],
-    vulnerabilities: [
-      "Kann sehr groß werden - Höhenkontrolle nötig",
-      "Anfällig für Spinnmilben bei trockener Luft",
-      "Benötigt viel Licht für optimale Erträge",
-    ],
-    genetics: "Blueberry x Haze",
-    breeder: "DJ Short",
-    rating: 4.6,
-    reviewCount: 1876,
-    affiliateLinks: [
-      {
-        shop: "Royal Queen Seeds",
-        url: "https://royalqueenseeds.com/blue-dream",
-        price: 29.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-      {
-        shop: "Fast Buds",
-        url: "https://fastbuds.com/blue-dream-auto",
-        price: 32.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "autoflower",
-      },
-    ],
-  },
-  {
-    id: "og-kush",
-    name: "OG Kush",
-    type: "hybrid",
-    thcMin: 20,
-    thcMax: 26,
-    cbdMin: 0.1,
-    cbdMax: 0.3,
-    difficulty: "advanced",
-    floweringWeeks: 8,
-    yieldIndoor: "400-450",
-    yieldOutdoor: "500-550",
-    heightIndoor: "90-110cm",
-    heightOutdoor: "150-180cm",
-    effects: ["euphoric", "relaxed", "hungry", "sleepy"],
-    flavors: ["earthy", "pine", "diesel"],
-    medicalUses: ["stress", "pain", "depression", "insomnia"],
-    description:
-      "OG Kush ist eine legendäre Sorte aus Kalifornien und Grundlage vieler moderner Hybriden. Bekannt für ihren einzigartigen erdigen, dieselartigen Geschmack.",
-    growTips: [
-      "Benötigt stabile Umgebungsbedingungen",
-      "Reagiert empfindlich auf pH-Schwankungen",
-      "Moderate Düngung empfohlen",
-      "Gute Luftzirkulation wichtig",
-    ],
-    vulnerabilities: [
-      "Sehr anfällig für Mehltau",
-      "Empfindlich gegenüber Überdüngung",
-      "Benötigt präzise Bewässerung",
-      "Anfällig für Wurzelprobleme",
-    ],
-    genetics: "Chemdawg x Hindu Kush",
-    breeder: "Unknown",
-    rating: 4.7,
-    reviewCount: 2543,
-    isPremium: true,
-    affiliateLinks: [
-      {
-        shop: "Sensi Seeds",
-        url: "https://sensiseeds.com/og-kush",
-        price: 39.99,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-      {
-        shop: "Barney's Farm",
-        url: "https://barneysfarm.com/og-kush",
-        price: 42.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-    ],
-  },
-  {
-    id: "amnesia-haze",
-    name: "Amnesia Haze",
-    type: "sativa",
-    thcMin: 20,
-    thcMax: 25,
-    cbdMin: 0.1,
-    cbdMax: 0.1,
-    difficulty: "intermediate",
-    floweringWeeks: 11,
-    yieldIndoor: "600-650",
-    yieldOutdoor: "700-800",
-    heightIndoor: "140-180cm",
-    heightOutdoor: "200-250cm",
-    effects: ["euphoric", "energetic", "creative", "uplifted"],
-    flavors: ["citrus", "earthy", "sweet"],
-    medicalUses: ["depression", "stress", "anxiety", "appetite"],
-    description:
-      "Amnesia Haze ist eine preisgekrönte Sativa mit starkem, zerebralem High. Bekannt für ihren zitrusartigen Geschmack und energetisierenden Effekt.",
-    growTips: [
-      "Lange Blütezeit - Geduld erforderlich",
-      "Hohe Erträge bei richtiger Pflege",
-      "Gut für warme Klimazonen",
-      "Regelmäßiges Topping empfohlen",
-    ],
-    vulnerabilities: [
-      "Lange Blütezeit erhöht Schimmelrisiko",
-      "Kann bei Kälte Probleme bekommen",
-      "Benötigt viel vertikalen Raum",
-    ],
-    genetics: "South Asian x Jamaican x Hawaiian",
-    breeder: "Soma Seeds",
-    rating: 4.5,
-    reviewCount: 1654,
-    affiliateLinks: [
-      {
-        shop: "Royal Queen Seeds",
-        url: "https://royalqueenseeds.com/amnesia-haze",
-        price: 35.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-      {
-        shop: "Dutch Passion",
-        url: "https://dutch-passion.com/amnesia-haze",
-        price: 38.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-    ],
-  },
-  {
-    id: "critical-auto",
-    name: "Critical Auto",
+    source:
+      "https://sensiseeds.com/en/feminized-seeds/sensi-seeds/northern-lights",
     type: "indica",
-    thcMin: 14,
-    thcMax: 18,
-    cbdMin: 0.5,
-    cbdMax: 1.0,
+    sativaPct: 10,
+    indicaPct: 90,
+    genetics: "Thai x Afghani (Landrace-Genetik)",
+    floweringText: "45–50 Tage",
+    yieldIndoor: "500 g/m²",
+    heightIndoor: "80–130 cm",
+    heightOutdoor: "150–200 cm",
     difficulty: "beginner",
-    floweringWeeks: 7,
-    yieldIndoor: "400-500",
-    yieldOutdoor: "100-200",
-    heightIndoor: "60-80cm",
-    heightOutdoor: "80-100cm",
-    effects: ["relaxed", "sleepy", "hungry"],
-    flavors: ["sweet", "earthy", "citrus"],
-    medicalUses: ["insomnia", "pain", "stress"],
-    description:
-      "Critical Auto ist perfekt für Anfänger. Kompakt, schnell und ertragreich. Automatische Blüte ohne Lichtzyklus-Änderung nötig.",
-    growTips: [
-      "Keine Lichtzyklus-Änderung nötig",
-      "Von Samen bis Ernte in 8-9 Wochen",
-      "Ideal für kleine Räume",
-      "Wenig Pflege erforderlich",
-    ],
-    vulnerabilities: [
-      "Geringerer Ertrag als photoperiodische Sorten",
-      "Keine Möglichkeit zur Stecklingsvermehrung",
-    ],
-    genetics: "Critical x Ruderalis",
-    breeder: "Royal Queen Seeds",
-    rating: 4.4,
-    reviewCount: 987,
-    affiliateLinks: [
-      {
-        shop: "Royal Queen Seeds",
-        url: "https://royalqueenseeds.com/critical-auto",
-        price: 22.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "autoflower",
-      },
-      {
-        shop: "Fast Buds",
-        url: "https://fastbuds.com/critical-auto",
-        price: 25.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "autoflower",
-      },
+    tips: [
+      "Laut Sensi Seeds einfach anzubauen und kompakt – lässt sich unauffällig kultivieren.",
+      "Outdoor: sonniges, mediterranes Klima.",
+      "Platz: Indoor 80–130 cm – Zelthöhe und Lampenabstand darauf planen.",
+      "Kurze Blütezeit – passt, wenn du schnell ernten willst.",
     ],
   },
   {
-    id: "girl-scout-cookies",
-    name: "Girl Scout Cookies",
+    id: "skunk-1-sensi",
+    name: "Skunk #1 (fem.)",
+    breeder: "Sensi Seeds",
+    source:
+      "https://sensiseeds.com/en/feminized-seeds/sensi-seeds/skunk-1-feminised",
     type: "hybrid",
-    thcMin: 25,
-    thcMax: 28,
-    cbdMin: 0.1,
-    cbdMax: 0.2,
-    difficulty: "advanced",
-    floweringWeeks: 9,
-    yieldIndoor: "350-450",
-    yieldOutdoor: "450-550",
-    heightIndoor: "80-100cm",
-    heightOutdoor: "150-180cm",
-    effects: ["euphoric", "relaxed", "creative", "hungry"],
-    flavors: ["sweet", "earthy", "spicy"],
-    medicalUses: ["pain", "depression", "stress", "appetite"],
-    description:
-      "Girl Scout Cookies (GSC) ist eine der begehrtesten Sorten weltweit. Extrem potent mit einzigartigem süßen Geschmack. Mehrfacher Cannabis Cup Gewinner.",
-    growTips: [
-      "Kompakte Struktur, gut für SOG",
-      "Hoher Nährstoffbedarf",
-      "Kältere Nachttemperaturen fördern lila Färbung",
-      "Längere Aushärtung für besten Geschmack",
+    sativaPct: 35,
+    indicaPct: 65,
+    difficulty: "beginner",
+    tips: [
+      "Sensi Seeds beschreibt die Sorte als einheitlich, zuverlässig und ertragreich.",
+      "Als einfach einzustufen (Herstellerangabe).",
     ],
-    vulnerabilities: [
-      "Anfällig für Mehltau",
-      "Moderate Erträge trotz hoher Qualität",
-      "Empfindlich gegenüber Überdüngung",
+  },
+  {
+    id: "jack-herer-sensi",
+    name: "Jack Herer (fem.)",
+    breeder: "Sensi Seeds",
+    source:
+      "https://sensiseeds.com/en/feminized-seeds/sensi-seeds/jack-herer-feminized",
+    type: "hybrid",
+    sativaPct: 50,
+    indicaPct: 50,
+    floweringText: "10–12 Wochen (indica-dominante Phänotypen ca. 8 Wochen)",
+    tips: [
+      "Lange Blütezeit – Geduld und genug Platz bis zur Ernte einplanen.",
+      "Outdoor: Ernte nur in warmem Klima mit viel Sonne (Herstellerangabe).",
+      "Hoher Wuchs laut Hersteller – genug Höhe einplanen.",
     ],
-    genetics: "OG Kush x Durban Poison",
-    breeder: "Cookie Family",
-    rating: 4.8,
-    reviewCount: 2876,
-    isPremium: true,
-    affiliateLinks: [
-      {
-        shop: "Barney's Farm",
-        url: "https://barneysfarm.com/gsc",
-        price: 48.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-      {
-        shop: "Fast Buds",
-        url: "https://fastbuds.com/gsc-auto",
-        price: 38.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "autoflower",
-      },
+  },
+  {
+    id: "hindu-kush-sensi",
+    name: "Hindu Kush (fem.)",
+    breeder: "Sensi Seeds",
+    source: "https://sensiseeds.com/en/feminized-seeds/sensi-seeds/hindu-kush",
+    type: "indica",
+    floweringText: "45–50 Tage",
+    difficulty: "beginner",
+    tips: [
+      "Laut Sensi Seeds für Einsteiger geeignet und robust.",
+      "Kompakter Wuchs, mittlere Erträge (Herstellerangabe).",
+      "Outdoor: sonniges, mediterranes Klima.",
+      "Kurze Blütezeit – passt, wenn du schnell ernten willst.",
+    ],
+  },
+  {
+    id: "white-widow-gh",
+    name: "White Widow (Green House)",
+    breeder: "Green House Seed Company",
+    source:
+      "https://shop.greenhouseseeds.nl/award-winning-seeds/high-times-cannabis-cup/white-widow/",
+    thcExact: 25.76,
+    floweringText: "8–9 Wochen",
+    yieldIndoor: "600 g/m²",
+    tips: ["Blütezeit laut Hersteller 8–9 Wochen."],
+  },
+  {
+    id: "amnesia-haze-rqs",
+    name: "Amnesia Haze",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/115-amnesia-haze.html",
+    type: "sativa",
+    sativaPct: 70,
+    indicaPct: 30,
+    genetics: "Original Amnesia Haze",
+    thcMax: 22,
+    floweringText: "65–70 Tage",
+    yieldIndoor: "600–650 g/m²",
+    yieldOutdoor: "650–700 g/Pflanze",
+    heightIndoor: "80–140 cm",
+    heightOutdoor: "175–210 cm",
+    harvestOutdoor: "Ende Oktober",
+    climate: "long",
+    flavours: ["Zitrus", "erdig", "kräuterig", "Pfeffer"],
+    tips: [
+      "Outdoor: Laut Hersteller braucht die Sorte lange Sommer – in kühleren Regionen besser Indoor oder im Gewächshaus.",
+      "Platz: Indoor wird sie laut Hersteller 80–140 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Lange Blütezeit – Geduld und genug Platz bis zur Ernte einplanen.",
+      "Erntezeit outdoor (Nordhalbkugel): Ende Oktober.",
+    ],
+  },
+  {
+    id: "biscotti-rqs",
+    name: "Biscotti",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/630-biscotti.html",
+    type: "indica",
+    sativaPct: 20,
+    indicaPct: 80,
+    genetics: "Gelato 25 x South Florida OG",
+    thcMax: 25,
+    floweringText: "55–65 Tage",
+    yieldIndoor: "450–500 g/m²",
+    yieldOutdoor: "550–600 g/Pflanze",
+    heightIndoor: "80–120 cm",
+    heightOutdoor: "140–180 cm",
+    harvestOutdoor: "Oktober",
+    climate: "short",
+    flavours: ["Keks", "Diesel", "fruchtig", "Pfeffer"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 80–120 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Lange Blütezeit – Geduld und genug Platz bis zur Ernte einplanen.",
+      "Erntezeit outdoor (Nordhalbkugel): Oktober.",
+    ],
+  },
+  {
+    id: "blue-cheese-rqs",
+    name: "Blue Cheese",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/219-blue-cheese.html",
+    type: "hybrid",
+    sativaPct: 40,
+    indicaPct: 60,
+    genetics: "Original Cheese x Oregon Blueberry Blend",
+    thcMax: 19,
+    floweringText: "55–60 Tage",
+    yieldIndoor: "500–550 g/m²",
+    yieldOutdoor: "500–550 g/Pflanze",
+    heightIndoor: "100–160 cm",
+    heightOutdoor: "140–200 cm",
+    harvestOutdoor: "Ende September",
+    climate: "short",
+    flavours: ["Bonbon", "Käse", "fruchtig"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 100–160 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Erntezeit outdoor (Nordhalbkugel): Ende September.",
+    ],
+  },
+  {
+    id: "blue-mystic-rqs",
+    name: "Blue Mystic",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/116-blue-mystic.html",
+    type: "indica",
+    sativaPct: 20,
+    indicaPct: 80,
+    genetics: "Oregon Blueberry x Northern Light",
+    thcMax: 18,
+    floweringText: "55–60 Tage",
+    yieldIndoor: "375–425 g/m²",
+    yieldOutdoor: "400–450 g/Pflanze",
+    heightIndoor: "60–100 cm",
+    heightOutdoor: "180–220 cm",
+    harvestOutdoor: "Oktober",
+    climate: "short",
+    flavours: ["Bonbon", "fruchtig"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 60–100 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Erntezeit outdoor (Nordhalbkugel): Oktober.",
+    ],
+  },
+  {
+    id: "cherry-pie-rqs",
+    name: "Cherry Pie",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/653-cherry-pie.html",
+    type: "hybrid",
+    sativaPct: 40,
+    indicaPct: 60,
+    genetics: "Granddaddy Purple x Durban Poison",
+    thcMax: 20,
+    floweringText: "55–60 Tage",
+    yieldIndoor: "400–450 g/m²",
+    yieldOutdoor: "450–500 g/Pflanze",
+    heightIndoor: "80–120 cm",
+    heightOutdoor: "140–180 cm",
+    harvestOutdoor: "Oktober",
+    climate: "short",
+    flavours: ["Blaubeere", "Keks", "fruchtig", "Vanille"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 80–120 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Erntezeit outdoor (Nordhalbkugel): Oktober.",
+    ],
+  },
+  {
+    id: "critical-rqs",
+    name: "Critical",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/133-critical.html",
+    type: "hybrid",
+    sativaPct: 40,
+    indicaPct: 60,
+    genetics: "Afghani x Skunk",
+    thcMax: 18,
+    floweringText: "50–60 Tage",
+    yieldIndoor: "550–600 g/m²",
+    yieldOutdoor: "600–650 g/Pflanze",
+    heightIndoor: "80–140 cm",
+    heightOutdoor: "180–220 cm",
+    harvestOutdoor: "Ende September",
+    climate: "short",
+    flavours: ["Bonbon", "erdig", "fruchtig", "Kiefer", "Skunk"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 80–140 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Erntezeit outdoor (Nordhalbkugel): Ende September.",
+    ],
+  },
+  {
+    id: "critical-kush-rqs",
+    name: "Critical Kush",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/309-critical-kush.html",
+    type: "indica",
+    sativaPct: 20,
+    indicaPct: 80,
+    genetics: "Critical x OG Kush",
+    thcMax: 20,
+    floweringText: "55–65 Tage",
+    yieldIndoor: "500–550 g/m²",
+    yieldOutdoor: "500–550 g/Pflanze",
+    heightIndoor: "60–100 cm",
+    heightOutdoor: "100–140 cm",
+    harvestOutdoor: "Ende September",
+    climate: "short",
+    flavours: ["erdig", "fruchtig", "Kiefer", "intensiv"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 60–100 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Lange Blütezeit – Geduld und genug Platz bis zur Ernte einplanen.",
+      "Erntezeit outdoor (Nordhalbkugel): Ende September.",
+    ],
+  },
+  {
+    id: "do-si-dos-rqs",
+    name: "Do-Si-Dos",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/716-do-si-dos.html",
+    type: "indica",
+    sativaPct: 30,
+    indicaPct: 70,
+    genetics: "OGKB x Face Off OG",
+    thcMax: 25,
+    floweringText: "55–65 Tage",
+    yieldIndoor: "400–450 g/m²",
+    yieldOutdoor: "550–600 g/Pflanze",
+    heightIndoor: "80–140 cm",
+    heightOutdoor: "150–200 cm",
+    harvestOutdoor: "Anfang Oktober",
+    climate: "short",
+    flavours: ["erdig", "kräuterig", "Kiefer", "intensiv", "Skunk"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 80–140 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Lange Blütezeit – Geduld und genug Platz bis zur Ernte einplanen.",
+      "Erntezeit outdoor (Nordhalbkugel): Anfang Oktober.",
+    ],
+  },
+  {
+    id: "fat-banana-rqs",
+    name: "Fat Banana",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/414-fat-banana.html",
+    type: "indica",
+    sativaPct: 30,
+    indicaPct: 70,
+    genetics: "Banana x OG Kush",
+    thcMax: 25,
+    floweringText: "55–65 Tage",
+    yieldIndoor: "350–400 g/m²",
+    yieldOutdoor: "450–500 g/Pflanze",
+    heightIndoor: "80–140 cm",
+    heightOutdoor: "170–200 cm",
+    harvestOutdoor: "Ende September",
+    climate: "short",
+    flavours: ["Banane", "Zitrus", "erdig", "Pfeffer", "Skunk"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 80–140 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Lange Blütezeit – Geduld und genug Platz bis zur Ernte einplanen.",
+      "Erntezeit outdoor (Nordhalbkugel): Ende September.",
+    ],
+  },
+  {
+    id: "grape-ape-rqs",
+    name: "Grape Ape",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/659-grape-ape.html",
+    type: "indica",
+    sativaPct: 10,
+    indicaPct: 90,
+    genetics: "Afghani x Mendocino Purps x Skunk 1",
+    thcMax: 20,
+    floweringText: "50–60 Tage",
+    yieldIndoor: "450–500 g/m²",
+    yieldOutdoor: "500–600 g/Pflanze",
+    heightIndoor: "60–100 cm",
+    heightOutdoor: "160–190 cm",
+    harvestOutdoor: "Ende September",
+    climate: "short",
+    flavours: ["Blaubeere", "Bonbon", "erdig", "Skunk"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 60–100 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Erntezeit outdoor (Nordhalbkugel): Ende September.",
+    ],
+  },
+  {
+    id: "haze-berry-rqs",
+    name: "Haze Berry",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/184-haze-berry.html",
+    type: "hybrid",
+    sativaPct: 60,
+    indicaPct: 40,
+    genetics: "Blueberry x Shining Silver Haze",
+    thcMax: 20,
+    floweringText: "60–70 Tage",
+    yieldIndoor: "525–575 g/m²",
+    yieldOutdoor: "600–650 g/Pflanze",
+    heightIndoor: "60–100 cm",
+    heightOutdoor: "160–180 cm",
+    harvestOutdoor: "Ende Oktober",
+    climate: "long",
+    flavours: ["Blaubeere", "erdig", "fruchtig", "Pfeffer"],
+    tips: [
+      "Outdoor: Laut Hersteller braucht die Sorte lange Sommer – in kühleren Regionen besser Indoor oder im Gewächshaus.",
+      "Platz: Indoor wird sie laut Hersteller 60–100 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Lange Blütezeit – Geduld und genug Platz bis zur Ernte einplanen.",
+      "Erntezeit outdoor (Nordhalbkugel): Ende Oktober.",
+    ],
+  },
+  {
+    id: "lemon-skunk-rqs",
+    name: "Lemon Skunk",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/688-lemon-skunk.html",
+    type: "hybrid",
+    sativaPct: 50,
+    indicaPct: 50,
+    genetics: "Skunk 1 x Citral",
+    thcMax: 19,
+    floweringText: "55–60 Tage",
+    yieldIndoor: "600–650 g/m²",
+    yieldOutdoor: "625–675 g/Pflanze",
+    heightIndoor: "80–120 cm",
+    heightOutdoor: "120–150 cm",
+    harvestOutdoor: "Ende September",
+    climate: "short",
+    flavours: ["Zitrus", "fruchtig", "Limette", "Skunk"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 80–120 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Erntezeit outdoor (Nordhalbkugel): Ende September.",
+    ],
+  },
+  {
+    id: "mimosa-rqs",
+    name: "Mimosa",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/569-mimosa.html",
+    type: "sativa",
+    sativaPct: 70,
+    indicaPct: 30,
+    genetics: "Clementine x Purple Punch",
+    thcMax: 22,
+    floweringText: "60–65 Tage",
+    yieldIndoor: "350–400 g/m²",
+    yieldOutdoor: "500–550 g/Pflanze",
+    heightIndoor: "60–80 cm",
+    heightOutdoor: "80–100 cm",
+    harvestOutdoor: "Mitte Oktober",
+    climate: "long",
+    flavours: ["erdig", "sauer"],
+    tips: [
+      "Outdoor: Laut Hersteller braucht die Sorte lange Sommer – in kühleren Regionen besser Indoor oder im Gewächshaus.",
+      "Platz: Indoor wird sie laut Hersteller 60–80 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Lange Blütezeit – Geduld und genug Platz bis zur Ernte einplanen.",
+      "Erntezeit outdoor (Nordhalbkugel): Mitte Oktober.",
+    ],
+  },
+  {
+    id: "northern-light-rqs",
+    name: "Northern Light",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/119-northern-light.html",
+    type: "indica",
+    sativaPct: 0,
+    indicaPct: 100,
+    genetics: "Northern Light S1",
+    thcMax: 18,
+    floweringText: "55–60 Tage",
+    yieldIndoor: "500–550 g/m²",
+    yieldOutdoor: "575–625 g/Pflanze",
+    heightIndoor: "100–160 cm",
+    heightOutdoor: "180–220 cm",
+    harvestOutdoor: "Ende September",
+    climate: "short",
+    flavours: ["Zitrus", "erdig", "fruchtig", "Pfeffer"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 100–160 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Erntezeit outdoor (Nordhalbkugel): Ende September.",
+    ],
+  },
+  {
+    id: "og-kush-rqs",
+    name: "OG Kush",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/149-og-kush.html",
+    type: "hybrid",
+    sativaPct: 40,
+    indicaPct: 60,
+    genetics: "Chemdawg x Lemon Thai x Pakistani Kush",
+    thcMax: 19,
+    floweringText: "50–60 Tage",
+    yieldIndoor: "425–475 g/m²",
+    yieldOutdoor: "500–550 g/Pflanze",
+    heightIndoor: "90–160 cm",
+    heightOutdoor: "180–220 cm",
+    harvestOutdoor: "Oktober",
+    climate: "short",
+    flavours: ["Zitrus", "fruchtig", "Kiefer"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 90–160 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Erntezeit outdoor (Nordhalbkugel): Oktober.",
+    ],
+  },
+  {
+    id: "power-flower-rqs",
+    name: "Power Flower",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/120-power-flower.html",
+    type: "sativa",
+    sativaPct: 88,
+    indicaPct: 12,
+    genetics: "South African Sativas",
+    thcMax: 19,
+    floweringText: "60–65 Tage",
+    yieldIndoor: "500–550 g/m²",
+    yieldOutdoor: "500–550 g/Pflanze",
+    heightIndoor: "80–120 cm",
+    heightOutdoor: "160–200 cm",
+    harvestOutdoor: "Oktober",
+    climate: "long",
+    flavours: ["Zitrus", "erdig", "fruchtig", "Pfeffer"],
+    tips: [
+      "Outdoor: Laut Hersteller braucht die Sorte lange Sommer – in kühleren Regionen besser Indoor oder im Gewächshaus.",
+      "Platz: Indoor wird sie laut Hersteller 80–120 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Lange Blütezeit – Geduld und genug Platz bis zur Ernte einplanen.",
+      "Erntezeit outdoor (Nordhalbkugel): Oktober.",
+    ],
+  },
+  {
+    id: "purple-punch-rqs",
+    name: "Purple Punch",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/718-purple-punch.html",
+    type: "indica",
+    sativaPct: 15,
+    indicaPct: 85,
+    genetics: "Larry OG x Granddaddy Purple",
+    thcMax: 21,
+    floweringText: "55–60 Tage",
+    yieldIndoor: "550–600 g/m²",
+    yieldOutdoor: "550–600 g/Pflanze",
+    heightIndoor: "80–120 cm",
+    heightOutdoor: "120–150 cm",
+    harvestOutdoor: "Ende September",
+    climate: "short",
+    flavours: ["Blaubeere", "Bonbon", "erdig", "Vanille"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 80–120 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Erntezeit outdoor (Nordhalbkugel): Ende September.",
+    ],
+  },
+  {
+    id: "purple-queen-rqs",
+    name: "Purple Queen",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/415-purple-queen.html",
+    type: "indica",
+    sativaPct: 25,
+    indicaPct: 75,
+    genetics: "Hindu Kush x Purple Afghani",
+    thcMax: 22,
+    floweringText: "55–60 Tage",
+    yieldIndoor: "450–500 g/m²",
+    yieldOutdoor: "650–700 g/Pflanze",
+    heightIndoor: "80–120 cm",
+    heightOutdoor: "175–210 cm",
+    harvestOutdoor: "Oktober",
+    climate: "short",
+    flavours: ["Zitrus", "erdig"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 80–120 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Erntezeit outdoor (Nordhalbkugel): Oktober.",
+    ],
+  },
+  {
+    id: "royal-cheese-fast-flowering-rqs",
+    name: "Royal Cheese (Fast Flowering)",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/140-royal-cheese-fast-flowering.html",
+    type: "hybrid",
+    sativaPct: 40,
+    indicaPct: 60,
+    genetics: "Old School Skunk x Afghani",
+    thcMax: 17,
+    floweringText: "50–55 Tage",
+    yieldIndoor: "450–500 g/m²",
+    yieldOutdoor: "550–600 g/Pflanze",
+    heightIndoor: "60–100 cm",
+    heightOutdoor: "130–200 cm",
+    harvestOutdoor: "Anfang Oktober",
+    climate: "short",
+    flavours: ["Bonbon", "Käse", "erdig", "fruchtig", "Pfeffer"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 60–100 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Kurze Blütezeit – passt, wenn du schnell ernten willst.",
+      "Erntezeit outdoor (Nordhalbkugel): Anfang Oktober.",
+    ],
+  },
+  {
+    id: "royal-cookies-rqs",
+    name: "Royal Cookies",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/326-royal-cookies.html",
+    type: "indica",
+    sativaPct: 20,
+    indicaPct: 80,
+    genetics: "Forum Cookies S1",
+    thcMax: 23,
+    floweringText: "55–60 Tage",
+    yieldIndoor: "450–525 g/m²",
+    yieldOutdoor: "450–500 g/Pflanze",
+    heightIndoor: "80–110 cm",
+    heightOutdoor: "140–180 cm",
+    harvestOutdoor: "Mitte Oktober",
+    climate: "short",
+    flavours: ["erdig", "fruchtig", "Kiefer"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 80–110 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Erntezeit outdoor (Nordhalbkugel): Mitte Oktober.",
+    ],
+  },
+  {
+    id: "royal-gorilla-rqs",
+    name: "Royal Gorilla",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/370-royal-gorilla.html",
+    type: "hybrid",
+    sativaPct: 50,
+    indicaPct: 50,
+    genetics: "Sour Dubb x Chem Sis x Chocolate Diesel",
+    thcMax: 27,
+    floweringText: "55–65 Tage",
+    yieldIndoor: "500–550 g/m²",
+    yieldOutdoor: "550–600 g/Pflanze",
+    heightIndoor: "90–160 cm",
+    heightOutdoor: "130–170 cm",
+    harvestOutdoor: "Mitte Oktober",
+    climate: "short",
+    flavours: ["Schokolade", "Diesel", "fruchtig", "Kiefer", "intensiv"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 90–160 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Lange Blütezeit – Geduld und genug Platz bis zur Ernte einplanen.",
+      "Erntezeit outdoor (Nordhalbkugel): Mitte Oktober.",
+    ],
+  },
+  {
+    id: "shining-silver-haze-rqs",
+    name: "Shining Silver Haze",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/121-shining-silver-haze.html",
+    type: "sativa",
+    sativaPct: 75,
+    indicaPct: 25,
+    genetics: "Haze x (Skunk x Northern Light)",
+    thcMax: 21,
+    floweringText: "60–70 Tage",
+    yieldIndoor: "600–650 g/m²",
+    yieldOutdoor: "600–650 g/Pflanze",
+    heightIndoor: "80–120 cm",
+    heightOutdoor: "180–220 cm",
+    harvestOutdoor: "Ende Oktober",
+    climate: "long",
+    flavours: ["Zitrus", "erdig", "fruchtig", "Kiefer"],
+    tips: [
+      "Outdoor: Laut Hersteller braucht die Sorte lange Sommer – in kühleren Regionen besser Indoor oder im Gewächshaus.",
+      "Platz: Indoor wird sie laut Hersteller 80–120 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Lange Blütezeit – Geduld und genug Platz bis zur Ernte einplanen.",
+      "Erntezeit outdoor (Nordhalbkugel): Ende Oktober.",
+    ],
+  },
+  {
+    id: "skunk-xl-rqs",
+    name: "Skunk XL",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/132-skunk-xl.html",
+    type: "hybrid",
+    sativaPct: 50,
+    indicaPct: 50,
+    genetics: "Skunk 1 x Afghan",
+    thcMax: 17,
+    floweringText: "55–60 Tage",
+    yieldIndoor: "600–650 g/m²",
+    yieldOutdoor: "625–675 g/Pflanze",
+    heightIndoor: "60–100 cm",
+    heightOutdoor: "160–200 cm",
+    harvestOutdoor: "Oktober",
+    climate: "short",
+    flavours: ["Bonbon", "erdig", "fruchtig", "Kiefer", "Skunk"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 60–100 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Erntezeit outdoor (Nordhalbkugel): Oktober.",
+    ],
+  },
+  {
+    id: "sour-diesel-rqs",
+    name: "Sour Diesel",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/185-sour-diesel.html",
+    type: "sativa",
+    sativaPct: 70,
+    indicaPct: 30,
+    genetics: "Original Diesel x (Northern light x Shiva x Hawaiian)",
+    thcMax: 19,
+    floweringText: "65–70 Tage",
+    yieldIndoor: "475–525 g/m²",
+    yieldOutdoor: "550–600 g/Pflanze",
+    heightIndoor: "90–160 cm",
+    heightOutdoor: "150–200 cm",
+    harvestOutdoor: "Ende Oktober",
+    climate: "long",
+    flavours: ["Zitrus", "fruchtig", "kräuterig", "Pfeffer", "sauer"],
+    tips: [
+      "Outdoor: Laut Hersteller braucht die Sorte lange Sommer – in kühleren Regionen besser Indoor oder im Gewächshaus.",
+      "Platz: Indoor wird sie laut Hersteller 90–160 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Lange Blütezeit – Geduld und genug Platz bis zur Ernte einplanen.",
+      "Erntezeit outdoor (Nordhalbkugel): Ende Oktober.",
+    ],
+  },
+  {
+    id: "special-kush-1-rqs",
+    name: "Special Kush #1",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/138-special-kush-1.html",
+    type: "indica",
+    sativaPct: 20,
+    indicaPct: 80,
+    genetics: "Afghan x Kush",
+    thcMax: 17,
+    floweringText: "50–55 Tage",
+    yieldIndoor: "425–475 g/m²",
+    yieldOutdoor: "500–550 g/Pflanze",
+    heightIndoor: "60–100 cm",
+    heightOutdoor: "200–270 cm",
+    harvestOutdoor: "Ende September",
+    climate: "short",
+    flavours: ["erdig", "fruchtig", "intensiv"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 60–100 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Kurze Blütezeit – passt, wenn du schnell ernten willst.",
+      "Erntezeit outdoor (Nordhalbkugel): Ende September.",
+    ],
+  },
+  {
+    id: "special-queen-1-rqs",
+    name: "Special Queen #1",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/139-special-queen-1.html",
+    type: "hybrid",
+    sativaPct: 50,
+    indicaPct: 50,
+    genetics: "Power Bud x Skunk",
+    thcMax: 18,
+    floweringText: "55–60 Tage",
+    yieldIndoor: "500–550 g/m²",
+    yieldOutdoor: "500–550 g/Pflanze",
+    heightIndoor: "80–140 cm",
+    heightOutdoor: "200–270 cm",
+    harvestOutdoor: "Ende September",
+    climate: "short",
+    flavours: ["erdig", "fruchtig", "Skunk"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 80–140 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Erntezeit outdoor (Nordhalbkugel): Ende September.",
+    ],
+  },
+  {
+    id: "tangie-rqs",
+    name: "Tangie",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/677-tangie.html",
+    type: "sativa",
+    sativaPct: 70,
+    indicaPct: 30,
+    genetics: "California Orange x Skunk",
+    thcMax: 20,
+    floweringText: "60–65 Tage",
+    yieldIndoor: "450–550 g/m²",
+    yieldOutdoor: "650–700 g/Pflanze",
+    heightIndoor: "80–120 cm",
+    heightOutdoor: "150–190 cm",
+    harvestOutdoor: "Oktober",
+    climate: "long",
+    flavours: ["Bonbon", "Zitrus", "fruchtig", "Ananas"],
+    tips: [
+      "Outdoor: Laut Hersteller braucht die Sorte lange Sommer – in kühleren Regionen besser Indoor oder im Gewächshaus.",
+      "Platz: Indoor wird sie laut Hersteller 80–120 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Lange Blütezeit – Geduld und genug Platz bis zur Ernte einplanen.",
+      "Erntezeit outdoor (Nordhalbkugel): Oktober.",
+    ],
+  },
+  {
+    id: "wedding-cake-rqs",
+    name: "Wedding Cake",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/628-wedding-cake.html",
+    type: "indica",
+    sativaPct: 20,
+    indicaPct: 80,
+    genetics: "Girl Scout Cookies x Cherry Pie",
+    thcMax: 20,
+    floweringText: "55–65 Tage",
+    yieldIndoor: "450–500 g/m²",
+    yieldOutdoor: "550–600 g/Pflanze",
+    heightIndoor: "70–120 cm",
+    heightOutdoor: "120–150 cm",
+    harvestOutdoor: "Anfang Oktober",
+    climate: "short",
+    flavours: ["Keks", "erdig", "fruchtig"],
+    tips: [
+      "Outdoor: Laut Hersteller auch für Regionen mit kürzeren Sommern geeignet.",
+      "Platz: Indoor wird sie laut Hersteller 70–120 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Lange Blütezeit – Geduld und genug Platz bis zur Ernte einplanen.",
+      "Erntezeit outdoor (Nordhalbkugel): Anfang Oktober.",
+    ],
+  },
+  {
+    id: "wedding-gelato-rqs",
+    name: "Wedding Gelato",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/443-wedding-gelato.html",
+    type: "hybrid",
+    sativaPct: 40,
+    indicaPct: 60,
+    genetics: "Wedding Cake x Gelato x Gelato 33",
+    thcMax: 25,
+    floweringText: "55–65 Tage",
+    yieldIndoor: "450–500 g/m²",
+    yieldOutdoor: "350–400 g/Pflanze",
+    heightIndoor: "60–100 cm",
+    heightOutdoor: "130–200 cm",
+    harvestOutdoor: "Anfang Oktober",
+    climate: "long",
+    flavours: ["Zitrus", "erdig", "fruchtig", "kräuterig"],
+    tips: [
+      "Outdoor: Laut Hersteller braucht die Sorte lange Sommer – in kühleren Regionen besser Indoor oder im Gewächshaus.",
+      "Platz: Indoor wird sie laut Hersteller 60–100 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Lange Blütezeit – Geduld und genug Platz bis zur Ernte einplanen.",
+      "Erntezeit outdoor (Nordhalbkugel): Anfang Oktober.",
+    ],
+  },
+  {
+    id: "white-widow-rqs",
+    name: "White Widow (Royal Queen Seeds)",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/feminized-cannabis-seeds/122-white-widow.html",
+    type: "hybrid",
+    sativaPct: 50,
+    indicaPct: 50,
+    genetics: "White Widow S1",
+    thcMax: 19,
+    floweringText: "55–65 Tage",
+    yieldIndoor: "450–500 g/m²",
+    yieldOutdoor: "550–600 g/Pflanze",
+    heightIndoor: "60–100 cm",
+    heightOutdoor: "150–190 cm",
+    harvestOutdoor: "Anfang Oktober",
+    climate: "long",
+    flavours: ["erdig", "Pfeffer", "Kiefer"],
+    tips: [
+      "Outdoor: Laut Hersteller braucht die Sorte lange Sommer – in kühleren Regionen besser Indoor oder im Gewächshaus.",
+      "Platz: Indoor wird sie laut Hersteller 60–100 cm hoch – Zelthöhe und Lampenabstand darauf planen.",
+      "Lange Blütezeit – Geduld und genug Platz bis zur Ernte einplanen.",
+      "Erntezeit outdoor (Nordhalbkugel): Anfang Oktober.",
     ],
   },
 ];
 
-// Helper functions
+/** Search link instead of invented shop URLs/prices: we have no verified partner deals. */
+export function strainSearchUrl(
+  strain: Pick<Strain, "name" | "breeder">,
+): string {
+  const q = `${strain.name} ${strain.breeder} Samen`;
+  return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
+}
+
 export function getDifficultyLabel(difficulty: Difficulty): string {
   const labels: Record<Difficulty, string> = {
     beginner: "Anfänger",
@@ -562,49 +932,23 @@ export function getTypeColor(type: StrainType): string {
   return colors[type];
 }
 
-export function getEffectLabel(effect: Effect): string {
-  const labels: Record<Effect, string> = {
-    relaxed: "Entspannt",
-    euphoric: "Euphorisch",
-    creative: "Kreativ",
-    energetic: "Energetisch",
-    sleepy: "Schläfrig",
-    hungry: "Hungrig",
-    focused: "Fokussiert",
-    uplifted: "Gehoben",
-  };
-  return labels[effect];
+/** "Sativa 70% / Indica 30%" when the breeder states a ratio. */
+export function getRatioLabel(strain: Strain): string | null {
+  if (strain.sativaPct == null && strain.indicaPct == null) return null;
+  const parts: string[] = [];
+  if (strain.sativaPct != null) parts.push(`Sativa ${strain.sativaPct}%`);
+  if (strain.indicaPct != null) parts.push(`Indica ${strain.indicaPct}%`);
+  return parts.join(" / ");
 }
 
-export function getFlavorLabel(flavor: Flavor): string {
-  const labels: Record<Flavor, string> = {
-    sweet: "Süß",
-    earthy: "Erdig",
-    citrus: "Zitrus",
-    pine: "Kiefer",
-    berry: "Beere",
-    diesel: "Diesel",
-    skunk: "Skunk",
-    tropical: "Tropisch",
-    spicy: "Würzig",
-    cheese: "Käse",
-  };
-  return labels[flavor];
+export function getThcLabel(strain: Strain): string | null {
+  if (strain.thcExact != null)
+    return `${String(strain.thcExact).replace(".", ",")} %`;
+  if (strain.thcMax != null) return `bis ${strain.thcMax} %`;
+  return null;
 }
 
-export function getMedicalLabel(use: MedicalUse): string {
-  const labels: Record<MedicalUse, string> = {
-    pain: "Schmerzen",
-    anxiety: "Angst",
-    depression: "Depression",
-    insomnia: "Schlaflosigkeit",
-    appetite: "Appetit",
-    nausea: "Übelkeit",
-    inflammation: "Entzündung",
-    stress: "Stress",
-  };
-  return labels[use];
+/** Hersteller-Seite als Kurzname für "Quelle: …". */
+export function getSourceLabel(strain: Strain): string {
+  return strain.breeder;
 }
-
-// Reviews are now fetched from the backend via tRPC.
-// This type is kept for reference; actual review data comes from the API.

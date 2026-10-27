@@ -159,3 +159,142 @@ export function mergeRemedies(modelRemedies: unknown, text: string): Remedy[] {
   }
   return merged;
 }
+
+/**
+ * Equipment and care products for the Grow Coach, keyed on the topics the coach talks
+ * about (the problem catalog above only covers diagnoses). Same rule as above: only the
+ * search term is kept, links are built by the client.
+ */
+const COACH_CATALOG: CatalogEntry[] = [
+  {
+    keywords: /trichom|lupe|erntezeitpunkt|erntereif|bernstein/i,
+    name: "Lupe / Mikroskop-Aufsatz (Trichome prüfen)",
+    purpose:
+      "Damit erkennst du, ob die Trichome klar, milchig oder schon bernsteinfarben sind.",
+    searchTerm: "Taschenmikroskop 60x LED Lupe Pflanzen",
+  },
+  {
+    keywords: /topping|toppen|beschneid|trimmen|entlaub|lollipop|schere/i,
+    name: "Präzisions-Pflanzenschere",
+    purpose: "Saubere Schnitte beim Toppen, Entlauben und Ernten.",
+    searchTerm: "Präzisionsschere Pflanzen Bonsai Schere",
+  },
+  {
+    keywords:
+      /\blst\b|low.?stress|runterbinden|herunterbinden|pflanzenclips|biegen/i,
+    name: "Pflanzenclips / Bindedraht (Training)",
+    purpose: "Zum sanften Herunterbinden und Formen der Pflanze (LST).",
+    searchTerm: "Pflanzenclips Bindedraht Pflanzen Training",
+  },
+  {
+    keywords: /growzelt|growbox|anbauzelt|\bzelt\b/i,
+    name: "Growzelt",
+    purpose: "Lichtdichter, geschlossener Anbauraum mit konstantem Klima.",
+    searchTerm: "Growzelt 80x80 Growbox",
+  },
+  {
+    keywords:
+      /pflanzenlampe|led.?lampe|beleuchtung|lampenabstand|vollspektrum|vergeil/i,
+    name: "Dimmbare LED-Pflanzenlampe",
+    purpose: "Lässt sich im Abstand und in der Leistung an die Phase anpassen.",
+    searchTerm: "LED Pflanzenlampe dimmbar Vollspektrum",
+  },
+  {
+    keywords: /keimen|keimung|anzucht|sämling|saemling|keimling/i,
+    name: "Anzuchterde",
+    purpose:
+      "Leicht vorgedüngte, feine Erde für Keimung und die ersten Wochen.",
+    searchTerm: "Anzuchterde torffrei",
+  },
+  {
+    keywords: /keimen|keimung|anzucht|mini.?gewächshaus|gewaechshaus/i,
+    name: "Mini-Gewächshaus / Anzuchtbox",
+    purpose: "Hält Feuchtigkeit und Temperatur bei der Keimung konstant.",
+    searchTerm: "Mini Gewächshaus Anzuchtbox mit Deckel",
+  },
+  {
+    keywords: /samenschale|pinzette/i,
+    name: "Präzisionspinzette",
+    purpose: "Zum vorsichtigen Entfernen einer hängenden Samenschale.",
+    searchTerm: "Präzisionspinzette Edelstahl",
+  },
+  {
+    keywords:
+      /umtopf|umgetopft|topfe\w* .{0,15}\bum\b|topfgröße|topfgroesse|stofftopf|fabric ?pot/i,
+    name: "Stofftöpfe (Fabric Pots)",
+    purpose:
+      "Luftdurchlässige Töpfe für gesündere Wurzeln und einfaches Umtopfen.",
+    searchTerm: "Stofftopf Pflanzen 11 Liter",
+  },
+  {
+    keywords: /trocknen|trocknung|trockenphase/i,
+    name: "Trocknungsnetz zum Aufhängen",
+    purpose: "Zum gleichmäßigen, schonenden Trocknen der Blüten.",
+    searchTerm: "Trocknungsnetz hängend faltbar Kräuter",
+  },
+  {
+    keywords: /curing|fermentier|lagern|einmachglas|weck/i,
+    name: "Einmachgläser (Curing)",
+    purpose: "Luftdichtes Lagern und Curen nach dem Trocknen.",
+    searchTerm: "Einmachgläser Weck 1 Liter",
+  },
+  {
+    keywords: /geruch|abluft|aktivkohle|geruchsfilter/i,
+    name: "Aktivkohlefilter mit Abluft",
+    purpose: "Bindet Gerüche und sorgt für Luftaustausch im Zelt.",
+    searchTerm: "Aktivkohlefilter Abluft Growzelt 100mm",
+  },
+  {
+    keywords: /luftfeuchte|luftfeuchtigkeit|temperatur|raumklima/i,
+    name: "Thermo-Hygrometer",
+    purpose:
+      "Zeigt Temperatur und Luftfeuchte, damit das Klima zur Phase passt.",
+    searchTerm: "Thermo-Hygrometer digital Min Max",
+  },
+  {
+    keywords: /gieß|giess|staunässe|staunaesse|übergossen|uebergossen/i,
+    name: "Bodenfeuchtigkeitsmesser",
+    purpose: "Hilft, nur bei trockener Erde zu gießen.",
+    searchTerm: "Bodenfeuchtigkeitsmesser Pflanzen",
+  },
+  {
+    keywords: /dünge|duenge|dünger|duenger|nährstoff|naehrstoff/i,
+    name: "Pflanzendünger (Wachstum/Blüte)",
+    purpose:
+      "Bio- oder Mineraldünger passend zur Phase, nach Packungsangabe dosiert.",
+    searchTerm: "Pflanzendünger Wachstum Blüte flüssig",
+  },
+];
+
+/** Catalog lookup for coach topics. */
+export function suggestCoachProducts(text: string): Remedy[] {
+  const hits: Remedy[] = [];
+  for (const { keywords, name, purpose, searchTerm } of COACH_CATALOG) {
+    if (keywords.test(text) && !hits.some((h) => h.name === name)) {
+      hits.push({ name, purpose, searchTerm });
+    }
+  }
+  return hits;
+}
+
+/**
+ * Coach products: model proposals first, then the coach catalog, then the problem
+ * catalog (pH meter, Cal-Mag, ...), capped and de-duplicated by name.
+ */
+export function mergeCoachProducts(
+  modelProducts: unknown,
+  text: string,
+): Remedy[] {
+  const merged: Remedy[] = [];
+  for (const r of [
+    ...sanitizeRemedies(modelProducts),
+    ...suggestCoachProducts(text),
+    ...suggestRemedies(text),
+  ]) {
+    if (merged.some((m) => m.name.toLowerCase() === r.name.toLowerCase()))
+      continue;
+    merged.push(r);
+    if (merged.length >= MAX_REMEDIES) break;
+  }
+  return merged;
+}

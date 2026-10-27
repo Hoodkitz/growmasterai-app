@@ -14,11 +14,22 @@ import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
-import { STRAINS_DATABASE } from "@/lib/strains-data";
+import {
+  STRAINS_DATABASE,
+  strainSearchUrl,
+  getTypeColor,
+  getTypeLabel,
+  getThcLabel,
+} from "@/lib/strains-data";
 
 type TabType = "shop" | "auctions" | "raffles" | "deals" | "strains";
 type CategoryType =
-  "all" | "seeds" | "equipment" | "nutrients" | "accessories" | "other";
+  | "all"
+  | "seeds"
+  | "equipment"
+  | "nutrients"
+  | "accessories"
+  | "other";
 
 const CATEGORIES = [
   { id: "all", label: "Alle", icon: "square.grid.2x2.fill" },
@@ -37,6 +48,7 @@ export default function MarketplaceScreen() {
   const [activeTab, setActiveTab] = useState<TabType>("shop");
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showAllStrains, setShowAllStrains] = useState(false);
 
   const productsQuery = trpc.marketplace.listProducts.useQuery({
     category: selectedCategory === "all" ? undefined : selectedCategory,
@@ -104,6 +116,7 @@ export default function MarketplaceScreen() {
       {/* Tabs */}
       <ScrollView
         horizontal
+        style={{ flexGrow: 0 }}
         showsHorizontalScrollIndicator={false}
         className="px-4 py-3 border-b border-border"
       >
@@ -154,6 +167,7 @@ export default function MarketplaceScreen() {
             {/* Categories */}
             <ScrollView
               horizontal
+              style={{ flexGrow: 0 }}
               showsHorizontalScrollIndicator={false}
               className="mb-4"
             >
@@ -464,10 +478,13 @@ export default function MarketplaceScreen() {
               🌿 Sorten-Datenbank
             </Text>
             <Text className="text-sm text-muted">
-              Die besten Sorten mit Bewertungen und Kauflinks
+              Sorten mit Angaben direkt vom Züchter
             </Text>
 
-            {STRAINS_DATABASE.slice(0, 6).map((strain) => (
+            {(showAllStrains
+              ? STRAINS_DATABASE
+              : STRAINS_DATABASE.slice(0, 6)
+            ).map((strain) => (
               <TouchableOpacity
                 key={strain.id}
                 className="bg-surface rounded-xl p-4 border border-border"
@@ -481,27 +498,21 @@ export default function MarketplaceScreen() {
                       <Text className="text-base font-semibold text-foreground">
                         {strain.name}
                       </Text>
-                      <View
-                        className={`px-2 py-0.5 rounded ${
-                          strain.type === "indica"
-                            ? "bg-purple-500/20"
-                            : strain.type === "sativa"
-                              ? "bg-orange-500/20"
-                              : "bg-green-500/20"
-                        }`}
-                      >
-                        <Text
-                          className={`text-xs capitalize ${
-                            strain.type === "indica"
-                              ? "text-purple-400"
-                              : strain.type === "sativa"
-                                ? "text-orange-400"
-                                : "text-green-400"
-                          }`}
+                      {strain.type ? (
+                        <View
+                          className="px-2 py-0.5 rounded"
+                          style={{
+                            backgroundColor: getTypeColor(strain.type) + "20",
+                          }}
                         >
-                          {strain.type}
-                        </Text>
-                      </View>
+                          <Text
+                            className="text-xs"
+                            style={{ color: getTypeColor(strain.type) }}
+                          >
+                            {getTypeLabel(strain.type)}
+                          </Text>
+                        </View>
+                      ) : null}
                     </View>
                     <Text className="text-xs text-muted">{strain.breeder}</Text>
 
@@ -509,50 +520,44 @@ export default function MarketplaceScreen() {
                       <View className="flex-row items-center gap-1">
                         <Text className="text-xs text-muted">THC:</Text>
                         <Text className="text-xs font-medium text-foreground">
-                          {strain.thcMin}-{strain.thcMax}%
+                          {getThcLabel(strain) ?? "k. A."}
                         </Text>
                       </View>
                       <View className="flex-row items-center gap-1">
-                        <Text className="text-xs text-muted">CBD:</Text>
+                        <Text className="text-xs text-muted">Blüte:</Text>
                         <Text className="text-xs font-medium text-foreground">
-                          {strain.cbdMin}-{strain.cbdMax}%
-                        </Text>
-                      </View>
-                      <View className="flex-row items-center gap-1">
-                        <IconSymbol
-                          name="star.fill"
-                          size={12}
-                          color={colors.warning}
-                        />
-                        <Text className="text-xs font-medium text-foreground">
-                          {strain.rating}
+                          {strain.floweringText ?? "k. A."}
                         </Text>
                       </View>
                     </View>
 
                     {/* Difficulty */}
-                    <View className="flex-row items-center gap-2 mt-2">
-                      <Text className="text-xs text-muted">Schwierigkeit:</Text>
-                      <View className="flex-row gap-1">
-                        {[1, 2, 3, 4, 5].map((i) => (
-                          <View
-                            key={i}
-                            className={`w-3 h-3 rounded-full ${
-                              i <=
-                              (strain.difficulty === "beginner"
-                                ? 1
-                                : strain.difficulty === "intermediate"
-                                  ? 2
-                                  : strain.difficulty === "advanced"
-                                    ? 3
-                                    : 4)
-                                ? "bg-primary"
-                                : "bg-border"
-                            }`}
-                          />
-                        ))}
+                    {strain.difficulty ? (
+                      <View className="flex-row items-center gap-2 mt-2">
+                        <Text className="text-xs text-muted">
+                          Schwierigkeit:
+                        </Text>
+                        <View className="flex-row gap-1">
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <View
+                              key={i}
+                              className={`w-3 h-3 rounded-full ${
+                                i <=
+                                (strain.difficulty === "beginner"
+                                  ? 1
+                                  : strain.difficulty === "intermediate"
+                                    ? 2
+                                    : strain.difficulty === "advanced"
+                                      ? 3
+                                      : 4)
+                                  ? "bg-primary"
+                                  : "bg-border"
+                              }`}
+                            />
+                          ))}
+                        </View>
                       </View>
-                    </View>
+                    ) : null}
                   </View>
                   <IconSymbol
                     name="chevron.right"
@@ -561,31 +566,29 @@ export default function MarketplaceScreen() {
                   />
                 </View>
 
-                {/* Buy Links */}
-                {strain.affiliateLinks && strain.affiliateLinks.length > 0 && (
-                  <View className="flex-row gap-2 mt-3 pt-3 border-t border-border">
-                    <Text className="text-xs text-muted">Kaufen bei:</Text>
-                    {strain.affiliateLinks.slice(0, 2).map((link, i) => (
-                      <TouchableOpacity
-                        key={i}
-                        className="bg-primary/20 px-2 py-1 rounded"
-                        onPress={() => Linking.openURL(link.url)}
-                      >
-                        <Text className="text-xs text-primary">
-                          {link.shop}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                )}
+                <TouchableOpacity
+                  className="mt-3 pt-3 border-t border-border"
+                  onPress={() => Linking.openURL(strainSearchUrl(strain))}
+                >
+                  <Text className="text-xs text-primary">
+                    🔎 Samen dieser Sorte suchen
+                  </Text>
+                </TouchableOpacity>
               </TouchableOpacity>
             ))}
 
-            <TouchableOpacity className="bg-surface rounded-xl p-4 border border-border items-center">
-              <Text className="text-base font-semibold text-primary">
-                Alle Sorten anzeigen →
-              </Text>
-            </TouchableOpacity>
+            {STRAINS_DATABASE.length > 6 ? (
+              <TouchableOpacity
+                className="bg-surface rounded-xl p-4 border border-border items-center"
+                onPress={() => setShowAllStrains((v) => !v)}
+              >
+                <Text className="text-base font-semibold text-primary">
+                  {showAllStrains
+                    ? "Weniger anzeigen ↑"
+                    : `Alle ${STRAINS_DATABASE.length} Sorten anzeigen →`}
+                </Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
         )}
 

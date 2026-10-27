@@ -19,7 +19,11 @@ import { JournalSkeletonLoader } from "@/components/skeleton-loaders";
 import { ErrorDisplay } from "@/components/error-display";
 
 type GrowPhase =
-  "germination" | "seedling" | "vegetative" | "flowering" | "harvest";
+  | "germination"
+  | "seedling"
+  | "vegetative"
+  | "flowering"
+  | "harvest";
 type ViewMode = "guide" | "entries" | "timeline";
 
 interface GrowStep {
@@ -430,6 +434,7 @@ export default function JournalScreen() {
       {/* Phase Tabs */}
       <ScrollView
         horizontal
+        style={{ flexGrow: 0 }}
         showsHorizontalScrollIndicator={false}
         className="mb-4"
       >
@@ -723,7 +728,11 @@ export default function JournalScreen() {
                 <Text className="text-sm font-medium text-foreground">
                   Phase
                 </Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <ScrollView
+                  horizontal
+                  style={{ flexGrow: 0 }}
+                  showsHorizontalScrollIndicator={false}
+                >
                   <View className="flex-row gap-1">
                     {(Object.keys(PHASE_INFO) as GrowPhase[]).map((phase) => (
                       <TouchableOpacity

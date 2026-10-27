@@ -1,5 +1,5 @@
 import { sanitizeUserInput } from "./_core/security";
-import { mergeRemedies } from "../shared/remedies";
+import { mergeRemedies, mergeCoachProducts } from "../shared/remedies";
 import { z } from "zod";
 import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
@@ -89,6 +89,7 @@ function withRemedies<
 const coachResponseSchema = z.object({
   answer: z.string(),
   tips: z.array(z.string()),
+  products: z.unknown().optional(),
 });
 
 export const appRouter = router({
@@ -561,8 +562,11 @@ Klar = zu früh, Milchig = THC-Peak, Bernstein = mehr CBD/CBN, entspannender`,
 Antworte IMMER auf Deutsch und im folgenden JSON-Format:
 {
   "answer": "Deine ausführliche Antwort auf die Frage",
-  "tips": ["Praktischer Tipp 1", "Praktischer Tipp 2", "Praktischer Tipp 3"]
+  "tips": ["Praktischer Tipp 1", "Praktischer Tipp 2", "Praktischer Tipp 3"],
+  "products": [{"name": "Hilfsmittel, z. B. pH-Messgerät", "purpose": "Ein Satz, wofür es hier nützt", "searchTerm": "Suchbegriff für den Online-Shop"}]
 }
+
+Products: Nenne 0-3 konkrete, legale Hilfsmittel, die du in deiner Antwort empfiehlst oder die direkt dazu passen (z. B. pH-Messgerät, Lupe, Pflanzenschere, Thermo-Hygrometer, Dünger). Keine Samen, keine Rauschmittel, keine Links. Wenn kein Hilfsmittel passt, leeres Array.
 
 Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksichtige verschiedene Erfahrungslevel der Nutzer.`,
             },
@@ -585,12 +589,23 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         const content = result.choices[0]?.message?.content;
         if (typeof content === "string") {
           try {
-            const parsed = JSON.parse(content);
-            return coachResponseSchema.parse(parsed);
+            const parsed = coachResponseSchema.parse(JSON.parse(content));
+            return {
+              answer: parsed.answer,
+              tips: parsed.tips,
+              remedies: mergeCoachProducts(
+                parsed.products,
+                `${input.question} ${parsed.answer} ${parsed.tips.join(" ")}`,
+              ),
+            };
           } catch {
             return {
               answer: content,
-              tips: [],
+              tips: [] as string[],
+              remedies: mergeCoachProducts(
+                undefined,
+                `${input.question} ${content}`,
+              ),
             };
           }
         }
@@ -598,7 +613,8 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         return {
           answer:
             "Entschuldigung, ich konnte deine Frage nicht verarbeiten. Bitte versuche es erneut.",
-          tips: [],
+          tips: [] as string[],
+          remedies: [] as ReturnType<typeof mergeCoachProducts>,
         };
       }),
   }),
