@@ -17,6 +17,20 @@ export interface ErrorDetails {
  * Convert API/network errors into user-friendly German messages
  */
 export function getErrorDetails(error: unknown): ErrorDetails {
+  // Client-side request timeout (AbortController in lib/trpc.ts)
+  const rawMessage = error instanceof Error ? error.message : "";
+  if (
+    (error instanceof Error && error.name === "AbortError") ||
+    /^aborted$/i.test(rawMessage.trim())
+  ) {
+    return {
+      title: "Zeitüberschreitung",
+      message: "Der Server hat zu lange gebraucht. Bitte versuche es erneut.",
+      action: "Erneut versuchen",
+      retryable: true,
+    };
+  }
+
   // TRPC errors
   if (error instanceof TRPCClientError) {
     const code = error.data?.code;

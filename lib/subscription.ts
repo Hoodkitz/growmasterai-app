@@ -57,7 +57,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
 };
 
 // Accounts with all limits lifted (owner/testing)
-const UNLIMITED_EMAILS = ["hoodkitz@gmail.com"];
+const UNLIMITED_EMAILS = ["hoodkitz@gmail.com", "julpaarmann@gmail.com"];
 
 export function isUnlimitedAccount(email?: string | null): boolean {
   return !!email && UNLIMITED_EMAILS.includes(email.trim().toLowerCase());
@@ -207,6 +207,13 @@ export async function getDailyUsage(): Promise<{
 export async function incrementDiagnoses(): Promise<number> {
   const { diagnoses } = await getDailyUsage();
   const newCount = diagnoses + 1;
+  await AsyncStorage.setItem(STORAGE_KEYS.DAILY_DIAGNOSES, newCount.toString());
+  return newCount;
+}
+
+export async function decrementDiagnoses(): Promise<number> {
+  const { diagnoses } = await getDailyUsage();
+  const newCount = Math.max(0, diagnoses - 1);
   await AsyncStorage.setItem(STORAGE_KEYS.DAILY_DIAGNOSES, newCount.toString());
   return newCount;
 }

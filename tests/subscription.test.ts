@@ -227,6 +227,7 @@ describe("isUnlimitedAccount", () => {
   it("matches the owner email case-insensitively", async () => {
     const { isUnlimitedAccount } = await import("../lib/subscription");
     expect(isUnlimitedAccount("Hoodkitz@gmail.com")).toBe(true);
+    expect(isUnlimitedAccount("JulPaarmann@gmail.com")).toBe(true);
     expect(isUnlimitedAccount("someone@else.com")).toBe(false);
     expect(isUnlimitedAccount(null)).toBe(false);
   });
