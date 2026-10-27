@@ -33,8 +33,8 @@ const FIXTURE = {
       id: 202,
       center: { lat: 52.6, lon: 13.5 },
       tags: {
-        shop: "garden_centre",
-        name: "Gartencenter Test",
+        shop: "hydroponics",
+        name: "Growshop Way Test",
         "contact:phone": "+49 30 000",
       },
     },
@@ -120,7 +120,7 @@ describe("parseOverpassShops", () => {
 describe("overpass helpers", () => {
   it("builds a query containing all tags and the position", () => {
     const q = buildOverpassQuery(52.52, 13.405, 1000);
-    for (const t of ["hydroponics", "garden_centre", "cannabis", "headshop"])
+    for (const t of ["hydroponics", "cannabis", "headshop"])
       expect(q).toContain(`"shop"="${t}"`);
     expect(q).toContain("around:1000,52.52,13.40");
     expect(q).toContain("out center");

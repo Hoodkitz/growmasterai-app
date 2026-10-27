@@ -44,8 +44,9 @@ export const SHOP_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 // Cache is reused if user moved less than this (km)
 export const SHOP_CACHE_MAX_DRIFT_KM = 3;
 
-// shop=hydroponics / garden_centre -> growshop; shop=cannabis / headshop -> headshop
-const GROWSHOP_TAGS = ["hydroponics", "garden_centre"];
+// Only dedicated shops: garden centres/DIY stores are far too broad for cannabis growing.
+// shop=hydroponics -> growshop; shop=cannabis / headshop -> headshop
+const GROWSHOP_TAGS = ["hydroponics"];
 const HEADSHOP_TAGS = ["cannabis", "headshop"];
 
 // OSM tags are user-edited: only allow http(s) links to reach Linking.openURL.
