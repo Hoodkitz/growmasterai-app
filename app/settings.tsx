@@ -29,9 +29,29 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const { tier, upgradeTo, dailyDiagnoses, dailyMessages, refresh } =
     useSubscription();
-  const { isAdmin } = useAppAuth();
+  const { isAdmin, isAuthenticated, user, logout } = useAppAuth();
   const [notifications, setNotificationsState] = useState(true);
   const [expenses, setExpenses] = useState<Expense[]>([]);
+
+  const handleLogout = () => {
+    const doLogout = async () => {
+      await logout();
+      router.replace("/login");
+    };
+    if (Platform.OS === "web") {
+      if (window.confirm("Möchtest du dich wirklich abmelden?"))
+        void doLogout();
+      return;
+    }
+    Alert.alert("Abmelden", "Möchtest du dich wirklich abmelden?", [
+      { text: "Abbrechen", style: "cancel" },
+      {
+        text: "Abmelden",
+        style: "destructive",
+        onPress: () => void doLogout(),
+      },
+    ]);
+  };
 
   useEffect(() => {
     AsyncStorage.getItem(EXPENSES_KEY)
@@ -412,6 +432,48 @@ export default function SettingsScreen() {
             </Text>
             <IconSymbol name="chevron.right" size={20} color={colors.muted} />
           </TouchableOpacity>
+        </View>
+
+        {/* Account Section */}
+        <View className="bg-surface rounded-2xl border border-border mb-6 overflow-hidden">
+          <Text className="text-lg font-semibold text-foreground p-4 pb-2">
+            Konto
+          </Text>
+          {isAuthenticated ? (
+            <>
+              {user?.email ? (
+                <Text className="text-sm text-muted px-4 pb-3">
+                  Angemeldet als {user.email}
+                </Text>
+              ) : null}
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="Abmelden"
+                className="flex-row items-center justify-between p-4 border-t border-border"
+                onPress={handleLogout}
+              >
+                <Text className="text-base font-semibold text-error">
+                  Abmelden
+                </Text>
+                <IconSymbol
+                  name="chevron.right"
+                  size={20}
+                  color={colors.muted}
+                />
+              </TouchableOpacity>
+            </>
+          ) : (
+            <TouchableOpacity
+              accessibilityRole="button"
+              className="flex-row items-center justify-between p-4 border-t border-border"
+              onPress={() => router.push("/login")}
+            >
+              <Text className="text-base text-foreground">
+                Anmelden / Registrieren
+              </Text>
+              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Legal Section */}

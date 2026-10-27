@@ -1,4 +1,4 @@
-GrowMaster AI - Cannabis Grow Assistant
+GrowMaster AI: Grow Assistant
 
 SUBTITLE (max. 30 chars):
 AI Diagnosis & Grow Coach 24/7
@@ -107,7 +107,7 @@ KEYWORDS (max. 100 chars):
 cannabis,grow,plant,ai,diagnosis,coach,journal,community,tracker,assistant
 
 SUPPORT:
-Email: support@growmaster.app
+Email: team@growmaster.app
 Website: https://hoodkitz.github.io/growmasterai-legal/
 
 CATEGORIES:

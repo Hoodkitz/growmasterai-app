@@ -3,21 +3,20 @@
 ## Angaben gemäß § 5 TMG
 
 **GrowMaster AI**
-[Ihr vollständiger Name / Firmenname]
-[Straße und Hausnummer]
-[PLZ Ort]
+Julien Paarmann
+Klausing 19
+13627 Berlin
 Deutschland
 
 ## Kontakt
 
-- **Telefon:** [Ihre Telefonnummer]
-- **E-Mail:** support@growmaster.app
+- **E-Mail:** team@growmaster.app
 - **Website:** https://growmaster.app
 
 ## Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV
 
-[Ihr vollständiger Name]
-[Adresse wie oben]
+Julien Paarmann
+Klausing 19, 13627 Berlin
 
 ## EU-Streitschlichtung
 
@@ -49,4 +48,4 @@ Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden 
 
 ---
 
-*Stand: Januar 2026*
+_Stand: Januar 2026_

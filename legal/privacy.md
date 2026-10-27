@@ -45,11 +45,11 @@ Die Betreiber dieser App nehmen den Schutz Ihrer persönlichen Daten sehr ernst.
 Die verantwortliche Stelle für die Datenverarbeitung in dieser App ist:
 
 **GrowMaster AI**
-[Ihr Name / Firma]
-[Adresse]
-[PLZ Ort]
+Julien Paarmann
+Klausing 19
+13627 Berlin
 
-E-Mail: support@growmaster.app
+E-Mail: team@growmaster.app
 
 Verantwortliche Stelle ist die natürliche oder juristische Person, die allein oder gemeinsam mit anderen über die Zwecke und Mittel der Verarbeitung von personenbezogenen Daten entscheidet.
 
@@ -88,6 +88,7 @@ Sie haben das Recht, die Einschränkung der Verarbeitung Ihrer personenbezogenen
 Sie können sich in unserer App registrieren, um zusätzliche Funktionen zu nutzen. Die dazu eingegebenen Daten verwenden wir nur zum Zwecke der Nutzung des jeweiligen Angebotes oder Dienstes, für den Sie sich registriert haben.
 
 Bei der Registrierung werden folgende Daten erfasst:
+
 - E-Mail-Adresse
 - Name (optional)
 - Profilbild (optional)
@@ -97,6 +98,7 @@ Die Verarbeitung erfolgt auf Grundlage Ihrer Einwilligung (Art. 6 Abs. 1 lit. a 
 ### Nutzungsdaten
 
 Bei der Nutzung der App werden folgende Daten erfasst:
+
 - Pflanzen-Daten (Sorten, Wachstumsphasen, Fotos)
 - Journal-Einträge
 - Diagnose-Anfragen und -Ergebnisse
@@ -108,6 +110,7 @@ Diese Daten werden zur Bereitstellung der App-Funktionen verarbeitet (Art. 6 Abs
 ### Kamera und Fotos
 
 Die App benötigt Zugriff auf Ihre Kamera und Fotobibliothek für:
+
 - Pflanzen-Diagnose
 - Journal-Fotos
 - Profilbilder
@@ -118,6 +121,7 @@ Die Verarbeitung erfolgt nur nach Ihrer ausdrücklichen Einwilligung (Art. 6 Abs
 ### Standortdaten
 
 Die App kann Standortdaten erfassen für:
+
 - Shop-Finder in der Nähe
 - Community-Mitglieder in der Nähe (opt-in)
 
@@ -130,6 +134,7 @@ Die Verarbeitung erfolgt nur nach Ihrer ausdrücklichen Einwilligung (Art. 6 Abs
 Für Premium-Abonnements nutzen wir die Zahlungsdienste von Apple (App Store) und Google (Google Play). Die Zahlungsabwicklung erfolgt direkt über diese Plattformen. Wir erhalten keine Zahlungsdaten wie Kreditkartennummern.
 
 Wir nutzen RevenueCat als Dienst zur Verwaltung von Abonnements. RevenueCat erhält:
+
 - Ihre App-Nutzer-ID
 - Kaufhistorie
 - Abonnement-Status
@@ -145,6 +150,7 @@ Wir erfassen anonymisierte Nutzungsstatistiken zur Verbesserung der App. Diese D
 ### Affiliate-Links
 
 Die App enthält Affiliate-Links zu Partnershops. Beim Klick auf diese Links werden Sie zu externen Websites weitergeleitet. Wir erfassen:
+
 - Klicks auf Affiliate-Links (anonymisiert)
 - Keine persönlichen Daten
 
@@ -153,6 +159,7 @@ Die App enthält Affiliate-Links zu Partnershops. Beim Klick auf diese Links wer
 ### Google Sign-In
 
 Wir bieten die Anmeldung über Google an. Dabei werden folgende Daten von Google übermittelt:
+
 - E-Mail-Adresse
 - Name
 - Profilbild
@@ -168,6 +175,7 @@ Weitere Informationen: https://www.apple.com/legal/privacy/
 ### KI-Dienste
 
 Für die Pflanzen-Diagnose und den Grow-Coach nutzen wir KI-Dienste. Dabei werden:
+
 - Hochgeladene Bilder analysiert
 - Chat-Nachrichten verarbeitet
 
@@ -176,6 +184,7 @@ Die Verarbeitung erfolgt zur Bereitstellung der App-Funktionen (Art. 6 Abs. 1 li
 ## 8. Ihre Rechte
 
 Sie haben folgende Rechte:
+
 - **Auskunftsrecht** (Art. 15 DSGVO)
 - **Recht auf Berichtigung** (Art. 16 DSGVO)
 - **Recht auf Löschung** (Art. 17 DSGVO)
@@ -183,7 +192,7 @@ Sie haben folgende Rechte:
 - **Recht auf Datenübertragbarkeit** (Art. 20 DSGVO)
 - **Widerspruchsrecht** (Art. 21 DSGVO)
 
-Zur Ausübung Ihrer Rechte kontaktieren Sie uns unter: support@growmaster.app
+Zur Ausübung Ihrer Rechte kontaktieren Sie uns unter: team@growmaster.app
 
 ## 9. Änderungen dieser Datenschutzerklärung
 
@@ -191,4 +200,4 @@ Wir behalten uns vor, diese Datenschutzerklärung anzupassen, damit sie stets de
 
 ---
 
-*Stand: Januar 2026*
+_Stand: Januar 2026_

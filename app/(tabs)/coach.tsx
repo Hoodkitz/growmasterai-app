@@ -73,6 +73,7 @@ export default function CoachScreen() {
     dailyMessages,
     canMessage,
     useMessage: consumeMessage,
+    refundMessage,
     remainingMessages,
   } = useSubscription();
   const limits = TIER_LIMITS[tier];
@@ -93,6 +94,8 @@ export default function CoachScreen() {
     },
     onError: (error, variables) => {
       console.error("Coach error:", error);
+      // Fehlgeschlagene Anfrage zählt nicht gegen das Tageslimit
+      refundMessage().catch(() => {});
       const errorDetails = getCoachErrorMessage(error);
       const errorMessage: Message = {
         id: Date.now().toString(),
@@ -137,7 +140,8 @@ export default function CoachScreen() {
     coachMutation.mutate({ question });
   };
 
-  const retryMessage = (messageId: string, question: string) => {
+  const retryMessage = async (messageId: string, question: string) => {
+    if (!(await consumeMessage())) return;
     // Remove the error message
     setMessages((prev) => prev.filter((m) => m.id !== messageId));
 
@@ -159,8 +163,10 @@ export default function CoachScreen() {
     <ScreenContainer>
       <KeyboardAvoidingView
         className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={100}
+        // Android is edge-to-edge (no window resize), so "padding" is needed there too;
+        // the view measures its own position, so no extra offset.
+        behavior="padding"
+        keyboardVerticalOffset={0}
       >
         {/* Header */}
         <View className="p-4 border-b border-border">

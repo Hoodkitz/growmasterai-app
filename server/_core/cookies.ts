@@ -15,7 +15,9 @@ function isSecureRequest(req: Request) {
   const forwardedProto = req.headers["x-forwarded-proto"];
   if (!forwardedProto) return false;
 
-  const protoList = Array.isArray(forwardedProto) ? forwardedProto : forwardedProto.split(",");
+  const protoList = Array.isArray(forwardedProto)
+    ? forwardedProto
+    : forwardedProto.split(",");
 
   return protoList.some((proto) => proto.trim().toLowerCase() === "https");
 }
@@ -51,12 +53,14 @@ export function getSessionCookieOptions(
 ): Pick<CookieOptions, "domain" | "httpOnly" | "path" | "sameSite" | "secure"> {
   const hostname = req.hostname;
   const domain = getParentDomain(hostname);
+  const secure = isSecureRequest(req);
 
   return {
     domain,
     httpOnly: true,
     path: "/",
-    sameSite: "none",
-    secure: isSecureRequest(req),
+    // Browsers drop SameSite=None cookies that are not Secure, so fall back to Lax on plain HTTP.
+    sameSite: secure ? "none" : "lax",
+    secure,
   };
 }

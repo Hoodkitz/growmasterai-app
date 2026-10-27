@@ -1,3 +1,5 @@
+import { sanitizeUserInput } from "./_core/security";
+import { mergeRemedies } from "../shared/remedies";
 import { z } from "zod";
 import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
@@ -64,7 +66,24 @@ const diagnosisResponseSchema = z.object({
     .optional(),
   genderConfidence: z.number().min(0).max(100).optional(),
   voiceResponse: z.string().optional(),
+  remedies: z
+    .array(
+      z.object({
+        name: z.string(),
+        purpose: z.string().optional(),
+        searchTerm: z.string(),
+      }),
+    )
+    .optional(),
 });
+
+/** Adds remedy suggestions (model proposals plus catalog fallback) to any diagnosis result. */
+function withRemedies<
+  T extends { problem: string; recommendations: string[]; remedies?: unknown },
+>(result: T) {
+  const text = [result.problem, ...result.recommendations].join(" \n");
+  return { ...result, remedies: mergeRemedies(result.remedies, text) };
+}
 
 // Coach response schema
 const coachResponseSchema = z.object({
@@ -102,7 +121,7 @@ export const appRouter = router({
         const cached = await getCachedDiagnosis(cacheKey);
         if (cached) {
           console.log("[Diagnosis] Cache hit:", cacheKey.slice(0, 12));
-          return cached;
+          return withRemedies(cached);
         }
 
         console.log(
@@ -139,8 +158,11 @@ Antworte IMMER auf Deutsch und im folgenden JSON-Format:
   "severity": "low" | "medium" | "high",
   "plantGender": "male" | "female" | "hermaphrodite" | "unknown",
   "genderConfidence": 0-100 (Zahl),
-  "voiceResponse": "Kurze, gesprochene Zusammenfassung für Text-to-Speech (1-2 Sätze)"
+  "voiceResponse": "Kurze, gesprochene Zusammenfassung für Text-to-Speech (1-2 Sätze)",
+  "remedies": [{"name": "Produkt oder Mittel, z. B. Neemöl", "purpose": "Ein Satz, warum es hilft", "searchTerm": "Suchbegriff für den Online-Shop"}]
 }
+
+Remedies: Nenne 1-4 konkrete, legale Pflege- oder Pflanzenschutzmittel bzw. Messgeräte, die zum erkannten Problem passen (z. B. Neemöl, Cal-Mag, pH-Messgerät). Keine Samen, keine Rauschmittel, keine Links. Bei gesunden Pflanzen leeres Array.
 
 Geschlechts-Bestimmung:
 - "male": Pollensäcke sichtbar (kleine grüne Bälle an Nodien)
@@ -159,7 +181,7 @@ Wenn die Pflanze gesund aussieht, beschreibe ihren guten Zustand und gib allgeme
                   {
                     type: "text" as const,
                     text: input.notes
-                      ? `Analysiere diese Cannabis-Pflanze. Zusätzliche Notizen vom Nutzer: ${input.notes}`
+                      ? `Analysiere diese Cannabis-Pflanze. Zusätzliche Notizen vom Nutzer: ${sanitizeUserInput(input.notes)}`
                       : "Analysiere diese Cannabis-Pflanze und identifiziere alle Probleme oder Auffälligkeiten.",
                   },
                   ...imageContents,
@@ -202,7 +224,7 @@ Wenn die Pflanze gesund aussieht, beschreibe ihren guten Zustand und gib allgeme
           };
         });
 
-        return result;
+        return withRemedies(result);
       }),
   }),
 
@@ -386,7 +408,7 @@ Gib bis zu 3 mögliche Sorten an, sortiert nach Wahrscheinlichkeit.`,
                 {
                   type: "text" as const,
                   text: input.additionalInfo
-                    ? `Identifiziere diese Cannabis-Sorte. Zusätzliche Info: ${input.additionalInfo}`
+                    ? `Identifiziere diese Cannabis-Sorte. Zusätzliche Info: ${sanitizeUserInput(input.additionalInfo)}`
                     : "Identifiziere diese Cannabis-Sorte.",
                 },
                 {
@@ -466,7 +488,7 @@ Klar = zu früh, Milchig = THC-Peak, Bernstein = mehr CBD/CBN, entspannender`,
               content: [
                 {
                   type: "text" as const,
-                  text: `Analysiere die Erntereife dieser Cannabis-Pflanze.${input.strainInfo ? ` Sorte: ${input.strainInfo}` : ""}${input.floweringWeek ? ` Blütewoche: ${input.floweringWeek}` : ""}`,
+                  text: `Analysiere die Erntereife dieser Cannabis-Pflanze.${input.strainInfo ? ` Sorte: ${sanitizeUserInput(input.strainInfo, 200)}` : ""}${input.floweringWeek ? ` Blütewoche: ${input.floweringWeek}` : ""}`,
                 },
                 {
                   type: "image_url" as const,

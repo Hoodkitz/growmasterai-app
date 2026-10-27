@@ -91,7 +91,9 @@ export function OnboardingFlow() {
         {/* Skip Button */}
         <View className="absolute top-12 right-6 z-10">
           <TouchableOpacity onPress={handleSkip}>
-            <Text className="text-white/80 text-base font-semibold">Skip</Text>
+            <Text className="text-white/80 text-base font-semibold">
+              Überspringen
+            </Text>
           </TouchableOpacity>
         </View>
 

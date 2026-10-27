@@ -23,7 +23,10 @@ import {
 import type { EdgeInsets, Metrics, Rect } from "react-native-safe-area-context";
 
 import { trpc, createTRPCClient } from "@/lib/trpc";
-import { initManusRuntime, subscribeSafeAreaInsets } from "@/lib/_core/manus-runtime";
+import {
+  initManusRuntime,
+  subscribeSafeAreaInsets,
+} from "@/lib/_core/manus-runtime";
 
 const DEFAULT_WEB_INSETS: EdgeInsets = { top: 0, right: 0, bottom: 0, left: 0 };
 const DEFAULT_WEB_FRAME: Rect = { x: 0, y: 0, width: 0, height: 0 };
@@ -73,7 +76,10 @@ export default function RootLayout() {
 
   // Ensure minimum 8px padding for top and bottom on mobile
   const providerInitialMetrics = useMemo(() => {
-    const metrics = initialWindowMetrics ?? { insets: initialInsets, frame: initialFrame };
+    const metrics = initialWindowMetrics ?? {
+      insets: initialInsets,
+      frame: initialFrame,
+    };
     return {
       ...metrics,
       insets: {
@@ -85,18 +91,22 @@ export default function RootLayout() {
   }, [initialInsets, initialFrame]);
 
   // Check onboarding status
-  const [onboardingComplete, setOnboardingComplete] = React.useState<boolean | null>(null);
+  const [onboardingComplete, setOnboardingComplete] = React.useState<
+    boolean | null
+  >(null);
 
   React.useEffect(() => {
-    import('@/components/onboarding/onboarding-flow').then(({ getOnboardingStatus }) => {
-      getOnboardingStatus().then(setOnboardingComplete);
-    });
+    import("@/components/onboarding/onboarding-flow").then(
+      ({ getOnboardingStatus }) => {
+        getOnboardingStatus().then(setOnboardingComplete);
+      },
+    );
   }, []);
 
   // Redirect to onboarding if not completed
   React.useEffect(() => {
     if (onboardingComplete === false) {
-      router.replace('/onboarding');
+      router.replace("/onboarding");
     }
   }, [onboardingComplete]);
 
@@ -111,31 +121,73 @@ export default function RootLayout() {
         <trpc.Provider client={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>
             <AuthProvider>
-              <PushRegistrar />
               <GamificationProvider>
+                <PushRegistrar />
                 <SubscriptionProvider>
                   {/* PurchaseProvider nutzt useSubscription() (setTier) → muss innerhalb von SubscriptionProvider liegen */}
                   <PurchaseProvider>
-                  <Stack screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name="(tabs)" />
-                    <Stack.Screen name="oauth/callback" />
-                    <Stack.Screen name="login" options={{ presentation: "modal" }} />
-                    <Stack.Screen name="reset-password" />
-                    <Stack.Screen name="verify-email" />
-                    <Stack.Screen name="paywall" options={{ presentation: "modal" }} />
-                    <Stack.Screen name="settings" options={{ presentation: "modal" }} />
-                    <Stack.Screen name="achievements" options={{ presentation: "modal" }} />
-                    <Stack.Screen name="admin" options={{ presentation: "modal" }} />
-                    <Stack.Screen name="marketplace" options={{ presentation: "modal" }} />
-                    <Stack.Screen name="vendor-portal" options={{ presentation: "modal" }} />
-                    <Stack.Screen name="tools" options={{ presentation: "modal" }} />
-                    <Stack.Screen name="messages" options={{ presentation: "modal" }} />
-                    <Stack.Screen name="legal" options={{ presentation: "modal" }} />
-                    <Stack.Screen name="api-keys" options={{ presentation: "modal" }} />
-                    <Stack.Screen name="webhooks" options={{ presentation: "modal" }} />
-                    <Stack.Screen name="onboarding" options={{ presentation: "fullScreenModal", gestureEnabled: false }} />
-                  </Stack>
-                  <StatusBar style="light" />
+                    <Stack screenOptions={{ headerShown: false }}>
+                      <Stack.Screen name="(tabs)" />
+                      <Stack.Screen name="oauth/callback" />
+                      <Stack.Screen
+                        name="login"
+                        options={{ presentation: "modal" }}
+                      />
+                      <Stack.Screen name="reset-password" />
+                      <Stack.Screen name="verify-email" />
+                      <Stack.Screen
+                        name="paywall"
+                        options={{ presentation: "modal" }}
+                      />
+                      <Stack.Screen
+                        name="settings"
+                        options={{ presentation: "modal" }}
+                      />
+                      <Stack.Screen
+                        name="achievements"
+                        options={{ presentation: "modal" }}
+                      />
+                      <Stack.Screen
+                        name="admin"
+                        options={{ presentation: "modal" }}
+                      />
+                      <Stack.Screen
+                        name="marketplace"
+                        options={{ presentation: "modal" }}
+                      />
+                      <Stack.Screen
+                        name="vendor-portal"
+                        options={{ presentation: "modal" }}
+                      />
+                      <Stack.Screen
+                        name="tools"
+                        options={{ presentation: "modal" }}
+                      />
+                      <Stack.Screen
+                        name="messages"
+                        options={{ presentation: "modal" }}
+                      />
+                      <Stack.Screen
+                        name="legal"
+                        options={{ presentation: "modal" }}
+                      />
+                      <Stack.Screen
+                        name="api-keys"
+                        options={{ presentation: "modal" }}
+                      />
+                      <Stack.Screen
+                        name="webhooks"
+                        options={{ presentation: "modal" }}
+                      />
+                      <Stack.Screen
+                        name="onboarding"
+                        options={{
+                          presentation: "fullScreenModal",
+                          gestureEnabled: false,
+                        }}
+                      />
+                    </Stack>
+                    <StatusBar style="light" />
                   </PurchaseProvider>
                 </SubscriptionProvider>
               </GamificationProvider>
@@ -164,7 +216,9 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <SafeAreaProvider initialMetrics={providerInitialMetrics}>{content}</SafeAreaProvider>
+      <SafeAreaProvider initialMetrics={providerInitialMetrics}>
+        {content}
+      </SafeAreaProvider>
     </ThemeProvider>
   );
 }

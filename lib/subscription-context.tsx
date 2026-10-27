@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
+import { useAppAuth } from "./auth-context";
 import {
   SubscriptionTier,
   TIER_LIMITS,
@@ -8,12 +16,14 @@ import {
   getDailyUsage,
   incrementDiagnoses,
   incrementMessages,
+  decrementMessages,
   canUseDiagnosis,
   canSendMessage,
   canAddPlant,
   canAddJournalEntry,
   getRemainingDiagnoses,
   getRemainingMessages,
+  isUnlimitedAccount,
 } from "./subscription";
 
 interface SubscriptionContextType {
@@ -22,35 +32,43 @@ interface SubscriptionContextType {
   dailyDiagnoses: number;
   dailyMessages: number;
   loading: boolean;
-  
+
   // Tier setter (for external sync like RevenueCat)
   setTier: (tier: SubscriptionTier) => void;
-  
+
   // Upgrade functions
   upgradeTo: (tier: SubscriptionTier) => Promise<void>;
-  
+
   // Check functions
   canDiagnose: () => boolean;
   canMessage: () => boolean;
   canAddNewPlant: (currentCount: number) => boolean;
   canAddNewJournalEntry: (currentCount: number) => boolean;
-  
+
   // Usage functions
   useDiagnosis: () => Promise<boolean>;
   useMessage: () => Promise<boolean>;
-  
+  refundMessage: () => Promise<void>;
+
   // Remaining counts
   remainingDiagnoses: number | null;
   remainingMessages: number | null;
-  
+
   // Refresh
   refresh: () => Promise<void>;
 }
 
-const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
+const SubscriptionContext = createContext<SubscriptionContextType | undefined>(
+  undefined,
+);
 
 export function SubscriptionProvider({ children }: { children: ReactNode }) {
-  const [tier, setTier] = useState<SubscriptionTier>("free");
+  const { user } = useAppAuth();
+  const [storedTier, setTier] = useState<SubscriptionTier>("free");
+  // Owner accounts get every Pro limit lifted regardless of purchase state.
+  const tier: SubscriptionTier = isUnlimitedAccount(user?.email)
+    ? "pro"
+    : storedTier;
   const [dailyDiagnoses, setDailyDiagnoses] = useState(0);
   const [dailyMessages, setDailyMessages] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -90,13 +108,19 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     return canSendMessage(tier, dailyMessages);
   }, [tier, dailyMessages]);
 
-  const canAddNewPlant = useCallback((currentCount: number) => {
-    return canAddPlant(tier, currentCount);
-  }, [tier]);
+  const canAddNewPlant = useCallback(
+    (currentCount: number) => {
+      return canAddPlant(tier, currentCount);
+    },
+    [tier],
+  );
 
-  const canAddNewJournalEntry = useCallback((currentCount: number) => {
-    return canAddJournalEntry(tier, currentCount);
-  }, [tier]);
+  const canAddNewJournalEntry = useCallback(
+    (currentCount: number) => {
+      return canAddJournalEntry(tier, currentCount);
+    },
+    [tier],
+  );
 
   const useDiagnosis = useCallback(async () => {
     if (!canUseDiagnosis(tier, dailyDiagnoses)) {
@@ -115,6 +139,10 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     setDailyMessages(newCount);
     return true;
   }, [tier, dailyMessages]);
+
+  const refundMessage = useCallback(async () => {
+    setDailyMessages(await decrementMessages());
+  }, []);
 
   const remainingDiagnoses = getRemainingDiagnoses(tier, dailyDiagnoses);
   const remainingMessages = getRemainingMessages(tier, dailyMessages);
@@ -135,6 +163,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         canAddNewJournalEntry,
         useDiagnosis,
         useMessage,
+        refundMessage,
         remainingDiagnoses,
         remainingMessages,
         refresh,
@@ -148,7 +177,9 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
 export function useSubscription() {
   const context = useContext(SubscriptionContext);
   if (context === undefined) {
-    throw new Error("useSubscription must be used within a SubscriptionProvider");
+    throw new Error(
+      "useSubscription must be used within a SubscriptionProvider",
+    );
   }
   return context;
 }

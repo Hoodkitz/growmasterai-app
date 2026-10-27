@@ -11,27 +11,29 @@ Mit der Registrierung und Nutzung der App akzeptieren Sie diese AGB.
 Anbieter der App ist:
 
 **GrowMaster AI**
-[Ihr Name / Firma]
-[Adresse]
-[PLZ Ort]
+Julien Paarmann
+Klausing 19
+13627 Berlin
 Deutschland
 
-E-Mail: support@growmaster.app
+E-Mail: team@growmaster.app
 
 ## 3. Leistungsbeschreibung
 
 ### 3.1 Kostenlose Funktionen (Free)
 
 Die App bietet folgende kostenlose Funktionen:
+
 - Pflanzen-Tracking (bis zu 2 Pflanzen)
 - Basis-Diagnose (3 Analysen pro Tag)
-- Grow-Coach Chat (5 Nachrichten pro Tag)
+- Grow-Coach Chat (3 Nachrichten pro Tag)
 - Community-Zugang (Lesen)
 - Basis-Sorten-Datenbank
 
 ### 3.2 Premium-Abonnement
 
 Das Premium-Abonnement umfasst zusätzlich:
+
 - Pflanzen-Tracking (bis zu 10 Pflanzen)
 - Erweiterte Diagnose (15 Analysen pro Tag)
 - Grow-Coach Chat (50 Nachrichten pro Tag)
@@ -45,6 +47,7 @@ Das Premium-Abonnement umfasst zusätzlich:
 ### 3.3 Pro-Abonnement
 
 Das Pro-Abonnement umfasst zusätzlich zu Premium:
+
 - Unbegrenzte Pflanzen
 - Unbegrenzte Diagnosen
 - Unbegrenzter Grow-Coach Chat
@@ -61,6 +64,7 @@ Das Pro-Abonnement umfasst zusätzlich zu Premium:
 ### 4.1 Registrierung
 
 Die Nutzung der App erfordert eine Registrierung. Sie können sich registrieren über:
+
 - E-Mail und Passwort
 - Google-Konto
 - Apple-ID
@@ -76,7 +80,8 @@ Abonnements verlängern sich automatisch um den gewählten Zeitraum, sofern sie 
 ### 4.4 Kündigung
 
 Die Kündigung erfolgt über:
-- Apple App Store: Einstellungen → [Ihr Name] → Abonnements
+
+- Apple App Store: Einstellungen → Apple-ID (oben) → Abonnements
 - Google Play Store: Play Store → Menü → Abonnements
 
 ## 5. Widerrufsrecht
@@ -106,6 +111,7 @@ Mit der Registrierung erhalten Sie ein nicht-exklusives, nicht übertragbares Re
 ### 6.2 Verbotene Nutzung
 
 Es ist untersagt:
+
 - Die App für illegale Zwecke zu nutzen
 - Falsche Informationen bei der Registrierung anzugeben
 - Andere Nutzer zu belästigen oder zu bedrohen
@@ -123,6 +129,7 @@ Sie behalten die Rechte an Ihren hochgeladenen Inhalten. Mit dem Hochladen räum
 ### 7.1 Respektvoller Umgang
 
 In der Community ist ein respektvoller Umgang Pflicht. Verboten sind:
+
 - Beleidigungen und Hassrede
 - Diskriminierung jeglicher Art
 - Gewaltverherrlichung
@@ -177,7 +184,7 @@ Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrec
 
 ### 12.2 Gerichtsstand
 
-Soweit gesetzlich zulässig, ist Gerichtsstand [Ihr Ort].
+Soweit gesetzlich zulässig, ist Gerichtsstand Berlin.
 
 ### 12.3 Salvatorische Klausel
 
@@ -185,4 +192,4 @@ Sollten einzelne Bestimmungen dieser AGB unwirksam sein, bleibt die Wirksamkeit 
 
 ---
 
-*Stand: Januar 2026*
+_Stand: Januar 2026_

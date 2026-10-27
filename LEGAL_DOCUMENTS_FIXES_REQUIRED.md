@@ -9,6 +9,7 @@ Die Privacy Policy und Terms of Service sind grundsätzlich gut strukturiert und
 ## 🚨 KRITISCH: Fehlende Impressums-Daten
 
 ### Betroffene Dateien
+
 1. `legal/privacy.md` (Zeilen 46-50)
 2. `legal/terms.md` (Zeilen 14-17)
 3. `docs/legal/privacy.html` (falls vorhanden)
@@ -17,16 +18,18 @@ Die Privacy Policy und Terms of Service sind grundsätzlich gut strukturiert und
 ### Aktuelle Platzhalter (UNGÜLTIG!)
 
 **In `legal/privacy.md` (Zeile 46-50):**
+
 ```markdown
 **GrowMaster AI**
 [Ihr Name / Firma]
 [Adresse]
 [PLZ Ort]
 
-E-Mail: support@growmaster.app
+E-Mail: team@growmaster.app
 ```
 
 **In `legal/terms.md` (Zeile 14-18):**
+
 ```markdown
 **GrowMaster AI**
 [Ihr Name / Firma]
@@ -34,7 +37,7 @@ E-Mail: support@growmaster.app
 [PLZ Ort]
 Deutschland
 
-E-Mail: support@growmaster.app
+E-Mail: team@growmaster.app
 ```
 
 ---
@@ -50,10 +53,11 @@ Julien Paarmann
 [PLZ Ort]
 Deutschland
 
-E-Mail: support@growmaster.app
+E-Mail: team@growmaster.app
 ```
 
 **Beispiel (mit fiktiver Adresse):**
+
 ```markdown
 **GrowMaster AI**
 Julien Paarmann
@@ -61,7 +65,7 @@ Musterstraße 42
 12345 Musterstadt
 Deutschland
 
-E-Mail: support@growmaster.app
+E-Mail: team@growmaster.app
 ```
 
 ---
@@ -69,6 +73,7 @@ E-Mail: support@growmaster.app
 ## 📋 Zu erledigende Schritte
 
 ### 1. Informationen beschaffen
+
 - [ ] **Name:** Julien Paarmann (bereits bekannt)
 - [ ] **Straße + Hausnummer:** Vollständige Postadresse erforderlich
 - [ ] **PLZ + Ort:** Vollständige Postadresse erforderlich
@@ -80,7 +85,9 @@ E-Mail: support@growmaster.app
 ### 2. Dateien aktualisieren
 
 #### Datei 1: `legal/privacy.md`
+
 **Zeilen 46-52 ersetzen:**
+
 ```bash
 # Aktuell:
 **GrowMaster AI**
@@ -88,7 +95,7 @@ E-Mail: support@growmaster.app
 [Adresse]
 [PLZ Ort]
 
-E-Mail: support@growmaster.app
+E-Mail: team@growmaster.app
 
 # Ersetzen durch:
 **GrowMaster AI**
@@ -97,12 +104,14 @@ Julien Paarmann
 [Ihre echte PLZ + Ort]
 Deutschland
 
-E-Mail: support@growmaster.app
+E-Mail: team@growmaster.app
 Telefon: [Optional]
 ```
 
 #### Datei 2: `legal/terms.md`
+
 **Zeilen 14-20 ersetzen:**
+
 ```bash
 # Aktuell:
 **GrowMaster AI**
@@ -111,7 +120,7 @@ Telefon: [Optional]
 [PLZ Ort]
 Deutschland
 
-E-Mail: support@growmaster.app
+E-Mail: team@growmaster.app
 
 # Ersetzen durch:
 **GrowMaster AI**
@@ -120,16 +129,19 @@ Julien Paarmann
 [Ihre echte PLZ + Ort]
 Deutschland
 
-E-Mail: support@growmaster.app
+E-Mail: team@growmaster.app
 Telefon: [Optional]
 ```
 
 #### Datei 3 & 4: HTML-Versionen
+
 Falls `docs/legal/privacy.html` und `docs/legal/terms.html` existieren:
+
 - [ ] Auch dort Platzhalter durch echte Daten ersetzen
 - [ ] Oder automatisch aus den .md-Dateien generieren (empfohlen)
 
 ### 3. Online-Deployment
+
 - [ ] Aktualisierte Dateien auf https://hoodkitz.github.io/growmasterai-legal/ hochladen
 - [ ] Erreichbarkeit testen:
   - https://hoodkitz.github.io/growmasterai-legal/privacy.html
@@ -143,13 +155,11 @@ Falls `docs/legal/privacy.html` und `docs/legal/terms.html` existieren:
 
 1. **DSGVO Art. 13 & 14:** Informationspflicht
    - Name und Kontaktdaten des Verantwortlichen müssen angegeben werden
-   
 2. **§ 5 TMG (Telemediengesetz):** Impressumspflicht
    - Auch Apps benötigen ein Impressum mit:
      - Name und Anschrift
      - Kontaktmöglichkeit (E-Mail)
      - Bei Gewerbe: Handelsregistereintrag, USt-ID
-     
 3. **App Store Requirements:**
    - Apple & Google verlangen vollständige Kontaktdaten
    - Bei Verstößen: App-Ablehnung oder Entfernung
@@ -165,15 +175,17 @@ Falls `docs/legal/privacy.html` und `docs/legal/terms.html` existieren:
 ### Diese Daten werden AUCH benötigt für:
 
 #### Apple App Store Connect
+
 - Developer-Name: **Julien Paarmann**
 - Adresse: **Vollständige Postadresse**
-- E-Mail: **support@growmaster.app**
+- E-Mail: **team@growmaster.app**
 - Telefon: **Optional, aber empfohlen**
 
 #### Google Play Console
+
 - Developer-Name: **Julien Paarmann**
 - Adresse: **Vollständige Postadresse** (PFLICHT!)
-- E-Mail: **support@growmaster.app**
+- E-Mail: **team@growmaster.app**
 - Telefon: **Optional**
 - Website: **https://hoodkitz.github.io/growmasterai-legal/**
 
@@ -196,6 +208,7 @@ Falls `docs/legal/privacy.html` und `docs/legal/terms.html` existieren:
 Um Duplikate zu vermeiden, könntest du:
 
 1. **Zentrales Config-File erstellen:**
+
 ```typescript
 // legal-config.ts
 export const LEGAL_INFO = {
@@ -205,13 +218,14 @@ export const LEGAL_INFO = {
   zip: "[PLZ]",
   city: "[Ort]",
   country: "Deutschland",
-  email: "support@growmaster.app",
+  email: "team@growmaster.app",
   phone: "[Optional]", // kann leer bleiben
   website: "https://hoodkitz.github.io/growmasterai-legal/",
 };
 ```
 
 2. **Script zum Generieren der HTML-Dateien:**
+
 ```bash
 # Markdown zu HTML konvertieren + Platzhalter ersetzen
 pnpm add -D marked
@@ -227,6 +241,7 @@ node scripts/generate-legal-pages.js
 ## 📞 Support
 
 Bei Fragen zu den rechtlichen Anforderungen:
+
 - **DSGVO:** https://gdpr.eu
 - **TMG:** https://www.gesetze-im-internet.de/tmg/
 - **Rechtsberatung:** Anwalt für IT-Recht konsultieren

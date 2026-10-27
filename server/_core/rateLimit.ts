@@ -1,3 +1,4 @@
+import { logSecurityEvent } from "./securityLogger";
 import type { NextFunction, Request, Response } from "express";
 
 /**
@@ -10,7 +11,11 @@ export interface RateLimiter {
   reset(): void;
 }
 
-export function createRateLimiter(opts: { windowMs: number; max: number; now?: () => number }): RateLimiter {
+export function createRateLimiter(opts: {
+  windowMs: number;
+  max: number;
+  now?: () => number;
+}): RateLimiter {
   const now = opts.now ?? Date.now;
   const hits = new Map<string, { count: number; resetAt: number }>();
   let lastSweep = now();
@@ -30,7 +35,10 @@ export function createRateLimiter(opts: { windowMs: number; max: number; now?: (
       }
       entry.count += 1;
       if (entry.count > opts.max) {
-        return { allowed: false, retryAfterSec: Math.max(1, Math.ceil((entry.resetAt - t) / 1000)) };
+        return {
+          allowed: false,
+          retryAfterSec: Math.max(1, Math.ceil((entry.resetAt - t) / 1000)),
+        };
       }
       return { allowed: true, retryAfterSec: 0 };
     },
@@ -40,15 +48,27 @@ export function createRateLimiter(opts: { windowMs: number; max: number; now?: (
   };
 }
 
-export function clientKey(req: { ip?: string; socket?: { remoteAddress?: string } }): string {
+export function clientKey(req: {
+  ip?: string;
+  socket?: { remoteAddress?: string };
+}): string {
   return req.ip || req.socket?.remoteAddress || "unknown";
 }
 
 /** Express middleware factory. */
-export function rateLimitMiddleware(limiter: RateLimiter, message = "Zu viele Anfragen. Bitte später erneut versuchen.") {
+export function rateLimitMiddleware(
+  limiter: RateLimiter,
+  message = "Zu viele Anfragen. Bitte später erneut versuchen.",
+) {
   return (req: Request, res: Response, next: NextFunction) => {
     const result = limiter.check(clientKey(req));
     if (!result.allowed) {
+      logSecurityEvent({
+        type: "rate_limit_exceeded",
+        ip: clientKey(req),
+        endpoint: req.path,
+        success: false,
+      });
       res.setHeader("Retry-After", String(result.retryAfterSec));
       res.status(429).json({ error: message });
       return;
@@ -58,12 +78,30 @@ export function rateLimitMiddleware(limiter: RateLimiter, message = "Zu viele An
 }
 
 // Shared limiters (per IP)
-export const loginLimiter = createRateLimiter({ windowMs: 15 * 60_000, max: 10 });
-export const registerLimiter = createRateLimiter({ windowMs: 60 * 60_000, max: 5 });
+export const loginLimiter = createRateLimiter({
+  windowMs: 15 * 60_000,
+  max: 10,
+});
+export const registerLimiter = createRateLimiter({
+  windowMs: 60 * 60_000,
+  max: 5,
+});
 export const liveScanLimiter = createRateLimiter({ windowMs: 60_000, max: 20 });
 
 // Passwort-Reset / Verifizierung: per IP and per target email (silently dropped, no enumeration)
-export const forgotPasswordLimiter = createRateLimiter({ windowMs: 15 * 60_000, max: 5 });
-export const forgotPasswordEmailLimiter = createRateLimiter({ windowMs: 60 * 60_000, max: 3 });
-export const resetPasswordLimiter = createRateLimiter({ windowMs: 15 * 60_000, max: 10 });
-export const verifyEmailLimiter = createRateLimiter({ windowMs: 15 * 60_000, max: 20 });
+export const forgotPasswordLimiter = createRateLimiter({
+  windowMs: 15 * 60_000,
+  max: 5,
+});
+export const forgotPasswordEmailLimiter = createRateLimiter({
+  windowMs: 60 * 60_000,
+  max: 3,
+});
+export const resetPasswordLimiter = createRateLimiter({
+  windowMs: 15 * 60_000,
+  max: 10,
+});
+export const verifyEmailLimiter = createRateLimiter({
+  windowMs: 15 * 60_000,
+  max: 20,
+});

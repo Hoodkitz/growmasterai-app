@@ -7,6 +7,7 @@ Diese Anleitung führt dich durch die Erstellung der In-App-Produkte in der Goog
 ## Voraussetzungen
 
 Bevor du beginnst, stelle sicher dass:
+
 - Du einen **Google Play Developer Account** hast ($25 einmalige Gebühr)
 - Die App bereits in der Play Console als Draft angelegt ist
 - Du Zugriff auf die **Monetarisierung**-Sektion hast
@@ -21,12 +22,12 @@ Falls noch nicht geschehen:
 2. Klicke **"Create app"**
 3. Fülle die Grundinformationen aus:
 
-| Feld | Wert |
-|------|------|
-| **App name** | GrowMaster AI |
+| Feld                 | Wert                  |
+| -------------------- | --------------------- |
+| **App name**         | GrowMaster AI         |
 | **Default language** | Deutsch (Deutschland) |
-| **App or game** | App |
-| **Free or paid** | Free |
+| **App or game**      | App                   |
+| **Free or paid**     | Free                  |
 
 4. Akzeptiere die Bedingungen und klicke **"Create app"**
 
@@ -40,10 +41,10 @@ Falls noch nicht geschehen:
 2. Klicke **"Create subscription"**
 3. Fülle aus:
 
-| Feld | Wert |
-|------|------|
-| **Product ID** | `monthly` |
-| **Name** | GrowMaster Pro Monatlich |
+| Feld            | Wert                                  |
+| --------------- | ------------------------------------- |
+| **Product ID**  | `monthly`                             |
+| **Name**        | GrowMaster Pro Monatlich              |
 | **Description** | Monatliches Abo für alle Pro-Features |
 
 4. Klicke **"Create"**
@@ -70,10 +71,10 @@ Falls noch nicht geschehen:
 1. Klicke erneut **"Create subscription"**
 2. Fülle aus:
 
-| Feld | Wert |
-|------|------|
-| **Product ID** | `yearly` |
-| **Name** | GrowMaster Pro Jährlich |
+| Feld            | Wert                        |
+| --------------- | --------------------------- |
+| **Product ID**  | `yearly`                    |
+| **Name**        | GrowMaster Pro Jährlich     |
 | **Description** | Jährliches Abo - spare 40%! |
 
 3. Erstelle ein **Base plan**:
@@ -104,10 +105,10 @@ Für Lifetime-Käufe verwendest du ein **In-app product** statt einer Subscripti
 2. Klicke **"Create product"**
 3. Fülle aus:
 
-| Feld | Wert |
-|------|------|
-| **Product ID** | `lifetime` |
-| **Name** | GrowMaster Pro Lifetime |
+| Feld            | Wert                                  |
+| --------------- | ------------------------------------- |
+| **Product ID**  | `lifetime`                            |
+| **Name**        | GrowMaster Pro Lifetime               |
 | **Description** | Einmalzahlung für lebenslangen Zugang |
 
 4. Füge **Preise** hinzu:
@@ -121,11 +122,11 @@ Für Lifetime-Käufe verwendest du ein **In-app product** statt einer Subscripti
 
 Nach der Einrichtung solltest du folgende Produkte haben:
 
-| Product ID | Typ | Preis | Billing |
-|------------|-----|-------|---------|
-| `monthly` | Subscription | €4,99 | Monatlich |
-| `yearly` | Subscription | €35,99 | Jährlich |
-| `lifetime` | In-app product | €89,99 | Einmalig |
+| Product ID | Typ            | Preis  | Billing   |
+| ---------- | -------------- | ------ | --------- |
+| `monthly`  | Subscription   | €4,99  | Monatlich |
+| `yearly`   | Subscription   | €35,99 | Jährlich  |
+| `lifetime` | In-app product | €89,99 | Einmalig  |
 
 ---
 
@@ -138,7 +139,7 @@ Um Käufe zu testen ohne echtes Geld auszugeben:
 1. Gehe zu **Setup** → **License testing**
 2. Füge deine Test-E-Mail-Adressen hinzu:
    - `deine-email@gmail.com`
-   - `support@growmaster.app`
+   - `team@growmaster.app`
 3. Wähle **License response**: `RESPOND_NORMALLY`
 
 ### 4.2 Internal Testing Track
@@ -163,6 +164,7 @@ Nachdem die Produkte erstellt sind:
 4. RevenueCat sollte die Produkte aus Google Play automatisch erkennen
 
 Falls nicht:
+
 - Prüfe ob die Service Account Credentials korrekt sind
 - Stelle sicher dass die Product IDs exakt übereinstimmen
 - Warte 24-48 Stunden (Google Play API kann verzögert sein)
@@ -190,13 +192,13 @@ keytool -genkey -v -keystore growmaster-upload.keystore \
 
 Für die Veröffentlichung benötigst du:
 
-| Element | Anforderung |
-|---------|-------------|
-| **App Icon** | 512x512 PNG |
-| **Feature Graphic** | 1024x500 PNG |
-| **Screenshots** | Mind. 2 pro Gerätekategorie |
-| **Short description** | Max. 80 Zeichen |
-| **Full description** | Max. 4000 Zeichen |
+| Element                | Anforderung                 |
+| ---------------------- | --------------------------- |
+| **App Icon**           | 512x512 PNG                 |
+| **Feature Graphic**    | 1024x500 PNG                |
+| **Screenshots**        | Mind. 2 pro Gerätekategorie |
+| **Short description**  | Max. 80 Zeichen             |
+| **Full description**   | Max. 4000 Zeichen           |
 | **Privacy Policy URL** | Pflicht für Apps mit Käufen |
 
 ---

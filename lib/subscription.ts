@@ -20,7 +20,7 @@ export interface TierLimits {
 export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
   free: {
     diagnosesPerDay: 3,
-    coachMessagesPerDay: 5,
+    coachMessagesPerDay: 3,
     maxPlants: 2,
     maxJournalEntries: 10,
     advancedAnalysis: false,
@@ -56,6 +56,13 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
   },
 };
 
+// Accounts with all limits lifted (owner/testing)
+const UNLIMITED_EMAILS = ["hoodkitz@gmail.com"];
+
+export function isUnlimitedAccount(email?: string | null): boolean {
+  return !!email && UNLIMITED_EMAILS.includes(email.trim().toLowerCase());
+}
+
 // Pricing (in EUR)
 export interface TierPricing {
   monthly: number;
@@ -64,7 +71,10 @@ export interface TierPricing {
   savings: number; // percentage saved with yearly
 }
 
-export const TIER_PRICING: Record<Exclude<SubscriptionTier, "free">, TierPricing> = {
+export const TIER_PRICING: Record<
+  Exclude<SubscriptionTier, "free">,
+  TierPricing
+> = {
   premium: {
     monthly: 4.99,
     yearly: 39.99,
@@ -96,7 +106,7 @@ export const TIER_INFO: Record<SubscriptionTier, TierInfo> = {
     icon: "leaf.fill",
     features: [
       "3 Diagnosen pro Tag",
-      "5 Coach-Nachrichten pro Tag",
+      "3 Coach-Nachrichten pro Tag",
       "Bis zu 2 Pflanzen",
       "10 Journal-Einträge",
       "Basis-Analyse",
@@ -157,15 +167,20 @@ export async function getSubscriptionTier(): Promise<SubscriptionTier> {
   }
 }
 
-export async function setSubscriptionTier(tier: SubscriptionTier): Promise<void> {
+export async function setSubscriptionTier(
+  tier: SubscriptionTier,
+): Promise<void> {
   await AsyncStorage.setItem(STORAGE_KEYS.SUBSCRIPTION_TIER, tier);
 }
 
-export async function getDailyUsage(): Promise<{ diagnoses: number; messages: number }> {
+export async function getDailyUsage(): Promise<{
+  diagnoses: number;
+  messages: number;
+}> {
   try {
     const today = new Date().toDateString();
     const lastReset = await AsyncStorage.getItem(STORAGE_KEYS.LAST_RESET_DATE);
-    
+
     // Reset counters if it's a new day
     if (lastReset !== today) {
       await AsyncStorage.setItem(STORAGE_KEYS.LAST_RESET_DATE, today);
@@ -173,10 +188,16 @@ export async function getDailyUsage(): Promise<{ diagnoses: number; messages: nu
       await AsyncStorage.setItem(STORAGE_KEYS.DAILY_MESSAGES, "0");
       return { diagnoses: 0, messages: 0 };
     }
-    
-    const diagnoses = parseInt(await AsyncStorage.getItem(STORAGE_KEYS.DAILY_DIAGNOSES) || "0", 10);
-    const messages = parseInt(await AsyncStorage.getItem(STORAGE_KEYS.DAILY_MESSAGES) || "0", 10);
-    
+
+    const diagnoses = parseInt(
+      (await AsyncStorage.getItem(STORAGE_KEYS.DAILY_DIAGNOSES)) || "0",
+      10,
+    );
+    const messages = parseInt(
+      (await AsyncStorage.getItem(STORAGE_KEYS.DAILY_MESSAGES)) || "0",
+      10,
+    );
+
     return { diagnoses, messages };
   } catch {
     return { diagnoses: 0, messages: 0 };
@@ -197,33 +218,58 @@ export async function incrementMessages(): Promise<number> {
   return newCount;
 }
 
-export function canUseDiagnosis(tier: SubscriptionTier, currentCount: number): boolean {
+export async function decrementMessages(): Promise<number> {
+  const { messages } = await getDailyUsage();
+  const newCount = Math.max(0, messages - 1);
+  await AsyncStorage.setItem(STORAGE_KEYS.DAILY_MESSAGES, newCount.toString());
+  return newCount;
+}
+
+export function canUseDiagnosis(
+  tier: SubscriptionTier,
+  currentCount: number,
+): boolean {
   const limit = TIER_LIMITS[tier].diagnosesPerDay;
   return limit === -1 || currentCount < limit;
 }
 
-export function canSendMessage(tier: SubscriptionTier, currentCount: number): boolean {
+export function canSendMessage(
+  tier: SubscriptionTier,
+  currentCount: number,
+): boolean {
   const limit = TIER_LIMITS[tier].coachMessagesPerDay;
   return limit === -1 || currentCount < limit;
 }
 
-export function canAddPlant(tier: SubscriptionTier, currentCount: number): boolean {
+export function canAddPlant(
+  tier: SubscriptionTier,
+  currentCount: number,
+): boolean {
   const limit = TIER_LIMITS[tier].maxPlants;
   return limit === -1 || currentCount < limit;
 }
 
-export function canAddJournalEntry(tier: SubscriptionTier, currentCount: number): boolean {
+export function canAddJournalEntry(
+  tier: SubscriptionTier,
+  currentCount: number,
+): boolean {
   const limit = TIER_LIMITS[tier].maxJournalEntries;
   return limit === -1 || currentCount < limit;
 }
 
-export function getRemainingDiagnoses(tier: SubscriptionTier, currentCount: number): number | null {
+export function getRemainingDiagnoses(
+  tier: SubscriptionTier,
+  currentCount: number,
+): number | null {
   const limit = TIER_LIMITS[tier].diagnosesPerDay;
   if (limit === -1) return null;
   return Math.max(0, limit - currentCount);
 }
 
-export function getRemainingMessages(tier: SubscriptionTier, currentCount: number): number | null {
+export function getRemainingMessages(
+  tier: SubscriptionTier,
+  currentCount: number,
+): number | null {
   const limit = TIER_LIMITS[tier].coachMessagesPerDay;
   if (limit === -1) return null;
   return Math.max(0, limit - currentCount);

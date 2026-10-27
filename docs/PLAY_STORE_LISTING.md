@@ -1,9 +1,11 @@
 # Google Play Store Listing - GrowMaster AI
 
 ## App-Name
+
 GrowMaster AI - Cannabis Grow Assistent
 
 ## Kurzbesch reibung (max 80 Zeichen)
+
 KI-Pflanzendiagnose, Grow-Coach & Community fuer Cannabis-Anbau
 
 ## Vollstaendige Beschreibung (max 4000 Zeichen)
@@ -35,6 +37,7 @@ MARKETPLACE
 Entdecke Seeds, Naehrstoffe, Equipment und mehr von verifizierten Haendlern. Mit Community-Bewertungen und Empfehlungen.
 
 SMART TOOLS
+
 - VPD-Rechner
 - Naehrstoff-Rechner
 - CO2-Rechner
@@ -43,6 +46,7 @@ SMART TOOLS
 - Ernte-Prognose
 
 PREMIUM FEATURES
+
 - Erweiterte KI-Diagnosen
 - Unbegrenzter Grow-Coach
 - Mehr Pflanzen verwalten
@@ -54,22 +58,28 @@ Die App wird in Deutschland entwickelt und ist DSGVO-konform. Alle Daten werden 
 Hinweis: Diese App dient ausschliesslich dem legalen Cannabis-Anbau im Rahmen der geltenden Gesetze. Bitte informiere dich ueber die in deinem Land geltenden Regelungen.
 
 ## Kategorie
+
 Lifestyle oder Tools
 
 ## Content Rating
+
 Mature 17+ (Cannabis-Bezug)
 
 ## Datenschutz-URL
+
 https://hoodkitz.github.io/growmasterai-legal/privacy.html
 
 ## Tags/Keywords
+
 cannabis, grow, anbau, pflanze, diagnose, ki, ai, grow assistant, pflanzen tracker, grow journal, cannabis app, garten, indoor grow, outdoor grow, hanf
 
 ## Kontakt
-- E-Mail: support@growmaster.app
+
+- E-Mail: team@growmaster.app
 - Website: https://hoodkitz.github.io/growmasterai-legal/
 
 ## Screenshots benoetigt (pro Geraet)
+
 1. Home Dashboard mit Pflanzen-Uebersicht
 2. KI-Diagnose mit Kamera
 3. AI Coach Chat

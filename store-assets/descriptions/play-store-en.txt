@@ -1,7 +1,7 @@
 # Google Play Store Listing - GrowMaster AI (English)
 
 ## App Name
-GrowMaster AI - Cannabis Grow Assistant
+GrowMaster AI: Grow Assistant
 
 ## Short Description (max 80 chars)
 AI plant diagnosis, grow coach & community for cannabis cultivation
@@ -66,7 +66,7 @@ https://hoodkitz.github.io/growmasterai-legal/privacy.html
 cannabis, grow, cultivation, plant, diagnosis, ai, grow assistant, plant tracker, grow journal, cannabis app, garden, indoor grow, outdoor grow, hemp
 
 ## Contact
-- Email: support@growmaster.app
+- Email: team@growmaster.app
 - Website: https://hoodkitz.github.io/growmasterai-legal/
 
 ## Screenshots Required (per device)
