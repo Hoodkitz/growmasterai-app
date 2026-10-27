@@ -48,13 +48,22 @@ export const SHOP_CACHE_MAX_DRIFT_KM = 3;
 const GROWSHOP_TAGS = ["hydroponics", "garden_centre"];
 const HEADSHOP_TAGS = ["cannabis", "headshop"];
 
+// OSM tags are user-edited: only allow http(s) links to reach Linking.openURL.
+function safeWebUrl(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  const url = value.trim();
+  return /^https?:\/\//i.test(url) ? url : undefined;
+}
+
+// Coordinates are rounded to ~1 km before leaving the device (privacy); the
+// 25 km search radius does not need more precision.
 export function buildOverpassQuery(
   lat: number,
   lon: number,
   radiusM = SHOP_SEARCH_RADIUS_M,
 ): string {
   const tags = [...GROWSHOP_TAGS, ...HEADSHOP_TAGS];
-  const around = `(around:${Math.round(radiusM)},${lat.toFixed(5)},${lon.toFixed(5)})`;
+  const around = `(around:${Math.round(radiusM)},${lat.toFixed(2)},${lon.toFixed(2)})`;
   const parts = tags.map((t) => `nwr["shop"="${t}"]${around};`).join("");
   return `[out:json][timeout:25];(${parts});out center tags 100;`;
 }
@@ -134,7 +143,7 @@ export function parseOverpassShops(
       city: tags["addr:city"] ?? "",
       postalCode: tags["addr:postcode"] ?? "",
       phone: tags.phone ?? tags["contact:phone"],
-      website: tags.website ?? tags["contact:website"],
+      website: safeWebUrl(tags.website ?? tags["contact:website"]),
       openingHours: tags.opening_hours,
       osmShopType: shopType,
     };
