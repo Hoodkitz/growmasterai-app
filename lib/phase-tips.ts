@@ -25,10 +25,15 @@ export const TIP_VIDEO_CHANNEL = "Vince and Weed";
 export const TIP_VIDEOS: Record<string, string> = {
   hylMwwNgp5c: "Samen richtig keimen lassen – WAS KANN SCHIEFGEHEN",
   "54JClBM_cOc": "Typische Anfängerfehler im Garten – Was du wissen solltest!",
+  a2dvPckbWEU: "WIE du dein CANNABIS richtig TROCKNEST",
+  bo3uA5hqh50:
+    "Maximaler Ertrag – So füllst du dein gesamtes Zelt mit Low und High Stress Training",
 };
 
 const GERM = "hylMwwNgp5c";
 const BEGIN = "54JClBM_cOc";
+const DRY = "a2dvPckbWEU";
+const TRAIN = "bo3uA5hqh50";
 
 export const PHASE_TIPS: PhaseTip[] = [
   {
@@ -150,6 +155,134 @@ export const PHASE_TIPS: PhaseTip[] = [
     text: "Auf dem Weg vom ersten bis zum letzten Topf muss man als Anfänger in der Regel nicht düngen – gedüngt wird erst ab dem letzten Topf.",
     videoId: BEGIN,
     start: 477,
+  },
+  {
+    id: "train-topping",
+    phases: ["vegetative"],
+    topic: "Toppen",
+    text: "Beim Toppen schneidest du den Haupttrieb mit der Schere ab. Die unteren Seitentriebe konkurrieren dann um die Rolle des neuen Haupttriebs, die Pflanze wird buschiger – besonders wichtig auf kleinem Raum. Vince toppt das erste Mal an der dritten Nodie (Blattachsel).",
+    videoId: TRAIN,
+    start: 85,
+  },
+  {
+    id: "train-topping-repeat",
+    phases: ["vegetative"],
+    topic: "Mehrfach toppen",
+    text: "Aus z. B. 6 Haupttrieben werden durch erneutes Toppen 12 – so füllt die Pflanze mit der Zeit die Fläche im Zelt aus.",
+    videoId: TRAIN,
+    start: 165,
+  },
+  {
+    id: "train-wait",
+    phases: ["vegetative"],
+    topic: "Nach dem Toppen erst wachsen lassen",
+    text: "Direkt nach dem Beschnitt nicht gleich trainieren oder Triebe runterbinden – das stresst die Pflanze und bremst das Wachstum. Erst wachsen lassen und auf ausreichend Nährstoffe und Wasser achten.",
+    videoId: TRAIN,
+    start: 300,
+  },
+  {
+    id: "train-second-topping",
+    phases: ["vegetative"],
+    topic: "Zweites Toppen",
+    text: "Erst toppen, wenn die Triebe kräftig sind (kleine Blätter in den Blattachseln). Dann an allen neuen Spitzen oben über der letzten großen Verzweigung abschneiden und danach unten aufräumen.",
+    videoId: TRAIN,
+    start: 478,
+  },
+  {
+    id: "train-lst",
+    phases: ["vegetative"],
+    topic: "Low Stress Training (LST)",
+    text: "Triebe mit Clips oder Draht um etwa 90° runterbiegen und am Topf fixieren, sodass eine gleichmäßige Oberfläche entsteht. Die Triebe dabei so positionieren, dass auch die unteren Licht abbekommen.",
+    videoId: TRAIN,
+    start: 660,
+  },
+  {
+    id: "train-clips-remove",
+    phases: ["vegetative", "flowering"],
+    topic: "Clips rechtzeitig entfernen",
+    text: "Sobald die Pflanze verholzt, die Clips abnehmen. Sonst wächst sie in die Clips ein und kann sich verletzen.",
+    videoId: TRAIN,
+    start: 1186,
+  },
+  {
+    id: "dry-prep",
+    phases: ["harvest"],
+    topic: "Vor der Ernte",
+    text: "Vince empfiehlt, vor der Ernte 24–48 Stunden das Licht auszulassen. Ziel ist ein sauberes, nicht verschimmeltes Produkt.",
+    videoId: DRY,
+    start: 83,
+  },
+  {
+    id: "dry-hang",
+    phases: ["harvest"],
+    topic: "Ganz abschneiden und aufhängen",
+    text: "Die komplette Pflanze unten abschneiden, die großen Fächerblätter entfernen, die Blätter direkt an den Blüten dranlassen und die Pflanze kopfüber aufhängen. Nicht in kleinen Stücken auf Netze legen – dabei gehen Trichome verloren.",
+    videoId: DRY,
+    start: 127,
+  },
+  {
+    id: "dry-no-wet-trim",
+    phases: ["harvest"],
+    topic: "Erst trocknen, dann trimmen",
+    text: "Kein Nass-Trimmen direkt bei der Ernte: Offene Schnittstellen lassen Sporen eindringen und Feuchtigkeit entweichen, das Trocknen läuft zu schnell. Trimmen am besten, wenn die Pflanze schon trocken ist.",
+    videoId: DRY,
+    start: 168,
+  },
+  {
+    id: "dry-clean",
+    phases: ["harvest"],
+    topic: "Sauber arbeiten",
+    text: "Handschuhe tragen und desinfizierte Scheren benutzen – jede Verunreinigung kann am Ende zu Schimmel führen.",
+    videoId: DRY,
+    start: 211,
+  },
+  {
+    id: "dry-air",
+    phases: ["harvest"],
+    topic: "Luft und Geruchsfilter",
+    text: "Den Abluftfilter nicht ausschalten (die Trocknung riecht stark). Dauerhaft ein leichter Luftzug im Zelt, damit keine Staunässe entsteht – den Lüfter nicht direkt auf die Pflanzen richten.",
+    videoId: DRY,
+    start: 254,
+  },
+  {
+    id: "dry-climate",
+    phases: ["harvest"],
+    topic: "Klima beim Trocknen",
+    text: "Ideal sind laut Vince 45–55 % relative Luftfeuchte und 15–18 °C. Ab etwa 20–22 °C verflüchtigen sich viele Terpene.",
+    videoId: DRY,
+    start: 296,
+  },
+  {
+    id: "dry-snap",
+    phases: ["harvest"],
+    topic: "Wann ins Glas?",
+    text: "Stängel-Test: Frisch geerntet knickt er weich und lautlos, trocken knackt er hörbar. Anfänger nehmen die Blüten ab, wenn der Stängel knackt, und füllen sie dann in die Gläser.",
+    videoId: DRY,
+    start: 338,
+  },
+  {
+    id: "dry-jars",
+    phases: ["harvest"],
+    topic: "Gefäße",
+    text: "Vince bevorzugt Gefäße mit großer Öffnung, in die man die Blüten samt Blättern legen kann. Durchsichtige Gefäße kühl und dunkel lagern (ca. 15–18 °C), damit Cannabinoide und Terpene nicht abgebaut werden.",
+    videoId: DRY,
+    start: 426,
+  },
+  {
+    id: "dry-hygro",
+    phases: ["harvest"],
+    topic: "Feuchte im Glas kontrollieren",
+    text: "Ein Hygrometer im Glas (und ggf. Feuchtigkeitsbeutel mit 62 %) zeigt, ob du im richtigen Bereich bist: etwa 62–65 %. Liegt der Wert darüber, das Glas 1–2 Stunden offen lassen (Beutel vorher herausnehmen) und dann wieder schließen.",
+    videoId: DRY,
+    start: 555,
+  },
+  {
+    id: "dry-mold",
+    phases: ["harvest"],
+    topic: "Schimmel kontrollieren",
+    text: "Dicke, kompakte Blüten regelmäßig innen prüfen: Rötlich-braune, faserige Beläge sind verdächtig. Ist ein Glas kontaminiert, im Zweifel wegwerfen – Schimmel gehört nicht in die Lunge. Ein Heu-/Grasgeruch am Anfang ist normal und verfliegt nach ca. 7–10 Tagen.",
+    videoId: DRY,
+    start: 767,
   },
   {
     id: "harvest-trichomes",
