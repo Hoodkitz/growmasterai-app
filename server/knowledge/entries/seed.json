@@ -1,0 +1,649 @@
+[
+  {
+    "id": "seed-germ-conditions",
+    "topic": "Keimbedingungen",
+    "phases": ["germination"],
+    "tags": ["keimen", "keimung", "samen", "anzucht", "sämling"],
+    "text": "Optimal sind ca. 20–26 °C, Dunkelheit und feuchtes (nicht nasses) Substrat. Der Samen liegt etwa 1–1,5 cm tief. Eine Keimrate von 100 % ist nie garantiert.",
+    "videoId": "hylMwwNgp5c",
+    "videoTitle": "Samen richtig keimen lassen – WAS KANN SCHIEFGEHEN",
+    "channel": "Vince and Weed",
+    "start": 85
+  },
+  {
+    "id": "seed-germ-soil",
+    "topic": "Keimen in Erde",
+    "phases": ["germination"],
+    "tags": ["keimen", "keimung", "samen", "anzucht", "sämling"],
+    "text": "Vince empfiehlt, direkt in Erde zu keimen statt im Papiertuch oder Wasserglas: Dort drohen Überwässerung, beschädigte Pfahlwurzeln und Abbrechen beim Umsetzen.",
+    "videoId": "hylMwwNgp5c",
+    "videoTitle": "Samen richtig keimen lassen – WAS KANN SCHIEFGEHEN",
+    "channel": "Vince and Weed",
+    "start": 270
+  },
+  {
+    "id": "seed-germ-soil-prep",
+    "topic": "Erde vorbereiten",
+    "phases": ["germination"],
+    "tags": ["keimen", "keimung", "samen", "anzucht", "sämling"],
+    "text": "Leicht vorgedüngte Anzuchterde vorher gleichmäßig anfeuchten. Nie stark gedüngte Erde oder Dünger bei der Keimung verwenden – Nährsalze führen zu Wachstumsproblemen und Verbrennungen.",
+    "videoId": "hylMwwNgp5c",
+    "videoTitle": "Samen richtig keimen lassen – WAS KANN SCHIEFGEHEN",
+    "channel": "Vince and Weed",
+    "start": 345
+  },
+  {
+    "id": "seed-germ-planting",
+    "topic": "Einpflanzen",
+    "phases": ["germination"],
+    "tags": ["keimen", "keimung", "samen", "anzucht", "sämling"],
+    "text": "Mit einem Stab ein ca. 1,5 cm tiefes Loch machen, Samen hineinlegen, Loch schließen und andrücken. So bleibt die Samenschale in der Erde hängen und wird abgestreift.",
+    "videoId": "hylMwwNgp5c",
+    "videoTitle": "Samen richtig keimen lassen – WAS KANN SCHIEFGEHEN",
+    "channel": "Vince and Weed",
+    "start": 367
+  },
+  {
+    "id": "seed-germ-shell",
+    "topic": "Samenschale hängt noch",
+    "phases": ["germination", "seedling"],
+    "tags": ["keimen", "keimung", "samen", "anzucht", "sämling"],
+    "text": "Bleibt die Schale an den Keimblättern hängen, vorsichtig mit sauberer Pinzette entfernen (dabei kann viel kaputtgehen). Beim nächsten Mal den Samen 2–5 mm tiefer setzen.",
+    "videoId": "hylMwwNgp5c",
+    "videoTitle": "Samen richtig keimen lassen – WAS KANN SCHIEFGEHEN",
+    "channel": "Vince and Weed",
+    "start": 240
+  },
+  {
+    "id": "seed-germ-box",
+    "topic": "Klima halten",
+    "phases": ["germination"],
+    "tags": ["keimen", "keimung", "samen", "anzucht", "sämling"],
+    "text": "Töpfe in ein kleines Gewächshaus oder eine durchsichtige Box stellen, nicht ganz verschließen (Schimmel). Fensterbank (Zugluft) und Heizung (zu warm, trocknet aus) sind ungünstig.",
+    "videoId": "hylMwwNgp5c",
+    "videoTitle": "Samen richtig keimen lassen – WAS KANN SCHIEFGEHEN",
+    "channel": "Vince and Weed",
+    "start": 397
+  },
+  {
+    "id": "seed-germ-extra",
+    "topic": "Reserve einplanen",
+    "phases": ["germination"],
+    "tags": ["keimen", "keimung", "samen", "anzucht", "sämling"],
+    "text": "10–20 % mehr Samen ankeimen, als du brauchst. Ungenutzte Samen dunkel, sehr trocken und bei 2–5 °C lagern – dann bleiben sie bis zu 6 Jahre keimfähig.",
+    "videoId": "hylMwwNgp5c",
+    "videoTitle": "Samen richtig keimen lassen – WAS KANN SCHIEFGEHEN",
+    "channel": "Vince and Weed",
+    "start": 450
+  },
+  {
+    "id": "seed-stretch-light",
+    "topic": "Vergeilen vermeiden",
+    "phases": ["seedling"],
+    "tags": ["vergeilen", "licht", "lampe", "abstand", "keimling"],
+    "text": "Bekommt der Keimling zu wenig Licht, streckt er sich, wird lang und dünn und kippt ab ca. 7 cm leicht um. Herstellerangaben der Lampe beachten; bei dimmbaren Lampen etwa 30–40 cm Abstand, mit 10–15 % Leistung starten und langsam steigern.",
+    "videoId": "54JClBM_cOc",
+    "videoTitle": "Typische Anfängerfehler im Garten – Was du wissen solltest!",
+    "channel": "Vince and Weed",
+    "start": 341
+  },
+  {
+    "id": "seed-stretch-thread",
+    "topic": "Lampenabstand messen",
+    "phases": ["seedling", "vegetative"],
+    "tags": ["vergeilen", "licht", "lampe", "abstand", "keimling"],
+    "text": "Praxis-Trick: Einen Faden in Wunschlänge (z. B. 35–40 cm) mit einer Mutter an der Lampe befestigen – wächst die Pflanze darüber hinaus, die Lampe abends höher hängen.",
+    "videoId": "54JClBM_cOc",
+    "videoTitle": "Typische Anfängerfehler im Garten – Was du wissen solltest!",
+    "channel": "Vince and Weed",
+    "start": 393
+  },
+  {
+    "id": "seed-water-balance",
+    "topic": "Gießen: zu wenig vs. zu viel",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "gießen",
+      "wasser",
+      "überwässerung",
+      "staunässe",
+      "trocken",
+      "topf"
+    ],
+    "text": "Zu wenig und zu viel Wasser lassen beide die Blätter hängen. Dauerhaft zu trockene Erde wird wasserabweisend (Wasser läuft sofort unten durch). Zu viel Wasser macht die Pflanze weich und gummiartig, dazu kommen große gelbe/braune Flecken.",
+    "videoId": "54JClBM_cOc",
+    "videoTitle": "Typische Anfängerfehler im Garten – Was du wissen solltest!",
+    "channel": "Vince and Weed",
+    "start": 21
+  },
+  {
+    "id": "seed-water-lift",
+    "topic": "Gießen: Topf anheben",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "gießen",
+      "wasser",
+      "überwässerung",
+      "staunässe",
+      "trocken",
+      "topf"
+    ],
+    "text": "Topf anheben: Wirkt er zu schwer, wurde wahrscheinlich zu viel gegossen. Die Wurzeln brauchen auch Sauerstoff – dauerhaft nasse Erde blockiert Nährstoff- und Wasseraufnahme.",
+    "videoId": "54JClBM_cOc",
+    "videoTitle": "Typische Anfängerfehler im Garten – Was du wissen solltest!",
+    "channel": "Vince and Weed",
+    "start": 79
+  },
+  {
+    "id": "seed-feed-deficiency",
+    "topic": "Gelb von unten: Mangel",
+    "phases": ["vegetative", "flowering"],
+    "tags": ["düngen", "dünger", "nährstoffe", "mangel", "gelb", "überdüngung"],
+    "text": "Vergilbt die Pflanze von unten nach oben (wie ein Weihnachtsbaum), fehlen Nährstoffe in der Erde und sie zehrt von ihren Reserven – typisch Stickstoff. Dann hätte etwas früher gedüngt werden sollen.",
+    "videoId": "54JClBM_cOc",
+    "videoTitle": "Typische Anfängerfehler im Garten – Was du wissen solltest!",
+    "channel": "Vince and Weed",
+    "start": 185
+  },
+  {
+    "id": "seed-feed-burn",
+    "topic": "Gelbe Blattspitzen oben: zu viel Dünger",
+    "phases": ["vegetative", "flowering"],
+    "tags": ["düngen", "dünger", "nährstoffe", "mangel", "gelb", "überdüngung"],
+    "text": "Werden die Blattspitzen oben gelb-braun (oft bei sattem Dunkelgrün), war die Nährlösung zu stark („Nährstoffbrand“): Dünger besteht aus Salzen und entzieht der Pflanze Wasser.",
+    "videoId": "54JClBM_cOc",
+    "videoTitle": "Typische Anfängerfehler im Garten – Was du wissen solltest!",
+    "channel": "Vince and Weed",
+    "start": 220
+  },
+  {
+    "id": "seed-repot",
+    "topic": "Umtopfen",
+    "phases": ["seedling", "vegetative"],
+    "tags": ["umtopfen", "topf", "wurzeln", "durchwurzelt"],
+    "text": "Vince topft zweimal um: erst, wenn der Topf komplett durchwurzelt ist (Topf massieren, die Wurzeln müssen die Erde halten). Der neue Topf sollte rundum mindestens 4–5 cm mehr Platz bieten, z. B. 1 l, dann 1,5–2,5 l, dann der Endtopf.",
+    "videoId": "54JClBM_cOc",
+    "videoTitle": "Typische Anfängerfehler im Garten – Was du wissen solltest!",
+    "channel": "Vince and Weed",
+    "start": 436
+  },
+  {
+    "id": "seed-repot-feed",
+    "topic": "Düngen erst im Endtopf",
+    "phases": ["seedling", "vegetative"],
+    "tags": ["umtopfen", "topf", "wurzeln", "durchwurzelt"],
+    "text": "Auf dem Weg vom ersten bis zum letzten Topf muss man als Anfänger in der Regel nicht düngen – gedüngt wird erst ab dem letzten Topf.",
+    "videoId": "54JClBM_cOc",
+    "videoTitle": "Typische Anfängerfehler im Garten – Was du wissen solltest!",
+    "channel": "Vince and Weed",
+    "start": 477
+  },
+  {
+    "id": "seed-train-topping",
+    "topic": "Toppen",
+    "phases": ["vegetative"],
+    "tags": ["toppen", "lst", "training", "clips", "biegen", "busch"],
+    "text": "Beim Toppen schneidest du den Haupttrieb mit der Schere ab. Die unteren Seitentriebe konkurrieren dann um die Rolle des neuen Haupttriebs, die Pflanze wird buschiger – besonders wichtig auf kleinem Raum. Vince toppt das erste Mal an der dritten Nodie (Blattachsel).",
+    "videoId": "bo3uA5hqh50",
+    "videoTitle": "Maximaler Ertrag – So füllst du dein gesamtes Zelt mit Low und High Stress Training",
+    "channel": "Vince and Weed",
+    "start": 85
+  },
+  {
+    "id": "seed-train-topping-repeat",
+    "topic": "Mehrfach toppen",
+    "phases": ["vegetative"],
+    "tags": ["toppen", "lst", "training", "clips", "biegen", "busch"],
+    "text": "Aus z. B. 6 Haupttrieben werden durch erneutes Toppen 12 – so füllt die Pflanze mit der Zeit die Fläche im Zelt aus.",
+    "videoId": "bo3uA5hqh50",
+    "videoTitle": "Maximaler Ertrag – So füllst du dein gesamtes Zelt mit Low und High Stress Training",
+    "channel": "Vince and Weed",
+    "start": 165
+  },
+  {
+    "id": "seed-train-wait",
+    "topic": "Nach dem Toppen erst wachsen lassen",
+    "phases": ["vegetative"],
+    "tags": ["toppen", "lst", "training", "clips", "biegen", "busch"],
+    "text": "Direkt nach dem Beschnitt nicht gleich trainieren oder Triebe runterbinden – das stresst die Pflanze und bremst das Wachstum. Erst wachsen lassen und auf ausreichend Nährstoffe und Wasser achten.",
+    "videoId": "bo3uA5hqh50",
+    "videoTitle": "Maximaler Ertrag – So füllst du dein gesamtes Zelt mit Low und High Stress Training",
+    "channel": "Vince and Weed",
+    "start": 300
+  },
+  {
+    "id": "seed-train-second-topping",
+    "topic": "Zweites Toppen",
+    "phases": ["vegetative"],
+    "tags": ["toppen", "lst", "training", "clips", "biegen", "busch"],
+    "text": "Erst toppen, wenn die Triebe kräftig sind (kleine Blätter in den Blattachseln). Dann an allen neuen Spitzen oben über der letzten großen Verzweigung abschneiden und danach unten aufräumen.",
+    "videoId": "bo3uA5hqh50",
+    "videoTitle": "Maximaler Ertrag – So füllst du dein gesamtes Zelt mit Low und High Stress Training",
+    "channel": "Vince and Weed",
+    "start": 478
+  },
+  {
+    "id": "seed-train-lst",
+    "topic": "Low Stress Training (LST)",
+    "phases": ["vegetative"],
+    "tags": ["toppen", "lst", "training", "clips", "biegen", "busch"],
+    "text": "Triebe mit Clips oder Draht um etwa 90° runterbiegen und am Topf fixieren, sodass eine gleichmäßige Oberfläche entsteht. Die Triebe dabei so positionieren, dass auch die unteren Licht abbekommen.",
+    "videoId": "bo3uA5hqh50",
+    "videoTitle": "Maximaler Ertrag – So füllst du dein gesamtes Zelt mit Low und High Stress Training",
+    "channel": "Vince and Weed",
+    "start": 660
+  },
+  {
+    "id": "seed-train-clips-remove",
+    "topic": "Clips rechtzeitig entfernen",
+    "phases": ["vegetative", "flowering"],
+    "tags": ["toppen", "lst", "training", "clips", "biegen", "busch"],
+    "text": "Sobald die Pflanze verholzt, die Clips abnehmen. Sonst wächst sie in die Clips ein und kann sich verletzen.",
+    "videoId": "bo3uA5hqh50",
+    "videoTitle": "Maximaler Ertrag – So füllst du dein gesamtes Zelt mit Low und High Stress Training",
+    "channel": "Vince and Weed",
+    "start": 1186
+  },
+  {
+    "id": "seed-dry-prep",
+    "topic": "Vor der Ernte",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "trocknung",
+      "curing",
+      "glas",
+      "schimmel",
+      "hygrometer",
+      "lagern"
+    ],
+    "text": "Vince empfiehlt, vor der Ernte 24–48 Stunden das Licht auszulassen. Ziel ist ein sauberes, nicht verschimmeltes Produkt.",
+    "videoId": "a2dvPckbWEU",
+    "videoTitle": "WIE du dein CANNABIS richtig TROCKNEST",
+    "channel": "Vince and Weed",
+    "start": 83
+  },
+  {
+    "id": "seed-dry-hang",
+    "topic": "Ganz abschneiden und aufhängen",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "trocknung",
+      "curing",
+      "glas",
+      "schimmel",
+      "hygrometer",
+      "lagern"
+    ],
+    "text": "Die komplette Pflanze unten abschneiden, die großen Fächerblätter entfernen, die Blätter direkt an den Blüten dranlassen und die Pflanze kopfüber aufhängen. Nicht in kleinen Stücken auf Netze legen – dabei gehen Trichome verloren.",
+    "videoId": "a2dvPckbWEU",
+    "videoTitle": "WIE du dein CANNABIS richtig TROCKNEST",
+    "channel": "Vince and Weed",
+    "start": 127
+  },
+  {
+    "id": "seed-dry-no-wet-trim",
+    "topic": "Erst trocknen, dann trimmen",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "trocknung",
+      "curing",
+      "glas",
+      "schimmel",
+      "hygrometer",
+      "lagern"
+    ],
+    "text": "Kein Nass-Trimmen direkt bei der Ernte: Offene Schnittstellen lassen Sporen eindringen und Feuchtigkeit entweichen, das Trocknen läuft zu schnell. Trimmen am besten, wenn die Pflanze schon trocken ist.",
+    "videoId": "a2dvPckbWEU",
+    "videoTitle": "WIE du dein CANNABIS richtig TROCKNEST",
+    "channel": "Vince and Weed",
+    "start": 168
+  },
+  {
+    "id": "seed-dry-clean",
+    "topic": "Sauber arbeiten",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "trocknung",
+      "curing",
+      "glas",
+      "schimmel",
+      "hygrometer",
+      "lagern"
+    ],
+    "text": "Handschuhe tragen und desinfizierte Scheren benutzen – jede Verunreinigung kann am Ende zu Schimmel führen.",
+    "videoId": "a2dvPckbWEU",
+    "videoTitle": "WIE du dein CANNABIS richtig TROCKNEST",
+    "channel": "Vince and Weed",
+    "start": 211
+  },
+  {
+    "id": "seed-dry-air",
+    "topic": "Luft und Geruchsfilter",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "trocknung",
+      "curing",
+      "glas",
+      "schimmel",
+      "hygrometer",
+      "lagern"
+    ],
+    "text": "Den Abluftfilter nicht ausschalten (die Trocknung riecht stark). Dauerhaft ein leichter Luftzug im Zelt, damit keine Staunässe entsteht – den Lüfter nicht direkt auf die Pflanzen richten.",
+    "videoId": "a2dvPckbWEU",
+    "videoTitle": "WIE du dein CANNABIS richtig TROCKNEST",
+    "channel": "Vince and Weed",
+    "start": 254
+  },
+  {
+    "id": "seed-dry-climate",
+    "topic": "Klima beim Trocknen",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "trocknung",
+      "curing",
+      "glas",
+      "schimmel",
+      "hygrometer",
+      "lagern"
+    ],
+    "text": "Ideal sind laut Vince 45–55 % relative Luftfeuchte und 15–18 °C. Ab etwa 20–22 °C verflüchtigen sich viele Terpene.",
+    "videoId": "a2dvPckbWEU",
+    "videoTitle": "WIE du dein CANNABIS richtig TROCKNEST",
+    "channel": "Vince and Weed",
+    "start": 296
+  },
+  {
+    "id": "seed-dry-snap",
+    "topic": "Wann ins Glas?",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "trocknung",
+      "curing",
+      "glas",
+      "schimmel",
+      "hygrometer",
+      "lagern"
+    ],
+    "text": "Stängel-Test: Frisch geerntet knickt er weich und lautlos, trocken knackt er hörbar. Anfänger nehmen die Blüten ab, wenn der Stängel knackt, und füllen sie dann in die Gläser.",
+    "videoId": "a2dvPckbWEU",
+    "videoTitle": "WIE du dein CANNABIS richtig TROCKNEST",
+    "channel": "Vince and Weed",
+    "start": 338
+  },
+  {
+    "id": "seed-dry-jars",
+    "topic": "Gefäße",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "trocknung",
+      "curing",
+      "glas",
+      "schimmel",
+      "hygrometer",
+      "lagern"
+    ],
+    "text": "Vince bevorzugt Gefäße mit großer Öffnung, in die man die Blüten samt Blättern legen kann. Durchsichtige Gefäße kühl und dunkel lagern (ca. 15–18 °C), damit Cannabinoide und Terpene nicht abgebaut werden.",
+    "videoId": "a2dvPckbWEU",
+    "videoTitle": "WIE du dein CANNABIS richtig TROCKNEST",
+    "channel": "Vince and Weed",
+    "start": 426
+  },
+  {
+    "id": "seed-dry-hygro",
+    "topic": "Feuchte im Glas kontrollieren",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "trocknung",
+      "curing",
+      "glas",
+      "schimmel",
+      "hygrometer",
+      "lagern"
+    ],
+    "text": "Ein Hygrometer im Glas (und ggf. Feuchtigkeitsbeutel mit 62 %) zeigt, ob du im richtigen Bereich bist: etwa 62–65 %. Liegt der Wert darüber, das Glas 1–2 Stunden offen lassen (Beutel vorher herausnehmen) und dann wieder schließen.",
+    "videoId": "a2dvPckbWEU",
+    "videoTitle": "WIE du dein CANNABIS richtig TROCKNEST",
+    "channel": "Vince and Weed",
+    "start": 555
+  },
+  {
+    "id": "seed-dry-mold",
+    "topic": "Schimmel kontrollieren",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "trocknung",
+      "curing",
+      "glas",
+      "schimmel",
+      "hygrometer",
+      "lagern"
+    ],
+    "text": "Dicke, kompakte Blüten regelmäßig innen prüfen: Rötlich-braune, faserige Beläge sind verdächtig. Ist ein Glas kontaminiert, im Zweifel wegwerfen – Schimmel gehört nicht in die Lunge. Ein Heu-/Grasgeruch am Anfang ist normal und verfliegt nach ca. 7–10 Tagen.",
+    "videoId": "a2dvPckbWEU",
+    "videoTitle": "WIE du dein CANNABIS richtig TROCKNEST",
+    "channel": "Vince and Weed",
+    "start": 767
+  },
+  {
+    "id": "seed-sex-why",
+    "topic": "Warum das Geschlecht wichtig ist",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "geschlecht",
+      "männlich",
+      "weiblich",
+      "zwitter",
+      "bananen",
+      "vorblüten",
+      "pollen"
+    ],
+    "text": "Nur weibliche Pflanzen tragen die begehrten Blüten. Wird eine Pflanze bestäubt, steckt sie ihre Kraft in Samen, bildet weniger Blüten und der Cannabinoid-Gehalt sinkt. Männchen deshalb sofort aus dem Garten nehmen.",
+    "videoId": "ww7_81UuxDA",
+    "videoTitle": "Wie erkennt man ob eine Cannabis Pflanze männlich oder weiblich ist?",
+    "channel": "Vince and Weed",
+    "start": 58
+  },
+  {
+    "id": "seed-sex-feminized",
+    "topic": "Feminisierte Samen sind keine Garantie",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "geschlecht",
+      "männlich",
+      "weiblich",
+      "zwitter",
+      "bananen",
+      "vorblüten",
+      "pollen"
+    ],
+    "text": "Auch feminisiertes Saatgut kann zwittern, und eine kleine Restwahrscheinlichkeit (etwa 1 %) für ein Männchen bleibt. Kontrolliere deshalb trotzdem.",
+    "videoId": "ww7_81UuxDA",
+    "videoTitle": "Wie erkennt man ob eine Cannabis Pflanze männlich oder weiblich ist?",
+    "channel": "Vince and Weed",
+    "start": 137
+  },
+  {
+    "id": "seed-sex-timing",
+    "topic": "Wann man das Geschlecht sieht",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "geschlecht",
+      "männlich",
+      "weiblich",
+      "zwitter",
+      "bananen",
+      "vorblüten",
+      "pollen"
+    ],
+    "text": "Das Geschlecht zeigt sich erst, wenn die Pflanze in die Blüte geht – aus Samen meist nach 3–5 Wochen. Indoor leitest du die Blüte ein, indem du die Lichtdauer von 18 auf 12 Stunden stellst.",
+    "videoId": "ww7_81UuxDA",
+    "videoTitle": "Wie erkennt man ob eine Cannabis Pflanze männlich oder weiblich ist?",
+    "channel": "Vince and Weed",
+    "start": 169
+  },
+  {
+    "id": "seed-sex-female",
+    "topic": "Weibchen erkennen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "geschlecht",
+      "männlich",
+      "weiblich",
+      "zwitter",
+      "bananen",
+      "vorblüten",
+      "pollen"
+    ],
+    "text": "Weibliche Vorblüten sehen aus wie kleine weiße, V-förmig angeordnete Härchen am Blütenkelch. Du findest sie an den Nodien im mittleren und oberen Teil der Pflanze.",
+    "videoId": "ww7_81UuxDA",
+    "videoTitle": "Wie erkennt man ob eine Cannabis Pflanze männlich oder weiblich ist?",
+    "channel": "Vince and Weed",
+    "start": 235
+  },
+  {
+    "id": "seed-sex-wait",
+    "topic": "Geduld beim Bestimmen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "geschlecht",
+      "männlich",
+      "weiblich",
+      "zwitter",
+      "bananen",
+      "vorblüten",
+      "pollen"
+    ],
+    "text": "Mit einer Lupe sind die Vorblüten etwa 7–10 Tage nach Blütebeginn gut zu erkennen. Zeigt die Pflanze noch nichts, 2–3 Tage warten und den Garten täglich kontrollieren, bis alle Pflanzen ihr Geschlecht gezeigt haben.",
+    "videoId": "ww7_81UuxDA",
+    "videoTitle": "Wie erkennt man ob eine Cannabis Pflanze männlich oder weiblich ist?",
+    "channel": "Vince and Weed",
+    "start": 269
+  },
+  {
+    "id": "seed-sex-male",
+    "topic": "Männchen erkennen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "geschlecht",
+      "männlich",
+      "weiblich",
+      "zwitter",
+      "bananen",
+      "vorblüten",
+      "pollen"
+    ],
+    "text": "Männliche Pflanzen bilden Pollensäcke – keine V-förmigen Härchen, sondern kleine Kügelchen (unter der Lupe wie winzige Bananenstauden), ebenfalls an den Nodien im mittleren bis oberen Bereich.",
+    "videoId": "ww7_81UuxDA",
+    "videoTitle": "Wie erkennt man ob eine Cannabis Pflanze männlich oder weiblich ist?",
+    "channel": "Vince and Weed",
+    "start": 317
+  },
+  {
+    "id": "seed-sex-remove",
+    "topic": "Männchen vorsichtig entfernen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "geschlecht",
+      "männlich",
+      "weiblich",
+      "zwitter",
+      "bananen",
+      "vorblüten",
+      "pollen"
+    ],
+    "text": "Beim Entfernen behutsam vorgehen: Öffnet sich ein Pollensack, können die weiblichen Pflanzen ungewollt bestäubt werden.",
+    "videoId": "ww7_81UuxDA",
+    "videoTitle": "Wie erkennt man ob eine Cannabis Pflanze männlich oder weiblich ist?",
+    "channel": "Vince and Weed",
+    "start": 376
+  },
+  {
+    "id": "seed-sex-herma",
+    "topic": "Zwitter (Hermaphroditen)",
+    "phases": ["flowering"],
+    "tags": [
+      "geschlecht",
+      "männlich",
+      "weiblich",
+      "zwitter",
+      "bananen",
+      "vorblüten",
+      "pollen"
+    ],
+    "text": "Zwitter bilden männliche und weibliche Merkmale. Auslöser können Stress, Nährstoffmangel oder -überschuss oder Dürre sein. Zwitter können auch spät und über die gesamte Blüte entstehen – mach daher regelmäßig Stichproben.",
+    "videoId": "ww7_81UuxDA",
+    "videoTitle": "Wie erkennt man ob eine Cannabis Pflanze männlich oder weiblich ist?",
+    "channel": "Vince and Weed",
+    "start": 403
+  },
+  {
+    "id": "seed-sex-banana",
+    "topic": "„Bananen“ erkennen",
+    "phases": ["flowering"],
+    "tags": [
+      "geschlecht",
+      "männlich",
+      "weiblich",
+      "zwitter",
+      "bananen",
+      "vorblüten",
+      "pollen"
+    ],
+    "text": "Bei Zwittern wachsen männliche Staubgefäße („Bananen“, oft hellgrün oder gelb, manchmal gebündelt) aus den weiblichen Blüten, meist erst spät in der Blüte. Sie können jederzeit Pollen freisetzen.",
+    "videoId": "ww7_81UuxDA",
+    "videoTitle": "Wie erkennt man ob eine Cannabis Pflanze männlich oder weiblich ist?",
+    "channel": "Vince and Weed",
+    "start": 477
+  },
+  {
+    "id": "seed-sex-herma-late",
+    "topic": "Zwitter spät entdeckt",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "geschlecht",
+      "männlich",
+      "weiblich",
+      "zwitter",
+      "bananen",
+      "vorblüten",
+      "pollen"
+    ],
+    "text": "Vince entfernt Zwitter grundsätzlich. Wird einer erst in den letzten 1–1,5 Wochen entdeckt, kann man die Bananen vorsichtig entfernen und ein paar Samen riskieren – oder etwas früher ernten und dafür weniger Ertrag in Kauf nehmen.",
+    "videoId": "ww7_81UuxDA",
+    "videoTitle": "Wie erkennt man ob eine Cannabis Pflanze männlich oder weiblich ist?",
+    "channel": "Vince and Weed",
+    "start": 519
+  },
+  {
+    "id": "seed-harvest-trichomes",
+    "topic": "Erntezeitpunkt",
+    "phases": ["harvest", "flowering"],
+    "tags": ["ernte", "trichome", "erntezeitpunkt", "lupe"],
+    "text": "Nicht nach den Härchen gehen. Besser die Trichome prüfen: durchsichtig = zu früh, milchig = guter Zeitpunkt, bernsteinfarben = die Inhaltsstoffe beginnen abzubauen. Dafür eine Lupe (25x bis 200x) nutzen.",
+    "videoId": "54JClBM_cOc",
+    "videoTitle": "Typische Anfängerfehler im Garten – Was du wissen solltest!",
+    "channel": "Vince and Weed",
+    "start": 598
+  },
+  {
+    "id": "seed-harvest-patience",
+    "topic": "Geduld",
+    "phases": ["harvest", "flowering"],
+    "tags": ["ernte", "trichome", "erntezeitpunkt", "lupe"],
+    "text": "Der Erntetag kommt später, als man warten möchte. Geduld ist laut Vince das größte Hindernis für eine gute Ernte.",
+    "videoId": "54JClBM_cOc",
+    "videoTitle": "Typische Anfängerfehler im Garten – Was du wissen solltest!",
+    "channel": "Vince and Weed",
+    "start": 585
+  }
+]

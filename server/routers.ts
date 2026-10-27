@@ -1,5 +1,11 @@
 import { sanitizeUserInput } from "./_core/security";
 import { mergeRemedies, mergeCoachProducts } from "../shared/remedies";
+import {
+  KNOWLEDGE_PHASES,
+  knowledgeForPhase,
+  searchKnowledge,
+  type KnowledgeEntry,
+} from "./knowledge";
 import { z } from "zod";
 import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
@@ -83,6 +89,30 @@ function withRemedies<
 >(result: T) {
   const text = [result.problem, ...result.recommendations].join(" \n");
   return { ...result, remedies: mergeRemedies(result.remedies, text) };
+}
+
+/** One source per video moment, at most three, for the coach answer. */
+function dedupeSources(entries: KnowledgeEntry[]) {
+  const seen = new Set<string>();
+  const out: {
+    title: string;
+    channel: string;
+    videoId: string;
+    start: number;
+  }[] = [];
+  for (const e of entries) {
+    const key = `${e.videoId}:${e.start}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({
+      title: e.videoTitle,
+      channel: e.channel,
+      videoId: e.videoId,
+      start: e.start,
+    });
+    if (out.length >= 3) break;
+  }
+  return out;
 }
 
 // Coach response schema
@@ -553,6 +583,17 @@ Klar = zu früh, Milchig = THC-Peak, Bernstein = mehr CBD/CBN, entspannender`,
             },
           })) || [];
 
+        const hits = searchKnowledge(input.question, { limit: 4 }).map(
+          (h) => h.entry,
+        );
+        const knowledgeBlock =
+          hits.length > 0
+            ? `\n\nWissensbasis (belegte Aussagen aus Grow-Videos, nutze sie nur, wenn sie zur Frage passen, und widersprich ihnen nicht ohne Grund):\n${hits
+                .map((h) => `- ${h.topic}: ${h.text}`)
+                .join("\n")}`
+            : "";
+        const sources = dedupeSources(hits);
+
         const result = await invokeLLM({
           messages: [
             {
@@ -568,7 +609,7 @@ Antworte IMMER auf Deutsch und im folgenden JSON-Format:
 
 Products: Nenne 0-3 konkrete, legale Hilfsmittel, die du in deiner Antwort empfiehlst oder die direkt dazu passen (z. B. pH-Messgerät, Lupe, Pflanzenschere, Thermo-Hygrometer, Dünger). Keine Samen, keine Rauschmittel, keine Links. Wenn kein Hilfsmittel passt, leeres Array.
 
-Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksichtige verschiedene Erfahrungslevel der Nutzer.`,
+Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksichtige verschiedene Erfahrungslevel der Nutzer.${knowledgeBlock}`,
             },
             {
               role: "user",
@@ -597,6 +638,7 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
                 parsed.products,
                 `${input.question} ${parsed.answer} ${parsed.tips.join(" ")}`,
               ),
+              sources,
             };
           } catch {
             return {
@@ -606,6 +648,7 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
                 undefined,
                 `${input.question} ${content}`,
               ),
+              sources,
             };
           }
         }
@@ -615,8 +658,34 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
             "Entschuldigung, ich konnte deine Frage nicht verarbeiten. Bitte versuche es erneut.",
           tips: [] as string[],
           remedies: [] as ReturnType<typeof mergeCoachProducts>,
+          sources,
         };
       }),
+  }),
+
+  // Knowledge base (checked statements from grow videos)
+  knowledge: router({
+    search: publicProcedure
+      .input(
+        z.object({
+          query: z.string().min(2).max(200),
+          phase: z.enum(KNOWLEDGE_PHASES as [string, ...string[]]).optional(),
+          limit: z.number().int().min(1).max(10).default(5),
+        }),
+      )
+      .query(({ input }) =>
+        searchKnowledge(input.query, {
+          phase: input.phase as KnowledgeEntry["phases"][number] | undefined,
+          limit: input.limit,
+        }).map((h) => h.entry),
+      ),
+    forPhase: publicProcedure
+      .input(
+        z.object({ phase: z.enum(KNOWLEDGE_PHASES as [string, ...string[]]) }),
+      )
+      .query(({ input }) =>
+        knowledgeForPhase(input.phase as KnowledgeEntry["phases"][number]),
+      ),
   }),
 
   // Plants Management

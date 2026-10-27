@@ -18,6 +18,8 @@ export interface PhaseTip {
   videoId: string;
   /** Start of the explanation in the video, in seconds. */
   start: number;
+  /** Channel of the video; defaults to Vince and Weed for the bundled tips. */
+  channel?: string;
 }
 
 export const TIP_VIDEO_CHANNEL = "Vince and Weed";
