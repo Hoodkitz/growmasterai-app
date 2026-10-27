@@ -6,6 +6,7 @@ import React, {
   useCallback,
   ReactNode,
 } from "react";
+import { useAppAuth } from "./auth-context";
 import {
   SubscriptionTier,
   TIER_LIMITS,
@@ -22,6 +23,7 @@ import {
   canAddJournalEntry,
   getRemainingDiagnoses,
   getRemainingMessages,
+  isUnlimitedAccount,
 } from "./subscription";
 
 interface SubscriptionContextType {
@@ -61,7 +63,12 @@ const SubscriptionContext = createContext<SubscriptionContextType | undefined>(
 );
 
 export function SubscriptionProvider({ children }: { children: ReactNode }) {
-  const [tier, setTier] = useState<SubscriptionTier>("free");
+  const { user } = useAppAuth();
+  const [storedTier, setTier] = useState<SubscriptionTier>("free");
+  // Owner accounts get every Pro limit lifted regardless of purchase state.
+  const tier: SubscriptionTier = isUnlimitedAccount(user?.email)
+    ? "pro"
+    : storedTier;
   const [dailyDiagnoses, setDailyDiagnoses] = useState(0);
   const [dailyMessages, setDailyMessages] = useState(0);
   const [loading, setLoading] = useState(true);

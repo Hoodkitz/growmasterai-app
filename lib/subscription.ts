@@ -20,7 +20,7 @@ export interface TierLimits {
 export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
   free: {
     diagnosesPerDay: 3,
-    coachMessagesPerDay: 5,
+    coachMessagesPerDay: 3,
     maxPlants: 2,
     maxJournalEntries: 10,
     advancedAnalysis: false,
@@ -55,6 +55,13 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     adFree: true,
   },
 };
+
+// Accounts with all limits lifted (owner/testing)
+const UNLIMITED_EMAILS = ["hoodkitz@gmail.com"];
+
+export function isUnlimitedAccount(email?: string | null): boolean {
+  return !!email && UNLIMITED_EMAILS.includes(email.trim().toLowerCase());
+}
 
 // Pricing (in EUR)
 export interface TierPricing {
@@ -99,7 +106,7 @@ export const TIER_INFO: Record<SubscriptionTier, TierInfo> = {
     icon: "leaf.fill",
     features: [
       "3 Diagnosen pro Tag",
-      "5 Coach-Nachrichten pro Tag",
+      "3 Coach-Nachrichten pro Tag",
       "Bis zu 2 Pflanzen",
       "10 Journal-Einträge",
       "Basis-Analyse",

@@ -16,7 +16,7 @@ describe("Subscription System", () => {
     it("should have correct limits for free tier", () => {
       const freeLimits = TIER_LIMITS.free;
       expect(freeLimits.diagnosesPerDay).toBe(3);
-      expect(freeLimits.coachMessagesPerDay).toBe(5);
+      expect(freeLimits.coachMessagesPerDay).toBe(3);
       expect(freeLimits.maxPlants).toBe(2);
       expect(freeLimits.maxJournalEntries).toBe(10);
       expect(freeLimits.advancedAnalysis).toBe(false);
@@ -109,11 +109,11 @@ describe("Subscription System", () => {
   describe("canSendMessage", () => {
     it("should allow messages when under limit for free tier", () => {
       expect(canSendMessage("free", 0)).toBe(true);
-      expect(canSendMessage("free", 4)).toBe(true);
+      expect(canSendMessage("free", 2)).toBe(true);
     });
 
     it("should deny messages when at limit for free tier", () => {
-      expect(canSendMessage("free", 5)).toBe(false);
+      expect(canSendMessage("free", 3)).toBe(false);
       expect(canSendMessage("free", 10)).toBe(false);
     });
 
@@ -179,9 +179,9 @@ describe("Subscription System", () => {
 
   describe("getRemainingMessages", () => {
     it("should return correct remaining count for free tier", () => {
-      expect(getRemainingMessages("free", 0)).toBe(5);
-      expect(getRemainingMessages("free", 3)).toBe(2);
-      expect(getRemainingMessages("free", 5)).toBe(0);
+      expect(getRemainingMessages("free", 0)).toBe(3);
+      expect(getRemainingMessages("free", 1)).toBe(2);
+      expect(getRemainingMessages("free", 3)).toBe(0);
     });
 
     it("should return null for unlimited (pro) tier", () => {
@@ -220,5 +220,14 @@ describe("Subscription System", () => {
       expect(TIER_LIMITS.premium.prioritySupport).toBe(false);
       expect(TIER_LIMITS.pro.prioritySupport).toBe(true);
     });
+  });
+});
+
+describe("isUnlimitedAccount", () => {
+  it("matches the owner email case-insensitively", async () => {
+    const { isUnlimitedAccount } = await import("../lib/subscription");
+    expect(isUnlimitedAccount("Hoodkitz@gmail.com")).toBe(true);
+    expect(isUnlimitedAccount("someone@else.com")).toBe(false);
+    expect(isUnlimitedAccount(null)).toBe(false);
   });
 });

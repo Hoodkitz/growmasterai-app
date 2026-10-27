@@ -26,7 +26,7 @@ Die App bietet folgende kostenlose Funktionen:
 
 - Pflanzen-Tracking (bis zu 2 Pflanzen)
 - Basis-Diagnose (3 Analysen pro Tag)
-- Grow-Coach Chat (5 Nachrichten pro Tag)
+- Grow-Coach Chat (3 Nachrichten pro Tag)
 - Community-Zugang (Lesen)
 - Basis-Sorten-Datenbank
 
