@@ -50,6 +50,8 @@ import {
   getDifficultyColor,
   getTypeLabel,
   getTypeColor,
+  getRatioLabel,
+  getThcLabel,
 } from "@/lib/strains-data";
 import { CommunitySkeletonLoader } from "@/components/skeleton-loaders";
 import { ErrorDisplay } from "@/components/error-display";
@@ -1074,7 +1076,9 @@ export default function CommunityScreen() {
                   <View
                     className="w-14 h-14 rounded-xl items-center justify-center"
                     style={{
-                      backgroundColor: getTypeColor(strain.type) + "20",
+                      backgroundColor:
+                        (strain.type ? getTypeColor(strain.type) : "#6B7280") +
+                        "20",
                     }}
                   >
                     <Text className="text-2xl">🌿</Text>
@@ -1091,68 +1095,89 @@ export default function CommunityScreen() {
                       )}
                     </View>
                     <View className="flex-row items-center gap-2 mt-1">
-                      <View
-                        className="px-2 py-0.5 rounded-full"
-                        style={{
-                          backgroundColor: getTypeColor(strain.type) + "20",
-                        }}
-                      >
-                        <Text
-                          className="text-xs"
-                          style={{ color: getTypeColor(strain.type) }}
-                        >
-                          {getTypeLabel(strain.type)}
-                        </Text>
-                      </View>
-                      <View
-                        className="px-2 py-0.5 rounded-full"
-                        style={{
-                          backgroundColor:
-                            getDifficultyColor(strain.difficulty) + "20",
-                        }}
-                      >
-                        <Text
-                          className="text-xs"
+                      {strain.type ? (
+                        <View
+                          className="px-2 py-0.5 rounded-full"
                           style={{
-                            color: getDifficultyColor(strain.difficulty),
+                            backgroundColor: getTypeColor(strain.type) + "20",
                           }}
                         >
-                          {getDifficultyLabel(strain.difficulty)}
-                        </Text>
-                      </View>
+                          <Text
+                            className="text-xs"
+                            style={{ color: getTypeColor(strain.type) }}
+                          >
+                            {getTypeLabel(strain.type)}
+                          </Text>
+                        </View>
+                      ) : null}
+                      {strain.difficulty ? (
+                        <View
+                          className="px-2 py-0.5 rounded-full"
+                          style={{
+                            backgroundColor:
+                              getDifficultyColor(strain.difficulty) + "20",
+                          }}
+                        >
+                          <Text
+                            className="text-xs"
+                            style={{
+                              color: getDifficultyColor(strain.difficulty),
+                            }}
+                          >
+                            {getDifficultyLabel(strain.difficulty)}
+                          </Text>
+                        </View>
+                      ) : null}
                     </View>
+                    <Text className="text-xs text-muted mt-1">
+                      {strain.breeder}
+                      {strain.genetics ? ` · ${strain.genetics}` : ""}
+                    </Text>
+                    {getRatioLabel(strain) ? (
+                      <Text className="text-xs text-muted">
+                        {getRatioLabel(strain)}
+                      </Text>
+                    ) : null}
                   </View>
                 </View>
 
-                <View className="flex-row items-center gap-4 mt-3 pt-3 border-t border-border">
+                <View className="flex-row flex-wrap items-center gap-4 mt-3 pt-3 border-t border-border">
                   <View>
                     <Text className="text-xs text-muted">THC</Text>
                     <Text className="text-sm font-medium text-foreground">
-                      {strain.thcMin}-{strain.thcMax}%
+                      {getThcLabel(strain) ?? "k. A."}
                     </Text>
                   </View>
                   <View>
                     <Text className="text-xs text-muted">Blüte</Text>
                     <Text className="text-sm font-medium text-foreground">
-                      {strain.floweringWeeks} Wo.
+                      {strain.floweringText ?? "k. A."}
                     </Text>
                   </View>
                   <View>
                     <Text className="text-xs text-muted">Ertrag</Text>
                     <Text className="text-sm font-medium text-foreground">
-                      {strain.yieldIndoor}g/m²
+                      {strain.yieldIndoor ?? strain.yieldOutdoor ?? "k. A."}
                     </Text>
                   </View>
                 </View>
 
-                <TouchableOpacity
-                  className="mt-3 pt-3 border-t border-border"
-                  onPress={() => Linking.openURL(strainSearchUrl(strain))}
-                >
-                  <Text className="text-sm font-medium text-primary">
-                    🔎 Samen dieser Sorte suchen
-                  </Text>
-                </TouchableOpacity>
+                <View className="flex-row gap-4 mt-3 pt-3 border-t border-border">
+                  <TouchableOpacity
+                    onPress={() => Linking.openURL(strain.source)}
+                  >
+                    <Text className="text-sm font-medium text-primary">
+                      Quelle: {strain.breeder}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => Linking.openURL(strainSearchUrl(strain))}
+                  >
+                    <Text className="text-sm font-medium text-primary">
+                      🔎 Samen suchen
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </TouchableOpacity>
             ))}
           </View>

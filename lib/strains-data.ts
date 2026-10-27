@@ -1,87 +1,167 @@
-// Cannabis Strain Database with ratings and affiliate links
+// Strain database. Every entry is taken from the breeder's own product page (see `source`).
+// Only facts stated there are stored; anything the page does not state is left out
+// (no invented ratings, prices, effects or grow tips). Add new strains the same way.
 
 export type StrainType = "indica" | "sativa" | "hybrid";
 export type Difficulty = "beginner" | "intermediate" | "advanced" | "expert";
-export type Effect =
-  | "relaxed"
-  | "euphoric"
-  | "creative"
-  | "energetic"
-  | "sleepy"
-  | "hungry"
-  | "focused"
-  | "uplifted";
-export type Flavor =
-  | "sweet"
-  | "earthy"
-  | "citrus"
-  | "pine"
-  | "berry"
-  | "diesel"
-  | "skunk"
-  | "tropical"
-  | "spicy"
-  | "cheese";
-export type MedicalUse =
-  | "pain"
-  | "anxiety"
-  | "depression"
-  | "insomnia"
-  | "appetite"
-  | "nausea"
-  | "inflammation"
-  | "stress";
 
 export interface Strain {
   id: string;
   name: string;
-  type: StrainType;
-  thcMin: number;
-  thcMax: number;
-  cbdMin: number;
-  cbdMax: number;
-  difficulty: Difficulty;
-  floweringWeeks: number;
-  yieldIndoor: string; // g/m²
-  yieldOutdoor: string; // g/plant
-  heightIndoor: string;
-  heightOutdoor: string;
-  effects: Effect[];
-  flavors: Flavor[];
-  medicalUses: MedicalUse[];
-  description: string;
-  growTips: string[];
-  vulnerabilities: string[];
-  genetics: string;
   breeder: string;
-  imageUrl?: string;
+  /** Breeder page the facts below come from. */
+  source: string;
+  type?: StrainType;
+  sativaPct?: number;
+  indicaPct?: number;
+  genetics?: string;
+  /** "up to" value as stated by the breeder, in percent. */
+  thcMax?: number;
+  /** Exact value as stated by the breeder, in percent. */
+  thcExact?: number;
+  /** Indoor flowering time as stated, e.g. "45–50 Tage". */
+  floweringText?: string;
+  yieldIndoor?: string;
+  yieldOutdoor?: string;
+  heightIndoor?: string;
+  harvestOutdoor?: string;
+  /** Only set when the breeder rates the strain as easy / for novices. */
+  difficulty?: Difficulty;
   isPremium?: boolean;
 }
 
-export interface AffiliateLink {
-  shop: string;
-  url: string;
-  price: number;
-  currency: string;
-  seedCount: number;
-  type: "regular" | "feminized" | "autoflower";
-}
-
-export interface StrainReview {
-  id: string;
-  strainId: string;
-  userId: string;
-  userName: string;
-  rating: number;
-  difficulty: Difficulty;
-  yieldRating: number;
-  tasteRating: number;
-  effectRating: number;
-  comment: string;
-  images?: string[];
-  createdAt: Date;
-  helpful: number;
-}
+export const STRAINS_DATABASE: Strain[] = [
+  {
+    id: "northern-lights",
+    name: "Northern Lights (fem.)",
+    breeder: "Sensi Seeds",
+    source:
+      "https://sensiseeds.com/en/feminized-seeds/sensi-seeds/northern-lights",
+    type: "indica",
+    indicaPct: 90,
+    sativaPct: 10,
+    genetics: "Thai x Afghani (Landrace-Genetik)",
+    floweringText: "45–50 Tage",
+    yieldIndoor: "500 g/m²",
+    heightIndoor: "80–130 cm",
+    difficulty: "beginner",
+  },
+  {
+    id: "skunk-1",
+    name: "Skunk #1 (fem.)",
+    breeder: "Sensi Seeds",
+    source:
+      "https://sensiseeds.com/en/feminized-seeds/sensi-seeds/skunk-1-feminised",
+    type: "hybrid",
+    indicaPct: 65,
+    sativaPct: 35,
+    difficulty: "beginner",
+  },
+  {
+    id: "jack-herer",
+    name: "Jack Herer (fem.)",
+    breeder: "Sensi Seeds",
+    source:
+      "https://sensiseeds.com/en/feminized-seeds/sensi-seeds/jack-herer-feminized",
+    type: "hybrid",
+    indicaPct: 50,
+    sativaPct: 50,
+    floweringText: "10–12 Wochen (indica-dominante Phänotypen ca. 8 Wochen)",
+  },
+  {
+    id: "hindu-kush",
+    name: "Hindu Kush (fem.)",
+    breeder: "Sensi Seeds",
+    source: "https://sensiseeds.com/en/feminized-seeds/sensi-seeds/hindu-kush",
+    type: "indica",
+    floweringText: "45–50 Tage",
+    difficulty: "beginner",
+  },
+  {
+    id: "amnesia-haze",
+    name: "Amnesia Haze (fem.)",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/us/feminized-cannabis-seeds/115-amnesia-haze.html",
+    type: "sativa",
+    sativaPct: 70,
+    indicaPct: 30,
+    genetics: "Original Amnesia Haze",
+    thcMax: 22,
+    floweringText: "65–70 Tage",
+    yieldIndoor: "21–23 oz/m²",
+    heightIndoor: "100 cm",
+    harvestOutdoor: "Ende Oktober",
+  },
+  {
+    id: "critical",
+    name: "Critical (fem.)",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/us/feminized-cannabis-seeds/133-critical.html",
+    type: "hybrid",
+    sativaPct: 40,
+    indicaPct: 60,
+    genetics: "Afghani x Skunk",
+    thcMax: 18,
+    floweringText: "50–60 Tage",
+    yieldIndoor: "600 g/m²",
+    heightIndoor: "bis 100 cm",
+    harvestOutdoor: "Ende September",
+  },
+  {
+    id: "special-kush-1",
+    name: "Special Kush #1 (fem.)",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/us/feminized-cannabis-seeds/138-special-kush-1.html",
+    type: "indica",
+    sativaPct: 20,
+    indicaPct: 80,
+    genetics: "Afghan x Kush",
+    floweringText: "50–55 Tage",
+    harvestOutdoor: "Ende September",
+  },
+  {
+    id: "royal-cheese",
+    name: "Royal Cheese Fast Flowering (fem.)",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/us/feminized-cannabis-seeds/140-royal-cheese-fast-flowering.html",
+    type: "hybrid",
+    sativaPct: 40,
+    indicaPct: 60,
+    genetics: "Old School Skunk x Afghani",
+    thcMax: 17,
+    floweringText: "50–55 Tage",
+    yieldOutdoor: "19–21 oz/Pflanze",
+    harvestOutdoor: "Anfang Oktober",
+  },
+  {
+    id: "lemon-skunk",
+    name: "Lemon Skunk (fem.)",
+    breeder: "Royal Queen Seeds",
+    source:
+      "https://www.royalqueenseeds.com/us/feminized-cannabis-seeds/688-lemon-skunk.html",
+    type: "hybrid",
+    sativaPct: 50,
+    indicaPct: 50,
+    genetics: "Skunk 1 x Citral",
+    thcMax: 19,
+    floweringText: "55–60 Tage",
+    harvestOutdoor: "Ende September",
+  },
+  {
+    id: "white-widow",
+    name: "White Widow (fem.)",
+    breeder: "Green House Seed Company",
+    source:
+      "https://shop.greenhouseseeds.nl/award-winning-seeds/high-times-cannabis-cup/white-widow/",
+    thcExact: 25.76,
+    floweringText: "8–9 Wochen",
+    yieldIndoor: "600 g/m²",
+  },
+];
 
 /** Search link instead of invented shop URLs/prices: we have no verified partner deals. */
 export function strainSearchUrl(
@@ -91,284 +171,6 @@ export function strainSearchUrl(
   return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
 }
 
-// Affiliate partner shops
-export const AFFILIATE_SHOPS = [
-  { id: "sensiseeds", name: "Sensi Seeds", logo: "🌱", commission: 15 },
-  { id: "royalqueen", name: "Royal Queen Seeds", logo: "👑", commission: 12 },
-  { id: "dutchpassion", name: "Dutch Passion", logo: "🇳🇱", commission: 10 },
-  { id: "barneys", name: "Barney's Farm", logo: "🚜", commission: 12 },
-  { id: "fastbuds", name: "Fast Buds", logo: "⚡", commission: 15 },
-];
-
-export const STRAINS_DATABASE: Strain[] = [
-  {
-    id: "northern-lights",
-    name: "Northern Lights",
-    type: "indica",
-    thcMin: 16,
-    thcMax: 21,
-    cbdMin: 0.1,
-    cbdMax: 0.3,
-    difficulty: "beginner",
-    floweringWeeks: 7,
-    yieldIndoor: "500-550",
-    yieldOutdoor: "600-650",
-    heightIndoor: "100-120cm",
-    heightOutdoor: "180-220cm",
-    effects: ["relaxed", "sleepy", "euphoric", "hungry"],
-    flavors: ["sweet", "earthy", "pine"],
-    medicalUses: ["insomnia", "pain", "stress", "anxiety"],
-    description:
-      "Northern Lights ist eine der bekanntesten und beliebtesten Indica-Sorten weltweit. Sie ist bekannt für ihre entspannende Wirkung und ihren süßen, erdigen Geschmack. Perfekt für Anfänger aufgrund ihrer Robustheit.",
-    growTips: [
-      "Sehr widerstandsfähig gegen Schimmel und Schädlinge",
-      "Ideal für SOG und SCROG Methoden",
-      "Niedrige Geruchsentwicklung während der Blüte",
-      "Reagiert gut auf LST (Low Stress Training)",
-    ],
-    vulnerabilities: [
-      "Kann bei Überwässerung Wurzelfäule entwickeln",
-      "Empfindlich gegenüber extremer Hitze über 30°C",
-    ],
-    genetics: "Afghani x Thai",
-    breeder: "Sensi Seeds",
-  },
-  {
-    id: "white-widow",
-    name: "White Widow",
-    type: "hybrid",
-    thcMin: 18,
-    thcMax: 25,
-    cbdMin: 0.1,
-    cbdMax: 0.2,
-    difficulty: "beginner",
-    floweringWeeks: 8,
-    yieldIndoor: "450-500",
-    yieldOutdoor: "550-600",
-    heightIndoor: "80-100cm",
-    heightOutdoor: "150-180cm",
-    effects: ["euphoric", "creative", "energetic", "uplifted"],
-    flavors: ["earthy", "pine", "spicy"],
-    medicalUses: ["depression", "stress", "pain", "appetite"],
-    description:
-      "White Widow ist ein legendärer Hybrid aus den Niederlanden. Bekannt für ihre weißen, harzigen Blüten und den ausgewogenen, erhebenden Effekt. Eine der meistverkauften Sorten seit den 90er Jahren.",
-    growTips: [
-      "Sehr harzreich - ideal für Extrakte",
-      "Kompakte Struktur, gut für kleine Räume",
-      "Verträgt Temperaturschwankungen gut",
-      "Moderate Nährstoffzufuhr empfohlen",
-    ],
-    vulnerabilities: [
-      "Kann bei hoher Luftfeuchtigkeit Schimmel entwickeln",
-      "Starker Geruch in der Blütephase",
-    ],
-    genetics: "Brazilian Sativa x South Indian Indica",
-    breeder: "Green House Seeds",
-  },
-  {
-    id: "gorilla-glue",
-    name: "Gorilla Glue #4",
-    type: "hybrid",
-    thcMin: 25,
-    thcMax: 30,
-    cbdMin: 0.1,
-    cbdMax: 0.1,
-    difficulty: "intermediate",
-    floweringWeeks: 9,
-    yieldIndoor: "500-600",
-    yieldOutdoor: "600-700",
-    heightIndoor: "120-150cm",
-    heightOutdoor: "200-250cm",
-    effects: ["relaxed", "euphoric", "sleepy", "hungry"],
-    flavors: ["diesel", "earthy", "pine"],
-    medicalUses: ["pain", "insomnia", "stress", "depression"],
-    description:
-      "Gorilla Glue #4 ist eine extrem potente Sorte mit sehr hohem THC-Gehalt. Der Name kommt von den extrem klebrigen, harzigen Blüten. Mehrfacher Cannabis Cup Gewinner.",
-    growTips: [
-      "Benötigt Stützen wegen schwerer Blüten",
-      "Hoher Nährstoffbedarf in der Blüte",
-      "Regelmäßiges Entlauben empfohlen",
-      "Längere Trocknungszeit für besten Geschmack",
-    ],
-    vulnerabilities: [
-      "Anfällig für Spinnmilben",
-      "Kann bei Überdüngung verbrennen",
-      "Starke Geruchsentwicklung - Kohlefilter nötig",
-    ],
-    genetics: "Chem's Sister x Sour Dubb x Chocolate Diesel",
-    breeder: "GG Strains",
-    isPremium: true,
-  },
-  {
-    id: "blue-dream",
-    name: "Blue Dream",
-    type: "sativa",
-    thcMin: 17,
-    thcMax: 24,
-    cbdMin: 0.1,
-    cbdMax: 0.2,
-    difficulty: "beginner",
-    floweringWeeks: 9,
-    yieldIndoor: "500-550",
-    yieldOutdoor: "600-700",
-    heightIndoor: "150-180cm",
-    heightOutdoor: "200-300cm",
-    effects: ["euphoric", "creative", "uplifted", "relaxed"],
-    flavors: ["berry", "sweet", "citrus"],
-    medicalUses: ["depression", "pain", "stress", "anxiety"],
-    description:
-      "Blue Dream ist eine der beliebtesten Sorten in den USA. Sie bietet einen sanften, ausgewogenen High mit süßem Beerengeschmack. Ideal für den Tag.",
-    growTips: [
-      "Wächst schnell und kräftig",
-      "Gut für SCROG wegen langer Seitentriebe",
-      "Verträgt höhere Temperaturen gut",
-      "Outdoor-Ernte Ende Oktober",
-    ],
-    vulnerabilities: [
-      "Kann sehr groß werden - Höhenkontrolle nötig",
-      "Anfällig für Spinnmilben bei trockener Luft",
-      "Benötigt viel Licht für optimale Erträge",
-    ],
-    genetics: "Blueberry x Haze",
-    breeder: "DJ Short",
-  },
-  {
-    id: "og-kush",
-    name: "OG Kush",
-    type: "hybrid",
-    thcMin: 20,
-    thcMax: 26,
-    cbdMin: 0.1,
-    cbdMax: 0.3,
-    difficulty: "advanced",
-    floweringWeeks: 8,
-    yieldIndoor: "400-450",
-    yieldOutdoor: "500-550",
-    heightIndoor: "90-110cm",
-    heightOutdoor: "150-180cm",
-    effects: ["euphoric", "relaxed", "hungry", "sleepy"],
-    flavors: ["earthy", "pine", "diesel"],
-    medicalUses: ["stress", "pain", "depression", "insomnia"],
-    description:
-      "OG Kush ist eine legendäre Sorte aus Kalifornien und Grundlage vieler moderner Hybriden. Bekannt für ihren einzigartigen erdigen, dieselartigen Geschmack.",
-    growTips: [
-      "Benötigt stabile Umgebungsbedingungen",
-      "Reagiert empfindlich auf pH-Schwankungen",
-      "Moderate Düngung empfohlen",
-      "Gute Luftzirkulation wichtig",
-    ],
-    vulnerabilities: [
-      "Sehr anfällig für Mehltau",
-      "Empfindlich gegenüber Überdüngung",
-      "Benötigt präzise Bewässerung",
-      "Anfällig für Wurzelprobleme",
-    ],
-    genetics: "Chemdawg x Hindu Kush",
-    breeder: "Unknown",
-    isPremium: true,
-  },
-  {
-    id: "amnesia-haze",
-    name: "Amnesia Haze",
-    type: "sativa",
-    thcMin: 20,
-    thcMax: 25,
-    cbdMin: 0.1,
-    cbdMax: 0.1,
-    difficulty: "intermediate",
-    floweringWeeks: 11,
-    yieldIndoor: "600-650",
-    yieldOutdoor: "700-800",
-    heightIndoor: "140-180cm",
-    heightOutdoor: "200-250cm",
-    effects: ["euphoric", "energetic", "creative", "uplifted"],
-    flavors: ["citrus", "earthy", "sweet"],
-    medicalUses: ["depression", "stress", "anxiety", "appetite"],
-    description:
-      "Amnesia Haze ist eine preisgekrönte Sativa mit starkem, zerebralem High. Bekannt für ihren zitrusartigen Geschmack und energetisierenden Effekt.",
-    growTips: [
-      "Lange Blütezeit - Geduld erforderlich",
-      "Hohe Erträge bei richtiger Pflege",
-      "Gut für warme Klimazonen",
-      "Regelmäßiges Topping empfohlen",
-    ],
-    vulnerabilities: [
-      "Lange Blütezeit erhöht Schimmelrisiko",
-      "Kann bei Kälte Probleme bekommen",
-      "Benötigt viel vertikalen Raum",
-    ],
-    genetics: "South Asian x Jamaican x Hawaiian",
-    breeder: "Soma Seeds",
-  },
-  {
-    id: "critical-auto",
-    name: "Critical Auto",
-    type: "indica",
-    thcMin: 14,
-    thcMax: 18,
-    cbdMin: 0.5,
-    cbdMax: 1.0,
-    difficulty: "beginner",
-    floweringWeeks: 7,
-    yieldIndoor: "400-500",
-    yieldOutdoor: "100-200",
-    heightIndoor: "60-80cm",
-    heightOutdoor: "80-100cm",
-    effects: ["relaxed", "sleepy", "hungry"],
-    flavors: ["sweet", "earthy", "citrus"],
-    medicalUses: ["insomnia", "pain", "stress"],
-    description:
-      "Critical Auto ist perfekt für Anfänger. Kompakt, schnell und ertragreich. Automatische Blüte ohne Lichtzyklus-Änderung nötig.",
-    growTips: [
-      "Keine Lichtzyklus-Änderung nötig",
-      "Von Samen bis Ernte in 8-9 Wochen",
-      "Ideal für kleine Räume",
-      "Wenig Pflege erforderlich",
-    ],
-    vulnerabilities: [
-      "Geringerer Ertrag als photoperiodische Sorten",
-      "Keine Möglichkeit zur Stecklingsvermehrung",
-    ],
-    genetics: "Critical x Ruderalis",
-    breeder: "Royal Queen Seeds",
-  },
-  {
-    id: "girl-scout-cookies",
-    name: "Girl Scout Cookies",
-    type: "hybrid",
-    thcMin: 25,
-    thcMax: 28,
-    cbdMin: 0.1,
-    cbdMax: 0.2,
-    difficulty: "advanced",
-    floweringWeeks: 9,
-    yieldIndoor: "350-450",
-    yieldOutdoor: "450-550",
-    heightIndoor: "80-100cm",
-    heightOutdoor: "150-180cm",
-    effects: ["euphoric", "relaxed", "creative", "hungry"],
-    flavors: ["sweet", "earthy", "spicy"],
-    medicalUses: ["pain", "depression", "stress", "appetite"],
-    description:
-      "Girl Scout Cookies (GSC) ist eine der begehrtesten Sorten weltweit. Extrem potent mit einzigartigem süßen Geschmack. Mehrfacher Cannabis Cup Gewinner.",
-    growTips: [
-      "Kompakte Struktur, gut für SOG",
-      "Hoher Nährstoffbedarf",
-      "Kältere Nachttemperaturen fördern lila Färbung",
-      "Längere Aushärtung für besten Geschmack",
-    ],
-    vulnerabilities: [
-      "Anfällig für Mehltau",
-      "Moderate Erträge trotz hoher Qualität",
-      "Empfindlich gegenüber Überdüngung",
-    ],
-    genetics: "OG Kush x Durban Poison",
-    breeder: "Cookie Family",
-    isPremium: true,
-  },
-];
-
-// Helper functions
 export function getDifficultyLabel(difficulty: Difficulty): string {
   const labels: Record<Difficulty, string> = {
     beginner: "Anfänger",
@@ -407,49 +209,23 @@ export function getTypeColor(type: StrainType): string {
   return colors[type];
 }
 
-export function getEffectLabel(effect: Effect): string {
-  const labels: Record<Effect, string> = {
-    relaxed: "Entspannt",
-    euphoric: "Euphorisch",
-    creative: "Kreativ",
-    energetic: "Energetisch",
-    sleepy: "Schläfrig",
-    hungry: "Hungrig",
-    focused: "Fokussiert",
-    uplifted: "Gehoben",
-  };
-  return labels[effect];
+/** "Sativa 70% / Indica 30%" when the breeder states a ratio. */
+export function getRatioLabel(strain: Strain): string | null {
+  if (strain.sativaPct == null && strain.indicaPct == null) return null;
+  const parts: string[] = [];
+  if (strain.sativaPct != null) parts.push(`Sativa ${strain.sativaPct}%`);
+  if (strain.indicaPct != null) parts.push(`Indica ${strain.indicaPct}%`);
+  return parts.join(" / ");
 }
 
-export function getFlavorLabel(flavor: Flavor): string {
-  const labels: Record<Flavor, string> = {
-    sweet: "Süß",
-    earthy: "Erdig",
-    citrus: "Zitrus",
-    pine: "Kiefer",
-    berry: "Beere",
-    diesel: "Diesel",
-    skunk: "Skunk",
-    tropical: "Tropisch",
-    spicy: "Würzig",
-    cheese: "Käse",
-  };
-  return labels[flavor];
+export function getThcLabel(strain: Strain): string | null {
+  if (strain.thcExact != null)
+    return `${String(strain.thcExact).replace(".", ",")} %`;
+  if (strain.thcMax != null) return `bis ${strain.thcMax} %`;
+  return null;
 }
 
-export function getMedicalLabel(use: MedicalUse): string {
-  const labels: Record<MedicalUse, string> = {
-    pain: "Schmerzen",
-    anxiety: "Angst",
-    depression: "Depression",
-    insomnia: "Schlaflosigkeit",
-    appetite: "Appetit",
-    nausea: "Übelkeit",
-    inflammation: "Entzündung",
-    stress: "Stress",
-  };
-  return labels[use];
+/** Hersteller-Seite als Kurzname für "Quelle: …". */
+export function getSourceLabel(strain: Strain): string {
+  return strain.breeder;
 }
-
-// Reviews are now fetched from the backend via tRPC.
-// This type is kept for reference; actual review data comes from the API.

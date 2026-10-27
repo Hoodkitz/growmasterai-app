@@ -147,13 +147,20 @@ describe("Strains Database", () => {
     expect(STRAINS_DATABASE.length).toBeGreaterThan(0);
   });
 
-  it("should have required fields for each strain", () => {
-    STRAINS_DATABASE.forEach((strain: any) => {
+  it("every strain cites its breeder source and has consistent data", () => {
+    const ids = new Set<string>();
+    STRAINS_DATABASE.forEach((strain) => {
       expect(strain.id).toBeTruthy();
+      expect(ids.has(strain.id)).toBe(false);
+      ids.add(strain.id);
       expect(strain.name).toBeTruthy();
-      expect(strain.type).toBeTruthy();
-      expect(["indica", "sativa", "hybrid"]).toContain(strain.type);
-      expect(strain.difficulty).toBeTruthy();
+      expect(strain.breeder).toBeTruthy();
+      expect(strain.source).toMatch(/^https:\/\//);
+      if (strain.type)
+        expect(["indica", "sativa", "hybrid"]).toContain(strain.type);
+      if (strain.sativaPct != null && strain.indicaPct != null) {
+        expect(strain.sativaPct + strain.indicaPct).toBe(100);
+      }
     });
   });
 

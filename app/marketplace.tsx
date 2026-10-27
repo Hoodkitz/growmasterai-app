@@ -14,7 +14,13 @@ import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
-import { STRAINS_DATABASE, strainSearchUrl } from "@/lib/strains-data";
+import {
+  STRAINS_DATABASE,
+  strainSearchUrl,
+  getTypeColor,
+  getTypeLabel,
+  getThcLabel,
+} from "@/lib/strains-data";
 
 type TabType = "shop" | "auctions" | "raffles" | "deals" | "strains";
 type CategoryType =
@@ -472,7 +478,7 @@ export default function MarketplaceScreen() {
               🌿 Sorten-Datenbank
             </Text>
             <Text className="text-sm text-muted">
-              Beliebte Sorten mit Kauflinks
+              Sorten mit Angaben direkt vom Züchter
             </Text>
 
             {(showAllStrains
@@ -492,27 +498,21 @@ export default function MarketplaceScreen() {
                       <Text className="text-base font-semibold text-foreground">
                         {strain.name}
                       </Text>
-                      <View
-                        className={`px-2 py-0.5 rounded ${
-                          strain.type === "indica"
-                            ? "bg-purple-500/20"
-                            : strain.type === "sativa"
-                              ? "bg-orange-500/20"
-                              : "bg-green-500/20"
-                        }`}
-                      >
-                        <Text
-                          className={`text-xs capitalize ${
-                            strain.type === "indica"
-                              ? "text-purple-400"
-                              : strain.type === "sativa"
-                                ? "text-orange-400"
-                                : "text-green-400"
-                          }`}
+                      {strain.type ? (
+                        <View
+                          className="px-2 py-0.5 rounded"
+                          style={{
+                            backgroundColor: getTypeColor(strain.type) + "20",
+                          }}
                         >
-                          {strain.type}
-                        </Text>
-                      </View>
+                          <Text
+                            className="text-xs"
+                            style={{ color: getTypeColor(strain.type) }}
+                          >
+                            {getTypeLabel(strain.type)}
+                          </Text>
+                        </View>
+                      ) : null}
                     </View>
                     <Text className="text-xs text-muted">{strain.breeder}</Text>
 
@@ -520,40 +520,44 @@ export default function MarketplaceScreen() {
                       <View className="flex-row items-center gap-1">
                         <Text className="text-xs text-muted">THC:</Text>
                         <Text className="text-xs font-medium text-foreground">
-                          {strain.thcMin}-{strain.thcMax}%
+                          {getThcLabel(strain) ?? "k. A."}
                         </Text>
                       </View>
                       <View className="flex-row items-center gap-1">
-                        <Text className="text-xs text-muted">CBD:</Text>
+                        <Text className="text-xs text-muted">Blüte:</Text>
                         <Text className="text-xs font-medium text-foreground">
-                          {strain.cbdMin}-{strain.cbdMax}%
+                          {strain.floweringText ?? "k. A."}
                         </Text>
                       </View>
                     </View>
 
                     {/* Difficulty */}
-                    <View className="flex-row items-center gap-2 mt-2">
-                      <Text className="text-xs text-muted">Schwierigkeit:</Text>
-                      <View className="flex-row gap-1">
-                        {[1, 2, 3, 4, 5].map((i) => (
-                          <View
-                            key={i}
-                            className={`w-3 h-3 rounded-full ${
-                              i <=
-                              (strain.difficulty === "beginner"
-                                ? 1
-                                : strain.difficulty === "intermediate"
-                                  ? 2
-                                  : strain.difficulty === "advanced"
-                                    ? 3
-                                    : 4)
-                                ? "bg-primary"
-                                : "bg-border"
-                            }`}
-                          />
-                        ))}
+                    {strain.difficulty ? (
+                      <View className="flex-row items-center gap-2 mt-2">
+                        <Text className="text-xs text-muted">
+                          Schwierigkeit:
+                        </Text>
+                        <View className="flex-row gap-1">
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <View
+                              key={i}
+                              className={`w-3 h-3 rounded-full ${
+                                i <=
+                                (strain.difficulty === "beginner"
+                                  ? 1
+                                  : strain.difficulty === "intermediate"
+                                    ? 2
+                                    : strain.difficulty === "advanced"
+                                      ? 3
+                                      : 4)
+                                  ? "bg-primary"
+                                  : "bg-border"
+                              }`}
+                            />
+                          ))}
+                        </View>
                       </View>
-                    </View>
+                    ) : null}
                   </View>
                   <IconSymbol
                     name="chevron.right"
