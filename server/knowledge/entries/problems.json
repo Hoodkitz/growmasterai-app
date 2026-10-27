@@ -1,1 +1,1554 @@
-[]
+[
+  {
+    "id": "problem-vergeilung-01",
+    "topic": "Vergeilen bei Lichtmangel",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "vergeilen",
+      "spargelwachstum",
+      "lichtmangel",
+      "dünner stiel",
+      "pflanze streckt sich",
+      "zu wenig licht"
+    ],
+    "text": "Bei zu wenig Licht, gerade im Keimlingsstadium, wächst die Pflanze mit sehr langem, dünnem Stiel (Spargelwachstum bzw. Vergeilen). Sie sucht Licht, wird instabil und knickt leichter ab.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 85
+  },
+  {
+    "id": "problem-vergeilung-02",
+    "topic": "Vergeilen: lange Internodien",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "vergeilen",
+      "internodien",
+      "abstände",
+      "kompakt",
+      "lichtmangel",
+      "größere pflanze"
+    ],
+    "text": "Laut Sprecher sind die Abstände zwischen den Blattachseln (Internodien) bei vergeilten Pflanzen länger, man bekommt am Ende genauso viele Blüten, aber eine größere Pflanze. Kompaktes Wachstum mit vielen Blüten auf kurzer Strecke sei effizienter.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 130
+  },
+  {
+    "id": "problem-ueberwaessern-01",
+    "topic": "Übergießen und Wurzelfäule",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "überwässerung",
+      "übergießen",
+      "wurzelfäule",
+      "hängende blätter",
+      "wachstumsstillstand",
+      "topf müffelt"
+    ],
+    "text": "Ist die Erde dauerhaft übermäßig nass, können die Wurzeln nicht atmen und es tritt Wurzelfäule ein: verkrüppeltes Wachstum, schlaff hängende Blätter, sehr langsames Wachstum bis zum Stillstand. Bei starkem Fall riecht der Topf muffig, weil Wurzeln absterben.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 159
+  },
+  {
+    "id": "problem-ueberduengung-01",
+    "topic": "Überdüngung erkennen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "überdüngung",
+      "nährstoffüberschuss",
+      "dunkle blätter",
+      "spitzenbrand",
+      "braune spitzen",
+      "gelbe spitzen"
+    ],
+    "text": "Überdüngte Pflanzen bekommen dunklere Neuaustriebe und wirken insgesamt dunkler; später verfärben sich die Blattspitzen gelblich bis bräunlich (Spitzenbrand). Das Wachstum wird blockiert. Der Sprecher rät, dann einfach etwas weniger Dünger zu geben.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 196
+  },
+  {
+    "id": "problem-stickstoffmangel-01",
+    "topic": "Stickstoffmangel",
+    "phases": ["vegetative"],
+    "tags": [
+      "stickstoffmangel",
+      "gelbe blätter",
+      "untere blätter gelb",
+      "blätter fallen ab",
+      "langsames wachstum",
+      "stickstoff"
+    ],
+    "text": "Bei Stickstoffmangel wächst die Pflanze langsamer, die untersten Blätter werden hell bis gelb oder von der Pflanze abgestoßen. Stickstoff ist laut Sprecher wichtig für den Aufbau von Chlorophyll, Photosynthese und Eiweißbildung.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 276
+  },
+  {
+    "id": "problem-diagnose-ph-01",
+    "topic": "Mangelbilder nicht immer eindeutig, pH beachten",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "ph wert",
+      "nährstoffsperre",
+      "mangel erkennen",
+      "überschneidung",
+      "diagnose",
+      "gelbe blätter"
+    ],
+    "text": "Mangelerscheinungen sind nicht immer hundertprozentig eindeutig, es gibt Überschneidungen. Es muss nicht am Nährstoff liegen, denn der pH-Wert im Topf muss stimmen, weil manche Nährstoffe nur in einem bestimmten pH-Bereich effizient aufgenommen werden.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 328
+  },
+  {
+    "id": "problem-stickstoffmangel-02",
+    "topic": "Stickstoff nachdüngen",
+    "phases": ["vegetative"],
+    "tags": [
+      "stickstoffmangel",
+      "wurmtee",
+      "brennnesseljauche",
+      "npk",
+      "organisch düngen",
+      "stickstoffdünger"
+    ],
+    "text": "Gegen Stickstoffmangel kann man mineralisch mit stickstoffbetontem NPK-Dünger (erste Zahl höher) arbeiten. Organisch nennt der Sprecher Wurmtee oder Brennnesseljauche zum Nachdüngen von Stickstoff.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 423
+  },
+  {
+    "id": "problem-phosphor-01",
+    "topic": "Phosphor in Wachstum und Wurzeln",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "phosphor",
+      "phosphormangel",
+      "wurzelwachstum",
+      "energie",
+      "atp",
+      "düngen"
+    ],
+    "text": "Phosphor wird laut Sprecher nicht nur in der Blüte gebraucht, sondern schon in der Wachstumsphase: für die Energieübertragung in den Zellen und als Baustein für Wurzelwachstum und Wurzelbildung.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 494
+  },
+  {
+    "id": "problem-phosphormangel-01",
+    "topic": "Phosphormangel: lila und bronze Blätter",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "phosphormangel",
+      "lila blätter",
+      "bronze",
+      "violette stängel",
+      "rote stängel",
+      "verfärbung"
+    ],
+    "text": "Fehlt Phosphor, werden die Blätter dunkelgrün bis lila-bronze. Rötlich-lila Stängel können auf Phosphormangel hindeuten, haben laut Sprecher aber auch andere mögliche Ursachen.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 556
+  },
+  {
+    "id": "problem-phosphormangel-02",
+    "topic": "Phosphor und Blütenbildung",
+    "phases": ["flowering"],
+    "tags": [
+      "phosphormangel",
+      "blüte",
+      "blütenbildung",
+      "blüten schwellen nicht",
+      "phosphor",
+      "blütebeginn"
+    ],
+    "text": "Bei Phosphormangel ist das Blütenwachstum stark verzögert, die Blüten schwellen nie richtig an. Den richtigen Zeitpunkt für etwas mehr Phosphor sieht der Sprecher beim Anfang der Blütephase.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 598
+  },
+  {
+    "id": "problem-kaliummangel-01",
+    "topic": "Kaliummangel erkennen",
+    "phases": ["flowering"],
+    "tags": [
+      "kaliummangel",
+      "kalium",
+      "braune blattränder",
+      "verbrannte ränder",
+      "kräuseln",
+      "harz",
+      "blütenstruktur"
+    ],
+    "text": "Bei Kaliummangel werden Blattränder braun und trocken (Verbrennungsoptik) und können sich kräuseln. Die Blütenstruktur wird schlecht, Blüten bilden sich nicht anständig aus und es ist weniger Harz vorhanden.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 735
+  },
+  {
+    "id": "problem-kalium-01",
+    "topic": "Kalium: Immunabwehr und Zellspannung",
+    "phases": ["flowering"],
+    "tags": [
+      "kalium",
+      "immunsystem",
+      "abwehr",
+      "zellspannung",
+      "wasserregulation",
+      "harz",
+      "terpene"
+    ],
+    "text": "Kalium ist laut Sprecher wichtig für Immunabwehr, Zellspannung und Wasserregulation sowie für Blüten, Harze und Terpene. In der Blütephase sei der richtige Zeitpunkt, Kalium zu geben.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 670
+  },
+  {
+    "id": "problem-kalium-02",
+    "topic": "Bananentee als organisches Kalium",
+    "phases": ["flowering"],
+    "tags": [
+      "kalium",
+      "bananentee",
+      "bananenschale",
+      "organisch",
+      "kaliummangel"
+    ],
+    "text": "Wer rein organisch arbeitet, kann laut Sprecher aus Bananenschalen einen Bananentee herstellen, um das Kalium zu extrahieren und den Pflanzen zuzuführen. Details dazu will er in einem eigenen Video zeigen.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 826
+  },
+  {
+    "id": "problem-calcium-01",
+    "topic": "Calciummangel: verkrüppelte Blätter und Flecken",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "calciummangel",
+      "calcium",
+      "verkrüppelte blätter",
+      "braune flecken",
+      "neue blätter",
+      "wurzeln"
+    ],
+    "text": "Bei Calciummangel verkrüppeln neue Blätter oder zeigen braune Flecken. Unter der Erde können die Wurzeln dadurch schlechter wachsen. Calcium stärkt laut Sprecher Zellwände und Feinwurzeln.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 898
+  },
+  {
+    "id": "problem-calcium-02",
+    "topic": "Calciummangel und Blütenendfäule",
+    "phases": ["flowering"],
+    "tags": [
+      "calciummangel",
+      "botrytis",
+      "blütenfäule",
+      "budrot",
+      "schimmel",
+      "regen",
+      "outdoor"
+    ],
+    "text": "Calciummangel erhöht laut Sprecher das Risiko für Blütenendfäule (Botrytis) und senkt die Sicherheit vor Pilzerkrankungen. Gerade in Deutschland mit Wechseln aus warm-trocken und dunkel-regnerisch solle man Calcium im Blick haben.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 985
+  },
+  {
+    "id": "problem-magnesium-01",
+    "topic": "Magnesiummangel: gelb zwischen den Adern",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "magnesiummangel",
+      "magnesium",
+      "gelb zwischen adern",
+      "blätter rollen",
+      "ältere blätter",
+      "bittersalz"
+    ],
+    "text": "Bei Magnesiummangel werden ältere Blätter zwischen den Adern gelb, es kommen hellere Pünktchen und die Blätter rollen sich nach oben. Als Mittel nennt der Sprecher Bittersalz (Magnesiumsulfat).",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 1079
+  },
+  {
+    "id": "problem-magnesium-02",
+    "topic": "Calcium- und Magnesiummangel bei Regen- oder gefiltertem Wasser",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "calmag",
+      "magnesiummangel",
+      "calciummangel",
+      "regenwasser",
+      "destilliertes wasser",
+      "osmosewasser",
+      "leitungswasser"
+    ],
+    "text": "Calcium- und Magnesiummangel treten laut Sprecher meist auf, wenn man mit Regenwasser oder mit destilliertem bzw. stark gefiltertem Wasser gießt. Bei Leitungswasser sei das Thema weniger relevant, außer die Leitungswasserwerte sind sehr unausgewogen.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 1037
+  },
+  {
+    "id": "problem-blattlaeuse-01",
+    "topic": "Blattläuse erkennen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "blattläuse",
+      "läuse",
+      "honigtau",
+      "klebrige blätter",
+      "schädlinge",
+      "kleine punkte"
+    ],
+    "text": "Blattläuse saugen Saft aus den Blättern und können bei starkem Befall ganze Pflanzen schwächen oder töten. Man erkennt sie an kleinen gelben, schwarzen oder grünen beweglichen Punkten auf Stielen und Blättern, oft zusammen mit klebrigem Honigtau.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 60
+  },
+  {
+    "id": "problem-blattlaeuse-02",
+    "topic": "Blattläuse bekämpfen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "blattläuse",
+      "marienkäfer",
+      "florfliegen",
+      "neemöl",
+      "seifenlösung",
+      "nützlinge"
+    ],
+    "text": "Laut Video lassen sich Blattläuse mit natürlichen Feinden wie Marienkäfern und Florfliegen bekämpfen. Ebenso nennt der Sprecher Neemöl und Seifenlösung; bei starkem Befall können spezielle Insektizide nötig sein.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 83
+  },
+  {
+    "id": "problem-thripse-01",
+    "topic": "Thripse erkennen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "thripse",
+      "silbrige flecken",
+      "deformierte blätter",
+      "schädlinge",
+      "fransenflügler"
+    ],
+    "text": "Thripse sind winzige Insekten, die Pflanzensaft saugen, krabbeln und sich vom Wind treiben lassen. Beim Cannabis verursachen sie silbrig schimmernde Flecken und deformierte Blätter; sie haben schmale, fransige Flügel.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 111
+  },
+  {
+    "id": "problem-thripse-02",
+    "topic": "Thripse bekämpfen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "thripse",
+      "blaue klebefallen",
+      "raubmilben",
+      "florfliegen",
+      "neemöl",
+      "kaliseife"
+    ],
+    "text": "Blaue Klebefallen ziehen Thripse an und helfen, ihre Population zu senken. Als natürliche Feinde nennt der Sprecher Raubmilben, Florfliegen und Marienkäfer; Neemöl und Kaliseifenlösung können ebenfalls als natürliche Insektizide dienen.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 132
+  },
+  {
+    "id": "problem-spinnmilben-01",
+    "topic": "Spinnmilben erkennen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "spinnmilben",
+      "rote spinne",
+      "spinnweben",
+      "netze",
+      "gesprenkelte blätter",
+      "trocken warm"
+    ],
+    "text": "Spinnmilben erkennt man an feinen seidigen Netzen auf der Blattunterseite und auch an den Blüten. Sie sind besonders gefährlich in trockenen, warmen Bedingungen; in der Blüte sollte man auf verfärbte oder gesprenkelte Blätter achten.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 150
+  },
+  {
+    "id": "problem-spinnmilben-02",
+    "topic": "Spinnmilben vorbeugen und bekämpfen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "spinnmilben",
+      "luftfeuchtigkeit",
+      "luftzirkulation",
+      "raubmilben",
+      "neemöl",
+      "kaliseife",
+      "mitizide"
+    ],
+    "text": "Höhere Luftfeuchtigkeit und gute Luftzirkulation verschlechtern die Lebensbedingungen der Spinnmilben. Gegen sie nennt der Sprecher Raubmilben, Marienkäfer, Florfliegen, Neemöl, Kaliseifenlösung und bei starkem Befall spezielle Mitizide.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 171
+  },
+  {
+    "id": "problem-schaedlinge-lupe-01",
+    "topic": "Taschenmikroskop zur Kontrolle",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "schädlinge",
+      "kontrolle",
+      "taschenmikroskop",
+      "lupe",
+      "früherkennung",
+      "inspektion"
+    ],
+    "text": "Regelmäßige Kontrolle der Pflanzen und eine saubere Umgebung sind laut Sprecher entscheidend für die Vorbeugung. Ein Taschenmikroskop helfe, kleine Schädlinge wie Spinnmilben oder Thripse zu erkennen, die mit bloßem Auge schwer zu sehen sind.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 201
+  },
+  {
+    "id": "problem-trauermuecken-01",
+    "topic": "Trauermücken erkennen",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "trauermücken",
+      "fliegen",
+      "kleine fliegen",
+      "wurzeln",
+      "larven",
+      "junge pflanzen"
+    ],
+    "text": "Trauermücken entwickeln sich im Boden und greifen die Wurzeln an, was junge und schwächere Pflanzen besonders anfällig macht. Sie ähneln Obstfliegen, haben aber längere Beine und Fühler, und die erwachsenen Tiere sieht man oft in Bodennähe, besonders beim Gießen.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 215
+  },
+  {
+    "id": "problem-trauermuecken-02",
+    "topic": "Trauermücken bekämpfen",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "trauermücken",
+      "gelbtafeln",
+      "nematoden",
+      "sandschicht",
+      "überwässerung",
+      "drainage",
+      "raubmilben"
+    ],
+    "text": "Überwässerung vermeiden und gute Drainage helfen, denn Trauermücken bevorzugen feuchte Böden. Gelbtafeln fangen Erwachsene, eine Sandschicht kann die Eiablage verhindern; als bestes Mittel nennt der Sprecher Nematoden und Raubmilben, die die Larven fressen.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 236
+  },
+  {
+    "id": "problem-weisse-fliege-01",
+    "topic": "Weiße Fliege (Mottenschildläuse)",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "weiße fliege",
+      "mottenschildläuse",
+      "honigtau",
+      "rußtau",
+      "klebefallen",
+      "unterseite blätter"
+    ],
+    "text": "Mottenschildläuse (Weiße Fliege) saugen Pflanzensaft und scheiden Honigtau aus, was zu Rußtaupilz führen kann. Man erkennt sie als kleine weiße Insekten an der Blattunterseite, die bei Berührung in Schwärmen aufsteigen.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 270
+  },
+  {
+    "id": "problem-weisse-fliege-02",
+    "topic": "Weiße Fliege vorbeugen und bekämpfen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "weiße fliege",
+      "gelbe klebefallen",
+      "nützlinge",
+      "seife",
+      "neemöl",
+      "befallene blätter entfernen"
+    ],
+    "text": "Zur Vorbeugung nennt der Sprecher gelbe Klebefallen und natürliche Feinde wie Wespen oder Marienkäferlarven. Zur Bekämpfung können Seifen oder Neemöl dienen, und befallene Stellen sollten entfernt werden.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 293
+  },
+  {
+    "id": "problem-miniermotten-01",
+    "topic": "Miniermotten",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "miniermotten",
+      "gänge im blatt",
+      "helle linien",
+      "blattminen",
+      "larven"
+    ],
+    "text": "Miniermotten-Larven hinterlassen unregelmäßige helle Linien oder Flecken (Fraßgänge) in den Blättern und schwächen die Pflanze, weil die Photosynthese sinkt. Befallene Blätter sollten sofort entfernt und vernichtet werden.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 312
+  },
+  {
+    "id": "problem-nacktschnecken-01",
+    "topic": "Nacktschnecken im Outdoor-Anbau",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "nacktschnecken",
+      "schnecken",
+      "outdoor",
+      "schneckenzaun",
+      "kupferband",
+      "nematoden"
+    ],
+    "text": "Nacktschnecken können im Outdoor-Anbau junge Pflanzen und Blätter erheblich schädigen. Der Sprecher nennt Schneckenzäune und Kupferbänder um die Pflanzenbasis, einen sauberen Boden sowie Nematoden im Boden gegen Schneckenlarven.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 350
+  },
+  {
+    "id": "problem-raupen-01",
+    "topic": "Raupen absammeln",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "raupen",
+      "fraßspuren",
+      "outdoor",
+      "absammeln",
+      "netze",
+      "schädlinge"
+    ],
+    "text": "Raupen erkennt man, weil sie offen auf den Blättern sitzen und deutliche Fraßspuren hinterlassen. Im ersten Schritt kann man sie von Hand entfernen; Netze oder Kupferbänder und biologische Insektizide nennt der Sprecher zusätzlich.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 392
+  },
+  {
+    "id": "problem-praevention-01",
+    "topic": "Schädlinge werden oft selbst eingeschleppt",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "schädlinge",
+      "vorbeugung",
+      "straßenkleidung",
+      "indoor",
+      "sauber arbeiten",
+      "luftfilter"
+    ],
+    "text": "Die meisten Schädlinge werden beim Indoor-Anbau laut Sprecher unbemerkt vom Gärtner selbst eingebracht; deshalb solle man den Anbauraum nie in Straßenkleidung betreten. Luftfilter und regelmäßiges Entfernen von Pflanzenresten und abgestorbenem Material helfen ebenfalls.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 476
+  },
+  {
+    "id": "problem-praevention-02",
+    "topic": "Insektennetz im Outdoor-Anbau",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "insektennetz",
+      "outdoor",
+      "thripse",
+      "mücken",
+      "schädlinge vorbeugen"
+    ],
+    "text": "Outdoor ist ein Insektennetz laut Sprecher eines der einfachsten und wirksamsten Mittel gegen fliegende Schädlinge wie Thripse und Mücken. Es muss engmaschig sein und ohne Lücken um die Pflanzen befestigt werden.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 524
+  },
+  {
+    "id": "problem-bekaempfung-01",
+    "topic": "Chemie nur als letzte Option",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "neemöl",
+      "schädlinge",
+      "insektizide",
+      "natürliche mittel",
+      "befall",
+      "gelbtafeln"
+    ],
+    "text": "Natürliche Insektizide wie Neemöl können laut Video gegen viele Insekten eingesetzt werden. Chemische Behandlungen sollten nur bei schwerem Befall und als letzte Option betrachtet werden, auch wegen der Qualität der Ernte; gelbe Klebefallen dienen als Frühwarnsystem.",
+    "videoId": "zcOCeggU3Pg",
+    "videoTitle": "10 häufigsten SCHÄDLINGE beim Cannabis Anbau und wie man sie BEKÄMPFT!🕷🪴",
+    "channel": "Growstorys",
+    "start": 558
+  },
+  {
+    "id": "problem-ledkrankheit-01",
+    "topic": "LED-Krankheit erkennen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "led krankheit",
+      "calmag mangel",
+      "camouflage flecken",
+      "rostige flecken",
+      "braune flecken",
+      "calciummangel",
+      "magnesiummangel"
+    ],
+    "text": "Calcium-Magnesium-Mangel unter LED zeigt sich laut Sprecher in der Vegetation zuerst als camouflageartige Flecken an den Blättern, später als kleine braune, rostige Flecken. Spätestens mit höherem Kalium- und Phosphorbedarf in der Blüte beginne die Blattnekrose.",
+    "videoId": "0h3aFbmKXQM",
+    "videoTitle": "LED Krankheit und CalMag Mangel: So löst du das Problem – Freds Tipps und Strategien!",
+    "channel": "Bonorum - Premium Hemp Products",
+    "start": 113
+  },
+  {
+    "id": "problem-ledkrankheit-02",
+    "topic": "LED-Krankheit: Ursachen (Theorie)",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "led krankheit",
+      "natriumdampflampe",
+      "transpiration",
+      "genetik",
+      "calmag mangel",
+      "vpd"
+    ],
+    "text": "Der Sprecher vermutet (Theorie, nicht gesichert), dass bei früheren Natriumdampflampen höhere Wärme und Transpiration das Problem kleinhielten. Zudem seien manche Hochleistungs-Genetiken durch Züchtung anfälliger für Calcium-Magnesium-Mangel.",
+    "videoId": "0h3aFbmKXQM",
+    "videoTitle": "LED Krankheit und CalMag Mangel: So löst du das Problem – Freds Tipps und Strategien!",
+    "channel": "Bonorum - Premium Hemp Products",
+    "start": 70
+  },
+  {
+    "id": "problem-ledkrankheit-03",
+    "topic": "LED-Krankheit: Folgen und Behandlung",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "led krankheit",
+      "calmag",
+      "ertrag",
+      "terpene",
+      "nekrose",
+      "mangel beheben"
+    ],
+    "text": "Hat sich der Mangel in der Blüte gezeigt, lässt er sich laut Sprecher kaum mehr stoppen, kostet aber nur etwas Ertrag und Terpene. Wird er schon in der vegetativen Phase bemerkt, kann die Zugabe eines Calcium-Magnesium-Präparats ihn noch beseitigen.",
+    "videoId": "0h3aFbmKXQM",
+    "videoTitle": "LED Krankheit und CalMag Mangel: So löst du das Problem – Freds Tipps und Strategien!",
+    "channel": "Bonorum - Premium Hemp Products",
+    "start": 141
+  },
+  {
+    "id": "problem-ledkrankheit-04",
+    "topic": "Vorbeugen mit CalMag bei jedem Gießen",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "calmag",
+      "vorbeugen",
+      "calcium",
+      "magnesium",
+      "gießen",
+      "überdosierung",
+      "stabile genetik"
+    ],
+    "text": "Der Sprecher setzt auf stabile Genetiken und gibt von Anfang an bei jedem Gießen etwas Calcium-Magnesium dazu; laut Video waren es bei seinem Produkt 0,5 ml pro Liter Wasser. Er warnt, dass zu viel Calcium-Magnesium der Pflanze ebenfalls schadet.",
+    "videoId": "0h3aFbmKXQM",
+    "videoTitle": "LED Krankheit und CalMag Mangel: So löst du das Problem – Freds Tipps und Strategien!",
+    "channel": "Bonorum - Premium Hemp Products",
+    "start": 232
+  },
+  {
+    "id": "problem-mehltau-01",
+    "topic": "Echter und falscher Mehltau",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "mehltau",
+      "weiße flecken",
+      "echter mehltau",
+      "falscher mehltau",
+      "pilz",
+      "weißer belag"
+    ],
+    "text": "Echten Mehltau erkennt man vor allem an weißen Flecken auf der Blattoberseite, falscher Mehltau beginnt meist auf der Blattunterseite. Beides sind Pilzerkrankungen, die im Lauf der Zeit die ganze Pflanze befallen und Blätter absterben lassen.",
+    "videoId": "3D0okOQokXg",
+    "videoTitle": "Dieses Zeug HILFT sofort! 😍 Mehltau und Schädlinge bekämpfen - weiße Flecken mit Neemöl?",
+    "channel": "Pott Planter",
+    "start": 113
+  },
+  {
+    "id": "problem-neemoel-01",
+    "topic": "Neemöl gegen Mehltau und Schädlinge (Erfahrung)",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "neemöl",
+      "mehltau",
+      "schädlinge",
+      "fungizid",
+      "insektizid",
+      "pilz"
+    ],
+    "text": "Der Sprecher berichtet aus eigener Erfahrung, dass Neemöl fungizide und insektizide Eigenschaften habe und gegen echten wie falschen Mehltau wirke. Das ist seine persönliche Einschätzung; das Video ist als Werbung für ein Amazon-Set markiert.",
+    "videoId": "3D0okOQokXg",
+    "videoTitle": "Dieses Zeug HILFT sofort! 😍 Mehltau und Schädlinge bekämpfen - weiße Flecken mit Neemöl?",
+    "channel": "Pott Planter",
+    "start": 154
+  },
+  {
+    "id": "problem-neemoel-02",
+    "topic": "Neemöl anmischen: Emulgator nötig",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "neemöl",
+      "anmischen",
+      "emulgator",
+      "spülmittel",
+      "spritzmittel",
+      "dosierung"
+    ],
+    "text": "Öl und Wasser verbinden sich nicht, deshalb braucht Neemöl einen Emulgator. Laut Video genügen pro Liter Wasser etwa 5 bis 10 ml Neemöl und zwei Tropfen Spülmittel oder ein anderer Emulgator.",
+    "videoId": "3D0okOQokXg",
+    "videoTitle": "Dieses Zeug HILFT sofort! 😍 Mehltau und Schädlinge bekämpfen - weiße Flecken mit Neemöl?",
+    "channel": "Pott Planter",
+    "start": 275
+  },
+  {
+    "id": "problem-neemoel-03",
+    "topic": "Neemöl gegen Blattläuse (Beispiel)",
+    "phases": ["vegetative"],
+    "tags": [
+      "neemöl",
+      "blattläuse",
+      "läuse",
+      "rosen",
+      "erfahrung",
+      "besprühen"
+    ],
+    "text": "Am Beispiel stark von Blattläusen besiedelter Rosen zeigt der Sprecher, dass ein tropfnass besprühter Trieb zwei Tage später frei von Läusen war, während der unbehandelte Nachbartrieb noch voll besiedelt war.",
+    "videoId": "3D0okOQokXg",
+    "videoTitle": "Dieses Zeug HILFT sofort! 😍 Mehltau und Schädlinge bekämpfen - weiße Flecken mit Neemöl?",
+    "channel": "Pott Planter",
+    "start": 436
+  },
+  {
+    "id": "problem-neemoel-04",
+    "topic": "Neemöl: nicht in die Blüte sprühen",
+    "phases": ["flowering"],
+    "tags": [
+      "neemöl",
+      "blüte",
+      "nützlinge",
+      "cannabis",
+      "sprühen",
+      "blüten besprühen"
+    ],
+    "text": "Blüten sollte man, gerade bei Cannabis, laut Sprecher möglichst gar nicht einsprühen, weil es in dieser Phase Nützlinge gibt.",
+    "videoId": "3D0okOQokXg",
+    "videoTitle": "Dieses Zeug HILFT sofort! 😍 Mehltau und Schädlinge bekämpfen - weiße Flecken mit Neemöl?",
+    "channel": "Pott Planter",
+    "start": 578
+  },
+  {
+    "id": "problem-neemoel-05",
+    "topic": "Neemöl: abends sprühen, dunkel lagern",
+    "phases": ["vegetative"],
+    "tags": [
+      "neemöl",
+      "abends sprühen",
+      "sonnenbrand",
+      "uv licht",
+      "lagern",
+      "blätter verbrennen"
+    ],
+    "text": "Der Sprecher sprüht abends, weil heiße Sonne auf benetzten Blättern hochriskant ist und sie verbrennen können; außerdem hemme UV-Licht die Wirkung des Neemöls. Das Öl solle bei etwa 20 Grad im Dunkeln gelagert werden.",
+    "videoId": "3D0okOQokXg",
+    "videoTitle": "Dieses Zeug HILFT sofort! 😍 Mehltau und Schädlinge bekämpfen - weiße Flecken mit Neemöl?",
+    "channel": "Pott Planter",
+    "start": 596
+  },
+  {
+    "id": "problem-neemoel-06",
+    "topic": "Neemöl vorsichtig testen",
+    "phases": ["vegetative"],
+    "tags": [
+      "neemöl",
+      "testen",
+      "empfindliche pflanzen",
+      "cannabis",
+      "gurke",
+      "blätter benetzen"
+    ],
+    "text": "Vor der Anwendung die Pflanze gießen und die Blätter nur leicht benetzen. Wer sicher gehen will, besprüht erst einen Teil der Pflanze und prüft am nächsten Tag, ob sie noch gut aussieht; Cannabis und Gurken seien empfindlich.",
+    "videoId": "3D0okOQokXg",
+    "videoTitle": "Dieses Zeug HILFT sofort! 😍 Mehltau und Schädlinge bekämpfen - weiße Flecken mit Neemöl?",
+    "channel": "Pott Planter",
+    "start": 636
+  },
+  {
+    "id": "problem-mehltau-02",
+    "topic": "Befallene Blätter entfernen, Mehltau vorbeugen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "mehltau",
+      "vorbeugen",
+      "blätter entfernen",
+      "ausdünnen",
+      "luftzirkulation",
+      "luftfeuchtigkeit"
+    ],
+    "text": "Stark befallene Einzelblätter sollte man abschneiden, damit sie die Nachbarpflanzen nicht anstecken. Vorbeugend die Pflanzen luftig halten, ausdünnen, im Indoor-Bereich Platz zwischen den Pflanzen lassen, für stetigen Wind sorgen und die Luftfeuchtigkeit senken.",
+    "videoId": "3D0okOQokXg",
+    "videoTitle": "Dieses Zeug HILFT sofort! 😍 Mehltau und Schädlinge bekämpfen - weiße Flecken mit Neemöl?",
+    "channel": "Pott Planter",
+    "start": 784
+  },
+  {
+    "id": "problem-neemoel-07",
+    "topic": "Neemöl vorbeugend im Zweiwochenrhythmus",
+    "phases": ["vegetative"],
+    "tags": [
+      "neemöl",
+      "vorbeugen",
+      "mehltau",
+      "alle zwei wochen",
+      "gurke",
+      "cannabis"
+    ],
+    "text": "Mehltaugefährdete Pflanzen wie Gurke und Cannabis besprüht der Sprecher im Abstand von etwa zwei Wochen und sieht darin Schutz gegen Schädlinge und Pilzbefall. Das ist seine eigene Praxis, keine allgemeine Vorgabe.",
+    "videoId": "3D0okOQokXg",
+    "videoTitle": "Dieses Zeug HILFT sofort! 😍 Mehltau und Schädlinge bekämpfen - weiße Flecken mit Neemöl?",
+    "channel": "Pott Planter",
+    "start": 914
+  },
+  {
+    "id": "problem-schimmel-01",
+    "topic": "Schimmel: befallene Pflanze entfernen",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "schimmel",
+      "budrot",
+      "botrytis",
+      "kompost",
+      "ansteckung",
+      "befallene pflanze"
+    ],
+    "text": "Schimmel bleibt Schimmel: Der Sprecher entfernt die befallene Pflanze und entsorgt sie auf dem Kompost, weil sie die gesunden Pflanzen daneben angreift.",
+    "videoId": "-jD-RJIcpvU",
+    "videoTitle": "Achtung, Schimmel 😱 So schützt du deine Ernte bevor es zu spät ist! Budrot & Blütenfäule",
+    "channel": "Pott Planter",
+    "start": 16
+  },
+  {
+    "id": "problem-schimmel-02",
+    "topic": "Blütenendfäule: braune Stellen an Buds",
+    "phases": ["flowering"],
+    "tags": [
+      "blütenfäule",
+      "budrot",
+      "botrytis",
+      "braune stellen",
+      "schimmel im bud",
+      "regen"
+    ],
+    "text": "Bei der Blütenendfäule hat man an vielen Buds braune Stellen, was bedeutet, dass der Schimmel drin ist. Der Sprecher würde von so einer Pflanze nichts mehr ernten wollen.",
+    "videoId": "-jD-RJIcpvU",
+    "videoTitle": "Achtung, Schimmel 😱 So schützt du deine Ernte bevor es zu spät ist! Budrot & Blütenfäule",
+    "channel": "Pott Planter",
+    "start": 144
+  },
+  {
+    "id": "problem-schimmel-03",
+    "topic": "Regenschutz bei Blüte im Herbst",
+    "phases": ["flowering"],
+    "tags": [
+      "regenschutz",
+      "schimmel",
+      "outdoor",
+      "herbst",
+      "automatik",
+      "blütenfäule",
+      "unterstellen"
+    ],
+    "text": "Wenn Pflanzen im Spätsommer oder Herbst in die Blüte gehen, sollten sie untergestellt werden und nicht nass werden. Manche Genetiken sind anfälliger als andere; um sicher zu gehen, hält man alles regensicher.",
+    "videoId": "-jD-RJIcpvU",
+    "videoTitle": "Achtung, Schimmel 😱 So schützt du deine Ernte bevor es zu spät ist! Budrot & Blütenfäule",
+    "channel": "Pott Planter",
+    "start": 208
+  },
+  {
+    "id": "problem-schimmel-04",
+    "topic": "Botrytis-Ursache: dauerfeuchte Blüten",
+    "phases": ["flowering"],
+    "tags": [
+      "botrytis",
+      "blütenfäule",
+      "feuchte blüten",
+      "regen",
+      "schimmel ursache"
+    ],
+    "text": "Der erste von drei Hauptgründen für Botrytis sind dauerhaft feuchte Blüten, zum Beispiel durch Regen und fehlenden Regenschutz.",
+    "videoId": "-jD-RJIcpvU",
+    "videoTitle": "Achtung, Schimmel 😱 So schützt du deine Ernte bevor es zu spät ist! Budrot & Blütenfäule",
+    "channel": "Pott Planter",
+    "start": 292
+  },
+  {
+    "id": "problem-schimmel-05",
+    "topic": "Botrytis-Ursache: zu wenig Luftumwälzung",
+    "phases": ["flowering"],
+    "tags": [
+      "botrytis",
+      "luftumwälzung",
+      "kompakte blüten",
+      "abtrocknen",
+      "schimmel ursache"
+    ],
+    "text": "Zweiter Grund ist zu wenig Luftumwälzung: Die Luft bleibt gestaut und die Blüten trocknen nicht ab. Sehr kompakte Blüten begünstigen das; etwas fluffigere Blüten sind laut Sprecher manchmal gar nicht schlecht.",
+    "videoId": "-jD-RJIcpvU",
+    "videoTitle": "Achtung, Schimmel 😱 So schützt du deine Ernte bevor es zu spät ist! Budrot & Blütenfäule",
+    "channel": "Pott Planter",
+    "start": 300
+  },
+  {
+    "id": "problem-schimmel-06",
+    "topic": "Botrytis-Ursache: Temperatur 17-18 Grad",
+    "phases": ["flowering"],
+    "tags": [
+      "botrytis",
+      "temperatur",
+      "kühle nächte",
+      "herbst",
+      "feuchtigkeit",
+      "schimmel ursache"
+    ],
+    "text": "Dritter Grund ist die Temperatur: Bei etwa 17 bis 18 Grad freut sich Schimmel besonders, vor allem in Kombination mit Feuchtigkeit. Ab etwa 28 Grad und mehr hat er laut Sprecher kaum eine Chance, weil Feuchtigkeit schnell abtrocknet; im Herbst mit kühleren Nächten steigt das Risiko.",
+    "videoId": "-jD-RJIcpvU",
+    "videoTitle": "Achtung, Schimmel 😱 So schützt du deine Ernte bevor es zu spät ist! Budrot & Blütenfäule",
+    "channel": "Pott Planter",
+    "start": 317
+  },
+  {
+    "id": "problem-spinnmilben-03",
+    "topic": "Spinnmilben: silbriger Glanz und Netze",
+    "phases": ["vegetative"],
+    "tags": [
+      "spinnmilben",
+      "silbriger glanz",
+      "spinnweben",
+      "fraßspuren",
+      "trockene luft",
+      "heizungsluft"
+    ],
+    "text": "Das Schadbild von Spinnmilben ist ein silbriger Glanz auf den Blättern (Fraßspuren) und feine Netze; die Milben selbst sieht man als kleine Punkte. Sie mögen trockene Luft, im Beispiel Heizungsluft bei einer Zimmerpflanze.",
+    "videoId": "fClJHJ_eiGE",
+    "videoTitle": "SPINNMILBEN BEKÄMPFEN: So gehst du ganz natürlich gegen die Schädlinge vor! 🕸",
+    "channel": "Natürlich im Garten [mit Neudorff]",
+    "start": 31
+  },
+  {
+    "id": "problem-spinnmilben-04",
+    "topic": "Spinnmilben: Pflanzenschutz oder Nützlinge",
+    "phases": ["vegetative"],
+    "tags": [
+      "spinnmilben",
+      "raubmilben",
+      "nützlinge",
+      "pflanzenschutzmittel",
+      "starker befall",
+      "leichter befall"
+    ],
+    "text": "Bei starkem Befall nennt die Sprecherin zunächst ein umweltschonendes Pflanzenschutzmittel, dann abwarten und ggf. wiederholen, oder Nützlinge. Bei leichtem Befall wäre die erste Wahl Nützlinge; beides nicht am selben Tag kombinieren.",
+    "videoId": "fClJHJ_eiGE",
+    "videoTitle": "SPINNMILBEN BEKÄMPFEN: So gehst du ganz natürlich gegen die Schädlinge vor! 🕸",
+    "channel": "Natürlich im Garten [mit Neudorff]",
+    "start": 64
+  },
+  {
+    "id": "problem-raubmilben-01",
+    "topic": "Raubmilben ausbringen",
+    "phases": ["vegetative"],
+    "tags": [
+      "raubmilben",
+      "nützlinge",
+      "spinnmilben",
+      "küchenpapier",
+      "granulat",
+      "ausbringen"
+    ],
+    "text": "Raubmilben kommen als Granulat in Holzspänen; es wird auf Küchenpapier geschüttet und in die Pflanze, in die Nähe des Befalls, gelegt. Drei Tage lang bleibt es dort, damit die winzigen Raubmilben herauskrabbeln und die Spinnmilben fressen.",
+    "videoId": "fClJHJ_eiGE",
+    "videoTitle": "SPINNMILBEN BEKÄMPFEN: So gehst du ganz natürlich gegen die Schädlinge vor! 🕸",
+    "channel": "Natürlich im Garten [mit Neudorff]",
+    "start": 104
+  },
+  {
+    "id": "problem-spinnmilben-05",
+    "topic": "Spinnmilben: erneuten Befall vermeiden",
+    "phases": ["vegetative"],
+    "tags": [
+      "spinnmilben",
+      "luftfeuchtigkeit",
+      "heizung",
+      "wasserschale",
+      "besprühen",
+      "vorbeugen"
+    ],
+    "text": "Um erneuten Befall zu vermeiden, die Pflanze nicht über der Heizung stehen lassen und die Luftfeuchtigkeit erhöhen, etwa durch Besprühen mit Wasser oder ein Wassergefäß in der Nähe.",
+    "videoId": "fClJHJ_eiGE",
+    "videoTitle": "SPINNMILBEN BEKÄMPFEN: So gehst du ganz natürlich gegen die Schädlinge vor! 🕸",
+    "channel": "Natürlich im Garten [mit Neudorff]",
+    "start": 280
+  },
+  {
+    "id": "problem-ph-01",
+    "topic": "Zwei Hauptfehlerquellen: Gießen und pH",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "ph wert",
+      "gießen",
+      "fehlerquelle",
+      "wachstumsprobleme",
+      "anfänger",
+      "mickrige pflanze"
+    ],
+    "text": "Nach Meinung des Sprechers gibt es zwei Hauptfehlerquellen bei langsam wachsenden oder toten Pflanzen: falsches Gießen und den pH-Wert, über den am seltensten gesprochen werde. Ohne Feuchtigkeit kann die Pflanze keine Nährstoffe aufnehmen.",
+    "videoId": "7EAyUiaJSgk",
+    "videoTitle": "Nur so wächst Dein Gras optimal 😱 richtig oder falsch?  Der perfekte pH-Wert für den Anbau!",
+    "channel": "Pott Planter",
+    "start": 81
+  },
+  {
+    "id": "problem-ph-02",
+    "topic": "Gleiches Leitungswasser, unterschiedlicher pH",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "ph wert",
+      "leitungswasser",
+      "gießwasser",
+      "messen",
+      "wasserwerte"
+    ],
+    "text": "Im Beispiel misst der Sprecher bei zwei Personen mit gleicher Mischung aus der Leitung einen pH von 6,17 bei der einen und deutlich über 8 bei der anderen; deren Pflanze wurde mickrig, gelblich-grün und verkrüppelt.",
+    "videoId": "7EAyUiaJSgk",
+    "videoTitle": "Nur so wächst Dein Gras optimal 😱 richtig oder falsch?  Der perfekte pH-Wert für den Anbau!",
+    "channel": "Pott Planter",
+    "start": 197
+  },
+  {
+    "id": "problem-ph-03",
+    "topic": "Optimaler pH in Erde: 6 bis 7",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "ph wert",
+      "erde",
+      "ph 6 bis 7",
+      "nährstoffaufnahme",
+      "hanferde",
+      "puffer"
+    ],
+    "text": "Hanfpflanzen bevorzugen in Erde laut Sprecher einen pH-Wert von 6 bis 7. Der Wert einer gekauften Erde ist voreingestellt und mit einem Puffer versehen, ändert sich aber je nachdem, wie man mit der Erde umgeht.",
+    "videoId": "7EAyUiaJSgk",
+    "videoTitle": "Nur so wächst Dein Gras optimal 😱 richtig oder falsch?  Der perfekte pH-Wert für den Anbau!",
+    "channel": "Pott Planter",
+    "start": 297
+  },
+  {
+    "id": "problem-ph-04",
+    "topic": "Nährstoffsperre bei falschem pH",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "nährstoffsperre",
+      "ph wert",
+      "mangelerscheinung",
+      "überdüngung",
+      "wurzelverbrennung",
+      "dünger"
+    ],
+    "text": "Passt der pH-Wert nicht, kommen Nährstoffe nicht mehr über die Wurzel in die Pflanze, sie zeigt Mangelerscheinungen. Noch mehr Dünger zu geben hilft dann nicht: Die Nährstoffe sammeln sich in der Erde, überdüngen sie und können die Wurzeln verbrennen.",
+    "videoId": "7EAyUiaJSgk",
+    "videoTitle": "Nur so wächst Dein Gras optimal 😱 richtig oder falsch?  Der perfekte pH-Wert für den Anbau!",
+    "channel": "Pott Planter",
+    "start": 432
+  },
+  {
+    "id": "problem-ph-05",
+    "topic": "pH beim Gießen kontrollieren",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "ph wert",
+      "gießwasser",
+      "messen",
+      "kleine töpfe",
+      "ph schwankung",
+      "erde ph"
+    ],
+    "text": "Gerade bei kleineren Töpfen empfiehlt der Sprecher, das Gießwasser regelmäßig zu messen: Gießt man über Wochen mit einem pH von 8 in Erde mit pH 6, ändert sich irgendwann auch der pH in der Erde. Schlechter pH kann bis zur kompletten Nährstoffblockade führen.",
+    "videoId": "7EAyUiaJSgk",
+    "videoTitle": "Nur so wächst Dein Gras optimal 😱 richtig oder falsch?  Der perfekte pH-Wert für den Anbau!",
+    "channel": "Pott Planter",
+    "start": 544
+  },
+  {
+    "id": "problem-ph-06",
+    "topic": "Dünger verändert den pH der Gießlösung",
+    "phases": ["vegetative", "flowering"],
+    "tags": ["ph wert", "dünger", "booster", "gießlösung", "ph verändern"],
+    "text": "Dünger, Booster und andere Zusätze verändern laut Sprecher grundsätzlich auch den pH-Wert der Gießlösung.",
+    "videoId": "7EAyUiaJSgk",
+    "videoTitle": "Nur so wächst Dein Gras optimal 😱 richtig oder falsch?  Der perfekte pH-Wert für den Anbau!",
+    "channel": "Pott Planter",
+    "start": 643
+  },
+  {
+    "id": "problem-wachstumsstopp-01",
+    "topic": "Pflanze bleibt klein und gelblich",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "wachstumsstopp",
+      "pflanze wächst nicht",
+      "mickrig",
+      "gelbe triebe",
+      "überwässerung",
+      "umtopfen"
+    ],
+    "text": "Im Fallbeispiel wächst die Pflanze mickrig und wird besonders an den neuen Trieben ganz hell bis gelblich. Sie sieht aus wie eine Miniaturversion dessen, was sie sein sollte.",
+    "videoId": "tGrM9p7jVx8",
+    "videoTitle": "Deine Hanfpflanze wächst nicht weiter? So behebst du das Problem SOFORT",
+    "channel": "Die Tomate",
+    "start": 30
+  },
+  {
+    "id": "problem-wachstumsstopp-02",
+    "topic": "Ursache: zu großzügig angießen nach dem Umtopfen",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "umtopfen",
+      "angießen",
+      "staunässe",
+      "wurzeln ersticken",
+      "überwässerung",
+      "wachstumsstopp"
+    ],
+    "text": "Ursache ist laut Sprecher das zu großzügige Angießen direkt nach dem Umtopfen: Die Pflanze muss erst Wurzeln bilden, bevor sie viel Wasser aufnehmen kann. In der nassen Erdschicht finden Wurzeln keinen Platz, die Pflanze erstickt an Wasser.",
+    "videoId": "tGrM9p7jVx8",
+    "videoTitle": "Deine Hanfpflanze wächst nicht weiter? So behebst du das Problem SOFORT",
+    "channel": "Die Tomate",
+    "start": 82
+  },
+  {
+    "id": "problem-wachstumsstopp-03",
+    "topic": "Gegenmaßnahme: lange nicht gießen",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "nicht gießen",
+      "wachstumsstopp",
+      "staunässe",
+      "rettung",
+      "trocknen lassen",
+      "kein dünger"
+    ],
+    "text": "Als Gegenmaßnahme rät der Sprecher, lange nicht mehr zu gießen: mindestens 10, eher 12 Tage, ohne Dünger. Wird es nach 2 bis 4 Tagen deutlich schlechter (starkes Vergilben, austrocknende Blattspitzen), setzt er die Pflanze in trockeneres Substrat um.",
+    "videoId": "tGrM9p7jVx8",
+    "videoTitle": "Deine Hanfpflanze wächst nicht weiter? So behebst du das Problem SOFORT",
+    "channel": "Die Tomate",
+    "start": 140
+  },
+  {
+    "id": "problem-wachstumsstopp-04",
+    "topic": "Junge Pflanzen: weniger Wasser ist mehr",
+    "phases": ["germination", "seedling"],
+    "tags": [
+      "junge pflanzen",
+      "gießen",
+      "wenig wasser",
+      "überwässerung",
+      "sämling",
+      "umtopfen"
+    ],
+    "text": "Beim Eintopfen junger Pflanzen gilt laut Sprecher bei allem: weniger ist mehr, ein paar Tröpfchen Wasser reichen im Regelfall. Zu wenig Wasser vertragen sie relativ gut, zu viel ist fast immer der sichere Tod.",
+    "videoId": "tGrM9p7jVx8",
+    "videoTitle": "Deine Hanfpflanze wächst nicht weiter? So behebst du das Problem SOFORT",
+    "channel": "Die Tomate",
+    "start": 185
+  },
+  {
+    "id": "problem-neemoel-08",
+    "topic": "Neemöl bei hoher Luftfeuchte: gelbe Flecken",
+    "phases": ["vegetative"],
+    "tags": [
+      "neemöl",
+      "gelbe flecken",
+      "hohe luftfeuchtigkeit",
+      "zelt",
+      "blätter",
+      "nachteile"
+    ],
+    "text": "Die Sprecherin berichtet, dass Pflanzen in ihrem Zelt mit hoher Luftfeuchtigkeit nach dem Besprühen mit Neemöl am nächsten Tag leicht gelbe Flecken bekamen, die sich später auf allen behandelten Blättern zeigten. Sie bereut, diese Pflanzen behandelt zu haben.",
+    "videoId": "DPPUnjoAnxk",
+    "videoTitle": "Die NACHTEILE von NEEMÖL für Thripse, spinnmilben usw",
+    "channel": "Plentyplants",
+    "start": 135
+  },
+  {
+    "id": "problem-neemoel-09",
+    "topic": "Neemöl: Spinnmilben weg, samtige Blätter leiden",
+    "phases": ["vegetative"],
+    "tags": [
+      "neemöl",
+      "spinnmilben",
+      "samtige blätter",
+      "knusprige ränder",
+      "trockene luft"
+    ],
+    "text": "Bei Pflanzen im Raum mit niedriger Luftfeuchtigkeit waren die Milben weg, glatte Blätter zeigten keine Schäden, samtige Blätter bekamen aber knusprige Ränder. Das ist ein Erfahrungsbericht zu Zimmerpflanzen.",
+    "videoId": "DPPUnjoAnxk",
+    "videoTitle": "Die NACHTEILE von NEEMÖL für Thripse, spinnmilben usw",
+    "channel": "Plentyplants",
+    "start": 205
+  },
+  {
+    "id": "problem-neemoel-10",
+    "topic": "Neemöl: Vermutung verstopfte Poren",
+    "phases": ["vegetative"],
+    "tags": [
+      "neemöl",
+      "poren",
+      "transpiration",
+      "pilz",
+      "abtrocknen",
+      "feuchte blätter"
+    ],
+    "text": "Die Sprecherin vermutet (ausdrücklich nicht gesichert), dass das Öl die Poren verstopft hat und die Blätter bei hoher Luftfeuchte schlechter transpirieren und abtrocknen, wodurch Flecken und Pilz entstehen können. Sie wusch die Pflanzen ab, danach wurden es nicht mehr viele neue Flecken.",
+    "videoId": "DPPUnjoAnxk",
+    "videoTitle": "Die NACHTEILE von NEEMÖL für Thripse, spinnmilben usw",
+    "channel": "Plentyplants",
+    "start": 263
+  },
+  {
+    "id": "problem-neemoel-11",
+    "topic": "Neemöl: Gärtner raten teils ab",
+    "phases": ["vegetative"],
+    "tags": [
+      "neemöl",
+      "nachteile",
+      "gärtner",
+      "erfahrung",
+      "luftwurzeln",
+      "setzlinge"
+    ],
+    "text": "Laut Sprecherin benutzen manche Gärtner Neemöl nur noch selten, weil die Nachteile die Vorteile überwiegen würden; das stützt sie auf Nachrichten, nicht auf eigene Belege. Bei zwei Setzlingen waren die Luftwurzeln am Folgetag gammelig.",
+    "videoId": "DPPUnjoAnxk",
+    "videoTitle": "Die NACHTEILE von NEEMÖL für Thripse, spinnmilben usw",
+    "channel": "Plentyplants",
+    "start": 400
+  },
+  {
+    "id": "problem-trauermuecken-03",
+    "topic": "Trauermücken: Aussehen und Schaden",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "trauermücken",
+      "kleine fliegen",
+      "obstfliegen",
+      "larven",
+      "wurzeln gefressen",
+      "zimmerpflanze"
+    ],
+    "text": "Trauermücken sehen aus wie kleine schwarze Obstfliegen mit Flügeln; die weißlich-durchsichtigen Larven leben in der Erde und fressen die Wurzeln an. Die Pflanze kann dann weniger Wasser und Nährstoffe aufnehmen, verliert Widerstandskraft und kann daran sterben. Das Video behandelt Zimmerpflanzen.",
+    "videoId": "onVKr_ctOx8",
+    "videoTitle": "Trauermücken schnell und einfach bekämpfen - Expertentipps mit Lisa",
+    "channel": "Green Me Up",
+    "start": 25
+  },
+  {
+    "id": "problem-trauermuecken-04",
+    "topic": "Trauermücken nachweisen mit Gelbtafeln",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "trauermücken",
+      "gelbtafeln",
+      "früherkennung",
+      "gelbe klebetafel",
+      "larven"
+    ],
+    "text": "Sieht man die Fliegen, sind die Larven schon in der Erde, daher ist Früherkennung wichtig. Mit aufgestellten Gelbtafeln lässt sich prüfen, ob es Trauermücken sind: Nach wenigen Tagen kleben viele daran. Eine Gelbtafel sollte laut Video auch während jeder Behandlung weiter in der Pflanze stecken.",
+    "videoId": "onVKr_ctOx8",
+    "videoTitle": "Trauermücken schnell und einfach bekämpfen - Expertentipps mit Lisa",
+    "channel": "Green Me Up",
+    "start": 55
+  },
+  {
+    "id": "problem-trauermuecken-05",
+    "topic": "Trauermücken: Quarantäne und Abtrocknen",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "trauermücken",
+      "quarantäne",
+      "abtrocknen",
+      "umtopfen",
+      "restmüll",
+      "nasse erde"
+    ],
+    "text": "Befallene Pflanzen separiert man, da die Mücken schnell zu anderen fliegen. Die Larven mögen nasse Erde, deshalb ein bis zwei Wochen nicht gießen; bei starkem Befall umtopfen und die alte Erde im Restmüll statt im Biomüll entsorgen.",
+    "videoId": "onVKr_ctOx8",
+    "videoTitle": "Trauermücken schnell und einfach bekämpfen - Expertentipps mit Lisa",
+    "channel": "Green Me Up",
+    "start": 82
+  },
+  {
+    "id": "problem-trauermuecken-06",
+    "topic": "Trauermücken: Hausmittel Sand, Kaffeesatz, Streichhölzer",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "trauermücken",
+      "hausmittel",
+      "sand",
+      "kaffeesatz",
+      "streichhölzer",
+      "schwefel"
+    ],
+    "text": "Als Hausmittel nennt das Video eine ein bis zwei Zentimeter dicke Schicht aus trockenem Sand oder Kaffeesatz, damit keine neuen Mücken schlüpfen. Außerdem Streichhölzer kopfüber in die Erde (bei 12-cm-Topf zwei bis vier, wöchentlich tauschen), weil sich der Schwefel löst und die Larven laut Video daran sterben.",
+    "videoId": "onVKr_ctOx8",
+    "videoTitle": "Trauermücken schnell und einfach bekämpfen - Expertentipps mit Lisa",
+    "channel": "Green Me Up",
+    "start": 184
+  },
+  {
+    "id": "problem-trauermuecken-07",
+    "topic": "Trauermücken: Nützlinge und Neemöl",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "trauermücken",
+      "nützlinge",
+      "nematoden",
+      "neemöl",
+      "gießwasser",
+      "biologisch"
+    ],
+    "text": "Nützlinge, die die Larven fressen, nennt die Sprecherin die nachhaltigste Alternative. Als biologisches Pflanzenschutzmittel kommt Neemöl ins Gießwasser; die Larven nehmen es laut Video auf und sterben.",
+    "videoId": "onVKr_ctOx8",
+    "videoTitle": "Trauermücken schnell und einfach bekämpfen - Expertentipps mit Lisa",
+    "channel": "Green Me Up",
+    "start": 244
+  },
+  {
+    "id": "problem-trauermuecken-08",
+    "topic": "Trauermücken: wöchentlich wiederholen",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "trauermücken",
+      "lebenszyklus",
+      "wiederholen",
+      "behandlung",
+      "vier wochen",
+      "vorbeugen"
+    ],
+    "text": "Der Lebenszyklus der Trauermücken geht über mehrere Wochen, daher muss die Behandlung Woche für Woche bis zu vier Wochen wiederholt werden; bei Nematoden oder Pflanzenschutzmitteln gelten die Herstellerangaben. Vorbeugend die Erdfeuchte unter Kontrolle halten und zwischendurch abtrocknen lassen.",
+    "videoId": "onVKr_ctOx8",
+    "videoTitle": "Trauermücken schnell und einfach bekämpfen - Expertentipps mit Lisa",
+    "channel": "Green Me Up",
+    "start": 303
+  },
+  {
+    "id": "problem-naehrstoff-01",
+    "topic": "Mangel liegt meist an den Bedingungen, nicht an zu wenig Dünger",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "nährstoffmangel",
+      "gelbe blätter",
+      "ph wert",
+      "mehr dünger",
+      "umgebung",
+      "diagnose"
+    ],
+    "text": "Zu wenig oder zu viel Dünger ist laut Sprecher selten das Problem; der Fehler liegt eher in den Umgebungsbedingungen, vor allem im pH-Wert. Bei Mangelzeichen mehr zu düngen sei meist kontraproduktiv und schade mehr.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 43
+  },
+  {
+    "id": "problem-ph-07",
+    "topic": "pH 6 bis 7: Aufnahme von Nährstoffen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "ph wert",
+      "nährstoffaufnahme",
+      "nährstoffsperre",
+      "ph 6 bis 7",
+      "mangelerscheinungen",
+      "dünger"
+    ],
+    "text": "Ist der pH-Wert im Boden nicht optimal, kann die Pflanze Nährstoffe nicht aufnehmen, egal wie viel man düngt. Laut Diagramm im Video fällt die Aufnahme außerhalb von pH 6 bis 7 ab, und verschiedene Nährstoffe werden bei unterschiedlichem pH unterschiedlich gut aufgenommen.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 96
+  },
+  {
+    "id": "problem-ph-08",
+    "topic": "Organisch gedüngt: pH meist unproblematisch",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "ph wert",
+      "organisch",
+      "langzeitdünger",
+      "mikroorganismen",
+      "puffer",
+      "mineraldünger"
+    ],
+    "text": "Wer organisch oder mit Langzeitdünger arbeitet, hat mit dem pH laut Sprecher meist keine Probleme, da Mikroorganismen die Nährstoffe liefern und der Boden gut gepuffert ist. Bei Mineraldünger ist ein schlechter Boden-pH wahrscheinlich, wenn die Nährlösung über längere Zeit nicht richtig eingestellt wurde.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 128
+  },
+  {
+    "id": "problem-ph-09",
+    "topic": "pH vor jedem Gießen messen, Drain-Messung",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "ph wert",
+      "messen",
+      "mineraldünger",
+      "leitungswasser",
+      "teststreifen",
+      "abflusswasser"
+    ],
+    "text": "Wer mineralisch düngt, sollte den pH der Nährlösung vor jedem Gießen messen. Auch der pH des Leitungswassers kann sich im Jahresverlauf ändern. Den Boden-pH kann man grob per Teststreifen am Abflusswasser (Drain) prüfen.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 148
+  },
+  {
+    "id": "problem-ph-10",
+    "topic": "Flush bei mineralischem Dünger",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "flush",
+      "spülen",
+      "nährstoffsperre",
+      "ph wert",
+      "mineraldünger",
+      "neu düngen"
+    ],
+    "text": "Liegt der Boden-pH bei Mineraldünger außerhalb des Bereichs, kann man laut Video mit dem zwei- bis dreifachen Topfvolumen Wasser spülen und danach mit etwa 50 Prozent der Herstellerempfehlung neu düngen, jede Gabe dann um 10 Prozentpunkte steigern bis 100 Prozent. Bei organischem Dünger soll man auf keinen Fall spülen.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 198
+  },
+  {
+    "id": "problem-ueberwaessern-02",
+    "topic": "Überwässerung: Wasser verdrängt Luft",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "überwässerung",
+      "wurzeln ersticken",
+      "drainage",
+      "junge pflanzen",
+      "durchwurzelt",
+      "topf anheben"
+    ],
+    "text": "Wasser nimmt die Pflanze nur dort auf, wo Wurzeln sind; ein nicht durchwurzelter Topf, besonders bei jungen Pflanzen, ist leicht überwässert. Zu viel Wasser verdrängt die Luft, die Wurzeln ersticken. Drainage hilft; der Sprecher rät, den Topf regelmäßig anzuheben und sein Gewicht zu fühlen.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 338
+  },
+  {
+    "id": "problem-temperatur-01",
+    "topic": "Zu kalt: Nährstoffe werden nicht aufgenommen",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "kälte",
+      "temperatur",
+      "nährstoffblockade",
+      "zelt",
+      "winter",
+      "bodentemperatur"
+    ],
+    "text": "Zu kalter Boden im Topf kann laut Sprecher zur Nährstoffimmobilisierung führen, besonders im Winter. Unter 20 °C Lufttemperatur ist es nicht mehr optimal, bei 15 °C geht die Pflanze in einen Schock. Optimal seien etwa 18 bis 23 °C im Boden und 21 bis 30 °C Luft im Zelt.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 427
+  },
+  {
+    "id": "problem-hitze-01",
+    "topic": "Hitzestress im Sommer unter der Lampe",
+    "phases": ["vegetative", "flowering"],
+    "tags": ["hitze", "hitzestress", "temperatur", "sommer", "lampe", "zelt"],
+    "text": "Bei etwa 40 °C Lufttemperatur wird es für die Pflanze kritisch, was im heißen Sommer zusammen mit der Lampe vorkommen kann. Als Gegenmaßnahme nennt der Sprecher, das Licht im Indoor-Zelt nachts laufen zu lassen, damit man tagsüber nicht zusätzlich aufheizt.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 506
+  },
+  {
+    "id": "problem-licht-01",
+    "topic": "Zu wenig Licht: weniger Nährstoffaufnahme",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "lichtmangel",
+      "lampe",
+      "photosynthese",
+      "nährstoffaufnahme",
+      "watt pro quadratmeter",
+      "schwache lampe"
+    ],
+    "text": "Ohne ausreichend Licht verbraucht die Pflanze weniger Energie und nimmt weniger Nährstoffe auf, auch wenn genug im Boden sind. Als Faustregel nennt der Sprecher 400 Watt Lichtleistung pro Quadratmeter Zeltfläche; auch bei weniger wachsen Pflanzen noch, nutzen aber nicht das volle Genetikpotenzial.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 556
+  },
+  {
+    "id": "problem-licht-02",
+    "topic": "Ungleichmäßige Ausleuchtung im Zelt",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "lichtverteilung",
+      "ausleuchtung",
+      "randpflanzen",
+      "pflanzen rotieren",
+      "zelt",
+      "wachstumsunterschied"
+    ],
+    "text": "Ist es in der Zeltmitte heller als am Rand, nehmen die Randpflanzen trotz gleicher Düngung weniger Nährstoffe auf und bleiben kleiner. Als Behelf nennt der Sprecher, die Pflanzen etwa einmal pro Woche zu rotieren, sodass eine andere Pflanze in der Mitte steht.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 639
+  }
+]
