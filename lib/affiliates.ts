@@ -422,9 +422,15 @@ export function buildRemedyLink(
   searchTerm: string,
   tag: string | undefined = process.env.EXPO_PUBLIC_AFFILIATE_AMAZON ??
     AMAZON_PARTNER_TAG,
+  asin?: string,
 ): { url: string; isAffiliate: boolean } {
-  const url = new URL("/s", "https://www.amazon.de");
-  url.searchParams.set("k", searchTerm.slice(0, 80));
+  // A fixed product page when a valid ASIN is given, otherwise a search for the term.
+  const isProduct = /^[A-Z0-9]{10}$/.test(asin ?? "");
+  const url = new URL(
+    isProduct ? `/dp/${asin}` : "/s",
+    "https://www.amazon.de",
+  );
+  if (!isProduct) url.searchParams.set("k", searchTerm.slice(0, 80));
   const cleanTag = (tag ?? "").trim();
   if (cleanTag) url.searchParams.set("tag", cleanTag);
   return { url: url.toString(), isAffiliate: cleanTag.length > 0 };

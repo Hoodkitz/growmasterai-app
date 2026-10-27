@@ -1,6 +1,6 @@
 import { Linking, Text, TouchableOpacity, View } from "react-native";
 import { buildRemedyLink, trackAffiliateClick } from "@/lib/affiliates";
-import type { Remedy } from "@/shared/remedies";
+import { asinForRemedy, type Remedy } from "@/shared/remedies";
 
 /** Product suggestions with Amazon links; the affiliate tag is added only if configured. */
 export function RemedyList({
@@ -16,7 +16,11 @@ export function RemedyList({
     <View className="mt-2 bg-surface border border-border rounded-xl p-3 gap-3">
       <Text className="text-sm font-semibold text-foreground">{title}</Text>
       {remedies.map((remedy) => {
-        const link = buildRemedyLink(remedy.searchTerm);
+        const link = buildRemedyLink(
+          remedy.searchTerm,
+          undefined,
+          asinForRemedy(remedy.name),
+        );
         return (
           <View key={remedy.name} className="gap-1 pb-2 border-b border-border">
             <Text className="text-sm font-semibold text-foreground">

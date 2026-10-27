@@ -5,6 +5,9 @@ import {
   suggestRemedies,
   mergeCoachProducts,
   suggestCoachProducts,
+  asinForRemedy,
+  catalogRemedyNames,
+  productAsinNames,
 } from "../shared/remedies";
 import { buildRemedyLink } from "../lib/affiliates";
 
@@ -114,5 +117,29 @@ describe("coach products", () => {
 
   it("returns nothing for unrelated text and ignores invalid model output", () => {
     expect(mergeCoachProducts("kaputt", "Hallo Welt")).toEqual([]);
+  });
+});
+
+describe("fixed products", () => {
+  it("only assigns ASINs to remedies that exist in a catalog", () => {
+    const names = new Set(catalogRemedyNames());
+    for (const n of productAsinNames()) expect(names.has(n)).toBe(true);
+  });
+
+  it("links a chosen product page and keeps search as fallback", () => {
+    const asin = asinForRemedy("Präzisions-Pflanzenschere");
+    expect(asin).toMatch(/^[A-Z0-9]{10}$/);
+    const product = new URL(buildRemedyLink("x", "", asin).url);
+    expect(product.pathname).toBe(`/dp/${asin}`);
+    expect(product.searchParams.has("k")).toBe(false);
+    expect(new URL(buildRemedyLink("Dünger", "", undefined).url).pathname).toBe(
+      "/s",
+    );
+    expect(
+      new URL(buildRemedyLink("x", "t-21", "B0DZNSB16W").url).searchParams.get(
+        "tag",
+      ),
+    ).toBe("t-21");
+    expect(new URL(buildRemedyLink("x", "", "bad id").url).pathname).toBe("/s");
   });
 });

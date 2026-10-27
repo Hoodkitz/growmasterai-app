@@ -298,3 +298,35 @@ export function mergeCoachProducts(
   }
   return merged;
 }
+
+/**
+ * Concrete products chosen by the operator (amazon.de ASINs), keyed by remedy name.
+ * Everything not listed here falls back to an Amazon search for the search term.
+ */
+const PRODUCT_ASINS: Record<string, string> = {
+  "pH-Messgerät und pH-Down": "B0DZNSB16W",
+  "EC-Messgerät": "B0DZNSB16W",
+  "Hygrometer / Thermometer": "B0D1Q3TP7F",
+  "Thermo-Hygrometer": "B0D1Q3TP7F",
+  "Lupe / Mikroskop-Aufsatz (Trichome prüfen)": "B09Y62T5B5",
+  "Präzisions-Pflanzenschere": "B07C2V85Q7",
+  "Pflanzenclips / Bindedraht (Training)": "B07RZZJQXP",
+  Anzuchterde: "B08TV1KWDP",
+  "Mini-Gewächshaus / Anzuchtbox": "B09L4T4P5K",
+  Feuchtigkeitsmesser: "B08V85KVWX",
+  Bodenfeuchtigkeitsmesser: "B08V85KVWX",
+};
+
+/** ASIN of the operator's chosen product for a remedy, if there is one. */
+export function asinForRemedy(name: string): string | undefined {
+  return PRODUCT_ASINS[name];
+}
+
+/** All remedy names of both catalogs (used to keep PRODUCT_ASINS in sync). */
+export function catalogRemedyNames(): string[] {
+  return [...CATALOG, ...COACH_CATALOG].map((c) => c.name);
+}
+
+export function productAsinNames(): string[] {
+  return Object.keys(PRODUCT_ASINS);
+}

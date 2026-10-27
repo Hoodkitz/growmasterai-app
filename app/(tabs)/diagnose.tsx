@@ -31,7 +31,7 @@ import { AIProcessingIndicator } from "@/components/loading-state";
 import { getDiagnosisErrorMessage } from "@/lib/error-handling";
 import { DiagnoseSkeletonLoader } from "@/components/skeleton-loaders";
 import { buildRemedyLink, trackAffiliateClick } from "@/lib/affiliates";
-import type { Remedy } from "@/shared/remedies";
+import { asinForRemedy, type Remedy } from "@/shared/remedies";
 
 const { width, height } = Dimensions.get("window");
 
@@ -559,7 +559,11 @@ export default function DiagnoseScreen() {
                   Empfohlene Mittel
                 </Text>
                 {diagnosis.remedies.map((remedy) => {
-                  const link = buildRemedyLink(remedy.searchTerm);
+                  const link = buildRemedyLink(
+                    remedy.searchTerm,
+                    undefined,
+                    asinForRemedy(remedy.name),
+                  );
                   return (
                     <View
                       key={remedy.name}
