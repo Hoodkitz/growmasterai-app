@@ -8,8 +8,11 @@ import {
   asinForRemedy,
   catalogRemedyNames,
   productAsinNames,
+  productsForRemedy,
 } from "../shared/remedies";
 import { buildRemedyLink } from "../lib/affiliates";
+
+import { findStrainByName } from "../lib/strains-data";
 
 describe("suggestRemedies", () => {
   it("suggests neem oil for spider mites", () => {
@@ -141,5 +144,37 @@ describe("fixed products", () => {
       ),
     ).toBe("t-21");
     expect(new URL(buildRemedyLink("x", "", "bad id").url).pathname).toBe("/s");
+  });
+});
+
+describe("fertilizers and curing containers", () => {
+  it("offers all five chosen fertilizers for every fertilizer remedy", () => {
+    for (const name of [
+      "Pflanzendünger (Wachstum/Blüte)",
+      "Wachstumsdünger (Stickstoff)",
+      "Blütedünger (PK)",
+    ]) {
+      const products = productsForRemedy(name);
+      expect(products).toHaveLength(5);
+      expect(
+        products.every((p) => p.label && /^[A-Z0-9]{10}$/.test(p.asin)),
+      ).toBe(true);
+    }
+  });
+
+  it("suggests light-protected containers instead of clear jars", () => {
+    const names = suggestCoachProducts(
+      "Wie lagere ich die Blüten beim Curing?",
+    ).map((r) => r.name);
+    expect(names).toContain("Lichtgeschützte Behälter (Curing)");
+    expect(names).not.toContain("Einmachgläser (Curing)");
+  });
+});
+
+describe("findStrainByName", () => {
+  it("finds a database strain by its exact name, case-insensitively", () => {
+    expect(findStrainByName("amnesia HAZE")?.breeder).toBe("Royal Queen Seeds");
+    expect(findStrainByName("Selbstgemixte Sorte")).toBeUndefined();
+    expect(findStrainByName("")).toBeUndefined();
   });
 });

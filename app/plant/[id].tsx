@@ -16,6 +16,19 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { PlantQrCode } from "@/components/plant-qr-code";
 import { PhaseTipsList } from "@/components/phase-tips-list";
 import { tipsForPhase } from "@/lib/phase-tips";
+import { PlantStrainInfo } from "@/components/plant-strain-info";
+import { PlantReminderSettings } from "@/components/plant-reminder-settings";
+import {
+  loadPlantMeta,
+  savePlantMeta,
+  syncPlantNotifications,
+  type PlantMeta,
+} from "@/lib/plant-reminders";
+import {
+  DEFAULT_REMINDER_SETTINGS,
+  type ReminderSettings,
+} from "@/lib/plant-schedule";
+import { findStrainByName } from "@/lib/strains-data";
 import { useColors } from "@/hooks/use-colors";
 import {
   CareEntry,
@@ -58,6 +71,11 @@ export default function PlantCardScreen() {
   const [loaded, setLoaded] = useState(false);
   const [log, setLog] = useState<CareEntry[]>([]);
   const [note, setNote] = useState("");
+  const [meta, setMeta] = useState<PlantMeta>({
+    reminders: { ...DEFAULT_REMINDER_SETTINGS },
+    notificationIds: [],
+  });
+  const [permissionDenied, setPermissionDenied] = useState(false);
 
   // Host form (growmasterai://plant/<id>) matches the Android intent filter, which needs a host.
   const link = `growmasterai://${plantPath(String(id))}`;
@@ -69,6 +87,7 @@ export default function PlantCardScreen() {
       setPlant(all.find((p) => p.id === id) ?? null);
       const rawLog = await AsyncStorage.getItem(careKey(String(id)));
       setLog(rawLog ? JSON.parse(rawLog) : []);
+      setMeta(await loadPlantMeta(String(id)));
     } catch {
       setPlant(null);
     } finally {
@@ -93,12 +112,64 @@ export default function PlantCardScreen() {
     setLog(next);
     setNote("");
     await AsyncStorage.setItem(careKey(String(id)), JSON.stringify(next));
+    if (plant) {
+      const nextMeta: PlantMeta = {
+        ...meta,
+        ...(kind === "water"
+          ? { lastWatered: entry.date }
+          : { lastFed: entry.date }),
+      };
+      await applyMeta(nextMeta, plant);
+    }
   };
 
   const removeCare = async (entryId: string) => {
     const next = log.filter((e) => e.id !== entryId);
     setLog(next);
     await AsyncStorage.setItem(careKey(String(id)), JSON.stringify(next));
+  };
+
+  /** Stores the device-local data and re-plans this plant's notifications. */
+  const applyMeta = async (nextMeta: PlantMeta, nextPlant: StoredPlant) => {
+    setMeta(nextMeta);
+    const granted = await syncPlantNotifications(nextPlant, nextMeta);
+    setPermissionDenied(nextMeta.reminders.enabled && !granted);
+    setMeta({ ...nextMeta });
+  };
+
+  const changeReminders = async (reminders: ReminderSettings) => {
+    if (!plant) return;
+    await applyMeta({ ...meta, reminders }, plant);
+  };
+
+  const changePhase = async (phase: StoredPlant["phase"]) => {
+    if (!plant || plant.phase === phase) return;
+    const now = new Date().toISOString();
+    const next: StoredPlant = { ...plant, phase };
+    try {
+      const raw = await AsyncStorage.getItem("plants");
+      const all: (StoredPlant & { updatedAt?: string })[] = raw
+        ? JSON.parse(raw)
+        : [];
+      await AsyncStorage.setItem(
+        "plants",
+        JSON.stringify(
+          all.map((p) =>
+            p.id === plant.id ? { ...p, phase, updatedAt: now } : p,
+          ),
+        ),
+      );
+    } catch {
+      Alert.alert("Fehler", "Die Phase konnte nicht gespeichert werden.");
+      return;
+    }
+    setPlant(next);
+    const nextMeta: PlantMeta = { ...meta };
+    if (phase === "flowering" && !nextMeta.floweringStart)
+      nextMeta.floweringStart = now;
+    if (phase === "harvest" && !nextMeta.harvestDate)
+      nextMeta.harvestDate = now;
+    await applyMeta(nextMeta, next);
   };
 
   const printLabel = async () => {
@@ -152,6 +223,7 @@ export default function PlantCardScreen() {
     );
   }
 
+  const strainInfo = findStrainByName(plant.strain);
   const start = new Date(plant.startDate);
   const days = daysSince(plant.startDate);
   const lastWater = lastOf("water");
@@ -219,6 +291,51 @@ export default function PlantCardScreen() {
             <Text className="text-sm text-muted mt-2">{plant.notes}</Text>
           ) : null}
         </View>
+
+        <View className="bg-surface rounded-2xl p-4 border border-border gap-3">
+          <Text className="text-lg font-semibold text-foreground">Phase</Text>
+          <View className="flex-row flex-wrap gap-2">
+            {(Object.keys(PHASE_LABEL) as StoredPlant["phase"][]).map((ph) => (
+              <TouchableOpacity
+                key={ph}
+                className={`px-4 py-2 rounded-full border ${plant.phase === ph ? "bg-primary border-primary" : "border-border"}`}
+                onPress={() => changePhase(ph)}
+              >
+                <Text
+                  className={
+                    plant.phase === ph
+                      ? "text-background font-medium"
+                      : "text-foreground"
+                  }
+                >
+                  {PHASE_LABEL[ph]}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          {meta.floweringStart ? (
+            <Text className="text-xs text-muted">
+              Blüte seit{" "}
+              {new Date(meta.floweringStart).toLocaleDateString("de-DE")}
+              {strainInfo?.floweringText
+                ? ` · laut Hersteller ${strainInfo.floweringText}`
+                : ""}
+            </Text>
+          ) : plant.phase !== "flowering" && plant.phase !== "harvest" ? (
+            <Text className="text-xs text-muted">
+              „Blüte“ antippen, sobald du das Licht auf 12 Stunden stellst.
+              Daraus berechnet die App das Erntefenster.
+            </Text>
+          ) : null}
+        </View>
+
+        {strainInfo ? <PlantStrainInfo strain={strainInfo} /> : null}
+
+        <PlantReminderSettings
+          settings={meta.reminders}
+          onChange={changeReminders}
+          permissionDenied={permissionDenied}
+        />
 
         <View className="bg-surface rounded-2xl p-4 border border-border gap-3">
           <Text className="text-lg font-semibold text-foreground">

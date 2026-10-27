@@ -1672,6 +1672,13 @@ export const STRAINS_DATABASE: Strain[] = [
   },
 ];
 
+/** The database entry a plant was created from (plants store the strain name). */
+export function findStrainByName(name?: string | null): Strain | undefined {
+  const n = name?.trim().toLowerCase();
+  if (!n) return undefined;
+  return STRAINS_DATABASE.find((s) => s.name.toLowerCase() === n);
+}
+
 /** Search link instead of invented shop URLs/prices: we have no verified partner deals. */
 export function strainSearchUrl(
   strain: Pick<Strain, "name" | "breeder">,

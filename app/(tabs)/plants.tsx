@@ -22,6 +22,11 @@ import { trpc } from "@/lib/trpc";
 import { useAppAuth } from "@/lib/auth-context";
 import { markPlantDeleted, syncPlantsWithServer } from "@/lib/plants-storage";
 import { PlantsSkeletonLoader } from "@/components/skeleton-loaders";
+import { StrainPicker } from "@/components/strain-picker";
+import {
+  cancelPlantNotifications,
+  refreshAllReminders,
+} from "@/lib/plant-reminders";
 
 interface Plant {
   id: string;
@@ -49,6 +54,7 @@ export default function PlantsScreen() {
   const router = useRouter();
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [showScanner, setShowScanner] = useState(false);
+  const [showStrainPicker, setShowStrainPicker] = useState(false);
   const scanHandled = useRef(false);
   const [plants, setPlants] = useState<Plant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -126,6 +132,7 @@ export default function PlantsScreen() {
   useFocusEffect(
     useCallback(() => {
       loadPlants().then(syncNow);
+      void refreshAllReminders();
     }, [loadPlants, syncNow]),
   );
 
@@ -166,6 +173,7 @@ export default function PlantsScreen() {
     setPlants(updatedPlants);
     await savePlants(updatedPlants);
     await markPlantDeleted(id);
+    void cancelPlantNotifications(id);
     void syncNow();
   };
 
@@ -205,14 +213,19 @@ export default function PlantsScreen() {
   const renderPlant = ({ item }: { item: Plant }) => (
     <View className="bg-surface rounded-2xl p-4 border border-border mb-3">
       <View className="flex-row justify-between items-start mb-3">
-        <View className="flex-1">
+        <TouchableOpacity
+          className="flex-1"
+          onPress={() =>
+            router.push({ pathname: "/plant/[id]", params: { id: item.id } })
+          }
+        >
           <Text className="text-lg font-semibold text-foreground">
             {item.name}
           </Text>
           {item.strain && (
             <Text className="text-sm text-muted">{item.strain}</Text>
           )}
-        </View>
+        </TouchableOpacity>
         <TouchableOpacity
           accessibilityLabel="Pflanzenkarte und QR-Etikett"
           className="p-2"
@@ -376,6 +389,15 @@ export default function PlantsScreen() {
         </View>
       </Modal>
 
+      <StrainPicker
+        visible={showStrainPicker}
+        onClose={() => setShowStrainPicker(false)}
+        onSelect={(name) => {
+          setNewPlant((prev) => ({ ...prev, strain: name }));
+          setShowStrainPicker(false);
+        }}
+      />
+
       {/* Add Plant Modal */}
       <Modal
         visible={showModal}
@@ -415,15 +437,30 @@ export default function PlantsScreen() {
 
             <View className="gap-2">
               <Text className="text-sm font-medium text-foreground">Sorte</Text>
-              <TextInput
-                className="bg-surface rounded-xl px-4 py-3 text-foreground border border-border"
-                placeholder="z.B. Northern Lights"
-                placeholderTextColor={colors.muted}
-                value={newPlant.strain}
-                onChangeText={(text) =>
-                  setNewPlant((prev) => ({ ...prev, strain: text }))
-                }
-              />
+              <TouchableOpacity
+                className="bg-surface rounded-xl px-4 py-3 border border-border flex-row items-center justify-between"
+                onPress={() => setShowStrainPicker(true)}
+              >
+                <Text
+                  className={newPlant.strain ? "text-foreground" : "text-muted"}
+                >
+                  {newPlant.strain || "Aus der Sortendatenbank wählen…"}
+                </Text>
+                <IconSymbol
+                  name="chevron.right"
+                  size={18}
+                  color={colors.muted}
+                />
+              </TouchableOpacity>
+              {newPlant.strain ? (
+                <TouchableOpacity
+                  onPress={() =>
+                    setNewPlant((prev) => ({ ...prev, strain: "" }))
+                  }
+                >
+                  <Text className="text-xs text-muted">Sorte entfernen</Text>
+                </TouchableOpacity>
+              ) : null}
             </View>
 
             <View className="gap-2">
