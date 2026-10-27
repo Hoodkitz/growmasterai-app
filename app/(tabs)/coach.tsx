@@ -6,10 +6,14 @@ import {
   View,
   TouchableOpacity,
   TextInput,
-  ActivityIndicator,
   Keyboard,
-  Dimensions,
+  ActivityIndicator,
 } from "react-native";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import Animated, {
+  useAnimatedKeyboard,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
@@ -35,39 +39,23 @@ interface Message {
 export default function CoachScreen() {
   const colors = useColors();
   const scrollViewRef = useRef<ScrollView>(null);
-  const inputBarRef = useRef<View>(null);
-  const [keyboardLift, setKeyboardLift] = useState(0);
-  const keyboardLiftRef = useRef(0);
+  // Edge-to-edge Android does not resize the window for the keyboard, so lift
+  // the input bar by the live IME height minus the tab bar that stays below it.
+  const tabBarHeight = useBottomTabBarHeight();
+  const keyboard = useAnimatedKeyboard();
+  const liftStyle = useAnimatedStyle(() => ({
+    marginBottom: Math.max(0, keyboard.height.value - tabBarHeight),
+  }));
 
-  // Lift the input bar above the keyboard. Window resizing differs between
-  // devices/edge-to-edge modes, so measure the real overlap instead of
-  // guessing an offset: whatever the keyboard still covers gets added as padding.
+  // Keep the newest message visible once the list has shrunk for the keyboard.
   useEffect(() => {
-    const setLift = (v: number) => {
-      keyboardLiftRef.current = v;
-      setKeyboardLift(v);
-    };
-    const show = Keyboard.addListener("keyboardDidShow", (e) => {
-      // screenY is unreliable with Android edge-to-edge; use the height instead
-      const keyboardHeight = e.endCoordinates.height;
-      setTimeout(() => {
-        inputBarRef.current?.measureInWindow((_x, y, _w, h) => {
-          const distanceToScreenBottom =
-            Dimensions.get("screen").height - (y + h);
-          const overlap = keyboardHeight - distanceToScreenBottom;
-          setLift(Math.max(0, keyboardLiftRef.current + overlap));
-          setTimeout(
-            () => scrollViewRef.current?.scrollToEnd({ animated: true }),
-            50,
-          );
-        });
-      }, 50);
+    const sub = Keyboard.addListener("keyboardDidShow", () => {
+      setTimeout(
+        () => scrollViewRef.current?.scrollToEnd({ animated: true }),
+        100,
+      );
     });
-    const hide = Keyboard.addListener("keyboardDidHide", () => setLift(0));
-    return () => {
-      show.remove();
-      hide.remove();
-    };
+    return () => sub.remove();
   }, []);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -282,11 +270,9 @@ export default function CoachScreen() {
         </ScrollView>
 
         {/* Input */}
-        <View
-          ref={inputBarRef}
-          collapsable={false}
+        <Animated.View
           className="p-4 border-t border-border bg-background"
-          style={{ marginBottom: keyboardLift }}
+          style={liftStyle}
         >
           {!canSendMessage ? (
             <UpgradePrompt feature="Nachrichten" compact />
@@ -315,7 +301,7 @@ export default function CoachScreen() {
               </TouchableOpacity>
             </View>
           )}
-        </View>
+        </Animated.View>
       </View>
     </ScreenContainer>
   );
