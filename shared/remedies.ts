@@ -307,12 +307,50 @@ export interface RemedyProduct {
   asin: string;
 }
 
+/** Cannabis base fertilizers (Grow + Bloom), organic and mineral. */
 const FERTILIZERS: RemedyProduct[] = [
   { label: "BioBizz Grow + Bloom + Top-Max (organisch)", asin: "B008T0YBWG" },
   { label: "Plagron Terra Grow + Bloom (mineralisch)", asin: "B093RLJM7F" },
   { label: "Hesi Bio Grow + Bloom 1 L (organisch)", asin: "B0DD8R2K1X" },
   { label: "Hesi Bio Grow + Bloom 500 ml (organisch)", asin: "B0FJF7VNKP" },
   { label: "Green House Feeding BioBloom (Pulver, 50 g)", asin: "B0D8B8R1HF" },
+  {
+    label: "Advanced Nutrients Grow + Micro + Bloom (3 x 1 L)",
+    asin: "B004FYSDFQ",
+  },
+  { label: "Canna Terra Vega 1 L (Erde)", asin: "B003XDJI3Q" },
+  { label: "GHE Flora Series Tripart (Set)", asin: "B0GRV7NR9S" },
+];
+
+/** Growth-phase (nitrogen-led) cannabis fertilizers. */
+const GROW_FERTILIZERS: RemedyProduct[] = [
+  { label: "Canna Terra Vega 1 L (Wachstum, Erde)", asin: "B003XDJI3Q" },
+  { label: "Canna Bio Vega 1 L (Wachstum, organisch)", asin: "B00DCUI7PA" },
+  { label: "BioBizz Bio-Grow 1 L (organisch)", asin: "B005PX47FG" },
+  {
+    label: "Advanced Nutrients Grow + Micro + Bloom (3 x 1 L)",
+    asin: "B004FYSDFQ",
+  },
+  { label: "Hesi Bio Grow + Bloom 1 L (organisch)", asin: "B0DD8R2K1X" },
+];
+
+/** Bloom-phase (PK) cannabis fertilizers and boosters. */
+const BLOOM_FERTILIZERS: RemedyProduct[] = [
+  { label: "Canna Terra Flores 1 L (Blüte, Erde)", asin: "B00Q6QSRWU" },
+  { label: "Canna Bio Flores 1 L (Blüte, organisch)", asin: "B016K5C272" },
+  { label: "BioBizz Bio-Bloom 1 L (organisch)", asin: "B0038WMGOU" },
+  { label: "Plagron Terra Bloom 1 L (mineralisch)", asin: "B00871DJ70" },
+  { label: "Canna PK 13/14 (Booster, 1 L)", asin: "B00FKZU84S" },
+  { label: "Advanced Nutrients Bud Candy (Booster, 1 L)", asin: "B003OTZ2PW" },
+  { label: "Atami Bloombastic (Booster, 1,25 L)", asin: "B00FKZTT1G" },
+];
+
+/** Calcium/magnesium supplements (also from the candidate list in docs/product-candidates.md). */
+const CAL_MAG: RemedyProduct[] = [
+  { label: "Atami VGN CalMag 250 ml (stickstofffrei)", asin: "B0GNT46MP7" },
+  { label: "Xpert Nutrients Cal-Mag Amino 1 L", asin: "B09YJ19TCJ" },
+  { label: "BUDXXL CalMag Grow Dünger", asin: "B0DQQCLQF9" },
+  { label: "UP NUTRIENTS CALMAG UP 1 L", asin: "B0FDH1BN3X" },
 ];
 
 /**
@@ -339,8 +377,9 @@ const PRODUCTS: Record<string, RemedyProduct[]> = {
   Neemöl: [{ asin: "B09W9S27X6" }],
   Gelbtafeln: [{ asin: "B0B9H1JJ83" }],
   "Pflanzendünger (Wachstum/Blüte)": FERTILIZERS,
-  "Wachstumsdünger (Stickstoff)": FERTILIZERS,
-  "Blütedünger (PK)": FERTILIZERS,
+  "Wachstumsdünger (Stickstoff)": GROW_FERTILIZERS,
+  "Blütedünger (PK)": BLOOM_FERTILIZERS,
+  "Cal-Mag Ergänzung": CAL_MAG,
 };
 
 export function productsForRemedy(name: string): RemedyProduct[] {

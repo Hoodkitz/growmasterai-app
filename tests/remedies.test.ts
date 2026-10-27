@@ -148,18 +148,30 @@ describe("fixed products", () => {
 });
 
 describe("fertilizers and curing containers", () => {
-  it("offers all five chosen fertilizers for every fertilizer remedy", () => {
+  it("offers cannabis fertilizers with valid ASINs and unique labels per remedy", () => {
     for (const name of [
       "Pflanzendünger (Wachstum/Blüte)",
       "Wachstumsdünger (Stickstoff)",
       "Blütedünger (PK)",
+      "Cal-Mag Ergänzung",
     ]) {
       const products = productsForRemedy(name);
-      expect(products).toHaveLength(5);
+      expect(products.length).toBeGreaterThanOrEqual(4);
       expect(
         products.every((p) => p.label && /^[A-Z0-9]{10}$/.test(p.asin)),
       ).toBe(true);
+      expect(new Set(products.map((p) => p.label)).size).toBe(products.length);
     }
+  });
+
+  it("includes boosters for bloom and known cannabis brands", () => {
+    const labels = productsForRemedy("Blütedünger (PK)").map((p) => p.label);
+    expect(labels.some((l) => /Booster/.test(l ?? ""))).toBe(true);
+    const all = productsForRemedy("Pflanzendünger (Wachstum/Blüte)")
+      .map((p) => p.label)
+      .join(" ");
+    for (const brand of ["BioBizz", "Plagron", "Advanced Nutrients", "GHE"])
+      expect(all).toContain(brand);
   });
 
   it("suggests light-protected containers instead of clear jars", () => {

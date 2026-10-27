@@ -1,6 +1,6 @@
 # Produkt-Kandidaten (Amazon.de) - Recherche
 
-Stand: 2026-10-27. Quelle: Amazon.de-Suchtreffer (nur /dp/-Seiten). Bewertungen stammen aus dem Such-Snippet (nur wo sichtbar); Preise und Verfügbarkeit bewusst nicht übernommen und vor Verlinkung prüfen. NICHT in den App-Code verlinkt; Auswahl trifft der Betreiber.
+Stand: 2026-10-27. Quelle: Amazon.de-Suchtreffer (nur /dp/-Seiten). Bewertungen stammen aus dem Such-Snippet (nur wo sichtbar); Preise und Verfügbarkeit bewusst nicht übernommen und vor Verlinkung prüfen. Nicht in den App-Code verlinkt, mit Ausnahme der Abschnitte "Cannabis-Dünger" und "Cal-Mag" (im Code aufgenommen). Einmachgläser sind bewusst ausgeschlossen: Cannabis braucht lichtgeschützte Behälter.
 
 ## Curing-Behälter (lichtgeschützt, luftdicht, Weithals)
 
@@ -63,6 +63,32 @@ Stand: 2026-10-27. Quelle: Amazon.de-Suchtreffer (nur /dp/-Seiten). Bewertungen 
 | b | Xpert Nutrients Cal-Mag Amino (1 l) | https://www.amazon.de/dp/B09YJ19TCJ | Gegen Ca-/Mg-Mangel; 4.6 (287). | Aminosäure-Zusatz. |
 | c | ATAMI VGN CalMag 250 ml (stickstofffrei) | https://www.amazon.de/dp/B0GNT46MP7 | Stickstofffrei, für weiches/Regenwasser; 4.6 (31). | Kleine Menge. |
 | d | UP NUTRIENTS CALMAG UP 1 L | https://www.amazon.de/dp/B0FDH1BN3X | 1 l, Ca/Mg-Ausgleich; 4.7 (11). | Wenige Bewertungen. |
+
+## Cannabis-Dünger (Grow/Bloom, Booster) - im Code aufgenommen
+
+Stand: 2026-10-27, Quelle Amazon.de-Suchtreffer; Preise/Bewertungen bewusst nicht übernommen. Umgesetzt in shared/remedies.ts (Listen FERTILIZERS, GROW_FERTILIZERS, BLOOM_FERTILIZERS, CAL_MAG). Einige Treffer sind Bündel von Drittanbietern (Weedness), Inhalt/Variante vor Verlinkung prüfen.
+
+| Typ | Produkt | Link |
+|---|---|---|
+| Basis Grow+Bloom | Advanced Nutrients Grow, Micro, Bloom (3 x 1 L) | https://www.amazon.de/dp/B004FYSDFQ |
+| Basis Grow+Bloom | BioBizz Bio-Grow, Bio-Bloom, Top-Max 500 ml | https://www.amazon.de/dp/B008T0ZWL0 |
+| Basis Grow+Bloom | GHE Flora Series Tripart (Set, Drittanbieter) | https://www.amazon.de/dp/B0GRV7NR9S |
+| Basis Grow+Bloom | GRANNYS Grow & Bloom Set (Cannabis, organisch) | https://www.amazon.de/dp/B0HFBMFQYV |
+| Basis Grow+Bloom | Mary Jane's Dünger-Bundle für Cannabis | https://www.amazon.de/dp/B0FJS96YY1 |
+| Basis Grow | Canna Terra Vega 1 L | https://www.amazon.de/dp/B003XDJI3Q |
+| Basis Grow | Canna Bio Vega 1 L | https://www.amazon.de/dp/B00DCUI7PA |
+| Basis Grow | BioBizz Bio-Grow 1 L | https://www.amazon.de/dp/B005PX47FG |
+| Basis Grow (Hydro) | Canna Aqua Vega A+B 2 x 1 L | https://www.amazon.de/dp/B0090HMVY2 |
+| Basis Bloom | Canna Terra Flores 1 L | https://www.amazon.de/dp/B00Q6QSRWU |
+| Basis Bloom | Canna Bio Flores 1 L | https://www.amazon.de/dp/B016K5C272 |
+| Basis Bloom | BioBizz Bio-Bloom 1 L | https://www.amazon.de/dp/B0038WMGOU |
+| Basis Bloom | Plagron Terra Bloom 1 L | https://www.amazon.de/dp/B00871DJ70 |
+| Booster | Canna PK 13/14 1 L | https://www.amazon.de/dp/B00FKZU84S |
+| Booster | Advanced Nutrients Bud Candy 1 L | https://www.amazon.de/dp/B003OTZ2PW |
+| Booster | Atami Bloombastic 1,25 L | https://www.amazon.de/dp/B00FKZTT1G |
+| Starter-Sets | Hesi Starterbox Erde; Canna Organic Starter Kit | https://www.amazon.de/dp/B083QMWRXN ; https://www.amazon.de/dp/B07WZ144H3 |
+
+Cal-Mag: siehe Abschnitt oben (alle vier Kandidaten a-d sind im Code).
 
 ## Mykorrhiza / Wurzelstimulator
 
