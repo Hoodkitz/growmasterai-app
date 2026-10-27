@@ -207,6 +207,31 @@ Cal-Mag: siehe Abschnitt oben (alle vier Kandidaten a-d sind im Code).
 
 (Wasserfilter: kein /dp/-Treffer gefunden.)
 
+## Ausrüstung, Substrate, Schädlingsmittel - im Code aufgenommen
+
+Stand: 2026-10-27, Quelle: Amazon.de-Suchergebnisseiten (normale Seiten, ohne Umgehung von Sperren); ASINs aus den /dp/-Links der Treffer, Labels selbst vergeben (aus Titel/URL, ohne Preise und Bewertungen). Umgesetzt in shared/remedies.ts (PRODUCTS, Tests in tests/remedies.test.ts). Verfügbarkeit, Variante und Packungsgröße vor Verlinkung prüfen; Drittanbieter-Bündel (Weedness) können Inhalt wechseln. Kein Einmachglas.
+
+| Kategorie | ASINs |
+|---|---|
+| Growzelt | B07KM46T6W, B00GAEYNGW, B01EANHLU4, B08JYB3L5K, B08WJG3X76 |
+| LED-Lampe (Quantum-Board-Stil) | B0F22F1MJT, B09ZK71SY7, B07ZVFBR34, B0FB8RK4X1, B0CQ58V9SG |
+| Abluft mit Aktivkohlefilter | B08RZ3WH7N, B0D9SJ119S, B08KWGDY44, B0G5YXK4WJ |
+| Umluft-Clipventilator | B0D9PDB3WD, B077P2PJ98, B07DVC18VJ, B0DQVLN93L |
+| Thermo-Hygrometer | B0D1Q3TP7F, B0CCJGKGSR, B0977DBXVD, B00WQNBK4O, B0BVLYPYT1 |
+| pH/EC-Messgerät | B0DZNSB16W, B0D3Y3DLKK, B0GTHXZ1X8, B0FXXG9H6C |
+| Zeitschaltuhr | B0CW9ZCFXV, B07PVYF6YB, B083KVNDZ4, B09NDGH96R |
+| Bewässerungsset | B09J92VPH2, B0BNLMJ7LQ, B0001IOZ98, B08779K17M |
+| Stofftöpfe | B0F6MQTW2T, B08D6X6VHD, B0BY2YJNYJ, B09P46NHCS |
+| Kokossubstrat | B08BB2HBPS, B0G5Z1SD96, B09VY83HMR, B07F7KMMWT |
+| Perlite | B0D4QQ4V9R, B07WPKL662, B0BVVMQ2B9, B00JJRCB2K |
+| Blumenerde (torffrei) | B09PLF1Z53, B0037ACVVG, B08RNN6695 |
+| ScrOG-/Pflanzennetz | B0H3G1P5ZZ, B09THJJ4WY, B01NBU1VCM, B09G1B7LQ7 |
+| Gelbtafeln | B0B9H1JJ83, B09KM672QJ, B0HM54R968, B0F8NJ7WS8 |
+| Nematoden/Raubmilben (Trauermücken) | B08SJF8Y7X, B0FZV5MGP9, B0DZP6KSDW |
+| Neemöl | B09W9S27X6, B0FPM2Y949, B0BTCCJNCW, B0CBW6MSKF |
+| Schere / Erntetrimmer | B07C2V85Q7, B0CQKP68YT, B08W9LYPXT, B0BNLQ9HLK |
+| Trocknungsnetz | B0DRKNCH6F, B0DDTKHFC8, B0DG5F563H, B08BYJ36HH |
+
 ## Nicht gefunden
 
 - Dunkle Aufbewahrungsbox/Kühlbox: Suche lieferte nur Growzelte, keine passenden Boxen.
