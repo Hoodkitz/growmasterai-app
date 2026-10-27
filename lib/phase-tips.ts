@@ -18,6 +18,8 @@ export interface PhaseTip {
   videoId: string;
   /** Start of the explanation in the video, in seconds. */
   start: number;
+  /** Channel of the video; defaults to Vince and Weed for the bundled tips. */
+  channel?: string;
 }
 
 export const TIP_VIDEO_CHANNEL = "Vince and Weed";
@@ -26,6 +28,8 @@ export const TIP_VIDEOS: Record<string, string> = {
   hylMwwNgp5c: "Samen richtig keimen lassen – WAS KANN SCHIEFGEHEN",
   "54JClBM_cOc": "Typische Anfängerfehler im Garten – Was du wissen solltest!",
   a2dvPckbWEU: "WIE du dein CANNABIS richtig TROCKNEST",
+  ww7_81UuxDA:
+    "Wie erkennt man ob eine Cannabis Pflanze männlich oder weiblich ist?",
   bo3uA5hqh50:
     "Maximaler Ertrag – So füllst du dein gesamtes Zelt mit Low und High Stress Training",
 };
@@ -34,6 +38,7 @@ const GERM = "hylMwwNgp5c";
 const BEGIN = "54JClBM_cOc";
 const DRY = "a2dvPckbWEU";
 const TRAIN = "bo3uA5hqh50";
+const SEX = "ww7_81UuxDA";
 
 export const PHASE_TIPS: PhaseTip[] = [
   {
@@ -283,6 +288,86 @@ export const PHASE_TIPS: PhaseTip[] = [
     text: "Dicke, kompakte Blüten regelmäßig innen prüfen: Rötlich-braune, faserige Beläge sind verdächtig. Ist ein Glas kontaminiert, im Zweifel wegwerfen – Schimmel gehört nicht in die Lunge. Ein Heu-/Grasgeruch am Anfang ist normal und verfliegt nach ca. 7–10 Tagen.",
     videoId: DRY,
     start: 767,
+  },
+  {
+    id: "sex-why",
+    phases: ["vegetative", "flowering"],
+    topic: "Warum das Geschlecht wichtig ist",
+    text: "Nur weibliche Pflanzen tragen die begehrten Blüten. Wird eine Pflanze bestäubt, steckt sie ihre Kraft in Samen, bildet weniger Blüten und der Cannabinoid-Gehalt sinkt. Männchen deshalb sofort aus dem Garten nehmen.",
+    videoId: SEX,
+    start: 58,
+  },
+  {
+    id: "sex-feminized",
+    phases: ["seedling", "vegetative"],
+    topic: "Feminisierte Samen sind keine Garantie",
+    text: "Auch feminisiertes Saatgut kann zwittern, und eine kleine Restwahrscheinlichkeit (etwa 1 %) für ein Männchen bleibt. Kontrolliere deshalb trotzdem.",
+    videoId: SEX,
+    start: 137,
+  },
+  {
+    id: "sex-timing",
+    phases: ["vegetative", "flowering"],
+    topic: "Wann man das Geschlecht sieht",
+    text: "Das Geschlecht zeigt sich erst, wenn die Pflanze in die Blüte geht – aus Samen meist nach 3–5 Wochen. Indoor leitest du die Blüte ein, indem du die Lichtdauer von 18 auf 12 Stunden stellst.",
+    videoId: SEX,
+    start: 169,
+  },
+  {
+    id: "sex-female",
+    phases: ["vegetative", "flowering"],
+    topic: "Weibchen erkennen",
+    text: "Weibliche Vorblüten sehen aus wie kleine weiße, V-förmig angeordnete Härchen am Blütenkelch. Du findest sie an den Nodien im mittleren und oberen Teil der Pflanze.",
+    videoId: SEX,
+    start: 235,
+  },
+  {
+    id: "sex-wait",
+    phases: ["vegetative", "flowering"],
+    topic: "Geduld beim Bestimmen",
+    text: "Mit einer Lupe sind die Vorblüten etwa 7–10 Tage nach Blütebeginn gut zu erkennen. Zeigt die Pflanze noch nichts, 2–3 Tage warten und den Garten täglich kontrollieren, bis alle Pflanzen ihr Geschlecht gezeigt haben.",
+    videoId: SEX,
+    start: 269,
+  },
+  {
+    id: "sex-male",
+    phases: ["vegetative", "flowering"],
+    topic: "Männchen erkennen",
+    text: "Männliche Pflanzen bilden Pollensäcke – keine V-förmigen Härchen, sondern kleine Kügelchen (unter der Lupe wie winzige Bananenstauden), ebenfalls an den Nodien im mittleren bis oberen Bereich.",
+    videoId: SEX,
+    start: 317,
+  },
+  {
+    id: "sex-remove",
+    phases: ["vegetative", "flowering"],
+    topic: "Männchen vorsichtig entfernen",
+    text: "Beim Entfernen behutsam vorgehen: Öffnet sich ein Pollensack, können die weiblichen Pflanzen ungewollt bestäubt werden.",
+    videoId: SEX,
+    start: 376,
+  },
+  {
+    id: "sex-herma",
+    phases: ["flowering"],
+    topic: "Zwitter (Hermaphroditen)",
+    text: "Zwitter bilden männliche und weibliche Merkmale. Auslöser können Stress, Nährstoffmangel oder -überschuss oder Dürre sein. Zwitter können auch spät und über die gesamte Blüte entstehen – mach daher regelmäßig Stichproben.",
+    videoId: SEX,
+    start: 403,
+  },
+  {
+    id: "sex-banana",
+    phases: ["flowering"],
+    topic: "„Bananen“ erkennen",
+    text: "Bei Zwittern wachsen männliche Staubgefäße („Bananen“, oft hellgrün oder gelb, manchmal gebündelt) aus den weiblichen Blüten, meist erst spät in der Blüte. Sie können jederzeit Pollen freisetzen.",
+    videoId: SEX,
+    start: 477,
+  },
+  {
+    id: "sex-herma-late",
+    phases: ["flowering", "harvest"],
+    topic: "Zwitter spät entdeckt",
+    text: "Vince entfernt Zwitter grundsätzlich. Wird einer erst in den letzten 1–1,5 Wochen entdeckt, kann man die Bananen vorsichtig entfernen und ein paar Samen riskieren – oder etwas früher ernten und dafür weniger Ertrag in Kauf nehmen.",
+    videoId: SEX,
+    start: 519,
   },
   {
     id: "harvest-trichomes",

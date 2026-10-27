@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   Keyboard,
+  Linking,
   ActivityIndicator,
 } from "react-native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -25,6 +26,7 @@ import { InlineError } from "@/components/error-display";
 import { getCoachErrorMessage } from "@/lib/error-handling";
 import { CoachSkeletonLoader } from "@/components/skeleton-loaders";
 import { RemedyList } from "@/components/remedy-list";
+import { formatTimestamp, tipVideoUrl } from "@/lib/phase-tips";
 import type { Remedy } from "@/shared/remedies";
 
 const COACH_STORAGE_KEY = "@growmaster_coach_messages";
@@ -35,6 +37,12 @@ interface Message {
   content: string;
   tips?: string[];
   remedies?: Remedy[];
+  sources?: {
+    title: string;
+    channel: string;
+    videoId: string;
+    start: number;
+  }[];
   error?: ReturnType<typeof getCoachErrorMessage>;
   retryQuestion?: string;
 }
@@ -111,6 +119,7 @@ export default function CoachScreen() {
         content: data.answer,
         tips: data.tips,
         remedies: data.remedies,
+        sources: data.sources,
       };
       setMessages((prev) => [...prev, assistantMessage]);
       setTimeout(
@@ -266,6 +275,35 @@ export default function CoachScreen() {
                   ))}
                 </View>
               )}
+
+              {message.sources && message.sources.length > 0 ? (
+                <View className="mt-2 bg-surface border border-border rounded-xl p-3 gap-1">
+                  <Text className="text-xs font-semibold text-foreground">
+                    📚 Quellen aus der Wissensbasis
+                  </Text>
+                  {message.sources.map((src) => (
+                    <TouchableOpacity
+                      key={`${src.videoId}-${src.start}`}
+                      onPress={() =>
+                        Linking.openURL(
+                          tipVideoUrl({
+                            videoId: src.videoId,
+                            start: src.start,
+                          }),
+                        ).catch(() => {})
+                      }
+                    >
+                      <Text
+                        className="text-xs"
+                        style={{ color: colors.primary }}
+                      >
+                        ▶ {src.channel}, ab {formatTimestamp(src.start)}:{" "}
+                        {src.title}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              ) : null}
 
               {message.remedies && message.remedies.length > 0 ? (
                 <RemedyList

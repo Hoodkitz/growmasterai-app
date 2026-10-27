@@ -233,11 +233,13 @@ const COACH_CATALOG: CatalogEntry[] = [
     searchTerm: "Trocknungsnetz hängend faltbar Kräuter",
   },
   {
-    keywords: /curing|fermentier|lagern|einmachglas|weck/i,
-    name: "Einmachgläser (Curing)",
-    purpose: "Luftdichtes Lagern und Curen nach dem Trocknen.",
-    searchTerm: "Einmachgläser Weck 1 Liter",
+    keywords: /curing|fermentier|lagern|einmachglas|weck|glas/i,
+    name: "Lichtgeschützte Behälter (Curing)",
+    purpose:
+      "Blüten dunkel und kühl lagern (ca. 15–18 °C): Braunglas oder Edelstahldosen schützen vor Licht.",
+    searchTerm: "Braunglas Weithalsglas 1 Liter luftdicht",
   },
+
   {
     keywords: /geruch|abluft|aktivkohle|geruchsfilter/i,
     name: "Aktivkohlefilter mit Abluft",
@@ -297,4 +299,64 @@ export function mergeCoachProducts(
     if (merged.length >= MAX_REMEDIES) break;
   }
   return merged;
+}
+
+/** A concrete amazon.de product (ASIN) chosen by the operator for a remedy. */
+export interface RemedyProduct {
+  label?: string;
+  asin: string;
+}
+
+const FERTILIZERS: RemedyProduct[] = [
+  { label: "BioBizz Grow + Bloom + Top-Max (organisch)", asin: "B008T0YBWG" },
+  { label: "Plagron Terra Grow + Bloom (mineralisch)", asin: "B093RLJM7F" },
+  { label: "Hesi Bio Grow + Bloom 1 L (organisch)", asin: "B0DD8R2K1X" },
+  { label: "Hesi Bio Grow + Bloom 500 ml (organisch)", asin: "B0FJF7VNKP" },
+  { label: "Green House Feeding BioBloom (Pulver, 50 g)", asin: "B0D8B8R1HF" },
+];
+
+/**
+ * Products by remedy name. Everything not listed here falls back to an Amazon search for
+ * the remedy's search term.
+ */
+const PRODUCTS: Record<string, RemedyProduct[]> = {
+  "pH-Messgerät und pH-Down": [{ asin: "B0DZNSB16W" }],
+  "EC-Messgerät": [{ asin: "B0DZNSB16W" }],
+  "Hygrometer / Thermometer": [{ asin: "B0D1Q3TP7F" }],
+  "Thermo-Hygrometer": [{ asin: "B0D1Q3TP7F" }],
+  "Lupe / Mikroskop-Aufsatz (Trichome prüfen)": [{ asin: "B09Y62T5B5" }],
+  "Präzisions-Pflanzenschere": [{ asin: "B07C2V85Q7" }],
+  "Pflanzenclips / Bindedraht (Training)": [{ asin: "B07RZZJQXP" }],
+  Anzuchterde: [{ asin: "B08TV1KWDP" }],
+  "Mini-Gewächshaus / Anzuchtbox": [{ asin: "B09L4T4P5K" }],
+  Feuchtigkeitsmesser: [{ asin: "B08V85KVWX" }],
+  Bodenfeuchtigkeitsmesser: [{ asin: "B08V85KVWX" }],
+  Growzelt: [{ asin: "B07KM46T6W" }],
+  "Dimmbare LED-Pflanzenlampe": [{ asin: "B0F22F1MJT" }],
+  "Stofftöpfe (Fabric Pots)": [{ asin: "B0F6MQTW2T" }],
+  "Trocknungsnetz zum Aufhängen": [{ asin: "B0DRKNCH6F" }],
+  "Aktivkohlefilter mit Abluft": [{ asin: "B08RZ3WH7N" }],
+  Neemöl: [{ asin: "B09W9S27X6" }],
+  Gelbtafeln: [{ asin: "B0B9H1JJ83" }],
+  "Pflanzendünger (Wachstum/Blüte)": FERTILIZERS,
+  "Wachstumsdünger (Stickstoff)": FERTILIZERS,
+  "Blütedünger (PK)": FERTILIZERS,
+};
+
+export function productsForRemedy(name: string): RemedyProduct[] {
+  return PRODUCTS[name] ?? [];
+}
+
+/** First chosen product's ASIN for a remedy, if there is one. */
+export function asinForRemedy(name: string): string | undefined {
+  return PRODUCTS[name]?.[0]?.asin;
+}
+
+/** All remedy names of both catalogs (used to keep PRODUCT_ASINS in sync). */
+export function catalogRemedyNames(): string[] {
+  return [...CATALOG, ...COACH_CATALOG].map((c) => c.name);
+}
+
+export function productAsinNames(): string[] {
+  return Object.keys(PRODUCTS);
 }

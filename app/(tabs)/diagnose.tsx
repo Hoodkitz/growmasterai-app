@@ -30,7 +30,8 @@ import { ErrorDisplay } from "@/components/error-display";
 import { AIProcessingIndicator } from "@/components/loading-state";
 import { getDiagnosisErrorMessage } from "@/lib/error-handling";
 import { DiagnoseSkeletonLoader } from "@/components/skeleton-loaders";
-import { buildRemedyLink, trackAffiliateClick } from "@/lib/affiliates";
+import { buildRemedyLink } from "@/lib/affiliates";
+import { RemedyLinks } from "@/components/remedy-list";
 import type { Remedy } from "@/shared/remedies";
 
 const { width, height } = Dimensions.get("window");
@@ -558,42 +559,22 @@ export default function DiagnoseScreen() {
                 <Text className="text-lg font-semibold text-foreground">
                   Empfohlene Mittel
                 </Text>
-                {diagnosis.remedies.map((remedy) => {
-                  const link = buildRemedyLink(remedy.searchTerm);
-                  return (
-                    <View
-                      key={remedy.name}
-                      className="gap-2 pb-3 border-b border-border"
-                    >
-                      <Text className="text-base font-semibold text-foreground">
-                        {remedy.name}
+                {diagnosis.remedies.map((remedy) => (
+                  <View
+                    key={remedy.name}
+                    className="gap-2 pb-3 border-b border-border"
+                  >
+                    <Text className="text-base font-semibold text-foreground">
+                      {remedy.name}
+                    </Text>
+                    {remedy.purpose ? (
+                      <Text className="text-sm text-muted">
+                        {remedy.purpose}
                       </Text>
-                      {remedy.purpose ? (
-                        <Text className="text-sm text-muted">
-                          {remedy.purpose}
-                        </Text>
-                      ) : null}
-                      <TouchableOpacity
-                        accessibilityRole="link"
-                        accessibilityLabel={`${remedy.name} bei Amazon ansehen${link.isAffiliate ? " (Anzeige)" : ""}`}
-                        className="bg-primary rounded-xl py-2.5 items-center"
-                        onPress={() => {
-                          trackAffiliateClick({
-                            partnerId: "amazon",
-                            productType: "general",
-                            productName: remedy.name,
-                          });
-                          Linking.openURL(link.url);
-                        }}
-                      >
-                        <Text className="text-sm font-semibold text-white">
-                          Bei Amazon ansehen
-                          {link.isAffiliate ? " (Anzeige)" : ""}
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  );
-                })}
+                    ) : null}
+                    <RemedyLinks remedy={remedy} />
+                  </View>
+                ))}
                 <Text className="text-xs text-muted">
                   {buildRemedyLink("x").isAffiliate
                     ? "Hinweis: Links zu Amazon sind Affiliate-Links (Werbung). Als Amazon-Partner verdienen wir an qualifizierten Verkäufen, für dich entstehen keine Mehrkosten. "

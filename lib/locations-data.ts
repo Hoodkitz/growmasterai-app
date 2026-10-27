@@ -1,3 +1,4 @@
+import { EXTRA_TUTORIAL_VIDEOS } from "./tutorial-videos-extra";
 // Locations data for shops, clubs, and member radar
 
 export type LocationType = "headshop" | "growshop";
@@ -325,7 +326,7 @@ export interface TutorialVideo {
   isPremium?: boolean;
 }
 
-export const TUTORIAL_VIDEOS: TutorialVideo[] = [
+const CORE_TUTORIAL_VIDEOS: TutorialVideo[] = [
   {
     id: "54JClBM_cOc",
     videoId: "54JClBM_cOc",
@@ -726,6 +727,11 @@ export const TUTORIAL_VIDEOS: TutorialVideo[] = [
 ];
 
 // Grow Journal Steps/Checklist
+export const TUTORIAL_VIDEOS: TutorialVideo[] = [
+  ...CORE_TUTORIAL_VIDEOS,
+  ...EXTRA_TUTORIAL_VIDEOS,
+];
+
 export interface GrowStep {
   id: string;
   phase:

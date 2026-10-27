@@ -55,8 +55,8 @@ import {
 } from "@/lib/strains-data";
 import { CommunitySkeletonLoader } from "@/components/skeleton-loaders";
 import { ErrorDisplay } from "@/components/error-display";
-import { PhaseTipsList } from "@/components/phase-tips-list";
-import { TIP_PHASE_LABEL, TipPhase, tipsForPhase } from "@/lib/phase-tips";
+import { PhaseTipsForPhase } from "@/components/phase-tips-list";
+import { TIP_PHASE_LABEL, TipPhase } from "@/lib/phase-tips";
 
 const { width } = Dimensions.get("window");
 
@@ -976,7 +976,7 @@ export default function CommunityScreen() {
                 ))}
               </View>
               {tipPhase ? (
-                <PhaseTipsList tips={tipsForPhase(tipPhase)} />
+                <PhaseTipsForPhase phase={tipPhase} />
               ) : (
                 <Text className="text-xs text-muted">
                   Wähle eine Phase. Jeder Tipp verlinkt die Stelle im Video, in

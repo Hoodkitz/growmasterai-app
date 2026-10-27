@@ -1,10 +1,13 @@
 import { Linking, Text, TouchableOpacity, View } from "react-native";
 import { useColors } from "@/hooks/use-colors";
+import { trpc } from "@/lib/trpc";
 import {
   PhaseTip,
   TIP_VIDEO_CHANNEL,
+  TipPhase,
   formatTimestamp,
   tipVideoUrl,
+  tipsForPhase,
 } from "@/lib/phase-tips";
 
 /** Tips with a link to the exact moment in the source video. */
@@ -29,7 +32,8 @@ export function PhaseTipsList({ tips }: { tips: PhaseTip[] }) {
               className="text-xs font-medium"
               style={{ color: colors.primary }}
             >
-              ▶ {TIP_VIDEO_CHANNEL}, ab {formatTimestamp(tip.start)}
+              ▶ {tip.channel ?? TIP_VIDEO_CHANNEL}, ab{" "}
+              {formatTimestamp(tip.start)}
             </Text>
           </TouchableOpacity>
         </View>
@@ -39,5 +43,27 @@ export function PhaseTipsList({ tips }: { tips: PhaseTip[] }) {
         Rechtslage in deinem Land.
       </Text>
     </View>
+  );
+}
+
+/** Tips for one phase, from the server knowledge base; falls back to the bundled tips offline. */
+export function PhaseTipsForPhase({ phase }: { phase: TipPhase }) {
+  const query = trpc.knowledge.forPhase.useQuery(
+    { phase },
+    { staleTime: 10 * 60 * 1000 },
+  );
+  const fromServer: PhaseTip[] = (query.data ?? []).map((e) => ({
+    id: e.id,
+    phases: e.phases as TipPhase[],
+    topic: e.topic,
+    text: e.text,
+    videoId: e.videoId,
+    start: e.start,
+    channel: e.channel,
+  }));
+  return (
+    <PhaseTipsList
+      tips={fromServer.length > 0 ? fromServer : tipsForPhase(phase)}
+    />
   );
 }

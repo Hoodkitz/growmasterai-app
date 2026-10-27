@@ -6,8 +6,12 @@
  * in den Umgebungsvariablen hinterlegt werden.
  */
 
-/** Amazon-PartnerNet-Kennung des Betreibers (amazon.de). */
-const AMAZON_PARTNER_TAG = "plantdoctor-21";
+/**
+ * Amazon-PartnerNet-Kennung. Bewusst leer: "plantdoctor-21" ist vermutlich geschlossen
+ * (Angabe des Betreibers, 2026-10-27). Echte Kennung per EXPO_PUBLIC_AFFILIATE_AMAZON setzen,
+ * dann werden die Links getaggt und als Anzeige gekennzeichnet.
+ */
+const AMAZON_PARTNER_TAG = "";
 
 // Affiliate IDs aus Umgebungsvariablen (nach Registrierung eintragen)
 const AFFILIATE_IDS = {
@@ -410,7 +414,7 @@ export function getRecommendedProductsWithLinks(
 
 /**
  * Shop link for a remedy suggestion from a diagnosis. Only the plain search term is used.
- * The Amazon tag is EXPO_PUBLIC_AFFILIATE_AMAZON, falling back to the operator's partner tag.
+ * The Amazon tag is EXPO_PUBLIC_AFFILIATE_AMAZON, without it the link is untagged.
  * With an empty tag the link still works but is not an affiliate link (isAffiliate=false),
  * so the UI must not label it as ad.
  */
@@ -418,9 +422,15 @@ export function buildRemedyLink(
   searchTerm: string,
   tag: string | undefined = process.env.EXPO_PUBLIC_AFFILIATE_AMAZON ??
     AMAZON_PARTNER_TAG,
+  asin?: string,
 ): { url: string; isAffiliate: boolean } {
-  const url = new URL("/s", "https://www.amazon.de");
-  url.searchParams.set("k", searchTerm.slice(0, 80));
+  // A fixed product page when a valid ASIN is given, otherwise a search for the term.
+  const isProduct = /^[A-Z0-9]{10}$/.test(asin ?? "");
+  const url = new URL(
+    isProduct ? `/dp/${asin}` : "/s",
+    "https://www.amazon.de",
+  );
+  if (!isProduct) url.searchParams.set("k", searchTerm.slice(0, 80));
   const cleanTag = (tag ?? "").trim();
   if (cleanTag) url.searchParams.set("tag", cleanTag);
   return { url: url.toString(), isAffiliate: cleanTag.length > 0 };
