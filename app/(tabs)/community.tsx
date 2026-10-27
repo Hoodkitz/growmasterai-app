@@ -187,6 +187,7 @@ export default function CommunityScreen() {
     placeBidMutation.mutate({ auctionId, amount });
   };
   const [tutorialCategory, setTutorialCategory] = useState<string>("all");
+  const [expandedStrain, setExpandedStrain] = useState<string | null>(null);
   const [strainFilter, setStrainFilter] = useState<
     "all" | "beginner" | "indica" | "sativa"
   >("all");
@@ -1071,6 +1072,12 @@ export default function CommunityScreen() {
               <TouchableOpacity
                 key={strain.id}
                 className="bg-surface rounded-xl p-4 border border-border"
+                activeOpacity={0.8}
+                onPress={() =>
+                  setExpandedStrain((cur) =>
+                    cur === strain.id ? null : strain.id,
+                  )
+                }
               >
                 <View className="flex-row items-start gap-3">
                   <View
@@ -1161,6 +1168,60 @@ export default function CommunityScreen() {
                     </Text>
                   </View>
                 </View>
+
+                {expandedStrain === strain.id ? (
+                  <View className="mt-3 pt-3 border-t border-border gap-2">
+                    {strain.flavours?.length ? (
+                      <Text className="text-sm text-foreground">
+                        <Text className="text-muted">Aroma: </Text>
+                        {strain.flavours.join(", ")}
+                      </Text>
+                    ) : null}
+                    {strain.heightIndoor || strain.heightOutdoor ? (
+                      <Text className="text-sm text-foreground">
+                        <Text className="text-muted">Höhe: </Text>
+                        {[
+                          strain.heightIndoor &&
+                            `indoor ${strain.heightIndoor}`,
+                          strain.heightOutdoor &&
+                            `outdoor ${strain.heightOutdoor}`,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </Text>
+                    ) : null}
+                    {strain.harvestOutdoor ? (
+                      <Text className="text-sm text-foreground">
+                        <Text className="text-muted">Ernte outdoor: </Text>
+                        {strain.harvestOutdoor}
+                      </Text>
+                    ) : null}
+                    {strain.tips?.length ? (
+                      <View className="gap-1 mt-1">
+                        <Text className="text-sm font-semibold text-foreground">
+                          💡 Anbau-Tipps
+                        </Text>
+                        {strain.tips.map((tip, i) => (
+                          <Text key={i} className="text-sm text-foreground">
+                            • {tip}
+                          </Text>
+                        ))}
+                      </View>
+                    ) : null}
+                    <Text className="text-xs text-muted">
+                      Angaben laut Hersteller ({strain.breeder}), ohne Gewähr.
+                    </Text>
+                    <TouchableOpacity onPress={() => setActiveTab("tutorials")}>
+                      <Text className="text-sm font-medium text-primary">
+                        🎬 Anbau-Videos ansehen →
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <Text className="text-xs text-muted mt-3">
+                    Antippen für Anbau-Tipps
+                  </Text>
+                )}
 
                 <View className="flex-row gap-4 mt-3 pt-3 border-t border-border">
                   <TouchableOpacity
