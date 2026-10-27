@@ -218,8 +218,11 @@ export default function CoachScreen() {
         <ScrollView
           ref={scrollViewRef}
           className="flex-1 p-4"
-          contentContainerStyle={{ gap: 16 }}
+          contentContainerStyle={{ gap: 16, paddingBottom: 8 }}
           showsVerticalScrollIndicator={false}
+          onContentSizeChange={() =>
+            scrollViewRef.current?.scrollToEnd({ animated: true })
+          }
         >
           {messages.map((message) => (
             <View
