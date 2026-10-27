@@ -1,1 +1,1689 @@
-[]
+[
+  {
+    "id": "growth-giessen-wurzelatmung-01",
+    "topic": "Wurzeln atmen mit",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "gießen",
+      "wurzeln",
+      "sauerstoff",
+      "substrat",
+      "nass",
+      "trocken",
+      "wasser"
+    ],
+    "text": "Die Pflanze nimmt über die Wurzeln nicht nur Wasser und Nährstoffe auf, sie atmet auch über sie. Deshalb soll das Medium weder zu nass noch zu trocken sein, damit Wasser und Sauerstoff verfügbar sind.",
+    "videoId": "VtDof7g2doY",
+    "videoTitle": "Richtig gießen auf Erde - Optimale Wasserversorgung deiner Pflanzen",
+    "channel": "Vince and Weed",
+    "start": 42
+  },
+  {
+    "id": "growth-giessen-zunass-02",
+    "topic": "Zu nasse Erde",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "überwässerung",
+      "zu nass",
+      "staunässe",
+      "wurzelfäule",
+      "pilze",
+      "gießen",
+      "übergossen"
+    ],
+    "text": "Ist die Erde zu nass, fehlt den Wurzeln der Sauerstoff, und unter der Staunässe können sich Bakterien und Pilze entwickeln, die zur Wurzelfäule führen.",
+    "videoId": "VtDof7g2doY",
+    "videoTitle": "Richtig gießen auf Erde - Optimale Wasserversorgung deiner Pflanzen",
+    "channel": "Vince and Weed",
+    "start": 90
+  },
+  {
+    "id": "growth-giessen-zutrocken-03",
+    "topic": "Zu trockene Erde",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "zu trocken",
+      "austrocknen",
+      "durst",
+      "gießen",
+      "nährstoffe",
+      "stress",
+      "vertrocknet"
+    ],
+    "text": "Laut Video kann die Pflanze bei zu trockener Erde Nährstoffe nicht aufnehmen und sich an heißen Tagen nicht vor dem Austrocknen schützen, was zu starkem Stress oder sogar zum Absterben führen kann.",
+    "videoId": "VtDof7g2doY",
+    "videoTitle": "Richtig gießen auf Erde - Optimale Wasserversorgung deiner Pflanzen",
+    "channel": "Vince and Weed",
+    "start": 105
+  },
+  {
+    "id": "growth-giessen-hydrophob-04",
+    "topic": "Hydrophobe Erde benetzen",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "hydrophob",
+      "erde nimmt kein wasser an",
+      "wasser läuft durch",
+      "trockener topf",
+      "gießen"
+    ],
+    "text": "Läuft das Wasser bei einem staubtrockenen Topf unten sofort wieder raus, nennt Vince das hydrophobe Erde. Er empfiehlt, die Erde zuerst mit etwas Wasser zu benetzen, ein paar Minuten zu warten und dann den Rest zu geben.",
+    "videoId": "VtDof7g2doY",
+    "videoTitle": "Richtig gießen auf Erde - Optimale Wasserversorgung deiner Pflanzen",
+    "channel": "Vince and Weed",
+    "start": 153
+  },
+  {
+    "id": "growth-giessen-staunaesse-05",
+    "topic": "Staunässe: Geduld",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "übergossen",
+      "staunässe",
+      "überwässert",
+      "wasser zu viel",
+      "trocknen",
+      "gießen"
+    ],
+    "text": "Hat man die Pflanze übergossen, bleibt laut Video meist nur Geduld: Die Pflanze muss das Wasser trinken und es muss über die Oberfläche verdunsten, was in der Regel vier bis fünf Tage dauert.",
+    "videoId": "VtDof7g2doY",
+    "videoTitle": "Richtig gießen auf Erde - Optimale Wasserversorgung deiner Pflanzen",
+    "channel": "Vince and Weed",
+    "start": 180
+  },
+  {
+    "id": "growth-giessen-duenger-trocken-06",
+    "topic": "Nie auf trockenem Substrat düngen",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "düngen",
+      "wurzelverbrennung",
+      "trockene erde",
+      "dünger",
+      "verbrennen",
+      "gießen"
+    ],
+    "text": "Niemals auf trockenem Substrat mit Dünger gießen, das führt meist dazu, dass die Wurzeln verbrennen. Ist die Erde trocken, gibt man nur Wasser und düngt erst beim nächsten Gießen wieder.",
+    "videoId": "VtDof7g2doY",
+    "videoTitle": "Richtig gießen auf Erde - Optimale Wasserversorgung deiner Pflanzen",
+    "channel": "Vince and Weed",
+    "start": 220
+  },
+  {
+    "id": "growth-giessen-skala-07",
+    "topic": "Feuchtigkeitsskala 1 bis 5",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "feuchtigkeit",
+      "gießen",
+      "skala",
+      "erde prüfen",
+      "wie nass",
+      "fingerprobe"
+    ],
+    "text": "Vince stellt eine Feuchtigkeitsskala in fünf Stufen vor, von 1 (staubtrocken) bis 5 (klatschnass), damit man sich besser über Gießmengen verständigen kann.",
+    "videoId": "VtDof7g2doY",
+    "videoTitle": "Richtig gießen auf Erde - Optimale Wasserversorgung deiner Pflanzen",
+    "channel": "Vince and Weed",
+    "start": 271
+  },
+  {
+    "id": "growth-giessen-stufe12-08",
+    "topic": "Stufe 1 und 2: trocken",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "staubtrocken",
+      "erde trocken",
+      "hydrophob",
+      "topf leicht",
+      "gießen",
+      "gewicht"
+    ],
+    "text": "Bei Stufe 1 (staubtrocken) ist die Erde leicht, hydrophob und lässt sich nicht zu einer Form pressen. Bei Stufe 2 wirkt sie oben noch trocken, hat etwas mehr Gewicht, zerfällt aber weiterhin zu Staub.",
+    "videoId": "VtDof7g2doY",
+    "videoTitle": "Richtig gießen auf Erde - Optimale Wasserversorgung deiner Pflanzen",
+    "channel": "Vince and Weed",
+    "start": 287
+  },
+  {
+    "id": "growth-giessen-stufe3-09",
+    "topic": "Stufe 3: der Sweet Spot",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "sweet spot",
+      "optimale feuchtigkeit",
+      "gießrhythmus",
+      "wie oft gießen",
+      "topf zu groß"
+    ],
+    "text": "Stufe 3 ist das Optimum: Die Pflanze verbraucht das Wasser selbst, und man muss wahrscheinlich nach ein bis zwei Tagen wieder gießen. Dauert es vier bis fünf Tage, ist das ein Zeichen für Staunässe, oder die Pflanze ist zu klein für den zu großen Topf.",
+    "videoId": "VtDof7g2doY",
+    "videoTitle": "Richtig gießen auf Erde - Optimale Wasserversorgung deiner Pflanzen",
+    "channel": "Vince and Weed",
+    "start": 332
+  },
+  {
+    "id": "growth-giessen-stufe3-hand-10",
+    "topic": "Stufe 3: Erde in der Hand",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "fingerprobe",
+      "erde feucht",
+      "handprobe",
+      "topf gewicht",
+      "gießen",
+      "feuchtigkeit prüfen"
+    ],
+    "text": "Bei Stufe 3 hat der Topf spürbar Gewicht, die Erde ist an der Oberfläche feucht, und in der Hand behält sie ihre Form.",
+    "videoId": "VtDof7g2doY",
+    "videoTitle": "Richtig gießen auf Erde - Optimale Wasserversorgung deiner Pflanzen",
+    "channel": "Vince and Weed",
+    "start": 369
+  },
+  {
+    "id": "growth-giessen-stufe4-11",
+    "topic": "Stufe 4: Wasserspeicher voll",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "topf anheben",
+      "tropft",
+      "nass",
+      "wurzelwerk",
+      "gießen",
+      "staunässe grenze"
+    ],
+    "text": "Bei Stufe 4 hat das Substrat seine maximale Wasserhaltefähigkeit erreicht: Der angehobene Topf tropft nicht, bei leichtem Druck fängt er an zu tropfen. Bleibt dieser Zustand länger als einen Tag, mag das Wurzelwerk das laut Video nicht gern.",
+    "videoId": "VtDof7g2doY",
+    "videoTitle": "Richtig gießen auf Erde - Optimale Wasserversorgung deiner Pflanzen",
+    "channel": "Vince and Weed",
+    "start": 396
+  },
+  {
+    "id": "growth-duengen-pauschal-01",
+    "topic": "Pauschale Düngeregel für Anfänger",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "düngen",
+      "dünger",
+      "wie oft",
+      "wie viel",
+      "dosierung",
+      "anfänger",
+      "biobizz",
+      "1/3 regel"
+    ],
+    "text": "Der Kanalbetreiber empfiehlt als Einstieg: nach der 1/3-Regel gießen (er macht eher 1/4), nur einmal pro Woche düngen, den Rest nur wässern und nur etwa 70 bis 80 Prozent der Herstellermengen verwenden. Das ist seine persönliche Empfehlung auf Basis von BioBizz.",
+    "videoId": "6h8ViWDJslg",
+    "videoTitle": "Auf Erde richtig Düngen, organisch mit BioBizz 🥦 -  Wie oft? Wie viel? Wann?",
+    "channel": "Der Hanf lebt",
+    "start": 50
+  },
+  {
+    "id": "growth-duengen-herstellermengen-02",
+    "topic": "Herstellermengen sind oft zu hoch",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "dünger menge",
+      "herstellerangabe",
+      "dosierung",
+      "überdüngung",
+      "düngeschema",
+      "weniger düngen"
+    ],
+    "text": "Laut Video sind die Düngermengen der Hersteller fast durchweg zu hoch oder für maximal potente Pflanzen mit CO2 und viel Nährstoffbedarf gedacht. Für Homegrow-Bedingungen kann man sie gut halbieren, bei Automatics startet man am besten mit noch weniger.",
+    "videoId": "6h8ViWDJslg",
+    "videoTitle": "Auf Erde richtig Düngen, organisch mit BioBizz 🥦 -  Wie oft? Wie viel? Wann?",
+    "channel": "Der Hanf lebt",
+    "start": 71
+  },
+  {
+    "id": "growth-duengen-ueberduengung-03",
+    "topic": "Überdüngung ist das größere Problem",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "überdüngung",
+      "unterdüngung",
+      "dünger",
+      "zu viel dünger",
+      "nährstoffbrand"
+    ],
+    "text": "Überdüngung ist das viel schwerwiegendere Problem als Unterdüngung, denn Dünger bekommt man laut Video stets leichter rein als wieder raus.",
+    "videoId": "6h8ViWDJslg",
+    "videoTitle": "Auf Erde richtig Düngen, organisch mit BioBizz 🥦 -  Wie oft? Wie viel? Wann?",
+    "channel": "Der Hanf lebt",
+    "start": 117
+  },
+  {
+    "id": "growth-erde-lightmix-04",
+    "topic": "Vorgedüngte Erde: Light Mix vs. All Mix",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "erde",
+      "vorgedüngt",
+      "light mix",
+      "all mix",
+      "substrat",
+      "umtopfen",
+      "biobizz"
+    ],
+    "text": "Der Kanalbetreiber bevorzugt die BioBizz Light Mix, weil man sie von Beginn an verwenden kann. Die All Mix scheint ihm stark vorgedüngt, selbst 3 bis 4 Wochen alte Pflanzen wirkten beim Umtopfen darin überfordert.",
+    "videoId": "6h8ViWDJslg",
+    "videoTitle": "Auf Erde richtig Düngen, organisch mit BioBizz 🥦 -  Wie oft? Wie viel? Wann?",
+    "channel": "Der Hanf lebt",
+    "start": 166
+  },
+  {
+    "id": "growth-duengen-zusaetze-05",
+    "topic": "Zusätze sind nicht notwendig",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "zusätze",
+      "booster",
+      "dünger",
+      "wurzelstimulator",
+      "basisdünger",
+      "anfänger"
+    ],
+    "text": "Zum Start reichen laut Video die drei Basisdünger eines Probiersets (Grow, Bloom, Top Max). Zusätze haben ihre Berechtigung, notwendig sind sie aber keinesfalls.",
+    "videoId": "6h8ViWDJslg",
+    "videoTitle": "Auf Erde richtig Düngen, organisch mit BioBizz 🥦 -  Wie oft? Wie viel? Wann?",
+    "channel": "Der Hanf lebt",
+    "start": 187
+  },
+  {
+    "id": "growth-duengen-erstes-mal-06",
+    "topic": "Wann zum ersten Mal düngen?",
+    "phases": ["germination", "seedling", "vegetative"],
+    "tags": [
+      "erste düngung",
+      "wann düngen",
+      "keimling düngen",
+      "jungpflanze",
+      "düngeplan",
+      "feedchart"
+    ],
+    "text": "In der ersten Woche nach der Aussaat sorgt man nur für stabile Feuchtigkeit, damit der Samen aufgeht. Die Woche 1 der Feedchart beginnt erst etwa 7 bis 10 Tage nach der Aussaat, in der Wachstumsphase verschiebt sich alles also um mindestens eine Woche.",
+    "videoId": "6h8ViWDJslg",
+    "videoTitle": "Auf Erde richtig Düngen, organisch mit BioBizz 🥦 -  Wie oft? Wie viel? Wann?",
+    "channel": "Der Hanf lebt",
+    "start": 275
+  },
+  {
+    "id": "growth-duengen-erste-wochen-07",
+    "topic": "Düngen in den ersten Wochen",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "jungpflanze",
+      "erste wochen",
+      "düngen",
+      "wurzeln",
+      "wuchsdünger",
+      "anfang"
+    ],
+    "text": "Laut Video gibt es in der tatsächlichen zweiten Woche seit der Aussaat nur den Wurzelstimulator, und der erste Wuchsdünger kommt erst in der dritten Woche.",
+    "videoId": "6h8ViWDJslg",
+    "videoTitle": "Auf Erde richtig Düngen, organisch mit BioBizz 🥦 -  Wie oft? Wie viel? Wann?",
+    "channel": "Der Hanf lebt",
+    "start": 295
+  },
+  {
+    "id": "growth-duenger-organisch-mineralisch-08",
+    "topic": "Organisch vs. mineralisch",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "organisch",
+      "mineralisch",
+      "dünger",
+      "erde",
+      "bodenleben",
+      "coco",
+      "steinwolle",
+      "anfänger"
+    ],
+    "text": "Mineralische Dünger nimmt die Wurzel direkt auf, man nutzt sie für 'tote' Substrate wie Steinwolle, Kokos oder Tonkügelchen. Organische Dünger füttern das Bodenleben, das dann die Wurzeln versorgt, was die Toleranz bei pH, EC und das Risiko einer Überdüngung senkt und sie für Anfänger geeigneter macht.",
+    "videoId": "6h8ViWDJslg",
+    "videoTitle": "Auf Erde richtig Düngen, organisch mit BioBizz 🥦 -  Wie oft? Wie viel? Wann?",
+    "channel": "Der Hanf lebt",
+    "start": 338
+  },
+  {
+    "id": "growth-duenger-organisch-verzoegert-09",
+    "topic": "Organischer Dünger wirkt verzögert",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "organisch",
+      "dünger wirkt langsam",
+      "überdüngung",
+      "spülen",
+      "bodenleben",
+      "verzögert"
+    ],
+    "text": "Organische Dünger wirken wegen des Bodenlebens erst mindestens eine Woche verzögert. Überdüngen ist dadurch schwerer, ist es aber passiert, ist die Lage auch schwerer zu beheben.",
+    "videoId": "6h8ViWDJslg",
+    "videoTitle": "Auf Erde richtig Düngen, organisch mit BioBizz 🥦 -  Wie oft? Wie viel? Wann?",
+    "channel": "Der Hanf lebt",
+    "start": 375
+  },
+  {
+    "id": "growth-duenger-organisch-lagerung-10",
+    "topic": "Organischen Dünger richtig lagern",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "dünger ansetzen",
+      "lagerung",
+      "haltbarkeit",
+      "organisch",
+      "flaschen",
+      "24 stunden"
+    ],
+    "text": "Angesetzter organischer Dünger ist nicht stabil und sollte nach 24 Stunden verbraucht werden. Geöffnete Flaschen lagert man kühl und dunkel und verwendet sie nicht unbedingt länger als ein Jahr.",
+    "videoId": "6h8ViWDJslg",
+    "videoTitle": "Auf Erde richtig Düngen, organisch mit BioBizz 🥦 -  Wie oft? Wie viel? Wann?",
+    "channel": "Der Hanf lebt",
+    "start": 396
+  },
+  {
+    "id": "growth-erde-organisch-ansetzen-11",
+    "topic": "Organische Erde vorbereiten und warm halten",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "organische erde",
+      "bodenleben",
+      "temperatur",
+      "erde ansetzen",
+      "mikroorganismen",
+      "kälte"
+    ],
+    "text": "Organische Erde sollte vor der Verwendung gut 36 Stunden mit Wasser angesetzt werden, damit das Bodenleben erwacht. Die Temperatur im Growbereich ist wegen der Mikroorganismen etwas wichtiger, denn sie mögen Kälte nicht unbedingt.",
+    "videoId": "6h8ViWDJslg",
+    "videoTitle": "Auf Erde richtig Düngen, organisch mit BioBizz 🥦 -  Wie oft? Wie viel? Wann?",
+    "channel": "Der Hanf lebt",
+    "start": 407
+  },
+  {
+    "id": "growth-spuelen-organisch-12",
+    "topic": "Spülen vor der Ernte bei BioBizz",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "spülen",
+      "flushen",
+      "durchspülen",
+      "vor der ernte",
+      "organisch",
+      "wasser"
+    ],
+    "text": "Das klassische Durchspülen 1 bis 2 Wochen vor der Ernte ist laut BioBizz nicht notwendig, es reicht, wenn man rein auf Bewässerung umsteigt.",
+    "videoId": "6h8ViWDJslg",
+    "videoTitle": "Auf Erde richtig Düngen, organisch mit BioBizz 🥦 -  Wie oft? Wie viel? Wann?",
+    "channel": "Der Hanf lebt",
+    "start": 423
+  },
+  {
+    "id": "growth-duengen-topfmaterial-13",
+    "topic": "Düngemenge je nach Topfart",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "stofftopf",
+      "plastiktopf",
+      "tontopf",
+      "dünger menge",
+      "topfgröße",
+      "düngen"
+    ],
+    "text": "Kleine bis mittlere Stofftöpfe vertragen laut Video etwas mehr Dünger, also höhere Konzentration oder zweimal pro Woche. In mittleren bis großen Plastik- oder Tontöpfen kann man Konzentration oder Häufigkeit dagegen weiter reduzieren.",
+    "videoId": "6h8ViWDJslg",
+    "videoTitle": "Auf Erde richtig Düngen, organisch mit BioBizz 🥦 -  Wie oft? Wie viel? Wann?",
+    "channel": "Der Hanf lebt",
+    "start": 464
+  },
+  {
+    "id": "growth-mineral-makro-mikro-01",
+    "topic": "Makro- und Mikronährstoffe",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "npk",
+      "makronährstoffe",
+      "mikronährstoffe",
+      "stickstoff",
+      "phosphor",
+      "kalium",
+      "spurenelemente",
+      "mineraldünger"
+    ],
+    "text": "Bei den Nährstoffen unterscheidet man Makro- und Mikronährstoffe. Die primären Makronährstoffe sind N, P und K (Stickstoff, Phosphor, Kalium), die Mikronährstoffe sind Spurenelemente wie Eisen, Mangan oder Zink, die in kleineren Mengen gebraucht werden.",
+    "videoId": "PoTl-BibULU",
+    "videoTitle": "Mineralische Düngung ist einfacher, als du denkst...",
+    "channel": "Growstorys",
+    "start": 72
+  },
+  {
+    "id": "growth-mineral-zweiteilig-02",
+    "topic": "Warum Dünger in A und B getrennt sind",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "mineraldünger",
+      "a und b",
+      "flaschen",
+      "calcium",
+      "kristalle",
+      "mischen",
+      "mischreihenfolge"
+    ],
+    "text": "Mineralische Dünger sind auf mehrere Flaschen aufgeteilt, weil sich bestimmte Mineralien in hoher Konzentration nicht vertragen. Vor allem Calcium würde in einer gemeinsamen Flasche Kristalle bilden, die sich später nicht mehr lösen, erst stark verdünnt im Wasser bleibt alles stabil.",
+    "videoId": "PoTl-BibULU",
+    "videoTitle": "Mineralische Düngung ist einfacher, als du denkst...",
+    "channel": "Growstorys",
+    "start": 141
+  },
+  {
+    "id": "growth-mineral-wachstum-bedarf-03",
+    "topic": "Was die Pflanze im Wuchs braucht",
+    "phases": ["vegetative"],
+    "tags": [
+      "wachstumsphase",
+      "stickstoff",
+      "magnesium",
+      "calcium",
+      "nährstoffbedarf",
+      "wuchs"
+    ],
+    "text": "In der Wachstumsphase braucht die Pflanze laut Video vor allem Stickstoff für neues Blattwerk, Magnesium für die Fotosynthese und Calcium für stabile Zellstrukturen und kräftige neue Triebe.",
+    "videoId": "PoTl-BibULU",
+    "videoTitle": "Mineralische Düngung ist einfacher, als du denkst...",
+    "channel": "Growstorys",
+    "start": 161
+  },
+  {
+    "id": "growth-calmag-led-04",
+    "topic": "Mehr Calcium und Magnesium unter LED",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "calmag",
+      "calcium",
+      "magnesium",
+      "led",
+      "weiches wasser",
+      "mangel",
+      "licht"
+    ],
+    "text": "Unter LEDs oder bei sehr weichem Wasser steigt der Bedarf an Calcium und Magnesium häufig an, weil die Pflanze schneller wächst und mehr Calcium für neue Zellwände und Magnesium für die Fotosynthese verbraucht.",
+    "videoId": "PoTl-BibULU",
+    "videoTitle": "Mineralische Düngung ist einfacher, als du denkst...",
+    "channel": "Growstorys",
+    "start": 186
+  },
+  {
+    "id": "growth-calmag-mangelzeichen-05",
+    "topic": "Anzeichen von Calcium-/Magnesiummangel",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "calciummangel",
+      "magnesiummangel",
+      "blattrand",
+      "nekrosen",
+      "mangel erkennen",
+      "calmag"
+    ],
+    "text": "Passt das Verhältnis nicht, zeigt sich das laut Video relativ schnell durch leichte Randtrockenheit, feine Nekrosen oder aufgehellte Blattzwischenräume.",
+    "videoId": "PoTl-BibULU",
+    "videoTitle": "Mineralische Düngung ist einfacher, als du denkst...",
+    "channel": "Growstorys",
+    "start": 213
+  },
+  {
+    "id": "growth-calmag-weiches-wasser-06",
+    "topic": "Weiches Wasser, Kokos und Steinwolle",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "umkehrosmose",
+      "osmosewasser",
+      "weiches wasser",
+      "kokos",
+      "steinwolle",
+      "calmag",
+      "wasserqualität"
+    ],
+    "text": "Calcium- und Magnesiummangel tritt vor allem bei sehr weichem Wasser (z. B. Umkehrosmosewasser), in Kokos oder in Steinwolle auf, also dort, wo von Natur aus wenig oder kein Calcium und Magnesium enthalten ist. Wie viel man braucht, hängt stark vom Wasserprofil ab.",
+    "videoId": "PoTl-BibULU",
+    "videoTitle": "Mineralische Düngung ist einfacher, als du denkst...",
+    "channel": "Growstorys",
+    "start": 220
+  },
+  {
+    "id": "growth-ph-puffer-weiches-wasser-07",
+    "topic": "pH springt bei weichem Wasser",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "ph wert",
+      "puffer",
+      "osmosewasser",
+      "ro wasser",
+      "weiches wasser",
+      "ph stabilisieren"
+    ],
+    "text": "Gerade sehr weiches Wasser oder Osmosewasser reagiert oft empfindlich auf Dünger, der pH springt stärker. Gefiltertes oder RO-Wasser hat deutlich weniger Pufferkapazität, deshalb kann ein pH-Puffer dort sinnvoll werden, ist aber nicht in jedem Setup nötig.",
+    "videoId": "PoTl-BibULU",
+    "videoTitle": "Mineralische Düngung ist einfacher, als du denkst...",
+    "channel": "Growstorys",
+    "start": 449
+  },
+  {
+    "id": "growth-bewaesserung-biofilm-08",
+    "topic": "Ablagerungen in Tank und Leitungen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "tank",
+      "biofilm",
+      "tropfer",
+      "verstopft",
+      "bewässerung",
+      "ablagerung",
+      "ec"
+    ],
+    "text": "In Tanks, Leitungen oder Tropfern können sich mit der Zeit Ablagerungen bilden, vor allem wenn das Wasser mehrere Tage steht oder man mit höheren EC-Werten arbeitet. Das nennt man Biofilm oder mineralische Rückstände, es kann ein automatisches System irgendwann stören.",
+    "videoId": "PoTl-BibULU",
+    "videoTitle": "Mineralische Düngung ist einfacher, als du denkst...",
+    "channel": "Growstorys",
+    "start": 506
+  },
+  {
+    "id": "growth-ec-definition-01",
+    "topic": "Was ist der EC-Wert?",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "ec wert",
+      "leitfähigkeit",
+      "nährlösung",
+      "salze",
+      "konzentration",
+      "messen"
+    ],
+    "text": "EC steht für elektrische Leitfähigkeit. Je mehr Nährsalze, Dünger, CalMag oder andere Mineralien im Wasser gelöst sind, desto höher ist der EC-Wert, er zeigt also, wie konzentriert die Nährlösung ist.",
+    "videoId": "OQBS1K3KKCY",
+    "videoTitle": "Salzansammlung im Substrat? Der EC-Test zeigt es dir",
+    "channel": "Merrit erklärt",
+    "start": 43
+  },
+  {
+    "id": "growth-ec-zuhoch-zuniedrig-02",
+    "topic": "Zu niedriger und zu hoher EC",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "ec zu hoch",
+      "salzstress",
+      "überdüngung",
+      "mangel",
+      "unterdüngung",
+      "blattspitzen verbrannt"
+    ],
+    "text": "Ein zu niedriger EC bedeutet laut Video zu wenig Nährstoffe, Mangelerscheinungen und langsames Wachstum. Ein zu hoher EC führt zu Salzstress: Die Wurzeln nehmen kein Wasser mehr auf, die Blattspitzen verbrennen und das Wachstum stagniert oder bricht ein.",
+    "videoId": "OQBS1K3KKCY",
+    "videoTitle": "Salzansammlung im Substrat? Der EC-Test zeigt es dir",
+    "channel": "Merrit erklärt",
+    "start": 72
+  },
+  {
+    "id": "growth-ec-vs-ph-03",
+    "topic": "EC und pH: unterschiedliche Aufgaben",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "ph wert",
+      "ec wert",
+      "nährstoffaufnahme",
+      "überdüngung",
+      "unterdüngung"
+    ],
+    "text": "Der pH-Wert entscheidet, ob die Pflanze Nährstoffe überhaupt aufnehmen kann, der EC-Wert, wie viel angeboten wird. Beides gehört zusammen, der EC ist die Stellschraube für Über- oder Unterdüngung.",
+    "videoId": "OQBS1K3KKCY",
+    "videoTitle": "Salzansammlung im Substrat? Der EC-Test zeigt es dir",
+    "channel": "Merrit erklärt",
+    "start": 99
+  },
+  {
+    "id": "growth-ec-messen-04",
+    "topic": "EC messen: Wasser, Gießwasser, Drain",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "ec messgerät",
+      "messen",
+      "drain",
+      "gießwasser",
+      "leitungswasser",
+      "messgerät"
+    ],
+    "text": "Zum EC-Messen braucht man ein Messgerät. Man kann im reinen Wasser als Ausgangswert, im Gießwasser und im Drain messen. Wer ernsthaft growen will, kommt laut Video mittelfristig kaum um ein solches Gerät herum.",
+    "videoId": "OQBS1K3KKCY",
+    "videoTitle": "Salzansammlung im Substrat? Der EC-Test zeigt es dir",
+    "channel": "Merrit erklärt",
+    "start": 116
+  },
+  {
+    "id": "growth-ec-leitungswasser-05",
+    "topic": "Leitungswasser-EC einrechnen",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "leitungswasser",
+      "ec zielwert",
+      "dünger menge",
+      "ausgangswert",
+      "wasserhärte"
+    ],
+    "text": "Leitungswasser hat je nach Region einen EC zwischen 0,2 und 0,6. Hat es z. B. 0,4 und der Zielwert ist 1,6, darf man nur bis 1,2 Dünger zugeben, dieser Anteil wird häufig nicht mit eingerechnet.",
+    "videoId": "OQBS1K3KKCY",
+    "videoTitle": "Salzansammlung im Substrat? Der EC-Test zeigt es dir",
+    "channel": "Merrit erklärt",
+    "start": 178
+  },
+  {
+    "id": "growth-ec-richtwerte-06",
+    "topic": "EC-Richtwerte je Phase",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "ec richtwert",
+      "jungpflanze",
+      "wachstum",
+      "blüte",
+      "nährlösung",
+      "ec tabelle"
+    ],
+    "text": "Als grobe Anhaltswerte nennt das Video für Jungpflanzen einen EC von 0,6 bis 1,0, für die Wachstumsphase 1,2 bis 1,8 und für die Blüte 1,6 bis 2,2.",
+    "videoId": "OQBS1K3KKCY",
+    "videoTitle": "Salzansammlung im Substrat? Der EC-Test zeigt es dir",
+    "channel": "Merrit erklärt",
+    "start": 244
+  },
+  {
+    "id": "growth-ec-beobachten-07",
+    "topic": "Pflanzen beobachten statt nur messen",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "pflanze beobachten",
+      "tabellen",
+      "ec",
+      "mangel erkennen",
+      "nach pflanze richten"
+    ],
+    "text": "Pflanzen lesen keine Tabellen: Neben dem Messen soll man die Pflanze beobachten, um zu beurteilen, ob es ihr gut geht.",
+    "videoId": "OQBS1K3KKCY",
+    "videoTitle": "Salzansammlung im Substrat? Der EC-Test zeigt es dir",
+    "channel": "Merrit erklärt",
+    "start": 264
+  },
+  {
+    "id": "growth-ec-drain-08",
+    "topic": "Drain-EC deuten",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "drain",
+      "ec drain",
+      "überdüngung",
+      "unterdüngung",
+      "ablaufwasser",
+      "stofftopf"
+    ],
+    "text": "Der Drain-EC sollte leicht über dem des Gießwassers liegen, bei 1,6 im Gießwasser etwa 1,8 bis 1,9. Bei 2,5 ist wahrscheinlich schon zu viel Dünger da, bei einem Drain von 1,0 bekommt die Pflanze zu wenig.",
+    "videoId": "OQBS1K3KKCY",
+    "videoTitle": "Salzansammlung im Substrat? Der EC-Test zeigt es dir",
+    "channel": "Merrit erklärt",
+    "start": 313
+  },
+  {
+    "id": "growth-coco-mittelweg-01",
+    "topic": "Kokos: Mittelweg zwischen Erde und Hydro",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "kokos",
+      "coco",
+      "substrat",
+      "mineraldünger",
+      "mikroleben",
+      "organisch",
+      "hydro"
+    ],
+    "text": "Kokos ist laut Video eine Zwischenform aus Erde und Hydro. Kokossubstrat hat kein Mikroleben, daher ist organischer Dünger nicht unbedingt geeignet und man arbeitet am besten mit Mineraldünger.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 59
+  },
+  {
+    "id": "growth-coco-calmag-02",
+    "topic": "Kokos braucht Calcium und Magnesium",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "kokos",
+      "coco",
+      "calmag",
+      "calcium",
+      "magnesium",
+      "puffer",
+      "gepuffert",
+      "ph wert"
+    ],
+    "text": "Kokos ist nicht gepuffert und braucht eine bestimmte Menge Calcium und Magnesium, die in den meisten Kokosdüngern enthalten ist. Ohne ausreichend Calcium und Magnesium funktionieren auch die anderen Düngerelemente nicht gut.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 237
+  },
+  {
+    "id": "growth-coco-puffer-03",
+    "topic": "Kokos: gepuffert oder nicht prüfen",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "kokos",
+      "coco",
+      "gepuffert",
+      "kokosmatten",
+      "kokosziegel",
+      "calmag",
+      "substrat kaufen"
+    ],
+    "text": "Man muss nachsehen, ob das Kokossubstrat schon gepuffert ist. Ist es nicht gepuffert, muss man ein Calcium-/Magnesium-Präparat als Puffer hinzufügen.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 256
+  },
+  {
+    "id": "growth-coco-struktur-04",
+    "topic": "Kokosfaser und Kokostorf",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "kokos",
+      "coco",
+      "kokosfaser",
+      "kokostorf",
+      "luft",
+      "sauerstoff",
+      "wasser speichern"
+    ],
+    "text": "Kokossubstrat besteht aus längeren Fasern, die besser Wasser aufnehmen, und aus kleineren Teilen (Kokostorf), die dafür sorgen, dass genug Sauerstoff an den Wurzeln bleibt.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 160
+  },
+  {
+    "id": "growth-coco-giessen-05",
+    "topic": "Kokos trocknet schnell aus",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "kokos",
+      "coco",
+      "gießen",
+      "häufig gießen",
+      "austrocknen",
+      "tropfbewässerung",
+      "dünger"
+    ],
+    "text": "Kokos enthält keine Nährstoffe und trocknet relativ schnell aus, deshalb gießt und düngt man mit relativ hoher Frequenz, mehrmals am Tag. Das Medium sollte nicht zu sehr austrocknen.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 221
+  },
+  {
+    "id": "growth-coco-runoff-06",
+    "topic": "Kokos: Runoff gegen Salzaufbau",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "kokos",
+      "coco",
+      "runoff",
+      "salze",
+      "spülen",
+      "überdüngung",
+      "ablauf"
+    ],
+    "text": "Auf Erde gilt laut Video lieber etwas zu wenig als zu viel, bei Kokos ist es umgekehrt. Man gießt so viel, dass etwa 10 bis 20 Prozent unten aus dem Topf laufen (Runoff), damit überschüssige Salze ausgespült werden.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 284
+  },
+  {
+    "id": "growth-coco-organisch-07",
+    "topic": "Organisch auf Kokos",
+    "phases": ["vegetative", "flowering"],
+    "tags": ["kokos", "coco", "organisch", "calmag", "gepuffert", "dünger"],
+    "text": "Man kann auch organisch auf Kokos züchten, sollte aber ein Produkt mit ausreichend Calcium und Magnesium dazunehmen, damit das Substrat vernünftig gepuffert ist. Runoff ist bei organischem Dünger weniger wichtig.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 360
+  },
+  {
+    "id": "growth-coco-ph-08",
+    "topic": "Richtiger pH für Calcium und Magnesium",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "ph wert",
+      "kokos",
+      "coco",
+      "calcium",
+      "magnesium",
+      "aufnahme",
+      "wasser ph"
+    ],
+    "text": "Unabhängig vom Dünger muss der pH-Wert stimmen, denn nur dann werden Calcium und Magnesium vernünftig aufgenommen.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 427
+  },
+  {
+    "id": "growth-coco-tropf-09",
+    "topic": "Tropfbewässerung bei Kokos",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "tropfbewässerung",
+      "kokos",
+      "coco",
+      "verstopft",
+      "automatisch gießen",
+      "kontrolle"
+    ],
+    "text": "Ein Tropfbewässerungssystem gibt die komplette Kontrolle über Wasser- und Düngermenge. Man muss laut Video immer prüfen, dass nichts verstopft ist, und darauf achten, dass das Düngerwasser den richtigen pH-Wert hat.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 442
+  },
+  {
+    "id": "growth-topf-groesse-konstant-10",
+    "topic": "Größerer Topf, konstantere Bedingungen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "topfgröße",
+      "topf",
+      "größerer topf",
+      "wurzelbereich",
+      "liter",
+      "endtopf"
+    ],
+    "text": "Bei größeren Pflanzen nimmt man laut Video am besten einen Topf von mindestens 5 Litern. Es gilt die Regel: je größer der Topf, desto konstanter die Bedingungen im Wurzelbereich.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 500
+  },
+  {
+    "id": "growth-topf-drainage-11",
+    "topic": "Genug Entwässerungslöcher",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "drainage",
+      "entwässerung",
+      "abfluss",
+      "topf löcher",
+      "staunässe",
+      "wurzelfäule"
+    ],
+    "text": "Man soll immer für genügend Entwässerung sorgen, z. B. durch ausreichend Entwässerungslöcher unten im Topf.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 510
+  },
+  {
+    "id": "growth-ebbflut-nass-12",
+    "topic": "Ebbe-Flut: Wassermenge finden",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "ebbe flut",
+      "autopot",
+      "kokos",
+      "wurzelfäule",
+      "zu nass",
+      "bewässerungssystem"
+    ],
+    "text": "Bei einem Ebbe-Flut-System muss man die richtige Wassermenge finden, damit das Kokos nicht zu nass wird, denn zu nass kann Wurzelfäule verursachen.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 551
+  },
+  {
+    "id": "growth-hydro-anfaenger-13",
+    "topic": "Hydro ist nichts für Anfänger",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "hydro",
+      "hydrokultur",
+      "dwc",
+      "anfänger",
+      "ph wert",
+      "kokos in hydro",
+      "wassertemperatur"
+    ],
+    "text": "Hydrosysteme sind laut Video die effektivste, aber auch relativ schwierige Form: Ein kleiner Fehler bei Wassertemperatur, Düngerwert oder pH kann der Pflanze schaden. Sie brauchen Erfahrung und sind nicht unbedingt für Anfänger geeignet.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 591
+  },
+  {
+    "id": "growth-ph-bereich-01",
+    "topic": "pH-Bereich für Nährstoffaufnahme",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "ph wert",
+      "ph bereich",
+      "nährstoffaufnahme",
+      "wasser ph",
+      "gießwasser",
+      "ph messen"
+    ],
+    "text": "Laut Video ist je nach Stadium ein pH-Bereich zwischen 5,5 und 6,5 optimal, weil die Nährstoffaufnahme dort am effizientesten ist.",
+    "videoId": "OF6h2esJDdY",
+    "videoTitle": "5 DINGE beim Cannabis Anbau, die ich als Anfänger gerne gewusst hätte!",
+    "channel": "Growstorys",
+    "start": 213
+  },
+  {
+    "id": "growth-ph-falsch-02",
+    "topic": "Falscher pH führt zu Mängeln",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "ph wert",
+      "mangel",
+      "überdüngung",
+      "nährstoffmangel",
+      "mehr dünger",
+      "ph falsch"
+    ],
+    "text": "Ein falscher pH-Wert kann zu Mängeln führen, weil die Pflanze Nährstoffe nicht effizient aufnehmen kann, selbst wenn genug da sind. Das verleitet schnell dazu, mehr Dünger zu geben, was dann Überdüngung als weiteres Problem schafft.",
+    "videoId": "OF6h2esJDdY",
+    "videoTitle": "5 DINGE beim Cannabis Anbau, die ich als Anfänger gerne gewusst hätte!",
+    "channel": "Growstorys",
+    "start": 220
+  },
+  {
+    "id": "growth-ph-messen-03",
+    "topic": "pH messen und einstellen",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "ph messgerät",
+      "ph down",
+      "ph up",
+      "ph regulator",
+      "ph einstellen",
+      "gießwasser"
+    ],
+    "text": "Zum Messen des pH-Werts nimmt man spezielle pH-Messgeräte, mit pH-Reglern (pH up / pH down) stellt man das gewünschte Niveau ein. Man soll ihn regelmäßig prüfen und anpassen.",
+    "videoId": "OF6h2esJDdY",
+    "videoTitle": "5 DINGE beim Cannabis Anbau, die ich als Anfänger gerne gewusst hätte!",
+    "channel": "Growstorys",
+    "start": 237
+  },
+  {
+    "id": "growth-sorte-eine-04",
+    "topic": "Anfänger: mit einer Sorte starten",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "anfänger",
+      "eine sorte",
+      "wuchsverhalten",
+      "stretch",
+      "höhe",
+      "mehrere sorten"
+    ],
+    "text": "Anfänger sollten laut Video erst mal nur mit einer Sorte starten, weil jede Sorte anders auf Licht, Wasser oder Nährstoffe reagiert. Das unterschiedliche Wuchsverhalten ist der Hauptgrund, spätestens ab dem Stretch in der Blüte verlieren viele die Kontrolle über die Höhe.",
+    "videoId": "OF6h2esJDdY",
+    "videoTitle": "5 DINGE beim Cannabis Anbau, die ich als Anfänger gerne gewusst hätte!",
+    "channel": "Growstorys",
+    "start": 27
+  },
+  {
+    "id": "growth-dokumentieren-05",
+    "topic": "Den Grow dokumentieren",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "notizen",
+      "dokumentieren",
+      "tagebuch",
+      "grow tagebuch",
+      "probleme finden",
+      "lernen"
+    ],
+    "text": "Der Sprecher rät, den Grow zu dokumentieren (Techniken, Nährstoffe, Lichtzyklus, Luftfeuchtigkeit), um Probleme besser einzugrenzen, weil man nachsehen kann, was vor dem Problem geändert wurde.",
+    "videoId": "OF6h2esJDdY",
+    "videoTitle": "5 DINGE beim Cannabis Anbau, die ich als Anfänger gerne gewusst hätte!",
+    "channel": "Growstorys",
+    "start": 252
+  },
+  {
+    "id": "growth-umtopfen-stagnation-01",
+    "topic": "Pflanze wächst nach dem Umtopfen nicht",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "wächst nicht",
+      "stagniert",
+      "mickrig",
+      "umtopfen",
+      "gelb",
+      "wachstumsstopp",
+      "klein bleibt"
+    ],
+    "text": "Im Fallbeispiel bleibt eine junge Pflanze nach dem Umtopfen in einen großen Topf klein und wird gelblich, vor allem an den neuen Trieben. Ursache laut Video: zu großzügiges Angießen direkt nach dem Umtopfen.",
+    "videoId": "tGrM9p7jVx8",
+    "videoTitle": "Deine Hanfpflanze wächst nicht weiter? So behebst du das Problem SOFORT",
+    "channel": "Die Tomate",
+    "start": 30
+  },
+  {
+    "id": "growth-umtopfen-wurzeln-02",
+    "topic": "Nach dem Umtopfen erst Wurzeln bilden",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "umtopfen",
+      "angießen",
+      "wurzeln",
+      "durchwurzelt",
+      "wasseraufnahme",
+      "gießen"
+    ],
+    "text": "Nach dem Umtopfen muss die Pflanze erst Wurzeln bilden. Erst wenn das Substrat durchwurzelt ist, kann sie große Wassermengen aufnehmen, deshalb ist großzügiges Angießen das Problem.",
+    "videoId": "tGrM9p7jVx8",
+    "videoTitle": "Deine Hanfpflanze wächst nicht weiter? So behebst du das Problem SOFORT",
+    "channel": "Die Tomate",
+    "start": 84
+  },
+  {
+    "id": "growth-umtopfen-staunaesse-03",
+    "topic": "Wurzeln kommen nicht in nasse Erde",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "staunässe",
+      "wurzeln ersticken",
+      "umtopfen",
+      "nasse erde",
+      "zu viel wasser",
+      "überwässerung"
+    ],
+    "text": "Steht die nasse Erde zu hoch im Topf, haben die Wurzeln keine Chance, in diese Schicht vorzudringen: Die Pflanze erstickt an Wasser. Wurzeln brauchen eine Kombination aus lockerer Erde und etwas, aber nicht zu viel Feuchtigkeit.",
+    "videoId": "tGrM9p7jVx8",
+    "videoTitle": "Deine Hanfpflanze wächst nicht weiter? So behebst du das Problem SOFORT",
+    "channel": "Die Tomate",
+    "start": 101
+  },
+  {
+    "id": "growth-ueberwaessert-rettung-04",
+    "topic": "Überwässerte Jungpflanze retten",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "überwässert",
+      "rettung",
+      "nicht gießen",
+      "staunässe",
+      "jungpflanze",
+      "trocknen lassen"
+    ],
+    "text": "Der Sprecher empfiehlt, im großen Topf mindestens 10, eher 12 Tage nichts zu gießen und nicht zu düngen. Wird es nach 2 bis 4 Tagen deutlich schlechter, setzt man die Pflanze in trockeneres Substrat um und hofft, dass sie noch zu retten ist.",
+    "videoId": "tGrM9p7jVx8",
+    "videoTitle": "Deine Hanfpflanze wächst nicht weiter? So behebst du das Problem SOFORT",
+    "channel": "Die Tomate",
+    "start": 146
+  },
+  {
+    "id": "growth-jungpflanze-wenig-wasser-05",
+    "topic": "Junge Pflanzen: weniger ist mehr",
+    "phases": ["germination", "seedling"],
+    "tags": [
+      "keimling",
+      "jungpflanze",
+      "wenig gießen",
+      "tröpfchen",
+      "zu viel wasser",
+      "umtopfen"
+    ],
+    "text": "Beim Eintopfen junger Pflanzen gilt laut Video 'weniger ist mehr': Meist reichen ein paar Tröpfchen Wasser. Zu wenig Wasser vertragen die Pflänzchen relativ gut, zu viel ist fast immer der sichere Tod.",
+    "videoId": "tGrM9p7jVx8",
+    "videoTitle": "Deine Hanfpflanze wächst nicht weiter? So behebst du das Problem SOFORT",
+    "channel": "Die Tomate",
+    "start": 185
+  },
+  {
+    "id": "growth-erde-lehm-01",
+    "topic": "Lehmige Gartenerde ist ungeeignet",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "gartenerde",
+      "lehm",
+      "boden",
+      "draußen",
+      "steinhart",
+      "wurzeln",
+      "erde"
+    ],
+    "text": "Der Sprecher berichtet, dass lehmige Gartenerde bei Nässe wie Klebstoff um die Wurzeln liegt und beim Trocknen steinhart wird. Seine Pflanzen blieben dadurch bis zur Blüte winzig. Bei schlechter Gartenerde empfiehlt er große Pflanzlöcher mit guter Erde oder Töpfe.",
+    "videoId": "mVaq_sXzMeA",
+    "videoTitle": "Umtopfen in die RICHTIGE Erde - für Anfänger erklärt",
+    "channel": "CannabisKarl",
+    "start": 103
+  },
+  {
+    "id": "growth-erde-locker-trocken-02",
+    "topic": "Lockere Erde und kurze Trockenphase",
+    "phases": ["vegetative"],
+    "tags": [
+      "wurzelwachstum",
+      "trockenphase",
+      "locker",
+      "erde",
+      "wurzeln suchen wasser",
+      "gießen"
+    ],
+    "text": "Laut Video halten Pflanzen in der Wachstumsphase je nach Sorte problemlos ein paar Tage ohne Wasser durch. In lockerer Erde kann das sogar gut sein, weil die Wurzeln auf der Suche nach Wasser schneller wachsen.",
+    "videoId": "mVaq_sXzMeA",
+    "videoTitle": "Umtopfen in die RICHTIGE Erde - für Anfänger erklärt",
+    "channel": "CannabisKarl",
+    "start": 128
+  },
+  {
+    "id": "growth-erde-billig-03",
+    "topic": "Günstige Erde braucht Dünger",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "erde",
+      "billige erde",
+      "gartencenter",
+      "nährstoffe",
+      "düngen",
+      "substrat kaufen"
+    ],
+    "text": "Die einfachste, billigste Erde funktioniert laut Video, wenn man regelmäßig düngt, sie ist aber nur mäßig locker und hat kaum Nährstoffe. Kompostmixe und spezielle Mixe sind optimal, aber enorm teuer.",
+    "videoId": "mVaq_sXzMeA",
+    "videoTitle": "Umtopfen in die RICHTIGE Erde - für Anfänger erklärt",
+    "channel": "CannabisKarl",
+    "start": 230
+  },
+  {
+    "id": "growth-topf-groesse-04",
+    "topic": "Größerer Topf, größere Pflanze",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "topfgröße",
+      "20 liter",
+      "5 liter",
+      "topf",
+      "ertrag",
+      "pflanzengröße",
+      "endtopf"
+    ],
+    "text": "Laut Video wächst die Pflanze in einem 20-Liter-Topf deutlich größer und ertragreicher als in einem kleinen 5-Liter-Gefäß.",
+    "videoId": "mVaq_sXzMeA",
+    "videoTitle": "Umtopfen in die RICHTIGE Erde - für Anfänger erklärt",
+    "channel": "CannabisKarl",
+    "start": 277
+  },
+  {
+    "id": "growth-erde-mix-05",
+    "topic": "Eigener Erdmix aus Erde und Kompost",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "erdmix",
+      "kompost",
+      "selber mischen",
+      "erde",
+      "substrat",
+      "günstig"
+    ],
+    "text": "Der Sprecher mischte die einfachste und günstigste Erde aus dem Gartencenter zu gleichen Anteilen mit purem Kompost. Das schont die Geldbörse und funktionierte bei regelmäßiger Düngung bestens.",
+    "videoId": "mVaq_sXzMeA",
+    "videoTitle": "Umtopfen in die RICHTIGE Erde - für Anfänger erklärt",
+    "channel": "CannabisKarl",
+    "start": 299
+  },
+  {
+    "id": "growth-umtopfen-technik-06",
+    "topic": "Umtopfen: Topf im Topf",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "umtopfen",
+      "topf im topf",
+      "wurzelballen",
+      "technik",
+      "anfänger",
+      "vorbereiten"
+    ],
+    "text": "Technik laut Video: Den neuen Topf zu drei Vierteln mit Erdmix füllen, den kleinen Topf samt Pflanze hineindrücken, Erde ringsum leicht andrücken und den kleinen Topf wieder herausnehmen. So entsteht ein passendes Loch für die Pflanze.",
+    "videoId": "mVaq_sXzMeA",
+    "videoTitle": "Umtopfen in die RICHTIGE Erde - für Anfänger erklärt",
+    "channel": "CannabisKarl",
+    "start": 360
+  },
+  {
+    "id": "growth-umtopfen-ballen-07",
+    "topic": "Umtopfen: Ballen lösen und einsetzen",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "umtopfen",
+      "wurzelballen",
+      "topf umdrehen",
+      "ballen lösen",
+      "einpflanzen",
+      "durchwurzelt"
+    ],
+    "text": "Man lockert die Erde mit den Wurzeln sanft, fasst den Stamm zwischen die Finger und kippt den Topf auf den Kopf. Ist die Pflanze gut durchwurzelt und gelockert, lässt sich der Topf mühelos abziehen. Dann setzt man den Wurzelballen in das vorbereitete Loch und drückt die Erde leicht an.",
+    "videoId": "mVaq_sXzMeA",
+    "videoTitle": "Umtopfen in die RICHTIGE Erde - für Anfänger erklärt",
+    "channel": "CannabisKarl",
+    "start": 392
+  },
+  {
+    "id": "growth-umtopfen-grosse-pflanze-08",
+    "topic": "Große Pflanzen zu zweit umtopfen",
+    "phases": ["vegetative"],
+    "tags": [
+      "umtopfen",
+      "große pflanze",
+      "30 liter",
+      "hilfe",
+      "vier hände",
+      "wurzelballen"
+    ],
+    "text": "Soll eine relativ große Pflanze, z. B. aus einem 12-Liter- in einen 30-Liter-Topf, umgesetzt werden, empfiehlt der Sprecher, sich Hilfe zu holen: Mit vier Händen geht es mühelos.",
+    "videoId": "mVaq_sXzMeA",
+    "videoTitle": "Umtopfen in die RICHTIGE Erde - für Anfänger erklärt",
+    "channel": "CannabisKarl",
+    "start": 492
+  },
+  {
+    "id": "growth-mangel-nicht-mehr-duenger-01",
+    "topic": "Bei Mangel nicht einfach mehr düngen",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "nährstoffmangel",
+      "gelbe blätter",
+      "mehr dünger",
+      "überdüngung",
+      "ursache",
+      "mangel"
+    ],
+    "text": "Zeigt die Pflanze Mangelzeichen, geben die meisten Gärtner mehr Dünger, was laut Video meist kontraproduktiv ist. Die Ursache sollte man eher bei den Umgebungsbedingungen suchen, vor allem beim pH-Wert.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 89
+  },
+  {
+    "id": "growth-ph-boden-02",
+    "topic": "pH im Boden und Nährstoffaufnahme",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "ph wert",
+      "boden ph",
+      "nährstoffe nicht aufnehmbar",
+      "mangel",
+      "nährstoffaufnahme"
+    ],
+    "text": "Ist der pH-Wert im Boden nicht optimal, können Nährstoffe zwar vorhanden sein, die Pflanze kommt aber nicht heran. Außerhalb des optimalen Bereichs treten Mangelsymptome auf.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 62
+  },
+  {
+    "id": "growth-ph-organisch-puffer-03",
+    "topic": "Organische Erde puffert den pH",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "organisch",
+      "ph wert",
+      "bodenleben",
+      "gepuffert",
+      "langzeitdünger",
+      "mikroorganismen"
+    ],
+    "text": "Wer organisch oder mit Langzeitdünger arbeitet, hat laut Video meist kaum pH-Probleme: Die Mikroorganismen im Boden stellen die Nährstoffe bereit, und die Erde ist so gut gepuffert, dass sich ein leicht abweichender pH von selbst ausgleicht.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 130
+  },
+  {
+    "id": "growth-ph-mineral-messen-04",
+    "topic": "Mineraldünger: pH vor jedem Gießen messen",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "mineraldünger",
+      "ph messen",
+      "nährlösung",
+      "vor dem gießen",
+      "boden ph"
+    ],
+    "text": "Wer mineralisch düngt, sollte den pH der Nährlösung vor jedem Gießen messen, damit der pH im Boden nicht aus dem Gleichgewicht gerät.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 157
+  },
+  {
+    "id": "growth-ph-leitungswasser-05",
+    "topic": "Leitungswasser-pH schwankt",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "leitungswasser",
+      "ph wert",
+      "wasserqualität",
+      "jahreszeit",
+      "ph schwankt"
+    ],
+    "text": "Der pH-Wert des Leitungswassers kann sich im Jahresverlauf ändern, z. B. durch Regen, Landwirtschaft, Wasseraufbereitung oder Außentemperaturen. Den pH der eigenen Wasserquelle zu kennen und zu beobachten ist ein guter Ausgangspunkt.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 165
+  },
+  {
+    "id": "growth-ph-drain-teststreifen-06",
+    "topic": "Boden-pH über den Drain messen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "drain",
+      "ph streifen",
+      "boden ph messen",
+      "ablaufwasser",
+      "ph test"
+    ],
+    "text": "Den Boden-pH kann man einfach mit einem pH-Streifen am Drain messen, also dem Wasser, das nach dem Gießen unten aus dem Topf läuft. Spezielle Boden-pH-Tests sind noch genauer.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 189
+  },
+  {
+    "id": "growth-spuelen-mineral-07",
+    "topic": "Spülen bei Mineraldünger",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "spülen",
+      "flush",
+      "durchspülen",
+      "mineraldünger",
+      "topfvolumen",
+      "ph korrigieren",
+      "neu düngen"
+    ],
+    "text": "Bei Mineraldünger kann man mit einem Flush Nährstoffe und Mineralien aus der Erde spülen: zwei- bis dreimal das Topfvolumen Wasser langsam und gleichmäßig durchlaufen lassen. Danach beginnt man mit etwa 50 Prozent der empfohlenen Düngemenge und steigert in Schritten (60, 70, 80, 90 Prozent) bis 100 Prozent.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 207
+  },
+  {
+    "id": "growth-spuelen-organisch-nie-08",
+    "topic": "Organische Erde nie spülen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "organisch",
+      "nicht spülen",
+      "flush",
+      "ph regulator",
+      "umkehrosmose",
+      "destilliertes wasser"
+    ],
+    "text": "Bei organischem Dünger soll man die Erde laut Video unter keinen Umständen spülen und nur handeln, wenn man Mangelsymptome oder Wuchsprobleme sieht. Stattdessen passt man das Wasser an (pH-Regulator, mit destilliertem Wasser verdünnen oder Umkehrosmose).",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 241
+  },
+  {
+    "id": "growth-giessen-unverwurzelt-09",
+    "topic": "Nicht durchwurzelter Topf wird leicht überwässert",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "überwässerung",
+      "jungpflanze",
+      "durchwurzelt",
+      "topf",
+      "wurzeln",
+      "sauerstoff",
+      "ertrinken"
+    ],
+    "text": "Die Pflanze kann Wasser nur dort aufnehmen, wo die Wurzeln hinreichen. Ein noch nicht durchwurzelter Topf, vor allem bei jungen Pflanzen, wird deshalb leicht überwässert. Zu viel Wasser verdrängt die Luft, die Wurzeln ersticken.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 344
+  },
+  {
+    "id": "growth-giessen-keine-pauschale-10",
+    "topic": "Keine pauschale Gießmenge",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "gießmenge",
+      "wie viel gießen",
+      "wie oft gießen",
+      "topf anheben",
+      "gewicht",
+      "gefühl"
+    ],
+    "text": "Eine feste Gießmenge (z. B. dreimal pro Woche 250 ml) gibt es laut Video nicht, weil Temperatur, Pflanzengröße und Topfgröße eine Rolle spielen. Der beste Tipp: die Töpfe regelmäßig anheben und das Gewicht fühlen, bis man merkt, wann sie sehr leicht sind und Wasser brauchen.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 382
+  },
+  {
+    "id": "growth-drainage-ablauf-11",
+    "topic": "Drainage gegen Überwässerung",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "drainage",
+      "ablauf",
+      "topf",
+      "überschüssiges wasser",
+      "überwässerung vermeiden"
+    ],
+    "text": "Um Überwässerung zu vermeiden, hilft Drainage, die überschüssiges Wasser gut aus dem Topf ablaufen lässt.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 398
+  },
+  {
+    "id": "growth-temperatur-erde-12",
+    "topic": "Kalte Erde blockiert Nährstoffe",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "temperatur",
+      "kalte erde",
+      "winter",
+      "nährstoffblockade",
+      "zelt kalt",
+      "wurzeltemperatur"
+    ],
+    "text": "Zu kalte Erde im Topf kann zu Nährstoff-Immobilisierung führen, besonders im Winter. Laut Video sind etwa 18 bis 23 °C im Boden und 21 bis 30 °C Luft im Zelt optimal, die Bodentemperatur lässt sich z. B. mit einem Fleischthermometer messen.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 437
+  },
+  {
+    "id": "growth-temperatur-luft-13",
+    "topic": "Lufttemperatur: unter 20 °C nicht optimal",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "temperatur",
+      "zu kalt",
+      "kälte",
+      "schock",
+      "15 grad",
+      "zelt",
+      "nacht"
+    ],
+    "text": "Unter 20 °C Lufttemperatur hat die Pflanze laut Video keine optimalen Bedingungen und fährt ihre Prozesse herunter, bei 15 °C geht sie in einen Schock. Etwas kühlere Nächte sind dagegen in Ordnung.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 466
+  },
+  {
+    "id": "growth-licht-naehrstoffbedarf-14",
+    "topic": "Mehr Licht, mehr Nährstoffverbrauch",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "licht",
+      "lampe",
+      "nährstoffbedarf",
+      "photosynthese",
+      "schwache lampe",
+      "nährstoffe"
+    ],
+    "text": "Je mehr Licht eine Pflanze bekommt, desto mehr Photosynthese leistet sie und desto mehr Nährstoffe nimmt sie auf. Bei zu wenig Licht können Nährstoffe im Boden sein, die Pflanze nutzt sie aber nicht.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 588
+  },
+  {
+    "id": "growth-licht-rand-rotation-15",
+    "topic": "Ungleichmäßiges Licht und Pflanzen rotieren",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "lichtverteilung",
+      "zeltrand",
+      "pflanzen drehen",
+      "rotation",
+      "ecken",
+      "kleiner"
+    ],
+    "text": "Wird die Mitte des Zelts stärker beleuchtet als der Rand, nehmen die Randpflanzen bei gleicher Düngung weniger Nährstoffe auf und bleiben kleiner. Als Notlösung kann man die Pflanzen etwa einmal pro Woche umstellen, sodass eine andere in der Mitte steht.",
+    "videoId": "DkpuJvtebdo",
+    "videoTitle": "Nährstoffprobleme bei Cannabis verhindern!",
+    "channel": "Vince and Weed",
+    "start": 650
+  },
+  {
+    "id": "growth-dauer-keimung-ernte-01",
+    "topic": "Dauer von Keimung bis Ernte",
+    "phases": ["germination", "seedling", "vegetative", "flowering", "harvest"],
+    "tags": [
+      "dauer",
+      "wochen",
+      "wie lange",
+      "keimung bis ernte",
+      "wachstumsphase",
+      "blütezeit",
+      "durchgang"
+    ],
+    "text": "Laut Vince dauert ein Durchgang vom Keimen bis zur Ernte in der Regel 14 bis 15 Wochen: etwa drei bis vier Wochen Wachstumsphase und je nach Genetik 7 bis 10 Wochen Blüte.",
+    "videoId": "Yzco4wHSV2c",
+    "videoTitle": "Ich beantworte 15  Fragen für 🥦Gärtner - Q&A",
+    "channel": "Vince and Weed",
+    "start": 35
+  },
+  {
+    "id": "growth-umtopfen-zweimal-02",
+    "topic": "Zweimal umtopfen: kleiner, mittlerer, finaler Topf",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "umtopfen",
+      "topfgröße",
+      "1 liter",
+      "endtopf",
+      "wurzelballen",
+      "drei töpfe",
+      "10 liter"
+    ],
+    "text": "Vince topft von der Keimung bzw. Bewurzelung bis zur Blüte zweimal um (drei Töpfe): kleiner Topf, dann ein Topf mit 1 bis 1,5 Litern für einen fetten, gesunden Wurzelballen, dann der finale Topf mit 10, 15 oder 25 Litern. So kann die Pflanze die Wurzeln sofort im ganzen Topf ausbreiten.",
+    "videoId": "Yzco4wHSV2c",
+    "videoTitle": "Ich beantworte 15  Fragen für 🥦Gärtner - Q&A",
+    "channel": "Vince and Weed",
+    "start": 371
+  },
+  {
+    "id": "growth-giessen-drittel-regel-03",
+    "topic": "Kritik an der 1/3-Regel",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "drittel regel",
+      "1/3 regel",
+      "gießmenge",
+      "wie viel gießen",
+      "topfvolumen",
+      "gießen"
+    ],
+    "text": "Vince hält die 1/3-Regel (ein Drittel des Topfvolumens gießen) für schlecht, da Topf- und Pflanzengröße, Jahreszeit und Lichtstärke nie gleich sind. Das ist seine persönliche Meinung.",
+    "videoId": "Yzco4wHSV2c",
+    "videoTitle": "Ich beantworte 15  Fragen für 🥦Gärtner - Q&A",
+    "channel": "Vince and Weed",
+    "start": 500
+  },
+  {
+    "id": "growth-giessen-zwei-drei-tage-04",
+    "topic": "Alle zwei bis drei Tage gießen müssen",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "gießrhythmus",
+      "wie oft gießen",
+      "wurzelfäule",
+      "topf anheben",
+      "staunässe",
+      "erde noch nass"
+    ],
+    "text": "Ist die Pflanze nach drei Tagen noch nass, war es laut Vince definitiv zu viel. Sein Ziel gegen Wurzelfäule: spätestens alle zwei, maximal drei Tage wieder gießen, unabhängig vom Topfvolumen. Dafür hebt man die Töpfe an und gießt so, dass das Verhältnis aus Feuchtigkeit und Sauerstoff im Topf stimmt.",
+    "videoId": "Yzco4wHSV2c",
+    "videoTitle": "Ich beantworte 15  Fragen für 🥦Gärtner - Q&A",
+    "channel": "Vince and Weed",
+    "start": 526
+  },
+  {
+    "id": "growth-duengen-nicht-sofort-05",
+    "topic": "Nicht sofort düngen",
+    "phases": ["germination", "seedling", "vegetative"],
+    "tags": [
+      "wann düngen",
+      "keimling düngen",
+      "jungpflanze",
+      "erste düngung",
+      "anfängerfehler",
+      "15 cm"
+    ],
+    "text": "Direkt nach dem Auflaufen mit Dünger anzufangen ist laut Vince einer der größten Anfängerfehler. Er düngt in der Wachstumsphase am liebsten gar nicht, sondern topft regelmäßig um. Als Faustregel erst düngen, wenn die Pflanze 15 bis 20 cm groß ist oder unten Mangelerscheinungen zeigt.",
+    "videoId": "Yzco4wHSV2c",
+    "videoTitle": "Ich beantworte 15  Fragen für 🥦Gärtner - Q&A",
+    "channel": "Vince and Weed",
+    "start": 556
+  },
+  {
+    "id": "growth-erde-growshop-06",
+    "topic": "Vorgedüngte Erde aus dem Growshop",
+    "phases": ["seedling", "vegetative"],
+    "tags": [
+      "erde",
+      "vorgedüngt",
+      "growshop",
+      "leicht vorgedüngt",
+      "umtopfen",
+      "substrat"
+    ],
+    "text": "Vince empfiehlt Erde aus dem Growshop, die es stark oder leicht vorgedüngt gibt. Selbst die leicht vorgedüngte Erde hat bei regelmäßigem Umtopfen alles im ausreichenden Maß, damit die Pflanze bis zur Blüte kommt.",
+    "videoId": "Yzco4wHSV2c",
+    "videoTitle": "Ich beantworte 15  Fragen für 🥦Gärtner - Q&A",
+    "channel": "Vince and Weed",
+    "start": 619
+  },
+  {
+    "id": "growth-ohne-duenger-07",
+    "topic": "Ganz ohne Dünger growen",
+    "phases": ["seedling", "vegetative", "flowering"],
+    "tags": [
+      "ohne dünger",
+      "nur wasser",
+      "erde topf wasser",
+      "balkon",
+      "ertrag",
+      "low budget"
+    ],
+    "text": "Man kann laut Vince komplett ohne Dünger growen, sollte dann aber nicht das maximale Potenzial der Pflanze erwarten. Die Ernte wird nicht so gut wie bei bedarfsgerechter Versorgung.",
+    "videoId": "Yzco4wHSV2c",
+    "videoTitle": "Ich beantworte 15  Fragen für 🥦Gärtner - Q&A",
+    "channel": "Vince and Weed",
+    "start": 651
+  }
+]
