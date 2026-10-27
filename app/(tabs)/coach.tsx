@@ -8,6 +8,7 @@ import {
   TextInput,
   ActivityIndicator,
   Keyboard,
+  Dimensions,
 } from "react-native";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
@@ -47,10 +48,13 @@ export default function CoachScreen() {
       setKeyboardLift(v);
     };
     const show = Keyboard.addListener("keyboardDidShow", (e) => {
-      const keyboardTop = e.endCoordinates.screenY;
+      // screenY is unreliable with Android edge-to-edge; use the height instead
+      const keyboardHeight = e.endCoordinates.height;
       setTimeout(() => {
         inputBarRef.current?.measureInWindow((_x, y, _w, h) => {
-          const overlap = y + h - keyboardTop;
+          const distanceToScreenBottom =
+            Dimensions.get("screen").height - (y + h);
+          const overlap = keyboardHeight - distanceToScreenBottom;
           setLift(Math.max(0, keyboardLiftRef.current + overlap));
           setTimeout(
             () => scrollViewRef.current?.scrollToEnd({ animated: true }),
