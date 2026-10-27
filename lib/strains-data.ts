@@ -55,7 +55,6 @@ export interface Strain {
   genetics: string;
   breeder: string;
   imageUrl?: string;
-  affiliateLinks: AffiliateLink[];
   isPremium?: boolean;
 }
 
@@ -82,6 +81,14 @@ export interface StrainReview {
   images?: string[];
   createdAt: Date;
   helpful: number;
+}
+
+/** Search link instead of invented shop URLs/prices: we have no verified partner deals. */
+export function strainSearchUrl(
+  strain: Pick<Strain, "name" | "breeder">,
+): string {
+  const q = `${strain.name} ${strain.breeder} Samen`;
+  return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
 }
 
 // Affiliate partner shops
@@ -125,24 +132,6 @@ export const STRAINS_DATABASE: Strain[] = [
     ],
     genetics: "Afghani x Thai",
     breeder: "Sensi Seeds",
-    affiliateLinks: [
-      {
-        shop: "Sensi Seeds",
-        url: "https://sensiseeds.com/northern-lights",
-        price: 29.99,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-      {
-        shop: "Royal Queen Seeds",
-        url: "https://royalqueenseeds.com/northern-lights",
-        price: 25.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-    ],
   },
   {
     id: "white-widow",
@@ -175,24 +164,6 @@ export const STRAINS_DATABASE: Strain[] = [
     ],
     genetics: "Brazilian Sativa x South Indian Indica",
     breeder: "Green House Seeds",
-    affiliateLinks: [
-      {
-        shop: "Dutch Passion",
-        url: "https://dutch-passion.com/white-widow",
-        price: 32.5,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-      {
-        shop: "Royal Queen Seeds",
-        url: "https://royalqueenseeds.com/white-widow",
-        price: 27.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-    ],
   },
   {
     id: "gorilla-glue",
@@ -227,24 +198,6 @@ export const STRAINS_DATABASE: Strain[] = [
     genetics: "Chem's Sister x Sour Dubb x Chocolate Diesel",
     breeder: "GG Strains",
     isPremium: true,
-    affiliateLinks: [
-      {
-        shop: "Barney's Farm",
-        url: "https://barneysfarm.com/gorilla-glue",
-        price: 45.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-      {
-        shop: "Fast Buds",
-        url: "https://fastbuds.com/gorilla-glue-auto",
-        price: 35.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "autoflower",
-      },
-    ],
   },
   {
     id: "blue-dream",
@@ -278,24 +231,6 @@ export const STRAINS_DATABASE: Strain[] = [
     ],
     genetics: "Blueberry x Haze",
     breeder: "DJ Short",
-    affiliateLinks: [
-      {
-        shop: "Royal Queen Seeds",
-        url: "https://royalqueenseeds.com/blue-dream",
-        price: 29.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-      {
-        shop: "Fast Buds",
-        url: "https://fastbuds.com/blue-dream-auto",
-        price: 32.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "autoflower",
-      },
-    ],
   },
   {
     id: "og-kush",
@@ -331,24 +266,6 @@ export const STRAINS_DATABASE: Strain[] = [
     genetics: "Chemdawg x Hindu Kush",
     breeder: "Unknown",
     isPremium: true,
-    affiliateLinks: [
-      {
-        shop: "Sensi Seeds",
-        url: "https://sensiseeds.com/og-kush",
-        price: 39.99,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-      {
-        shop: "Barney's Farm",
-        url: "https://barneysfarm.com/og-kush",
-        price: 42.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-    ],
   },
   {
     id: "amnesia-haze",
@@ -382,24 +299,6 @@ export const STRAINS_DATABASE: Strain[] = [
     ],
     genetics: "South Asian x Jamaican x Hawaiian",
     breeder: "Soma Seeds",
-    affiliateLinks: [
-      {
-        shop: "Royal Queen Seeds",
-        url: "https://royalqueenseeds.com/amnesia-haze",
-        price: 35.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-      {
-        shop: "Dutch Passion",
-        url: "https://dutch-passion.com/amnesia-haze",
-        price: 38.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-    ],
   },
   {
     id: "critical-auto",
@@ -432,24 +331,6 @@ export const STRAINS_DATABASE: Strain[] = [
     ],
     genetics: "Critical x Ruderalis",
     breeder: "Royal Queen Seeds",
-    affiliateLinks: [
-      {
-        shop: "Royal Queen Seeds",
-        url: "https://royalqueenseeds.com/critical-auto",
-        price: 22.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "autoflower",
-      },
-      {
-        shop: "Fast Buds",
-        url: "https://fastbuds.com/critical-auto",
-        price: 25.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "autoflower",
-      },
-    ],
   },
   {
     id: "girl-scout-cookies",
@@ -484,24 +365,6 @@ export const STRAINS_DATABASE: Strain[] = [
     genetics: "OG Kush x Durban Poison",
     breeder: "Cookie Family",
     isPremium: true,
-    affiliateLinks: [
-      {
-        shop: "Barney's Farm",
-        url: "https://barneysfarm.com/gsc",
-        price: 48.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "feminized",
-      },
-      {
-        shop: "Fast Buds",
-        url: "https://fastbuds.com/gsc-auto",
-        price: 38.0,
-        currency: "EUR",
-        seedCount: 3,
-        type: "autoflower",
-      },
-    ],
   },
 ];
 

@@ -14,7 +14,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
-import { STRAINS_DATABASE } from "@/lib/strains-data";
+import { STRAINS_DATABASE, strainSearchUrl } from "@/lib/strains-data";
 
 type TabType = "shop" | "auctions" | "raffles" | "deals" | "strains";
 type CategoryType =
@@ -562,23 +562,14 @@ export default function MarketplaceScreen() {
                   />
                 </View>
 
-                {/* Buy Links */}
-                {strain.affiliateLinks && strain.affiliateLinks.length > 0 && (
-                  <View className="flex-row gap-2 mt-3 pt-3 border-t border-border">
-                    <Text className="text-xs text-muted">Kaufen bei:</Text>
-                    {strain.affiliateLinks.slice(0, 2).map((link, i) => (
-                      <TouchableOpacity
-                        key={i}
-                        className="bg-primary/20 px-2 py-1 rounded"
-                        onPress={() => Linking.openURL(link.url)}
-                      >
-                        <Text className="text-xs text-primary">
-                          {link.shop}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                )}
+                <TouchableOpacity
+                  className="mt-3 pt-3 border-t border-border"
+                  onPress={() => Linking.openURL(strainSearchUrl(strain))}
+                >
+                  <Text className="text-xs text-primary">
+                    🔎 Samen dieser Sorte suchen
+                  </Text>
+                </TouchableOpacity>
               </TouchableOpacity>
             ))}
 

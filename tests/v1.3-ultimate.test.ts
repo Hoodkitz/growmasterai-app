@@ -108,7 +108,9 @@ describe("Grow Tools", () => {
       const estimate = estimateYield(400, 4, "intermediate", "soil");
       expect(estimate.minGrams).toBeGreaterThan(0);
       expect(estimate.maxGrams).toBeGreaterThan(estimate.minGrams);
-      expect(estimate.avgGrams).toBe(Math.round((estimate.minGrams + estimate.maxGrams) / 2));
+      expect(estimate.avgGrams).toBe(
+        Math.round((estimate.minGrams + estimate.maxGrams) / 2),
+      );
     });
 
     it("should give higher yields for experts", () => {
@@ -155,9 +157,10 @@ describe("Strains Database", () => {
     });
   });
 
-  it("should have affiliate links for strains", () => {
-    const strainsWithLinks = STRAINS_DATABASE.filter((s: any) => s.affiliateLinks && s.affiliateLinks.length > 0);
-    expect(strainsWithLinks.length).toBeGreaterThan(0);
+  it("has no invented purchase data (prices / shop URLs) on strains", () => {
+    expect(
+      STRAINS_DATABASE.every((s: any) => s.affiliateLinks === undefined),
+    ).toBe(true);
   });
 });
 
@@ -185,7 +188,10 @@ describe("News Data", () => {
 
 describe("Locations Data", () => {
   it("no demo shops/members are exported any more (real POI data lives in locations-overpass tests)", async () => {
-    const mod = (await import("../lib/locations-data")) as Record<string, unknown>;
+    const mod = (await import("../lib/locations-data")) as Record<
+      string,
+      unknown
+    >;
     expect(mod.MOCK_SHOPS).toBeUndefined();
     expect(mod.MOCK_CLUBS).toBeUndefined();
     expect(mod.MOCK_NEARBY_MEMBERS).toBeUndefined();

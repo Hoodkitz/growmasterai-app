@@ -45,6 +45,7 @@ import {
 import { minimumNextBid } from "@/lib/auction-rules";
 import {
   STRAINS_DATABASE,
+  strainSearchUrl,
   getDifficultyLabel,
   getDifficultyColor,
   getTypeLabel,
@@ -924,6 +925,8 @@ export default function CommunityScreen() {
                   { id: "problems", label: "Probleme" },
                   { id: "harvest", label: "Ernte" },
                   { id: "equipment", label: "Equipment" },
+                  { id: "advanced", label: "Fortgeschritten" },
+                  { id: "strains", label: "Sorten" },
                 ].map((cat) => (
                   <TouchableOpacity
                     key={cat.id}
@@ -976,8 +979,8 @@ export default function CommunityScreen() {
                     {video.title}
                   </Text>
                   <View className="flex-row items-center gap-2">
-                    <Text className="text-xs text-muted">
-                      Auf YouTube suchen
+                    <Text className="text-xs text-muted" numberOfLines={1}>
+                      {video.channel} · YouTube
                     </Text>
                     <View
                       className={`px-2 py-0.5 rounded-full ${
@@ -1142,36 +1145,14 @@ export default function CommunityScreen() {
                   </View>
                 </View>
 
-                {/* Affiliate Links */}
-                {strain.affiliateLinks.length > 0 && (
-                  <View className="mt-3 pt-3 border-t border-border">
-                    <Text className="text-xs text-muted mb-2">
-                      🛒 Samen kaufen:
-                    </Text>
-                    <ScrollView
-                      horizontal
-                      style={{ flexGrow: 0 }}
-                      showsHorizontalScrollIndicator={false}
-                    >
-                      <View className="flex-row gap-2">
-                        {strain.affiliateLinks.map((link, index) => (
-                          <TouchableOpacity
-                            key={index}
-                            className="bg-primary/10 px-3 py-2 rounded-lg flex-row items-center gap-2"
-                            onPress={() => Linking.openURL(link.url)}
-                          >
-                            <Text className="text-sm font-medium text-primary">
-                              {link.shop}
-                            </Text>
-                            <Text className="text-xs text-muted">
-                              €{link.price}
-                            </Text>
-                          </TouchableOpacity>
-                        ))}
-                      </View>
-                    </ScrollView>
-                  </View>
-                )}
+                <TouchableOpacity
+                  className="mt-3 pt-3 border-t border-border"
+                  onPress={() => Linking.openURL(strainSearchUrl(strain))}
+                >
+                  <Text className="text-sm font-medium text-primary">
+                    🔎 Samen dieser Sorte suchen
+                  </Text>
+                </TouchableOpacity>
               </TouchableOpacity>
             ))}
           </View>
