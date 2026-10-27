@@ -14,6 +14,8 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { PlantQrCode } from "@/components/plant-qr-code";
+import { PhaseTipsList } from "@/components/phase-tips-list";
+import { tipsForPhase } from "@/lib/phase-tips";
 import { useColors } from "@/hooks/use-colors";
 import {
   CareEntry,
@@ -273,6 +275,13 @@ export default function PlantCardScreen() {
               </View>
             ))
           )}
+        </View>
+
+        <View className="bg-surface rounded-2xl p-4 border border-border gap-3">
+          <Text className="text-lg font-semibold text-foreground">
+            💡 Tipps für die Phase „{PHASE_LABEL[plant.phase]}“
+          </Text>
+          <PhaseTipsList tips={tipsForPhase(plant.phase)} />
         </View>
 
         <View className="bg-surface rounded-2xl p-4 border border-border items-center gap-3">

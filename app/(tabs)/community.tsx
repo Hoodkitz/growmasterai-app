@@ -55,6 +55,8 @@ import {
 } from "@/lib/strains-data";
 import { CommunitySkeletonLoader } from "@/components/skeleton-loaders";
 import { ErrorDisplay } from "@/components/error-display";
+import { PhaseTipsList } from "@/components/phase-tips-list";
+import { TIP_PHASE_LABEL, TipPhase, tipsForPhase } from "@/lib/phase-tips";
 
 const { width } = Dimensions.get("window");
 
@@ -188,6 +190,7 @@ export default function CommunityScreen() {
   };
   const [tutorialCategory, setTutorialCategory] = useState<string>("all");
   const [expandedStrain, setExpandedStrain] = useState<string | null>(null);
+  const [tipPhase, setTipPhase] = useState<TipPhase | null>(null);
   const [strainFilter, setStrainFilter] = useState<
     "all" | "beginner" | "indica" | "sativa"
   >("all");
@@ -949,6 +952,38 @@ export default function CommunityScreen() {
                 ))}
               </View>
             </ScrollView>
+
+            {/* Tips by phase */}
+            <View className="bg-surface rounded-xl border border-border p-4 gap-3">
+              <Text className="text-base font-semibold text-foreground">
+                💡 Tipps nach Phase
+              </Text>
+              <View className="flex-row flex-wrap gap-2">
+                {(Object.keys(TIP_PHASE_LABEL) as TipPhase[]).map((phase) => (
+                  <TouchableOpacity
+                    key={phase}
+                    className={`px-3 py-1.5 rounded-full ${tipPhase === phase ? "bg-primary" : "bg-background border border-border"}`}
+                    onPress={() =>
+                      setTipPhase((cur) => (cur === phase ? null : phase))
+                    }
+                  >
+                    <Text
+                      className={`text-sm ${tipPhase === phase ? "text-white" : "text-foreground"}`}
+                    >
+                      {TIP_PHASE_LABEL[phase]}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              {tipPhase ? (
+                <PhaseTipsList tips={tipsForPhase(tipPhase)} />
+              ) : (
+                <Text className="text-xs text-muted">
+                  Wähle eine Phase. Jeder Tipp verlinkt die Stelle im Video, in
+                  der er erklärt wird.
+                </Text>
+              )}
+            </View>
 
             {/* Video List */}
             {filteredTutorials.map((video) => (
