@@ -9,7 +9,9 @@ import {
   RefreshControl,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import { parsePlantId } from "@/lib/plant-qr";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
@@ -44,6 +46,10 @@ const STORAGE_KEY = "plants";
 
 export default function PlantsScreen() {
   const colors = useColors();
+  const router = useRouter();
+  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+  const [showScanner, setShowScanner] = useState(false);
+  const scanHandled = useRef(false);
   const [plants, setPlants] = useState<Plant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -172,6 +178,24 @@ export default function PlantsScreen() {
     return diff;
   };
 
+  const openScanner = async () => {
+    if (!cameraPermission?.granted) {
+      const res = await requestCameraPermission();
+      if (!res.granted) return;
+    }
+    scanHandled.current = false;
+    setShowScanner(true);
+  };
+
+  const onScanned = ({ data }: { data: string }) => {
+    if (scanHandled.current) return;
+    const id = parsePlantId(data);
+    if (!id) return; // not one of our labels: keep scanning
+    scanHandled.current = true;
+    setShowScanner(false);
+    router.push({ pathname: "/plant/[id]", params: { id } });
+  };
+
   const handleAddPress = () => {
     if (canAdd) {
       setShowModal(true);
@@ -189,6 +213,15 @@ export default function PlantsScreen() {
             <Text className="text-sm text-muted">{item.strain}</Text>
           )}
         </View>
+        <TouchableOpacity
+          accessibilityLabel="Pflanzenkarte und QR-Etikett"
+          className="p-2"
+          onPress={() =>
+            router.push({ pathname: "/plant/[id]", params: { id: item.id } })
+          }
+        >
+          <IconSymbol name="qrcode" size={24} color={colors.primary} />
+        </TouchableOpacity>
         <TouchableOpacity className="p-2" onPress={() => deletePlant(item.id)}>
           <IconSymbol name="xmark.circle.fill" size={24} color={colors.error} />
         </TouchableOpacity>
@@ -246,17 +279,30 @@ export default function PlantsScreen() {
             {plants.length !== 1 ? "n" : ""}
           </Text>
         </View>
-        <TouchableOpacity
-          className={`w-12 h-12 rounded-full items-center justify-center ${canAdd ? "bg-primary" : "bg-muted/30"}`}
-          onPress={handleAddPress}
-          disabled={!canAdd}
-        >
-          <IconSymbol
-            name="plus.circle.fill"
-            size={24}
-            color={canAdd ? "#fff" : colors.muted}
-          />
-        </TouchableOpacity>
+        <View className="flex-row items-center gap-3">
+          <TouchableOpacity
+            accessibilityLabel="QR-Etikett scannen"
+            className="w-12 h-12 rounded-full items-center justify-center bg-surface border border-border"
+            onPress={openScanner}
+          >
+            <IconSymbol
+              name="qrcode.viewfinder"
+              size={24}
+              color={colors.primary}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            className={`w-12 h-12 rounded-full items-center justify-center ${canAdd ? "bg-primary" : "bg-muted/30"}`}
+            onPress={handleAddPress}
+            disabled={!canAdd}
+          >
+            <IconSymbol
+              name="plus.circle.fill"
+              size={24}
+              color={canAdd ? "#fff" : colors.muted}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Limit Warning */}
@@ -302,6 +348,33 @@ export default function PlantsScreen() {
           }
         />
       )}
+
+      {/* QR scanner */}
+      <Modal
+        visible={showScanner}
+        animationType="slide"
+        onRequestClose={() => setShowScanner(false)}
+      >
+        <View className="flex-1 bg-black">
+          <CameraView
+            style={{ flex: 1 }}
+            facing="back"
+            barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
+            onBarcodeScanned={onScanned}
+          />
+          <View className="absolute bottom-12 left-0 right-0 items-center gap-3">
+            <Text className="text-white text-base">
+              Halte die Kamera auf ein Pflanzen-Etikett
+            </Text>
+            <TouchableOpacity
+              className="bg-white/90 px-6 py-3 rounded-xl"
+              onPress={() => setShowScanner(false)}
+            >
+              <Text className="font-semibold text-black">Schließen</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* Add Plant Modal */}
       <Modal

@@ -21,6 +21,7 @@ const MAPPING: Record<string, MaterialIconName> = {
   "xmark.circle.fill": "cancel",
   "checkmark.circle.fill": "check-circle",
   circle: "radio-button-unchecked",
+  "qrcode.viewfinder": "qr-code-scanner",
   "arrow.up.circle.fill": "arrow-circle-up",
   "arrow.down.circle.fill": "arrow-circle-down",
 
