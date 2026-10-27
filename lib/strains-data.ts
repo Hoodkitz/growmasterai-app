@@ -1,3 +1,5 @@
+import { EXTRA_STRAINS } from "./strains-extra";
+
 // Strain database. Every entry is taken from the breeder's own product page (see `source`).
 // Only facts stated there are stored; anything the page does not state is left out
 // (no invented ratings, prices, effects or grow tips). Add new strains the same way.
@@ -37,7 +39,7 @@ export interface Strain {
   isPremium?: boolean;
 }
 
-export const STRAINS_DATABASE: Strain[] = [
+const CORE_STRAINS: Strain[] = [
   {
     id: "northern-lights-sensi",
     name: "Northern Lights (fem.)",
@@ -1671,6 +1673,8 @@ export const STRAINS_DATABASE: Strain[] = [
     ],
   },
 ];
+
+export const STRAINS_DATABASE: Strain[] = [...CORE_STRAINS, ...EXTRA_STRAINS];
 
 /** The database entry a plant was created from (plants store the strain name). */
 export function findStrainByName(name?: string | null): Strain | undefined {
