@@ -3,6 +3,8 @@ import {
   mergeRemedies,
   sanitizeRemedies,
   suggestRemedies,
+  mergeCoachProducts,
+  suggestCoachProducts,
 } from "../shared/remedies";
 import { buildRemedyLink } from "../lib/affiliates";
 
@@ -86,5 +88,31 @@ describe("buildRemedyLink", () => {
   it("never lets the search term change the host", () => {
     const { url } = buildRemedyLink("https://evil.example/x", "t-21");
     expect(new URL(url).hostname).toBe("www.amazon.de");
+  });
+});
+
+describe("coach products", () => {
+  it("suggests matching equipment for coach topics", () => {
+    const names = suggestCoachProducts(
+      "Wie prüfe ich die Trichome vor der Ernte und wann topfe ich um?",
+    ).map((r) => r.name);
+    expect(names.some((n) => n.startsWith("Lupe"))).toBe(true);
+    expect(names).toContain("Stofftöpfe (Fabric Pots)");
+  });
+
+  it("puts model proposals first, de-duplicates and caps at four", () => {
+    const merged = mergeCoachProducts(
+      [{ name: "pH-Messgerät", purpose: "p", searchTerm: "pH Messgerät" }],
+      "Der pH-Wert, die Luftfeuchte, das Gießen, Düngen, Trocknen und der Zelt-Abluft Geruch",
+    );
+    expect(merged[0].name).toBe("pH-Messgerät");
+    expect(merged.length).toBeLessThanOrEqual(4);
+    expect(new Set(merged.map((m) => m.name.toLowerCase())).size).toBe(
+      merged.length,
+    );
+  });
+
+  it("returns nothing for unrelated text and ignores invalid model output", () => {
+    expect(mergeCoachProducts("kaputt", "Hallo Welt")).toEqual([]);
   });
 });

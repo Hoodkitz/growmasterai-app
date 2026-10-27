@@ -24,6 +24,8 @@ import { TIER_LIMITS } from "@/lib/subscription";
 import { InlineError } from "@/components/error-display";
 import { getCoachErrorMessage } from "@/lib/error-handling";
 import { CoachSkeletonLoader } from "@/components/skeleton-loaders";
+import { RemedyList } from "@/components/remedy-list";
+import type { Remedy } from "@/shared/remedies";
 
 const COACH_STORAGE_KEY = "@growmaster_coach_messages";
 
@@ -32,6 +34,7 @@ interface Message {
   role: "user" | "assistant" | "error";
   content: string;
   tips?: string[];
+  remedies?: Remedy[];
   error?: ReturnType<typeof getCoachErrorMessage>;
   retryQuestion?: string;
 }
@@ -107,6 +110,7 @@ export default function CoachScreen() {
         role: "assistant",
         content: data.answer,
         tips: data.tips,
+        remedies: data.remedies,
       };
       setMessages((prev) => [...prev, assistantMessage]);
       setTimeout(
@@ -262,6 +266,13 @@ export default function CoachScreen() {
                   ))}
                 </View>
               )}
+
+              {message.remedies && message.remedies.length > 0 ? (
+                <RemedyList
+                  remedies={message.remedies}
+                  title="🛒 Passende Hilfsmittel"
+                />
+              ) : null}
             </View>
           ))}
 
