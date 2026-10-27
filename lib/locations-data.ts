@@ -267,12 +267,15 @@ export async function fetchNearbyShops(
   let response: Response | null = null;
   let reachedServer = false;
   for (const endpoint of OVERPASS_ENDPOINTS) {
+    // AbortSignal.timeout() does not exist in React Native's Hermes runtime
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), OVERPASS_TIMEOUT_MS);
     try {
       const res = await fetch(endpoint, {
         method: "POST",
         headers: OVERPASS_HEADERS,
         body: `data=${encodeURIComponent(buildOverpassQuery(lat, lon))}`,
-        signal: AbortSignal.timeout(OVERPASS_TIMEOUT_MS),
+        signal: controller.signal,
       });
       reachedServer = true;
       if (res.ok) {
@@ -281,6 +284,8 @@ export async function fetchNearbyShops(
       }
     } catch {
       // network error or timeout: try the next mirror
+    } finally {
+      clearTimeout(timer);
     }
   }
   if (!response) return staleFallback(reachedServer ? "api_error" : "offline");
