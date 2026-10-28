@@ -167,6 +167,10 @@ export default function RootLayout() {
                         options={{ presentation: "modal" }}
                       />
                       <Stack.Screen
+                        name="wissen"
+                        options={{ presentation: "modal" }}
+                      />
+                      <Stack.Screen
                         name="messages"
                         options={{ presentation: "modal" }}
                       />
