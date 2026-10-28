@@ -7,6 +7,7 @@ import {
   searchKnowledge,
   type KnowledgeEntry,
 } from "./knowledge";
+import { browseKnowledge, hasPaidKnowledgeAccess } from "./knowledge/access";
 import { z } from "zod";
 import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
@@ -682,8 +683,27 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
           limit: input.limit,
         }).map((h) => h.entry),
       ),
-    /** Whole knowledge base; the app caches it for offline reading. */
-    all: publicProcedure.query(() => KNOWLEDGE),
+    /** Free users get a limited teaser, paying users everything. */
+    browse: publicProcedure
+      .input(
+        z.object({
+          query: z.string().max(200).default(""),
+          phase: z.enum(KNOWLEDGE_PHASES as [string, ...string[]]).optional(),
+        }),
+      )
+      .query(({ ctx, input }) =>
+        browseKnowledge(KNOWLEDGE, ctx.user, input.query, input.phase),
+      ),
+    /** Whole knowledge base for the offline cache; paying users only. */
+    all: publicProcedure.query(({ ctx }) => {
+      if (!hasPaidKnowledgeAccess(ctx.user)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Offline-Wissen ist Teil von Premium und Pro.",
+        });
+      }
+      return KNOWLEDGE;
+    }),
     forPhase: publicProcedure
       .input(
         z.object({ phase: z.enum(KNOWLEDGE_PHASES as [string, ...string[]]) }),
