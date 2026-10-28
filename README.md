@@ -11,42 +11,49 @@ Eine React Native App mit intelligenter Pflanzendiagnose, AI-Coach, Community-Fe
 ## ✨ Features
 
 ### 🤖 KI-Funktionen
+
 - **Pflanzen-Diagnose**: Gemini Vision API analysiert Pflanzenfotos und erkennt Probleme
 - **AI Coach**: Chatbot mit Grow-Expertise für Fragen rund um den Anbau
 - **Smart-Tipps**: Kontextbasierte Empfehlungen und Ratschläge
 
 ### 🌿 Pflanzen-Management
+
 - **Meine Pflanzen**: Verwaltung mehrerer Pflanzen mit Details
 - **Grow Journal**: Tägliche Einträge mit Fotos, Notizen und Messwerten
 - **Wachstums-Tracking**: Visualisierung des Fortschritts
 - **Strain-Datenbank**: Informationen zu verschiedenen Cannabis-Sorten
 
 ### 👥 Community & Social
-> Hinweis: Shops, Clubs und der "Member Radar" nutzen aktuell Demo-Daten (fiktiv, keine echten Orte/Nutzer); Tutorial-Videos verlinken auf YouTube-Suchen.
+
+> Hinweis: Shops kommen live aus OpenStreetMap; Clubs werden nur nach manueller Prüfung eingetragen (Liste aktuell leer, Suche pro Bundesland verlinkt). Es gibt keine Demo-Daten.
 
 - **Community Feed**: Teile Grows, Erfolge und Erfahrungen
 - **Likes & Kommentare**: Interagiere mit anderen Growern
 - **Direktnachrichten**: Private Kommunikation
 
 ### 🎮 Gamification
+
 - **Level-System**: Sammle XP durch Aktivitäten
 - **Achievements**: Freischaltbare Erfolge und Badges
 - **Streak-System**: Tägliche Login-Belohnungen
 - **Leaderboard**: Vergleiche dich mit anderen
 
 ### 🛒 Marketplace
+
 - **Produkt-Katalog**: Seeds, Nährstoffe, Equipment
 - **Vendor Portal**: Händler können Produkte einstellen
 - **Affiliate-System**: Verdiene Provisionen
 - **Bewertungen**: Community-basierte Produktbewertungen
 
 ### 💰 Monetarisierung
+
 - **Freemium Model**: 3 Tier-System (Free, Premium, Pro)
 - **In-App-Purchases**: RevenueCat Integration
 - **Werbung**: Banner-Ads für Free-Nutzer
 - **Feature-Limits**: Gestaffelte Zugriffsbeschränkungen
 
 ### 🔐 Admin-Features
+
 - **Admin Dashboard**: Nutzer- und Content-Verwaltung
 - **Moderation**: Community-Beiträge prüfen und moderieren
 - **Analytics**: Nutzungsstatistiken und Metriken
@@ -55,6 +62,7 @@ Eine React Native App mit intelligenter Pflanzendiagnose, AI-Coach, Community-Fe
 ## 🏗️ Tech Stack
 
 ### Frontend
+
 - **Framework**: React Native 0.81.5
 - **UI Library**: Expo SDK 54
 - **Routing**: Expo Router v6 (file-based routing)
@@ -63,6 +71,7 @@ Eine React Native App mit intelligenter Pflanzendiagnose, AI-Coach, Community-Fe
 - **Icons**: SF Symbols (iOS), Material Icons (Android)
 
 ### Backend
+
 - **API**: tRPC (type-safe API)
 - **Server**: Express.js
 - **Database**: MySQL
@@ -71,12 +80,14 @@ Eine React Native App mit intelligenter Pflanzendiagnose, AI-Coach, Community-Fe
 - **AI**: Google Gemini Vision API
 
 ### Infrastructure
+
 - **Monetization**: RevenueCat
 - **Push Notifications**: Expo Notifications
 - **Storage**: Local storage (AsyncStorage, SecureStore)
 - **Image Handling**: Expo Image Picker, Expo Camera
 
 ### Development
+
 - **Language**: TypeScript
 - **Package Manager**: pnpm
 - **Testing**: Vitest
@@ -261,16 +272,16 @@ growmaster-app/
 
 ### Subscription Tiers
 
-| Feature | Free | Premium | Pro |
-|---------|------|---------|-----|
-| Pflanzen | 2 | 10 | Unlimited |
-| Diagnosen/Tag | 3 | 10 | Unlimited |
-| Coach Messages/Tag | 5 | 20 | Unlimited |
-| Journal Einträge | 20 | 100 | Unlimited |
-| Werbung | ✅ | ❌ | ❌ |
-| Community Posts | 5/Tag | 20/Tag | Unlimited |
-| Marketplace | Browse | Browse | Sell |
-| Prioritäts-Support | ❌ | ✅ | ✅ |
+| Feature            | Free   | Premium | Pro       |
+| ------------------ | ------ | ------- | --------- |
+| Pflanzen           | 2      | 10      | Unlimited |
+| Diagnosen/Tag      | 3      | 10      | Unlimited |
+| Coach Messages/Tag | 5      | 20      | Unlimited |
+| Journal Einträge   | 20     | 100     | Unlimited |
+| Werbung            | ✅     | ❌      | ❌        |
+| Community Posts    | 5/Tag  | 20/Tag  | Unlimited |
+| Marketplace        | Browse | Browse  | Sell      |
+| Prioritäts-Support | ❌     | ✅      | ✅        |
 
 ### Authentication Flow
 
@@ -320,6 +331,7 @@ colors: {
 ## 📊 Database Schema
 
 Key tables:
+
 - `users` - User accounts
 - `plants` - User's plants
 - `journal_entries` - Daily grow logs

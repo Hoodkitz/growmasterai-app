@@ -3,8 +3,8 @@
 ## Angaben gemäß § 5 TMG
 
 **GrowMaster AI**
-Julien Paarmann
-Klausing 19
+Julien Nicolas Paarmann
+Klausingring 19
 13627 Berlin
 Deutschland
 
@@ -15,8 +15,8 @@ Deutschland
 
 ## Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV
 
-Julien Paarmann
-Klausing 19, 13627 Berlin
+Julien Nicolas Paarmann
+Klausingring 19, 13627 Berlin
 
 ## EU-Streitschlichtung
 

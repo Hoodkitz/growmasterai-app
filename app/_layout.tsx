@@ -14,6 +14,7 @@ import { AuthProvider } from "@/lib/auth-context";
 import { PushRegistrar } from "@/components/push-registrar";
 import { GamificationProvider } from "@/lib/gamification-context";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { initSentry } from "@/lib/sentry";
 import {
   SafeAreaFrameContext,
   SafeAreaInsetsContext,
@@ -34,6 +35,8 @@ const DEFAULT_WEB_FRAME: Rect = { x: 0, y: 0, width: 0, height: 0 };
 export const unstable_settings = {
   anchor: "(tabs)",
 };
+
+initSentry();
 
 export default function RootLayout() {
   const initialInsets = initialWindowMetrics?.insets ?? DEFAULT_WEB_INSETS;
