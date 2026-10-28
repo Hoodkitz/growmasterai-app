@@ -7,6 +7,13 @@ import {
   searchKnowledge,
   type KnowledgeEntry,
 } from "./knowledge";
+import {
+  FREE_BROWSE_LIMIT,
+  FREE_PHASE_LIMIT,
+  browseKnowledge,
+  hasPaidKnowledgeAccess,
+  toTeaser,
+} from "./knowledge/access";
 import { z } from "zod";
 import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
@@ -676,21 +683,48 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
           limit: z.number().int().min(1).max(10).default(5),
         }),
       )
-      .query(({ input }) =>
-        searchKnowledge(input.query, {
+      .query(({ ctx, input }) => {
+        const hits = searchKnowledge(input.query, {
           phase: input.phase as KnowledgeEntry["phases"][number] | undefined,
           limit: input.limit,
-        }).map((h) => h.entry),
+        }).map((h) => h.entry);
+        return hasPaidKnowledgeAccess(ctx.user)
+          ? hits
+          : hits.slice(0, FREE_BROWSE_LIMIT).map(toTeaser);
+      }),
+    /** Free users get a limited teaser, paying users everything. */
+    browse: publicProcedure
+      .input(
+        z.object({
+          query: z.string().max(200).default(""),
+          phase: z.enum(KNOWLEDGE_PHASES as [string, ...string[]]).optional(),
+        }),
+      )
+      .query(({ ctx, input }) =>
+        browseKnowledge(KNOWLEDGE, ctx.user, input.query, input.phase),
       ),
-    /** Whole knowledge base; the app caches it for offline reading. */
-    all: publicProcedure.query(() => KNOWLEDGE),
+    /** Whole knowledge base for the offline cache; paying users only. */
+    all: publicProcedure.query(({ ctx }) => {
+      if (!hasPaidKnowledgeAccess(ctx.user)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Offline-Wissen ist Teil von Premium und Pro.",
+        });
+      }
+      return KNOWLEDGE;
+    }),
     forPhase: publicProcedure
       .input(
         z.object({ phase: z.enum(KNOWLEDGE_PHASES as [string, ...string[]]) }),
       )
-      .query(({ input }) =>
-        knowledgeForPhase(input.phase as KnowledgeEntry["phases"][number]),
-      ),
+      .query(({ ctx, input }) => {
+        const entries = knowledgeForPhase(
+          input.phase as KnowledgeEntry["phases"][number],
+        );
+        return hasPaidKnowledgeAccess(ctx.user)
+          ? entries
+          : entries.slice(0, FREE_PHASE_LIMIT);
+      }),
   }),
 
   // Plants Management
