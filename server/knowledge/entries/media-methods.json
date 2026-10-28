@@ -1,1 +1,1048 @@
-[]
+[
+  {
+    "id": "media-coco-01",
+    "topic": "Kokos als Mittelweg",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "kokos",
+      "coco",
+      "erde",
+      "hydro",
+      "substrat",
+      "mikroorganismen"
+    ],
+    "text": "Anbau auf Kokos ist laut Video ein Mittelweg zwischen Erde und Hydro. Kokossubstrat hat im Grunde kein Mikroleben und enthält keine Nährstoffe.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 23
+  },
+  {
+    "id": "media-coco-02",
+    "topic": "Dünger für Kokos",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "kokos",
+      "coco",
+      "dünger",
+      "mineraldünger",
+      "organisch",
+      "mikroleben"
+    ],
+    "text": "Weil Kokos kein Mikroleben hat, ist organischer Dünger dort nicht unbedingt geeignet; am besten arbeitet man mit Mineraldünger bzw. speziellem Kokosdünger. Es gibt Ausnahmen, etwa einige Bio-Linien.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 62
+  },
+  {
+    "id": "media-coco-03",
+    "topic": "Calcium und Magnesium in Kokos",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "kokos",
+      "coco",
+      "calcium",
+      "magnesium",
+      "puffer",
+      "ph"
+    ],
+    "text": "Damit Dünger in Kokos normal aufgenommen werden kann, braucht das Medium eine bestimmte Menge Calcium und Magnesium; die meisten Kokosdünger enthalten beides. Beim richtigen pH-Wert sind diese beiden Elemente ausreichend verfügbar.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 119
+  },
+  {
+    "id": "media-coco-04",
+    "topic": "Gepuffertes und ungepuffertes Kokos",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "kokos",
+      "coco",
+      "gepuffert",
+      "puffer",
+      "calcium",
+      "magnesium",
+      "kokosmatten"
+    ],
+    "text": "Man sollte prüfen, ob das verwendete Kokossubstrat schon gepuffert ist. Ist es nicht gepuffert, etwa bei Kokosmatten mancher Hersteller, muss ein Puffer-Präparat mit Calcium und Magnesium ergänzt werden.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 256
+  },
+  {
+    "id": "media-coco-05",
+    "topic": "Kokos trocknet schnell aus",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "kokos",
+      "coco",
+      "gießen",
+      "bewässerung",
+      "tropfbewässerung",
+      "dünger",
+      "austrocknen"
+    ],
+    "text": "Kokos enthält keine Nährstoffe und trocknet relativ schnell aus, deshalb wird mehrmals am Tag gegossen und gedüngt. Viele Kokos-Grower nutzen ein Tropfbewässerungssystem, damit jeder Topf die richtige Menge Wasser und Dünger bekommt.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 180
+  },
+  {
+    "id": "media-coco-06",
+    "topic": "Runoff bei Kokos",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "kokos",
+      "coco",
+      "runoff",
+      "salze",
+      "überdüngung",
+      "gießen",
+      "spülen"
+    ],
+    "text": "Bei Kokos gibt man häufig Wasser und relativ viel Mineraldünger, wodurch sich Salze im Topf absetzen können. Deshalb gießt man so viel, dass 10 bis 20 Prozent unten als Runoff wieder herauslaufen und überflüssige Salze ausgespült werden.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 284
+  },
+  {
+    "id": "media-coco-07",
+    "topic": "Topfgröße und Entwässerung bei Kokos",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "kokos",
+      "coco",
+      "topfgröße",
+      "topf",
+      "drainage",
+      "entwässerung",
+      "löcher"
+    ],
+    "text": "Je größer der Topf, desto konstanter sind laut Video die Bedingungen im Wurzelbereich. Außerdem soll es genügend Entwässerung geben, zum Beispiel ausreichend Entwässerungslöcher unten im Topf.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 506
+  },
+  {
+    "id": "media-coco-08",
+    "topic": "Ebbe-Flut-System mit Kokos",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "kokos",
+      "coco",
+      "ebbe flut",
+      "autopot",
+      "bewässerung",
+      "wurzelfäule",
+      "zu nass"
+    ],
+    "text": "Bei einem Ebbe-Flut-System stehen die Töpfe in einer Wanne, saugen Wasser auf und das übrige Wasser wird abgeführt. Man muss die richtige Wassermenge finden, damit das Kokos nicht zu nass wird, denn zu nass kann Wurzelfäule verursachen.",
+    "videoId": "ONLhLIg_yvM",
+    "videoTitle": "Growlands Homegrow Tutorial – Dünger: Cocos",
+    "channel": "Growland Growshop",
+    "start": 526
+  },
+  {
+    "id": "media-hydro-01",
+    "topic": "Was Hydroponik bedeutet",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "hydro",
+      "hydroponik",
+      "wasser",
+      "nährmedium",
+      "substrat",
+      "steinwolle",
+      "blähton"
+    ],
+    "text": "Hydroponik bezeichnet den Anbau auf Wasser, das Wasser ist dabei das Nährmedium. Ein Substrat wird nicht genutzt, höchstens Blähtonkugeln, Steinwollblöcke oder Neoprenringe als Halt für die Pflanze.",
+    "videoId": "Ptp_BBSOVs8",
+    "videoTitle": "Hydroponik für Anfänger - So wachsen Pflanzen 30% schneller",
+    "channel": "Dampfkugel",
+    "start": 140
+  },
+  {
+    "id": "media-hydro-02",
+    "topic": "DWC-Prinzip",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "dwc",
+      "deep water culture",
+      "hydro",
+      "sprudelstein",
+      "sauerstoff",
+      "gittertopf",
+      "eimer"
+    ],
+    "text": "Bei Deep Water Culture steht die Pflanze in einem Gittertopf im Deckel eines Eimers mit recht viel Wasser. Ein Sprudelstein versorgt das Wasser mit Sauerstoff.",
+    "videoId": "Ptp_BBSOVs8",
+    "videoTitle": "Hydroponik für Anfänger - So wachsen Pflanzen 30% schneller",
+    "channel": "Dampfkugel",
+    "start": 311
+  },
+  {
+    "id": "media-hydro-03",
+    "topic": "EC-Wert in Hydro",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ec",
+      "leitfähigkeit",
+      "hydro",
+      "dwc",
+      "nährlösung",
+      "messgerät",
+      "dosierung"
+    ],
+    "text": "Der EC-Wert zeigt die elektrische Leitfähigkeit und damit, wie stark die Nährlösung dosiert ist. Der Sprecher nennt für Sämlinge 0,8 bis 1,3 und für die Blüte 1,3 bis 2,0 oder mehr, wobei jede Pflanze unterschiedlich viel verträgt.",
+    "videoId": "Ptp_BBSOVs8",
+    "videoTitle": "Hydroponik für Anfänger - So wachsen Pflanzen 30% schneller",
+    "channel": "Dampfkugel",
+    "start": 357
+  },
+  {
+    "id": "media-hydro-04",
+    "topic": "Leitungswasser oder Osmosewasser",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "wasserqualität",
+      "leitungswasser",
+      "osmose",
+      "destilliertes wasser",
+      "ec",
+      "härte",
+      "hydro"
+    ],
+    "text": "Leitungswasser sollte man messen, da es je nach Region für Hydro geeignet sein kann oder nicht; zu hartes Wasser beeinflusst EC und pH. Der Sprecher nutzt eine Osmoseanlage und düngt bei Osmose- oder destilliertem Wasser laut Hersteller auf einen EC von 0,4 vor.",
+    "videoId": "Ptp_BBSOVs8",
+    "videoTitle": "Hydroponik für Anfänger - So wachsen Pflanzen 30% schneller",
+    "channel": "Dampfkugel",
+    "start": 431
+  },
+  {
+    "id": "media-hydro-05",
+    "topic": "Reihenfolge beim Ansetzen der Nährlösung",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "nährlösung",
+      "ec",
+      "ph",
+      "zweikomponenten",
+      "dünger",
+      "hydro",
+      "dosieren"
+    ],
+    "text": "Zweikomponenten-Dünger gibt man getrennt ins Wasser und kippt sie nie direkt zusammen, damit nichts ausflockt. Erst stellt man den EC ein und erst danach den pH, weil jede Änderung am EC auch den pH beeinflusst.",
+    "videoId": "Ptp_BBSOVs8",
+    "videoTitle": "Hydroponik für Anfänger - So wachsen Pflanzen 30% schneller",
+    "channel": "Dampfkugel",
+    "start": 514
+  },
+  {
+    "id": "media-hydro-06",
+    "topic": "pH-Wert in Hydro",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ph",
+      "hydro",
+      "dwc",
+      "nährstoffaufnahme",
+      "wurzeln",
+      "ausfällung",
+      "säure"
+    ],
+    "text": "In Hydro liegt der optimale pH laut Video zwischen 5,2 und 6,2. Ein zu niedriger pH kann Nährstoffe überschüssig löslich machen und unter 5 die Wurzeln schädigen, ein zu hoher pH führt zu Ausfällungen von Calcium, Phosphat und Eisen.",
+    "videoId": "Ptp_BBSOVs8",
+    "videoTitle": "Hydroponik für Anfänger - So wachsen Pflanzen 30% schneller",
+    "channel": "Dampfkugel",
+    "start": 548
+  },
+  {
+    "id": "media-hydro-07",
+    "topic": "Wassertemperatur in Hydro",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "wassertemperatur",
+      "hydro",
+      "dwc",
+      "wurzelfäule",
+      "pilz",
+      "chiller",
+      "temperatur"
+    ],
+    "text": "Die Wassertemperatur sollte möglichst nicht über 20 Grad steigen, am besten liegt sie bei 18 bis 19 Grad. Darüber hat der Pilz, der Wurzelfäule verursacht, deutlich bessere Wachstumsbedingungen; viele stellen einen Chiller auf 19 Grad.",
+    "videoId": "Ptp_BBSOVs8",
+    "videoTitle": "Hydroponik für Anfänger - So wachsen Pflanzen 30% schneller",
+    "channel": "Dampfkugel",
+    "start": 665
+  },
+  {
+    "id": "media-hydro-08",
+    "topic": "Hydro hat keinen Puffer",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "hydro",
+      "puffer",
+      "erde",
+      "messen",
+      "messgerät",
+      "fehler",
+      "anfänger"
+    ],
+    "text": "Weil in Hydro kein Puffer vorhanden ist, zeigt die Pflanze Fehler und Mängel direkt, während Erde Fehler eine Zeit lang abpuffert. Der Sprecher empfiehlt zwei Messgeräte der gleichen Sorte, eines davon als Backup.",
+    "videoId": "Ptp_BBSOVs8",
+    "videoTitle": "Hydroponik für Anfänger - So wachsen Pflanzen 30% schneller",
+    "channel": "Dampfkugel",
+    "start": 820
+  },
+  {
+    "id": "media-pot-01",
+    "topic": "Stofftopf und Wurzelsystem",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "stofftopf",
+      "stofftöpfe",
+      "wurzeln",
+      "wurzelsystem",
+      "luftbeschneidung",
+      "topf",
+      "ertrag"
+    ],
+    "text": "Erreichen die Wurzeln die luft- und wasserdurchlässige Wand eines Stofftopfs, wachsen sie hindurch statt an der Wand entlang. Die Wurzelenden sterben bei Luftkontakt ab, was die Pflanze zu mehr Wurzelbildung anregt und ein feineres, verzweigteres Wurzelwerk ergibt.",
+    "videoId": "h2RaKcfeOe4",
+    "videoTitle": "Bieten Stofftöpfe Vorteile beim Growen? Richtig gießen, waschen. Schimmel?",
+    "channel": "Der Hanf lebt",
+    "start": 34
+  },
+  {
+    "id": "media-pot-02",
+    "topic": "Topfgröße bei Stofftöpfen",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "stofftopf",
+      "topfgröße",
+      "topf",
+      "plastik",
+      "substrat",
+      "wurzeln"
+    ],
+    "text": "Damit der Effekt greift, sollte man die Topfgröße gegenüber Plastik reduzieren. Der Sprecher würde 30 bis 50 Prozent weniger ansetzen, also nicht kleiner als die Hälfte, und spart so Substrat.",
+    "videoId": "h2RaKcfeOe4",
+    "videoTitle": "Bieten Stofftöpfe Vorteile beim Growen? Richtig gießen, waschen. Schimmel?",
+    "channel": "Der Hanf lebt",
+    "start": 65
+  },
+  {
+    "id": "media-pot-03",
+    "topic": "Kontakt zwischen Erde und Topfwand",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "stofftopf",
+      "wurzelballen",
+      "erde",
+      "topfwand",
+      "spalt",
+      "transport"
+    ],
+    "text": "Für die stärkere Verwurzelung braucht es Kontakt zwischen Erde und Topfwand. Löst sich die flexible Wand vom Wurzelballen, schließt man den Spalt mit Erde und nimmt dabei nicht zu viel Druck, damit der Ballen nicht zu sehr verdichtet.",
+    "videoId": "h2RaKcfeOe4",
+    "videoTitle": "Bieten Stofftöpfe Vorteile beim Growen? Richtig gießen, waschen. Schimmel?",
+    "channel": "Der Hanf lebt",
+    "start": 86
+  },
+  {
+    "id": "media-pot-04",
+    "topic": "Schimmel und schnelleres Abtrocknen",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "stofftopf",
+      "schimmel",
+      "gießen",
+      "nass",
+      "abtrocknen",
+      "luft"
+    ],
+    "text": "Das luftige Material führt seltener zu Schimmelbildung, und zu nasse Erde trocknet im Stofftopf viel schneller wieder ab. Als kleiner Nachteil muss man etwas häufiger gießen.",
+    "videoId": "h2RaKcfeOe4",
+    "videoTitle": "Bieten Stofftöpfe Vorteile beim Growen? Richtig gießen, waschen. Schimmel?",
+    "channel": "Der Hanf lebt",
+    "start": 108
+  },
+  {
+    "id": "media-pot-05",
+    "topic": "Stofftopf und Temperatur",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "stofftopf",
+      "temperatur",
+      "stauwärme",
+      "kühl",
+      "nacht",
+      "plastik"
+    ],
+    "text": "Der Stofftopf schützt die Erde vor Stauwärme, wie sie in Plastiktöpfen im Sommer auftreten kann. Nachteilig ist er laut Video bei kühlen Temperaturen, wenn es nachts deutlich unter 16 bis 18 Grad geht.",
+    "videoId": "h2RaKcfeOe4",
+    "videoTitle": "Bieten Stofftöpfe Vorteile beim Growen? Richtig gießen, waschen. Schimmel?",
+    "channel": "Der Hanf lebt",
+    "start": 124
+  },
+  {
+    "id": "media-pot-06",
+    "topic": "Gießmenge im Stofftopf",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "stofftopf",
+      "gießen",
+      "gießmenge",
+      "trocken",
+      "schimmel",
+      "erde",
+      "untersetzer"
+    ],
+    "text": "Die Erde soll zwischen den Gießgängen annähernd trocken werden, um Schimmel zu vermeiden, und dann gibt man etwa 20 bis 30 Prozent der Topfgröße an Flüssigkeit. In annähernd trockene Erde gießt man langsam oder befeuchtet die Oberfläche per Sprühen.",
+    "videoId": "h2RaKcfeOe4",
+    "videoTitle": "Bieten Stofftöpfe Vorteile beim Growen? Richtig gießen, waschen. Schimmel?",
+    "channel": "Der Hanf lebt",
+    "start": 150
+  },
+  {
+    "id": "media-pot-07",
+    "topic": "Stofftopf nur als Endtopf",
+    "phases": [
+      "seedling",
+      "vegetative"
+    ],
+    "tags": [
+      "stofftopf",
+      "umtopfen",
+      "endtopf",
+      "wurzeln",
+      "topf"
+    ],
+    "text": "Da die Wurzeln zu einem gewissen Grad mit dem Stoff verwachsen, sind Stofftöpfe nur als Endtöpfe geeignet. Umtopfen aus einem Stofftopf ist laut Video nicht wirklich möglich.",
+    "videoId": "h2RaKcfeOe4",
+    "videoTitle": "Bieten Stofftöpfe Vorteile beim Growen? Richtig gießen, waschen. Schimmel?",
+    "channel": "Der Hanf lebt",
+    "start": 229
+  },
+  {
+    "id": "media-drain-01",
+    "topic": "Drainageschicht im Topf",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "drainageschicht",
+      "drainage",
+      "blähton",
+      "steine",
+      "staunässe",
+      "topf",
+      "mythos"
+    ],
+    "text": "Eine Drainageschicht aus Steinen oder Blähton wird empfohlen, damit Wasser besser abläuft und Staunässe vorgebeugt wird. Das Video widerlegt das: Trifft Wasser auf eine andere Erdschicht, sammelt es sich zunächst in der oberen Schicht an, bevor es weiterfließt.",
+    "videoId": "bCRlwH4mKbg",
+    "videoTitle": "Drainageschicht bei Pflanzen: Schädlich oder hilfreich?",
+    "channel": "crazyplantboy",
+    "start": 44
+  },
+  {
+    "id": "media-drain-02",
+    "topic": "Wasserstand und sauerstoffarme Zone im Topf",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "staunässe",
+      "wasserspiegel",
+      "wurzeln",
+      "sauerstoff",
+      "topfboden",
+      "wurzelfäule",
+      "drainage"
+    ],
+    "text": "In jedem mit Erde gefüllten Topf sammelt sich am Boden ein voll mit Wasser gesättigter, meist sauerstoffarmer Bereich. Wachsen Wurzeln dort hinein, sterben sie ab, was die Pflanze Kraft kostet und ihr Potenzial bremsen kann.",
+    "videoId": "bCRlwH4mKbg",
+    "videoTitle": "Drainageschicht bei Pflanzen: Schädlich oder hilfreich?",
+    "channel": "crazyplantboy",
+    "start": 150
+  },
+  {
+    "id": "media-drain-03",
+    "topic": "Feine Erde und Topfhöhe",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "erde",
+      "partikelgröße",
+      "topfhöhe",
+      "staunässe",
+      "feine erde",
+      "wasserspiegel",
+      "topf"
+    ],
+    "text": "Feinere Erde erzeugt einen höheren Wasserstand im Topf als gröbere. Bei gleicher Erde ist der Wasserstand in jedem Topf gleich hoch, daher haben höhere Töpfe gemessen am Volumen weniger davon.",
+    "videoId": "bCRlwH4mKbg",
+    "videoTitle": "Drainageschicht bei Pflanzen: Schädlich oder hilfreich?",
+    "channel": "crazyplantboy",
+    "start": 261
+  },
+  {
+    "id": "media-drain-04",
+    "topic": "Gröbere Erde statt Drainageschicht",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "erde mischen",
+      "partikelgröße",
+      "grobe erde",
+      "staunässe",
+      "schichten",
+      "drainage",
+      "substrat"
+    ],
+    "text": "Statt einer Drainageschicht empfiehlt das Video eine gröbere Erde mit größerer Partikelgröße, die weniger Staunässe erzeugt. Mischt man zwei Erden, sollte man sie gut vermengen, etwa in einem Eimer, damit sich keine Schichten und kein neuer Wasserstand dazwischen bilden.",
+    "videoId": "bCRlwH4mKbg",
+    "videoTitle": "Drainageschicht bei Pflanzen: Schädlich oder hilfreich?",
+    "channel": "crazyplantboy",
+    "start": 412
+  },
+  {
+    "id": "media-drain-05",
+    "topic": "Fazit zur Drainageschicht",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "drainageschicht",
+      "wurzelfäule",
+      "topf ohne loch",
+      "volumen",
+      "drainage",
+      "wurzelraum"
+    ],
+    "text": "Eine Drainageschicht nimmt der Pflanze Wurzelraum in Höhe ihres Volumens und kann langfristig Wurzelfäule begünstigen. Bei einem Topf ganz ohne Loch rät der Sprecher erst recht von ihr ab.",
+    "videoId": "bCRlwH4mKbg",
+    "videoTitle": "Drainageschicht bei Pflanzen: Schädlich oder hilfreich?",
+    "channel": "crazyplantboy",
+    "start": 478
+  },
+  {
+    "id": "media-soil-01",
+    "topic": "Selbst gemischte Erde: Grundzutaten",
+    "phases": [
+      "germination",
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "erde mischen",
+      "kompost",
+      "perlit",
+      "torf",
+      "substrat",
+      "grundmischung",
+      "vorgedüngt"
+    ],
+    "text": "Als Grundzutaten für die selbst gemischte, vorgedüngte Erde nennt der Sprecher Kompost, Perlit und Torf. Aus 25 Litern Kompost, 10 Litern Perlit und 25 Litern Torf ergeben sich etwa 65 Liter Erde.",
+    "videoId": "QqGWyef-qQg",
+    "videoTitle": "Guerilla/Outdoor Grow Erde selber mischen [für mehr Ertrag]",
+    "channel": "growers-grow",
+    "start": 40
+  },
+  {
+    "id": "media-soil-02",
+    "topic": "Perlit verbessert Drainage und Luft",
+    "phases": [
+      "germination",
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "perlit",
+      "drainage",
+      "sauerstoff",
+      "wurzeln",
+      "luft",
+      "hohlräume",
+      "erde"
+    ],
+    "text": "Perlit verbessert die Drainage und schafft viel Luft und Hohlraum für die Wurzeln. Dadurch bekommen die Wurzeln auch bei nasser Erde noch viel Sauerstoff.",
+    "videoId": "QqGWyef-qQg",
+    "videoTitle": "Guerilla/Outdoor Grow Erde selber mischen [für mehr Ertrag]",
+    "channel": "growers-grow",
+    "start": 115
+  },
+  {
+    "id": "media-soil-03",
+    "topic": "Perlit speichert Wasser",
+    "phases": [
+      "germination",
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "perlit",
+      "wasseraufnahme",
+      "poren",
+      "vulkangestein",
+      "schwamm",
+      "erde"
+    ],
+    "text": "Perlit wird aus erhitztem Vulkangestein hergestellt und hat viele kleine Poren wie ein Schwamm. Dadurch verbessert sich die Wasseraufnahme der Erde.",
+    "videoId": "QqGWyef-qQg",
+    "videoTitle": "Guerilla/Outdoor Grow Erde selber mischen [für mehr Ertrag]",
+    "channel": "growers-grow",
+    "start": 143
+  },
+  {
+    "id": "media-soil-04",
+    "topic": "Torf-Alternative Kokosfaser",
+    "phases": [
+      "germination",
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "torf",
+      "kokosfaser",
+      "kokos",
+      "umwelt",
+      "moore",
+      "substrat",
+      "erde"
+    ],
+    "text": "Torf wird in Torfbauten abgebaut, wodurch Moore verschwinden. Wer keinen Torf nutzen will, kann Kokosfasern nehmen, die laut Sprecher aber auch nicht viel besser sind, weil sie importiert werden.",
+    "videoId": "QqGWyef-qQg",
+    "videoTitle": "Guerilla/Outdoor Grow Erde selber mischen [für mehr Ertrag]",
+    "channel": "growers-grow",
+    "start": 221
+  },
+  {
+    "id": "media-soil-05",
+    "topic": "Torf ist sauer",
+    "phases": [
+      "germination",
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "torf",
+      "ph",
+      "kalk",
+      "sauer",
+      "erde",
+      "cannabis"
+    ],
+    "text": "Torf hat laut Video einen pH-Wert von etwa 4,0 bis 4,3, was für Cannabis zu sauer ist. Deshalb wird später Kalk in die Mischung gegeben.",
+    "videoId": "QqGWyef-qQg",
+    "videoTitle": "Guerilla/Outdoor Grow Erde selber mischen [für mehr Ertrag]",
+    "channel": "growers-grow",
+    "start": 249
+  },
+  {
+    "id": "media-soil-06",
+    "topic": "Gartenkalk hebt den pH",
+    "phases": [
+      "germination",
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "kalk",
+      "gartenkalk",
+      "ph",
+      "erde",
+      "torf",
+      "6,5"
+    ],
+    "text": "Gartenkalk in gepresster Körnung gibt langsam ab und hebt den pH-Wert stark an, daher nicht zu viel verwenden. Ziel ist am Ende ein pH von etwa 6,5, der für die Pflanzen optimal sei.",
+    "videoId": "QqGWyef-qQg",
+    "videoTitle": "Guerilla/Outdoor Grow Erde selber mischen [für mehr Ertrag]",
+    "channel": "growers-grow",
+    "start": 416
+  },
+  {
+    "id": "media-soil-07",
+    "topic": "Langsam wirkende Dünger in der Erde",
+    "phases": [
+      "germination",
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "dünger",
+      "pellets",
+      "schafwolle",
+      "überdüngung",
+      "bio dünger",
+      "erde mischen",
+      "nährstoffe"
+    ],
+    "text": "Gepresste Pellets, etwa aus Schafwolle, bleiben länger in der Erde und geben Nährstoffe langsam ab. Dadurch hat man meist keine Probleme mit Überdüngung.",
+    "videoId": "QqGWyef-qQg",
+    "videoTitle": "Guerilla/Outdoor Grow Erde selber mischen [für mehr Ertrag]",
+    "channel": "growers-grow",
+    "start": 318
+  },
+  {
+    "id": "media-water-01",
+    "topic": "pH-Wert und Leitungswasser",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ph",
+      "wasserqualität",
+      "leitungswasser",
+      "alkalisch",
+      "sauer",
+      "gießen",
+      "wasser"
+    ],
+    "text": "Der pH-Wert liegt zwischen 0 und 14, je höher er ist, desto alkalischer ist eine Flüssigkeit. Leitungswasser kann einen hohen pH haben; der Sprecher nennt für Berlin 7,2 bis 8, aktuell 7,9.",
+    "videoId": "kjaPAASEGwM",
+    "videoTitle": "PH WERT UND DIE AUSWIRKUNGEN AUF EURE CANNABISPFLANZE - DER HOMEGROW GUIDE",
+    "channel": "Die Tomate",
+    "start": 21
+  },
+  {
+    "id": "media-water-02",
+    "topic": "Hoher pH hemmt die Nährstoffaufnahme",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ph",
+      "nährstoffaufnahme",
+      "phosphor",
+      "magnesium",
+      "eisen",
+      "hoher ph",
+      "nährstoffe"
+    ],
+    "text": "Ab etwa pH 7 werden Nährstoffe schlechter aufnehmbar, bei Leitungswasser von 7,5 bis 8 besonders Phosphor, Magnesium und Eisen, aber auch Bor, Kupfer und Zink. Laut Sprecher ist das gerade bei biologischen Düngern ein Problem.",
+    "videoId": "kjaPAASEGwM",
+    "videoTitle": "PH WERT UND DIE AUSWIRKUNGEN AUF EURE CANNABISPFLANZE - DER HOMEGROW GUIDE",
+    "channel": "Die Tomate",
+    "start": 85
+  },
+  {
+    "id": "media-water-03",
+    "topic": "pH und organischer Dünger",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ph",
+      "organisch",
+      "puffer",
+      "mikrobiom",
+      "erde",
+      "bio dünger"
+    ],
+    "text": "Organischer Dünger bringt durch das Mikrobiom im Boden eine gewisse Pufferwirkung mit. Gießt man trotzdem mit hohem pH, können Nährstoffe dennoch reduziert aufgenommen werden.",
+    "videoId": "kjaPAASEGwM",
+    "videoTitle": "PH WERT UND DIE AUSWIRKUNGEN AUF EURE CANNABISPFLANZE - DER HOMEGROW GUIDE",
+    "channel": "Die Tomate",
+    "start": 130
+  },
+  {
+    "id": "media-water-04",
+    "topic": "Ziel-pH auf Erde",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ph",
+      "erde",
+      "6,5",
+      "6,8",
+      "sweet spot",
+      "nährstoffaufnahme",
+      "gießwasser"
+    ],
+    "text": "Auf Erde peilt man laut Video einen pH von etwa 6,5 an, manche sagen 6,8. Den idealen Wert muss man für Sorte, Erde und Dünger-Setup durch Ausprobieren finden.",
+    "videoId": "kjaPAASEGwM",
+    "videoTitle": "PH WERT UND DIE AUSWIRKUNGEN AUF EURE CANNABISPFLANZE - DER HOMEGROW GUIDE",
+    "channel": "Die Tomate",
+    "start": 155
+  },
+  {
+    "id": "media-water-05",
+    "topic": "pH messen",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ph",
+      "messgerät",
+      "kalibrieren",
+      "teststreifen",
+      "wasserwerk",
+      "messen"
+    ],
+    "text": "Zum Messen empfiehlt der Sprecher ein pH-Messgerät, das man mit Kalibrierlösungen für pH 4 und pH 7 kalibriert. Ohne Budget reichen Teststreifen, oder man schaut in den Online-Daten des Wasserwerks.",
+    "videoId": "kjaPAASEGwM",
+    "videoTitle": "PH WERT UND DIE AUSWIRKUNGEN AUF EURE CANNABISPFLANZE - DER HOMEGROW GUIDE",
+    "channel": "Die Tomate",
+    "start": 182
+  },
+  {
+    "id": "media-water-06",
+    "topic": "pH anpassen",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ph",
+      "ph plus",
+      "ph minus",
+      "gießwasser",
+      "anpassen",
+      "messen"
+    ],
+    "text": "Stimmt der pH aus der Leitung nicht, mischt man eine für den Homegrow geeignete pH-Plus- oder pH-Minus-Lösung ins Wasser. Danach misst man erneut und gießt, sobald der Wunschwert erreicht ist.",
+    "videoId": "kjaPAASEGwM",
+    "videoTitle": "PH WERT UND DIE AUSWIRKUNGEN AUF EURE CANNABISPFLANZE - DER HOMEGROW GUIDE",
+    "channel": "Die Tomate",
+    "start": 255
+  },
+  {
+    "id": "media-dwc-01",
+    "topic": "DWC-Aufbau",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "dwc",
+      "deep water culture",
+      "hydro",
+      "drahtkorb",
+      "sprudelstein",
+      "pumpe",
+      "sauerstoff"
+    ],
+    "text": "Beim DWC steht die Pflanze in einem Drahtkorb in einem Behälter mit Gießwasser, die Wurzeln wachsen ins Wasser. Im Tank sorgt ein Sprudelstein mit Pumpe für Sauerstoff im Wasser.",
+    "videoId": "2Z8PyOuFv58",
+    "videoTitle": "Nie wieder Erde!? 😱 30% SCHNELLER und riesige Ernte – Sogar für Anfänger? Hydro DWC Pott Planter",
+    "channel": "Pott Planter",
+    "start": 91
+  },
+  {
+    "id": "media-dwc-02",
+    "topic": "Destilliertes Wasser statt Leitungswasser",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "destilliertes wasser",
+      "leitungswasser",
+      "ec",
+      "hydro",
+      "mineralstoffe",
+      "wasserqualität"
+    ],
+    "text": "Der Sprecher nimmt statt Leitungswasser destilliertes Wasser, wodurch sich der EC-Wert etwa halbiert. Gerade im Hydrobereich solle man darauf achten, nicht zu viele Mineralstoffe im Wasser zu haben, und Leitungswasser enthält je nach Region unterschiedlich viel.",
+    "videoId": "2Z8PyOuFv58",
+    "videoTitle": "Nie wieder Erde!? 😱 30% SCHNELLER und riesige Ernte – Sogar für Anfänger? Hydro DWC Pott Planter",
+    "channel": "Pott Planter",
+    "start": 419
+  },
+  {
+    "id": "media-dwc-03",
+    "topic": "pH in Hydro und Erde im Vergleich",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ph",
+      "hydro",
+      "erde",
+      "dwc",
+      "nährstoffaufnahme",
+      "ph minus"
+    ],
+    "text": "Bei Hydro sollte der pH laut Sprecher zwischen 5 und 6 liegen, bei Erde eher zwischen 6 und 7. Er senkt ihn in Tropfen auf etwa 5,5 ab, damit die Pflanze alle Nährstoffe aufnehmen kann.",
+    "videoId": "2Z8PyOuFv58",
+    "videoTitle": "Nie wieder Erde!? 😱 30% SCHNELLER und riesige Ernte – Sogar für Anfänger? Hydro DWC Pott Planter",
+    "channel": "Pott Planter",
+    "start": 532
+  },
+  {
+    "id": "media-dwc-04",
+    "topic": "Calcium und Magnesium bei destilliertem Wasser",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "calcium",
+      "magnesium",
+      "mangel",
+      "destilliertes wasser",
+      "dwc",
+      "wassertemperatur",
+      "blätter"
+    ],
+    "text": "Nach dem Verzicht auf Leitungswasser vermutet der Sprecher einen Calcium-Magnesium-Mangel, weil beides im Leitungswasser vorhanden gewesen wäre; zusätzlich war das Wasser teils 26 Grad warm. Die Blätter wurden gelblich mit bräunlichen Punkten und erholten sich nach Zugabe von Calcium und Magnesium.",
+    "videoId": "2Z8PyOuFv58",
+    "videoTitle": "Nie wieder Erde!? 😱 30% SCHNELLER und riesige Ernte – Sogar für Anfänger? Hydro DWC Pott Planter",
+    "channel": "Pott Planter",
+    "start": 688
+  },
+  {
+    "id": "media-dwc-05",
+    "topic": "Kleiner DWC-Tank",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "dwc",
+      "tank",
+      "wassertemperatur",
+      "ph",
+      "hydro",
+      "tankgröße",
+      "nachgießen"
+    ],
+    "text": "In einem kleinen Tank mit nur etwa 2 Litern driftet der pH öfter ab, die Wassertemperatur ist anfälliger und man muss alle ein bis zwei Tage nachgießen. Nach dem Umzug in einen größeren Tank mit 19 Litern waren die Werte viel stabiler.",
+    "videoId": "2Z8PyOuFv58",
+    "videoTitle": "Nie wieder Erde!? 😱 30% SCHNELLER und riesige Ernte – Sogar für Anfänger? Hydro DWC Pott Planter",
+    "channel": "Pott Planter",
+    "start": 843
+  }
+]
