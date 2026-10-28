@@ -9,6 +9,7 @@ import nutrients from "./entries/nutrients.json";
 import pestsDiseases from "./entries/pests-diseases.json";
 import propagationTechniques from "./entries/propagation-techniques.json";
 import mediaMethods from "./entries/media-methods.json";
+import harvestTrichomes from "./entries/harvest-trichomes.json";
 
 const VIDEO_ID = /^[A-Za-z0-9_-]{11}$/;
 
@@ -64,6 +65,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = collect(
   pestsDiseases,
   propagationTechniques,
   mediaMethods,
+  harvestTrichomes,
 );
 
 export function searchKnowledge(query: string, options?: SearchOptions) {
