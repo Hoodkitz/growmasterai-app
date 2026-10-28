@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto";
-import { eq, inArray, or } from "drizzle-orm";
+import { createHmac } from "node:crypto";
+import { and, eq, inArray, ne, or } from "drizzle-orm";
 import {
   adBanners,
   auctionBids,
@@ -23,9 +23,12 @@ import {
   vendors,
 } from "../drizzle/schema";
 
-/** Marker id kept instead of the real openId, so a stale session token cannot re-create a deleted account. */
-export function tombstoneOpenId(openId: string): string {
-  return `del_${createHash("sha256").update(openId).digest("hex").slice(0, 48)}`;
+/**
+ * Marker id kept instead of the real openId, so a stale session token cannot re-create a deleted
+ * account. Keyed with a server secret, so it cannot be recomputed from a known openId or email.
+ */
+export function tombstoneOpenId(openId: string, secret: string): string {
+  return `del_${createHmac("sha256", secret).update(openId).digest("hex").slice(0, 48)}`;
 }
 
 /** The small part of a drizzle db or transaction this function needs. */
@@ -48,6 +51,7 @@ export interface DeletionDb {
 export async function deleteAccountData(
   db: DeletionDb,
   user: { id: number; openId: string },
+  secret: string,
 ): Promise<void> {
   const uid = user.id;
 
@@ -109,12 +113,19 @@ export async function deleteAccountData(
     .delete(userCredentials)
     .where(eq(userCredentials.openId, user.openId));
 
+  // A tombstone from an earlier deletion of the same identity (re-registered, now deleting again)
+  // would collide on the unique openId, so it goes first.
+  const marker = tombstoneOpenId(user.openId, secret);
+  await db
+    .delete(users)
+    .where(and(eq(users.openId, marker), ne(users.id, uid)));
+
   // The users row stays as an anonymous tombstone (hashed id, no personal data) so that an old
   // session token is rejected instead of being re-provisioned; see authenticateRequest.
   await db
     .update(users)
     .set({
-      openId: tombstoneOpenId(user.openId),
+      openId: marker,
       name: null,
       email: null,
       loginMethod: "deleted",

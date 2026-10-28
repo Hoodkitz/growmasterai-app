@@ -282,7 +282,11 @@ class SDKServer {
     // If user not in DB, sync from OAuth server automatically
     if (!user) {
       // A deleted account leaves an anonymous tombstone; its old tokens must not re-create it.
-      if (await db.getUserByOpenId(tombstoneOpenId(sessionUserId))) {
+      if (
+        await db.getUserByOpenId(
+          tombstoneOpenId(sessionUserId, ENV.cookieSecret),
+        )
+      ) {
         throw ForbiddenError("Account deleted");
       }
       try {
