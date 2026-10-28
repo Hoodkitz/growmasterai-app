@@ -1,0 +1,195 @@
+[
+  {
+    "id": "lighting-lamp-distance-01",
+    "topic": "Zeltwände verdoppeln fast die Lichtstärke",
+    "phases": [
+      "seedling"
+    ],
+    "tags": [
+      "zelt",
+      "reflexion",
+      "lichtstärke",
+      "ppfd",
+      "abstand",
+      "sämling",
+      "growzelt"
+    ],
+    "text": "Bei etwa 120 cm Abstand liefert die Lampe im halb offenen Zelt rund 110 µmol/s, im ganz geschlossenen Zelt über 200 µmol/s. Der Unterschied zwischen offenem und geschlossenem Zelt beträgt also fast 100 % Lichtstärke, weil die Zeltwände reflektieren.",
+    "videoId": "My2j0376Paw",
+    "videoTitle": "SANlight Evo Serie Abstand zur Pflanze | Dimmstufen | Ausleuchtung",
+    "channel": "Der Hanf lebt",
+    "start": 413
+  },
+  {
+    "id": "lighting-lamp-distance-02",
+    "topic": "Lampenabstand für Sämlinge",
+    "phases": [
+      "seedling"
+    ],
+    "tags": [
+      "sämling",
+      "lampenabstand",
+      "abstand",
+      "ppfd",
+      "dimmen",
+      "led",
+      "startwert"
+    ],
+    "text": "Für Sämlinge startet man laut Lehrbuch niedriger. Im Video liefert die Evo 3 bei 140 cm Abstand im geschlossenen Zelt etwa 170 µmol/s, bei 115 cm knapp 230 und bei 90 cm über 290 µmol/s (jeweils bei 40 % Dimmung).",
+    "videoId": "My2j0376Paw",
+    "videoTitle": "SANlight Evo Serie Abstand zur Pflanze | Dimmstufen | Ausleuchtung",
+    "channel": "Der Hanf lebt",
+    "start": 448
+  },
+  {
+    "id": "lighting-lamp-distance-03",
+    "topic": "Übergang von Sämling zu Wuchsphase",
+    "phases": [
+      "seedling",
+      "vegetative"
+    ],
+    "tags": [
+      "abstand",
+      "ppfd",
+      "wuchsphase",
+      "vegetation",
+      "lampenabstand",
+      "led",
+      "dimmstufe"
+    ],
+    "text": "Etwa 80 cm Abstand mit rund 315 µmol/s markiert im Video den Übergang von der Sämlings- zur Wuchsphase. Bei 40 % Dimmung steigt der Wert bei 60 cm auf 375, bei etwa 50 cm auf knapp 420 und bei 36 bis 37 cm auf fast 520 µmol/s, was bis zum Ende der Wuchsphase genügt.",
+    "videoId": "My2j0376Paw",
+    "videoTitle": "SANlight Evo Serie Abstand zur Pflanze | Dimmstufen | Ausleuchtung",
+    "channel": "Der Hanf lebt",
+    "start": 486
+  },
+  {
+    "id": "lighting-lamp-distance-04",
+    "topic": "Blütebeginn: Dimmung und Abstand",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "blüte",
+      "dimmen",
+      "lampenabstand",
+      "ppfd",
+      "abstand",
+      "led",
+      "60 prozent"
+    ],
+    "text": "Zum Start der Blüte stellt der Sprecher auf 60 % Dimmung. Bei knapp 60 cm Abstand liefert das 565 µmol/s, bei etwa 50 cm über 600, bei knapp 40 cm 740 und bei 35 cm fast 820 µmol/s. Im Laufe der Blüte reduziert man den Abstand in kleinen Schritten.",
+    "videoId": "My2j0376Paw",
+    "videoTitle": "SANlight Evo Serie Abstand zur Pflanze | Dimmstufen | Ausleuchtung",
+    "channel": "Der Hanf lebt",
+    "start": 524
+  },
+  {
+    "id": "lighting-lamp-distance-05",
+    "topic": "Maximale Lichtintensität: 80 und 100 Prozent",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "ppfd",
+      "maximale intensität",
+      "co2",
+      "lampenabstand",
+      "dimmen",
+      "1000 mikromol",
+      "led"
+    ],
+    "text": "Bei 80 % Dimmung liefert die Lampe laut Video bei 40 cm über 930 µmol/s und bei 35 cm etwa 1070. Das reicht für die meisten Grows. Volle 100 % mit knapp 1200 µmol/s bei 40 cm und über 1300 bei 35 cm sind für Setups gedacht, die samt CO2 optimiert sind.",
+    "videoId": "My2j0376Paw",
+    "videoTitle": "SANlight Evo Serie Abstand zur Pflanze | Dimmstufen | Ausleuchtung",
+    "channel": "Der Hanf lebt",
+    "start": 563
+  },
+  {
+    "id": "lighting-lamp-distance-06",
+    "topic": "Dimmer-Minimum und Sämlingslicht",
+    "phases": [
+      "seedling"
+    ],
+    "tags": [
+      "dimmer",
+      "bluetooth",
+      "magnetdimmer",
+      "minimum",
+      "sämling",
+      "dimmen",
+      "20 prozent"
+    ],
+    "text": "Der Magnetdimmer hat ein Minimum von 40 %, was für die frühen Phasen laut Sprecher schon viel zu viel ist. Der Bluetooth-Dimmer geht bis 20 %: Bei 80 cm Abstand liefert die Lampe dann 145 µmol/s, ein guter Startwert nach der Aussaat, und bei 30 cm gut 300 µmol/s am Ende der Sämlingsphase.",
+    "videoId": "My2j0376Paw",
+    "videoTitle": "SANlight Evo Serie Abstand zur Pflanze | Dimmstufen | Ausleuchtung",
+    "channel": "Der Hanf lebt",
+    "start": 403
+  },
+  {
+    "id": "lighting-lamp-distance-07",
+    "topic": "Ausleuchtung im Zelt und Reflexion",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ausleuchtung",
+      "lichtverteilung",
+      "reflexion",
+      "zeltwand",
+      "ppfd",
+      "led"
+    ],
+    "text": "Bei 40 % Dimmung und rund 38 cm Abstand misst das Video direkt unter der Lampe 470 µmol/s, in der Ecke 420, an den seitlichen Zeltwänden über 500 und zur offenen Seite hin deutlich weniger. Die Reflexion des Zelts hat also großen Einfluss auf die Lichtverteilung.",
+    "videoId": "My2j0376Paw",
+    "videoTitle": "SANlight Evo Serie Abstand zur Pflanze | Dimmstufen | Ausleuchtung",
+    "channel": "Der Hanf lebt",
+    "start": 715
+  },
+  {
+    "id": "lighting-lamp-distance-08",
+    "topic": "Handy-Apps zur Lichtmessung",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "lichtmessung",
+      "handy app",
+      "ppfd messen",
+      "messgerät",
+      "kalibrieren",
+      "diffusor"
+    ],
+    "text": "Handy-Kameras und -Sensoren sind nicht für Lichtmessung ausgelegt, manche Apps brauchen einen Diffusor. Der Sprecher vertraut einem Sensor, dessen einzige Aufgabe die Messung ist, mehr. Mit einem Referenzwert aus einem Messgerät lässt sich das Handy aber kostenlos kalibrieren.",
+    "videoId": "My2j0376Paw",
+    "videoTitle": "SANlight Evo Serie Abstand zur Pflanze | Dimmstufen | Ausleuchtung",
+    "channel": "Der Hanf lebt",
+    "start": 164
+  },
+  {
+    "id": "lighting-lamp-distance-09",
+    "topic": "Lampen-Preis und Leistung",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "led",
+      "growlampe",
+      "preis",
+      "effizienz",
+      "sanlight",
+      "kaufberatung"
+    ],
+    "text": "Laut Video muss es keine teure Markenlampe sein, um schöne Ergebnisse zu erzielen. Es gibt Lampen, die nur etwa 10 % weniger leisten, aber weniger als die Hälfte kosten. Kleine Leistungsunterschiede amortisieren sich im Hobby allerdings recht schnell.",
+    "videoId": "My2j0376Paw",
+    "videoTitle": "SANlight Evo Serie Abstand zur Pflanze | Dimmstufen | Ausleuchtung",
+    "channel": "Der Hanf lebt",
+    "start": 0
+  }
+]
