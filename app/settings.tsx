@@ -18,6 +18,7 @@ import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
 import { TIER_INFO, TIER_LIMITS } from "@/lib/subscription";
 import { useAppAuth } from "@/lib/auth-context";
+import { trpc } from "@/lib/trpc";
 import { ExpenseTracker } from "@/components/expenses/expense-tracker";
 import type { Expense } from "@/lib/cost-tracking";
 
@@ -49,6 +50,37 @@ export default function SettingsScreen() {
         text: "Abmelden",
         style: "destructive",
         onPress: () => void doLogout(),
+      },
+    ]);
+  };
+
+  const deleteAccountMutation = trpc.auth.deleteAccount.useMutation();
+
+  const handleDeleteAccount = () => {
+    const doDelete = async () => {
+      try {
+        await deleteAccountMutation.mutateAsync({ confirm: "DELETE" });
+        await logout();
+        router.replace("/login");
+      } catch {
+        Alert.alert(
+          "Löschen fehlgeschlagen",
+          "Dein Konto konnte nicht gelöscht werden. Bitte versuche es später erneut oder schreibe an julien@growmaster.app.",
+        );
+      }
+    };
+    const message =
+      "Dein Konto und alle damit gespeicherten Daten (Pflanzen, Journal, Diagnosen, Beiträge, Nachrichten) werden unwiderruflich gelöscht.";
+    if (Platform.OS === "web") {
+      if (window.confirm(`Konto löschen?\n\n${message}`)) void doDelete();
+      return;
+    }
+    Alert.alert("Konto löschen?", message, [
+      { text: "Abbrechen", style: "cancel" },
+      {
+        text: "Endgültig löschen",
+        style: "destructive",
+        onPress: () => void doDelete(),
       },
     ]);
   };
@@ -454,6 +486,22 @@ export default function SettingsScreen() {
               >
                 <Text className="text-base font-semibold text-error">
                   Abmelden
+                </Text>
+                <IconSymbol
+                  name="chevron.right"
+                  size={20}
+                  color={colors.muted}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="Konto löschen"
+                className="flex-row items-center justify-between p-4 border-t border-border"
+                disabled={deleteAccountMutation.isPending}
+                onPress={handleDeleteAccount}
+              >
+                <Text className="text-base font-semibold text-error">
+                  Konto löschen
                 </Text>
                 <IconSymbol
                   name="chevron.right"
