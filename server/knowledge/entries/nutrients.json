@@ -1,1 +1,1202 @@
-[]
+[
+  {
+    "id": "nutrients-defic-01",
+    "topic": "Übergießen erkennen",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "übergießen",
+      "wurzelfäule",
+      "gießen",
+      "hängende blätter",
+      "wachstumsstillstand"
+    ],
+    "text": "Ist die Erde dauerhaft zu nass, können die Wurzeln nicht mehr atmen und es kommt zu Wurzelfäule. Folgen sind verkrüppeltes Wachstum, schlaff hängende Blätter und im Extremfall Wachstumsstillstand; bei starkem Befall kann der Topf auch müffeln.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 159
+  },
+  {
+    "id": "nutrients-burn-01",
+    "topic": "Überdüngung erkennen",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "überdüngung",
+      "nutrient burn",
+      "spitzenbrand",
+      "dunkle blätter",
+      "dünger"
+    ],
+    "text": "Überdüngte Pflanzen bekommen dunklere Neuaustriebe, später verfärben sich die Blattspitzen gelblich bis bräunlich (Spitzenbrand). Das Wachstum wird dadurch blockiert; als erste Maßnahme empfiehlt das Video, etwas weniger Dünger zu geben.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 189
+  },
+  {
+    "id": "nutrients-defic-02",
+    "topic": "Stickstoffmangel erkennen",
+    "phases": [
+      "vegetative"
+    ],
+    "tags": [
+      "stickstoffmangel",
+      "stickstoff",
+      "gelbe blätter",
+      "untere blätter",
+      "chlorophyll"
+    ],
+    "text": "Bei Stickstoffmangel wächst die Pflanze langsamer und die unteren Blätter werden hell bis gelb oder von der Pflanze abgestoßen. Stickstoff wird laut Video für den Aufbau von Chlorophyll und für die Proteinproduktion gebraucht.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 281
+  },
+  {
+    "id": "nutrients-diag-01",
+    "topic": "Mangel nicht immer eindeutig zuzuordnen",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "nährstoffmangel",
+      "diagnose",
+      "ph-wert",
+      "überschneidung",
+      "mangelerscheinung"
+    ],
+    "text": "Mangelerscheinungen lassen sich nicht immer hundertprozentig zuordnen, weil es Überschneidungen gibt. Außerdem muss der pH-Wert im Topf stimmen, denn manche Nährstoffe kann die Pflanze nur in einem bestimmten pH-Bereich effizient aufnehmen.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 326
+  },
+  {
+    "id": "nutrients-defic-03",
+    "topic": "Phosphormangel erkennen",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "phosphormangel",
+      "phosphor",
+      "lila blätter",
+      "bronze",
+      "rote stängel",
+      "blüte"
+    ],
+    "text": "Fehlt Phosphor, werden die Blätter dunkelgrün bis lila-bronze; auch rötlich-lila Stängel können auf Phosphormangel hinweisen. Das Video nennt zudem ein stark verzögertes Blütenwachstum, bei dem die Blüten nicht richtig anschwellen.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 560
+  },
+  {
+    "id": "nutrients-defic-04",
+    "topic": "Kaliummangel erkennen",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "kaliummangel",
+      "kalium",
+      "blattränder",
+      "braune ränder",
+      "blütenstruktur",
+      "harz"
+    ],
+    "text": "Bei Kaliummangel können die Blattränder braun und trocken werden und aussehen wie verbrannt; sie können sich auch kräuseln. Außerdem bildet sich laut Video die Blüten- bzw. Blattstruktur schlecht aus und es sind weniger Harze vorhanden.",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 731
+  },
+  {
+    "id": "nutrients-defic-05",
+    "topic": "Calciummangel erkennen",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "calciummangel",
+      "calcium",
+      "verkrüppelte blätter",
+      "braune flecken",
+      "wurzelwachstum",
+      "blütenendfäule"
+    ],
+    "text": "Bei Calciummangel verkrüppeln neue Blätter oder zeigen braune Flecken; zudem können die Wurzeln schlechter wachsen. Laut Video erhöht Calciummangel außerdem das Risiko für Blütenendfäule (Botrytis).",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 968
+  },
+  {
+    "id": "nutrients-defic-06",
+    "topic": "Magnesiummangel erkennen",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "magnesiummangel",
+      "magnesium",
+      "gelbe blätter",
+      "blattadern",
+      "regenwasser",
+      "bittersalz"
+    ],
+    "text": "Magnesiummangel tritt laut Video vor allem beim Gießen mit Regenwasser, destilliertem oder stark gefiltertem Wasser auf. Typisch sind ältere Blätter, die zwischen den Adern gelb werden, kleine Pünktchen und nach oben rollende Blätter; als Quelle nennt das Video Bittersalz (Magnesiumsulfat).",
+    "videoId": "24ODApfKRuY",
+    "videoTitle": "STOPP! 😵 Darum werden deine Pflanzen gelb! Nährstoffmangel Düngen und Co.",
+    "channel": "Pott Planter",
+    "start": 1041
+  },
+  {
+    "id": "nutrients-calmag-01",
+    "topic": "CalMag-Problem: kleine braune Punkte",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "calmag",
+      "calcium",
+      "magnesium",
+      "braune punkte",
+      "led",
+      "blüte"
+    ],
+    "text": "Beim sogenannten CalMag-Problem zeigen sich in der Blüte früher oder später kleine braune Punkte auf den Blättern, die oft übersehen werden. Der erste wirklich eindeutige Hinweis ist laut Video der braune Punkt, dann sei es meist schon zu spät, gegenzusteuern.",
+    "videoId": "piQ80EZqir8",
+    "videoTitle": "Die HOMEGROW LED Krankheit ?!? |  Was tun gegen CALMAG Mangel ? | SANlight und Garten Eden 🌱",
+    "channel": "Garten Eden 🌱",
+    "start": 46
+  },
+  {
+    "id": "nutrients-calmag-02",
+    "topic": "Theorie zur Ursache des CalMag-Problems",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "calmag",
+      "led",
+      "transpiration",
+      "blatttemperatur",
+      "theorie"
+    ],
+    "text": "Als Theorie wird genannt, dass Calcium und Magnesium mit dem Wasser durch die Pflanze gezogen werden und seit LED-Lampen weniger Wärmestrahlung vorhanden ist, sodass nicht genug ankommt. Im Video heißt es ausdrücklich, dass die Ursache noch nicht geklärt ist.",
+    "videoId": "piQ80EZqir8",
+    "videoTitle": "Die HOMEGROW LED Krankheit ?!? |  Was tun gegen CALMAG Mangel ? | SANlight und Garten Eden 🌱",
+    "channel": "Garten Eden 🌱",
+    "start": 135
+  },
+  {
+    "id": "nutrients-calmag-03",
+    "topic": "CalMag-Probleme je nach Genetik",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "calmag",
+      "genetik",
+      "sorte",
+      "blüte",
+      "mangel"
+    ],
+    "text": "Laut Video tritt das Problem nicht bei jeder Genetik gleich auf. Der Sprecher vermutet, dass es früher auftritt, je performanter die Pflanze ist.",
+    "videoId": "piQ80EZqir8",
+    "videoTitle": "Die HOMEGROW LED Krankheit ?!? |  Was tun gegen CALMAG Mangel ? | SANlight und Garten Eden 🌱",
+    "channel": "Garten Eden 🌱",
+    "start": 211
+  },
+  {
+    "id": "nutrients-calmag-04",
+    "topic": "CalMag nachgeben: Ausgangswasser beachten",
+    "phases": [
+      "vegetative"
+    ],
+    "tags": [
+      "calmag",
+      "dosierung",
+      "ausgangswasser",
+      "brunnenwasser",
+      "vegetation"
+    ],
+    "text": "Wer das Problem früh in der Vegetationsphase bemerkt, kann eventuell noch zusätzlich Calcium/Magnesium geben. Dünger-Hersteller nennen keine konkrete Menge, weil sie das Ausgangswasser nicht kennen; bei Wasser mit schon viel Calcium und Magnesium wäre zusätzliches Zugeben laut Video fatal.",
+    "videoId": "piQ80EZqir8",
+    "videoTitle": "Die HOMEGROW LED Krankheit ?!? |  Was tun gegen CALMAG Mangel ? | SANlight und Garten Eden 🌱",
+    "channel": "Garten Eden 🌱",
+    "start": 240
+  },
+  {
+    "id": "nutrients-calmag-05",
+    "topic": "CalMag-Mangel: keine Panik",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "calmag",
+      "ertrag",
+      "keine panik",
+      "blüte",
+      "braune punkte"
+    ],
+    "text": "Der Sprecher berichtet, dass die Pflanzen trotz rostbrauner Punkte gut abgeworfen haben. Ob das Calcium-/Magnesiumdefizit nennenswerte Ertragsverluste bringt, ist laut Video noch nicht geklärt; es sei vor allem ein unschöner Effekt.",
+    "videoId": "piQ80EZqir8",
+    "videoTitle": "Die HOMEGROW LED Krankheit ?!? |  Was tun gegen CALMAG Mangel ? | SANlight und Garten Eden 🌱",
+    "channel": "Garten Eden 🌱",
+    "start": 313
+  },
+  {
+    "id": "nutrients-calmag-06",
+    "topic": "Calcium und Magnesium getrennt anpassen",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "calmag",
+      "verhältnis",
+      "calcium",
+      "magnesium",
+      "mononährstoff",
+      "wasserwerte"
+    ],
+    "text": "Wenn das Calcium-Magnesium-Verhältnis angepasst werden soll, gibt es laut Video Einzelpräparate für Calcium bzw. Magnesium, was aber recht aufwendig ist. Mit den eigenen Wasserwerten kann man sich auch direkt an Hersteller wie Canna oder Plagron wenden, die dabei helfen.",
+    "videoId": "piQ80EZqir8",
+    "videoTitle": "Die HOMEGROW LED Krankheit ?!? |  Was tun gegen CALMAG Mangel ? | SANlight und Garten Eden 🌱",
+    "channel": "Garten Eden 🌱",
+    "start": 391
+  },
+  {
+    "id": "nutrients-calmag-07",
+    "topic": "Doppelte CalMag-Menge löst das Problem nicht",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "calmag",
+      "überdosierung",
+      "versuch",
+      "zu viel",
+      "mangelerscheinung"
+    ],
+    "text": "Im gezeigten Versuch hatten die Pflanzen mit der doppelten Calcium-Magnesium-Menge tendenziell mehr Blätter mit Mangelerscheinungen. Der Sprecher von SANlight empfiehlt daher, eher zu wenig als zu viel zu geben.",
+    "videoId": "piQ80EZqir8",
+    "videoTitle": "Die HOMEGROW LED Krankheit ?!? |  Was tun gegen CALMAG Mangel ? | SANlight und Garten Eden 🌱",
+    "channel": "Garten Eden 🌱",
+    "start": 728
+  },
+  {
+    "id": "nutrients-ec-01",
+    "topic": "Feeding-EC, Drain-EC und Medium-EC",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ec",
+      "feeding ec",
+      "drain ec",
+      "medium ec",
+      "leitfähigkeit"
+    ],
+    "text": "Das Video unterscheidet drei EC-Werte: den Feeding-EC (was man der Pflanze gibt), den Drain-EC (was unten ausläuft) und den Medium-EC (was sich im Topf bzw. Block befindet).",
+    "videoId": "vbPWRb4jt1g",
+    "videoTitle": "CANNABIS EC WERTE | PROFITIPPS | Alles was du wissen musst - GrowGuide",
+    "channel": "Growmotion",
+    "start": 9
+  },
+  {
+    "id": "nutrients-ec-02",
+    "topic": "Feeding-EC-Bereich",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ec",
+      "feeding ec",
+      "dünger",
+      "steigern",
+      "düngung"
+    ],
+    "text": "Der Feeding-EC beginnt laut Video niedrig bei etwa 1,6 und wird bis etwa 3 gesteigert, abhängig vom verwendeten Dünger. Bei manchen Düngern sollte man nicht bis auf 3 hochgehen.",
+    "videoId": "vbPWRb4jt1g",
+    "videoTitle": "CANNABIS EC WERTE | PROFITIPPS | Alles was du wissen musst - GrowGuide",
+    "channel": "Growmotion",
+    "start": 49
+  },
+  {
+    "id": "nutrients-ec-03",
+    "topic": "Drain-EC als Kontrolle",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "drain ec",
+      "unterdüngung",
+      "drain",
+      "ec",
+      "kontrolle"
+    ],
+    "text": "Der Drain-EC sollte laut Video etwa 1,5 Punkte über dem Feeding-EC liegen. Ist der EC im Drain niedriger, ist die Pflanze meist unterdüngt und man kann mehr düngen.",
+    "videoId": "vbPWRb4jt1g",
+    "videoTitle": "CANNABIS EC WERTE | PROFITIPPS | Alles was du wissen musst - GrowGuide",
+    "channel": "Growmotion",
+    "start": 76
+  },
+  {
+    "id": "nutrients-ec-04",
+    "topic": "Drain-Menge 15 bis 20 Prozent",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "drain",
+      "drain menge",
+      "gießen",
+      "20 prozent",
+      "runoff"
+    ],
+    "text": "Als Regel nennt das Video 15 bis 20 Prozent Drain: Gibt man 1 Liter Wasser, sollten etwa 200 ml unten herauskommen.",
+    "videoId": "vbPWRb4jt1g",
+    "videoTitle": "CANNABIS EC WERTE | PROFITIPPS | Alles was du wissen musst - GrowGuide",
+    "channel": "Growmotion",
+    "start": 299
+  },
+  {
+    "id": "nutrients-ph-01",
+    "topic": "Sinkender pH im Drain als Warnzeichen",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ph-wert",
+      "drain",
+      "überdüngung",
+      "kalibrieren",
+      "messgerät"
+    ],
+    "text": "Sinkt der pH-Wert im Drain, ist das laut Video ein Zeichen, dass schon etwas zu viel Dünger drin ist, und man sollte etwas weniger düngen. Der pH im Drain sollte in der Regel so hoch sein wie der der gegebenen Lösung; die Messgeräte müssen gut kalibriert sein.",
+    "videoId": "vbPWRb4jt1g",
+    "videoTitle": "CANNABIS EC WERTE | PROFITIPPS | Alles was du wissen musst - GrowGuide",
+    "channel": "Growmotion",
+    "start": 341
+  },
+  {
+    "id": "nutrients-ec-05",
+    "topic": "EC je nach Phase anpassen",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ec",
+      "phase",
+      "überdüngung",
+      "salz",
+      "blüte"
+    ],
+    "text": "Pflanzen können laut Video sehr schnell überdüngen, wenn man zu viel Salz gibt. Am Anfang der Kultur, im Wachstum, brauchen sie noch keinen hohen EC; in den Phasen, in denen die Blüten kommen, sollte man den EC erhöhen.",
+    "videoId": "vbPWRb4jt1g",
+    "videoTitle": "CANNABIS EC WERTE | PROFITIPPS | Alles was du wissen musst - GrowGuide",
+    "channel": "Growmotion",
+    "start": 416
+  },
+  {
+    "id": "nutrients-burn-02",
+    "topic": "Überdüngung im Medium mit mehr Wasser beheben",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "überdüngung",
+      "spülen",
+      "drain",
+      "doppelte menge",
+      "salze"
+    ],
+    "text": "Bei Überdüngung im Block oder in der Erde empfiehlt das Video, mit der doppelten Menge zu gießen, etwa 2 Liter statt 1 Liter, was rund 50 Prozent Drain ergibt. Bei Erde sollte man mehr aufpassen, da sie weniger Sauerstoffaustausch hat und die Pflanze übergossen werden kann.",
+    "videoId": "vbPWRb4jt1g",
+    "videoTitle": "CANNABIS EC WERTE | PROFITIPPS | Alles was du wissen musst - GrowGuide",
+    "channel": "Growmotion",
+    "start": 517
+  },
+  {
+    "id": "nutrients-burn-03",
+    "topic": "Blattdüngung bei Überdüngung",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "blattdüngung",
+      "überdüngung",
+      "blattfeeding",
+      "wurzeln",
+      "regeneration"
+    ],
+    "text": "Bei Überdüngung kann man laut Video einige Tage mehr Wasser geben, um die Salze durch den Drain auszuspülen, und die Pflanze währenddessen über die Blätter düngen. So werden die Wurzeln entlastet, weil die Pflanze Nährstoffe über Wurzeln und Blätter aufnehmen kann.",
+    "videoId": "vbPWRb4jt1g",
+    "videoTitle": "CANNABIS EC WERTE | PROFITIPPS | Alles was du wissen musst - GrowGuide",
+    "channel": "Growmotion",
+    "start": 559
+  },
+  {
+    "id": "nutrients-ph-02",
+    "topic": "Was der pH-Wert bedeutet",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ph-wert",
+      "substrat",
+      "gießwasser",
+      "nährstoffversorgung",
+      "sauer"
+    ],
+    "text": "Der pH-Wert bestimmt, wie sauer oder basisch Gießwasser oder Substrat ist, und beeinflusst maßgeblich, wie die Pflanze mit Nährstoffen versorgt werden kann. Je nach Anbau (Hydro, Erde, Kokos) gibt es dabei Unterschiede.",
+    "videoId": "3wwHtt2ralg",
+    "videoTitle": "Pflanzenwerte RICHTIG messen - PH & EC IM SUBSTRAT",
+    "channel": "grascheck24",
+    "start": 57
+  },
+  {
+    "id": "nutrients-ec-06",
+    "topic": "Was der EC-Wert bedeutet",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ec",
+      "leitfähigkeit",
+      "salzkonzentration",
+      "messgerät",
+      "gießwasser"
+    ],
+    "text": "Die elektrische Leitfähigkeit (EC) gibt Auskunft über die Salzkonzentration im Gießwasser, also darüber, wie viele Nährstoffe im Wasser sind. Ein pH- und EC-Messgerät gehört laut Video zur Grundausstattung.",
+    "videoId": "3wwHtt2ralg",
+    "videoTitle": "Pflanzenwerte RICHTIG messen - PH & EC IM SUBSTRAT",
+    "channel": "grascheck24",
+    "start": 75
+  },
+  {
+    "id": "nutrients-runoff-01",
+    "topic": "Runoff ist nur eine grobe Richtung",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "runoff",
+      "drain",
+      "salze",
+      "topfboden",
+      "messen"
+    ],
+    "text": "Der Runoff ist das Wasser, das nach dem Gießen unten herausläuft, und gibt nur eine ungefähre Aussage über pH und EC im Substrat. Je nach Gießverhalten kann er ein falsches Ergebnis liefern.",
+    "videoId": "3wwHtt2ralg",
+    "videoTitle": "Pflanzenwerte RICHTIG messen - PH & EC IM SUBSTRAT",
+    "channel": "grascheck24",
+    "start": 112
+  },
+  {
+    "id": "nutrients-runoff-02",
+    "topic": "Salze sammeln sich im Topfboden",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "salze",
+      "runoff",
+      "überdüngung",
+      "topfboden",
+      "unterversorgung"
+    ],
+    "text": "Die zugeführten Nährstoffe kommen als Salze vor und sammeln sich gern im Topfboden. Ohne echten Runoff kann die Pflanze oben hungern, während sie unten überfüttert ist und Überdüngungsanzeichen zeigt.",
+    "videoId": "3wwHtt2ralg",
+    "videoTitle": "Pflanzenwerte RICHTIG messen - PH & EC IM SUBSTRAT",
+    "channel": "grascheck24",
+    "start": 134
+  },
+  {
+    "id": "nutrients-runoff-03",
+    "topic": "Faustregel 10 bis 20 Prozent Runoff",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "runoff",
+      "faustregel",
+      "gießen",
+      "20 prozent",
+      "drain"
+    ],
+    "text": "Als grobe Faustregel sollten 10 bis 20 Prozent der gegossenen Wassermenge unten wieder herausfließen. Das sei eine ungefähre Angabe.",
+    "videoId": "3wwHtt2ralg",
+    "videoTitle": "Pflanzenwerte RICHTIG messen - PH & EC IM SUBSTRAT",
+    "channel": "grascheck24",
+    "start": 152
+  },
+  {
+    "id": "nutrients-ph-03",
+    "topic": "1:1,5-Extraktion vor der Blüte",
+    "phases": [
+      "vegetative"
+    ],
+    "tags": [
+      "extraktionsmethode",
+      "substrat",
+      "ph-wert",
+      "ec",
+      "vegetation"
+    ],
+    "text": "Die 1:1,5-Extraktionsmethode gibt eine eindeutige Aussage über EC und pH im Substrat und wird im Video für die dritte bis vierte Vegi-Woche empfohlen. Gut genährte Pflanzen zeigen laut Sprecher eher weniger Mangelerscheinungen in der Blüte.",
+    "videoId": "3wwHtt2ralg",
+    "videoTitle": "Pflanzenwerte RICHTIG messen - PH & EC IM SUBSTRAT",
+    "channel": "grascheck24",
+    "start": 172
+  },
+  {
+    "id": "nutrients-defic-07",
+    "topic": "Phosphormangel durch Unterdüngung",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "phosphormangel",
+      "unterdüngung",
+      "blüte",
+      "ertrag",
+      "qualität"
+    ],
+    "text": "Starten Pflanzen unterfüttert in die Blüte, können sie dort zum Beispiel Phosphormangel zeigen. Der Sprecher berichtet von einem starken Phosphormangel am Ende seines letzten Grows, weil zu wenig Dünger im Substrat war, mit Qualitäts- und Ertragseinbußen.",
+    "videoId": "3wwHtt2ralg",
+    "videoTitle": "Pflanzenwerte RICHTIG messen - PH & EC IM SUBSTRAT",
+    "channel": "grascheck24",
+    "start": 186
+  },
+  {
+    "id": "nutrients-defic-08",
+    "topic": "Unterfütterte Pflanze auffüttern",
+    "phases": [
+      "vegetative"
+    ],
+    "tags": [
+      "unterdüngung",
+      "düngekonzentration",
+      "vegetation",
+      "puffer",
+      "substrat"
+    ],
+    "text": "Ist die Pflanze unterfüttert, kann man die Düngekonzentration etwas höher fahren und die Vegetation etwas länger laufen lassen, um im Substrat den Puffer für die Blüte anzureichern. Die Richtwerte für die Substratwerte sind düngerabhängig und stehen beim jeweiligen Hersteller.",
+    "videoId": "3wwHtt2ralg",
+    "videoTitle": "Pflanzenwerte RICHTIG messen - PH & EC IM SUBSTRAT",
+    "channel": "grascheck24",
+    "start": 485
+  },
+  {
+    "id": "nutrients-ph-04",
+    "topic": "Bio-Erde puffert pH und EC",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "bio",
+      "erde",
+      "puffer",
+      "ph-wert",
+      "ec"
+    ],
+    "text": "Beim biologischen Anbau gibt es mehr Spielraum als beim mineralischen, weil die organischen Bestandteile der Erde pH- und EC-Wert zu einem großzügigen Grad puffern. Spezielle Erdmischungen verzeihen laut Video so manche Nachlässigkeit.",
+    "videoId": "rFxHY3u4hz4",
+    "videoTitle": "Das beste Gießwasser auf Erde 🥦 – PH Wert, EC Wert, Temperatur",
+    "channel": "Der Hanf lebt",
+    "start": 20
+  },
+  {
+    "id": "nutrients-water-01",
+    "topic": "Gießwasser: vier Faktoren",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "gießwasser",
+      "chlorid",
+      "temperatur",
+      "leitungswasser",
+      "ph-wert"
+    ],
+    "text": "Beim Gießwasser sind pH-Wert, EC-Wert, Temperatur und unerwünschte Zusätze wie Chlorid zu beachten. Das Wasser lässt man 24 Stunden offen stehen, damit Zusätze entweichen, und am besten bei Zimmertemperatur (um die 20 Grad) im Raum des Growzelts.",
+    "videoId": "rFxHY3u4hz4",
+    "videoTitle": "Das beste Gießwasser auf Erde 🥦 – PH Wert, EC Wert, Temperatur",
+    "channel": "Der Hanf lebt",
+    "start": 51
+  },
+  {
+    "id": "nutrients-ph-05",
+    "topic": "Richtwerte für Bio-Anbau auf Erde",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ph-wert",
+      "ec",
+      "bio",
+      "erde",
+      "gießwasser"
+    ],
+    "text": "Für biologischen Anbau nennt das Video einen pH-Wert zwischen 6,5 und 7,5 und einen EC-Wert zwischen 0,2 und 0,4 im Gießwasser.",
+    "videoId": "rFxHY3u4hz4",
+    "videoTitle": "Das beste Gießwasser auf Erde 🥦 – PH Wert, EC Wert, Temperatur",
+    "channel": "Der Hanf lebt",
+    "start": 80
+  },
+  {
+    "id": "nutrients-water-02",
+    "topic": "Regenwasser kritisch gesehen",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "regenwasser",
+      "gießwasser",
+      "mineralwasser",
+      "leitungswasser",
+      "bio"
+    ],
+    "text": "Der Sprecher rät eher von Regenwasser ab, weil man nicht wissen kann, was sich aus der belasteten Umwelt darin befindet. Leitungswasser wird am häufigsten genutzt und hat in Deutschland, Österreich und der Schweiz eine vergleichsweise hohe Qualität.",
+    "videoId": "rFxHY3u4hz4",
+    "videoTitle": "Das beste Gießwasser auf Erde 🥦 – PH Wert, EC Wert, Temperatur",
+    "channel": "Der Hanf lebt",
+    "start": 102
+  },
+  {
+    "id": "nutrients-ph-06",
+    "topic": "Leitungswasser-pH oft zu hoch",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "leitungswasser",
+      "ph-wert",
+      "ph minus",
+      "zitronensaft",
+      "korrektur"
+    ],
+    "text": "Der pH-Wert von Leitungswasser liegt in Mitteleuropa meist bei mindestens 8 und ist damit zu hoch. Biologische Dünger senken ihn etwas; sonst hilft eine Korrektur, praktikabler mit pH-Minus-Lösung als mit Zitronensaft.",
+    "videoId": "rFxHY3u4hz4",
+    "videoTitle": "Das beste Gießwasser auf Erde 🥦 – PH Wert, EC Wert, Temperatur",
+    "channel": "Der Hanf lebt",
+    "start": 137
+  },
+  {
+    "id": "nutrients-ph-07",
+    "topic": "pH messen: Teststreifen reichen bei Erde",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ph-messung",
+      "teststreifen",
+      "erde",
+      "messgerät",
+      "mineralisch"
+    ],
+    "text": "Auf Erde hält der Sprecher Teststreifen für den pH-Wert für ausreichend und ein Messgerät für fast übertrieben; man kontrolliert das Wasser vielleicht alle paar Monate. Für mineralischen Anbau sei ein Messgerät ein Muss.",
+    "videoId": "rFxHY3u4hz4",
+    "videoTitle": "Das beste Gießwasser auf Erde 🥦 – PH Wert, EC Wert, Temperatur",
+    "channel": "Der Hanf lebt",
+    "start": 164
+  },
+  {
+    "id": "nutrients-ec-07",
+    "topic": "EC-Grenzwerte und Wasserfilter",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ec",
+      "wasserfilter",
+      "umkehrosmose",
+      "bio",
+      "leitungswasser"
+    ],
+    "text": "Bei einem EC-Wert des Wassers zwischen 0,4 und 0,8 kann ein günstiger Wasserfilter helfen, über 0,8 sollte man laut Video fast etwas unternehmen. Tiefer als 0,4 kommt man nur mit einer Umkehrosmose-Anlage.",
+    "videoId": "rFxHY3u4hz4",
+    "videoTitle": "Das beste Gießwasser auf Erde 🥦 – PH Wert, EC Wert, Temperatur",
+    "channel": "Der Hanf lebt",
+    "start": 228
+  },
+  {
+    "id": "nutrients-water-03",
+    "topic": "Osmosewasser: Calcium und Magnesium fehlen",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "osmosewasser",
+      "calcium",
+      "magnesium",
+      "calmag",
+      "umkehrosmose"
+    ],
+    "text": "Bei Osmosewasser fehlen Mineralien wie Calcium und Magnesium. Da die meisten Dünger für Leitungswasser optimiert sind und weniger davon enthalten, muss man sie wieder zugeben; dafür gibt es eigene Ergänzungen.",
+    "videoId": "rFxHY3u4hz4",
+    "videoTitle": "Das beste Gießwasser auf Erde 🥦 – PH Wert, EC Wert, Temperatur",
+    "channel": "Der Hanf lebt",
+    "start": 248
+  },
+  {
+    "id": "nutrients-scheme-01",
+    "topic": "Organischer vs. mineralischer Dünger",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "organisch",
+      "mineralisch",
+      "dünger",
+      "bodenleben",
+      "nährstoffverfügbarkeit"
+    ],
+    "text": "Bei organischem Dünger werden die Nährstoffe erst durch das Bodenleben für die Pflanze verfügbar, bei mineralischem Dünger sind sie sofort verfügbar. Beim Mineraldünger muss man die Versorgung deshalb selbst über EC und pH steuern.",
+    "videoId": "hoOlh-VOfGg",
+    "videoTitle": "Mineralisch Düngen für Anfänger - Von der Keimung bis zur Ernte, Dünger richtig anwenden!",
+    "channel": "Vince and Weed",
+    "start": 28
+  },
+  {
+    "id": "nutrients-ec-08",
+    "topic": "EC und pH im Zusammenspiel",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ec",
+      "ph-wert",
+      "nährlösung",
+      "nährstoffaufnahme",
+      "mineralisch"
+    ],
+    "text": "Der EC-Wert zeigt, wie viele Nährstoffe im Wasser sind, der pH-Wert bestimmt, wie gut die Pflanze sie aufnehmen kann. Nur im Zusammenspiel beider Werte lassen sich optimale Ergebnisse erzielen.",
+    "videoId": "hoOlh-VOfGg",
+    "videoTitle": "Mineralisch Düngen für Anfänger - Von der Keimung bis zur Ernte, Dünger richtig anwenden!",
+    "channel": "Vince and Weed",
+    "start": 195
+  },
+  {
+    "id": "nutrients-ph-08",
+    "topic": "pH korrigieren mit pH-Plus und -Minus",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ph-wert",
+      "ph minus",
+      "ph plus",
+      "korrektur",
+      "nährlösung"
+    ],
+    "text": "Zum Korrigieren des pH-Werts dienen pH-Plus und pH-Minus, die nur den pH beeinflussen. Man gibt sie in Kleinstmengen unter Rühren zu, kontrolliert nach etwa 10 bis 15 Minuten nochmal und mischt sie niemals zusammen in die Düngerlösung.",
+    "videoId": "hoOlh-VOfGg",
+    "videoTitle": "Mineralisch Düngen für Anfänger - Von der Keimung bis zur Ernte, Dünger richtig anwenden!",
+    "channel": "Vince and Weed",
+    "start": 283
+  },
+  {
+    "id": "nutrients-scheme-02",
+    "topic": "Düngeschema Jungpflanze",
+    "phases": [
+      "seedling",
+      "vegetative"
+    ],
+    "tags": [
+      "düngeschema",
+      "jungpflanze",
+      "ec",
+      "ph-wert",
+      "wachstum"
+    ],
+    "text": "Für die Jungpflanze nennt das Video einen pH von 5,8 bis 6,0 und eine erste Nährlösung mit EC 0,5 bis 0,7, die bis zur dritten Wachstumswoche auf 0,8 bis 1,0 angehoben werden kann. Wer sich am niedrigeren EC orientiert, macht laut Sprecher so gut wie nichts falsch.",
+    "videoId": "hoOlh-VOfGg",
+    "videoTitle": "Mineralisch Düngen für Anfänger - Von der Keimung bis zur Ernte, Dünger richtig anwenden!",
+    "channel": "Vince and Weed",
+    "start": 395
+  },
+  {
+    "id": "nutrients-scheme-03",
+    "topic": "Düngeschema Blüte: von Stickstoff zu Phosphor und Kalium",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "düngeschema",
+      "blüte",
+      "stickstoff",
+      "phosphor",
+      "kalium",
+      "ec"
+    ],
+    "text": "Bis zur Streckung braucht die Pflanze eine stickstofflastige Ernährung, die sich in den folgenden zwei bis drei Wochen zu Phosphor und Kalium umstellt. In der Blüte nennt das Video einen EC von 1,2 bis 1,3, der bis Woche 6 steigt, und einen pH von 6,1 in der ersten bis 6,3 in der sechsten Blütewoche.",
+    "videoId": "hoOlh-VOfGg",
+    "videoTitle": "Mineralisch Düngen für Anfänger - Von der Keimung bis zur Ernte, Dünger richtig anwenden!",
+    "channel": "Vince and Weed",
+    "start": 486
+  },
+  {
+    "id": "nutrients-scheme-04",
+    "topic": "Phosphor-Kalium-Booster ab Blütewoche 7",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "booster",
+      "phosphor",
+      "kalium",
+      "blütewoche",
+      "ec"
+    ],
+    "text": "Ab Woche 7 wird weniger Stickstoff benötigt und die Pflanze braucht vermehrt Phosphor und Kalium, wofür neben dem Basisdünger ein P/K-Booster zugegeben wird. Im Beispiel kommen zu EC 1,2 des Düngers 0,4 vom Booster, also EC 1,6; der Booster läuft bis Ende der neunten Woche.",
+    "videoId": "hoOlh-VOfGg",
+    "videoTitle": "Mineralisch Düngen für Anfänger - Von der Keimung bis zur Ernte, Dünger richtig anwenden!",
+    "channel": "Vince and Weed",
+    "start": 526
+  },
+  {
+    "id": "nutrients-flush-01",
+    "topic": "Spülen vor der Ernte",
+    "phases": [
+      "flowering",
+      "harvest"
+    ],
+    "tags": [
+      "spülen",
+      "flush",
+      "ernte",
+      "nährstoffe",
+      "studie"
+    ],
+    "text": "Beim Spülen versuchen viele, durch viel Wasser Nährstoffe auszuwaschen, in der Hoffnung auf bessere Qualität. Laut Video haben neue Studien gezeigt, dass Spülen bis zu 14 Tagen keinen signifikanten Unterschied in Laboranalysen gebracht hat; die Pflanze soll bis zuletzt versorgt bleiben.",
+    "videoId": "hoOlh-VOfGg",
+    "videoTitle": "Mineralisch Düngen für Anfänger - Von der Keimung bis zur Ernte, Dünger richtig anwenden!",
+    "channel": "Vince and Weed",
+    "start": 565
+  },
+  {
+    "id": "nutrients-burn-04",
+    "topic": "Weniger ist für Anfänger oft mehr",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "überdüngung",
+      "unterdüngung",
+      "anfänger",
+      "düngung",
+      "vorsicht"
+    ],
+    "text": "Für Anfänger ist weniger oft mehr, denn eine Überdüngung lässt sich nicht reparieren, eine Unterversorgung aber noch korrigieren. Wer Angst vor zu viel Dünger hat, kann nur bei jedem zweiten Gießen mit den genannten Düngerwerten gießen.",
+    "videoId": "hoOlh-VOfGg",
+    "videoTitle": "Mineralisch Düngen für Anfänger - Von der Keimung bis zur Ernte, Dünger richtig anwenden!",
+    "channel": "Vince and Weed",
+    "start": 437
+  },
+  {
+    "id": "nutrients-ph-09",
+    "topic": "Zwei Hauptfehlerquellen: Gießen und pH",
+    "phases": [
+      "seedling",
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ph-wert",
+      "gießen",
+      "fehlerquellen",
+      "anfänger",
+      "wachstum"
+    ],
+    "text": "Als zwei Hauptfehlerquellen bei Anbau zu Hause nennt das Video falsches Gießen und den pH-Wert. Über den pH-Wert werde am seltensten gesprochen.",
+    "videoId": "7EAyUiaJSgk",
+    "videoTitle": "Nur so wächst Dein Gras optimal 😱 richtig oder falsch?  Der perfekte pH-Wert für den Anbau!",
+    "channel": "Pott Planter",
+    "start": 83
+  },
+  {
+    "id": "nutrients-ph-10",
+    "topic": "Gießwasser-pH kann stark abweichen",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ph-wert",
+      "leitungswasser",
+      "gießwasser",
+      "dünger",
+      "messung"
+    ],
+    "text": "Im Beispiel haben zwei Personen dieselbe Mischung angesetzt, doch bei der einen lag der pH bei etwa 6,1, bei der anderen deutlich über 8. Das zeigt, dass der pH der Gießlösung stark abweichen kann, obwohl beide Leitungswasser nutzen.",
+    "videoId": "7EAyUiaJSgk",
+    "videoTitle": "Nur so wächst Dein Gras optimal 😱 richtig oder falsch?  Der perfekte pH-Wert für den Anbau!",
+    "channel": "Pott Planter",
+    "start": 238
+  },
+  {
+    "id": "nutrients-ph-11",
+    "topic": "pH 6 bis 7 in Erde und Mangel trotz Dünger",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ph-wert",
+      "erde",
+      "nährstoffaufnahme",
+      "mangelerscheinung",
+      "nährstoffblockade"
+    ],
+    "text": "Damit die Pflanze Nährstoffe effizient aufnimmt, sollte der pH in einer vernünftigen Erde zwischen 6 und 7 liegen. Stimmt er nicht, treten Mangelerscheinungen auf, egal wie viel Dünger man gibt.",
+    "videoId": "7EAyUiaJSgk",
+    "videoTitle": "Nur so wächst Dein Gras optimal 😱 richtig oder falsch?  Der perfekte pH-Wert für den Anbau!",
+    "channel": "Pott Planter",
+    "start": 432
+  },
+  {
+    "id": "nutrients-burn-05",
+    "topic": "Falscher pH kann zu Überdüngung führen",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "überdüngung",
+      "ph-wert",
+      "wurzeln",
+      "verbrennen",
+      "nährstoffe"
+    ],
+    "text": "Bei falschem pH kann die Pflanze Nährstoffe nicht aufnehmen, selbst bei drei- bis fünffacher Düngermenge. Die Nährstoffe sammeln sich dann in der Erde an, die Erde wird überdüngt und die Wurzeln können verbrennen.",
+    "videoId": "7EAyUiaJSgk",
+    "videoTitle": "Nur so wächst Dein Gras optimal 😱 richtig oder falsch?  Der perfekte pH-Wert für den Anbau!",
+    "channel": "Pott Planter",
+    "start": 458
+  },
+  {
+    "id": "nutrients-ph-12",
+    "topic": "Vorbeugen mit passender Erde",
+    "phases": [
+      "seedling",
+      "vegetative"
+    ],
+    "tags": [
+      "erde",
+      "ph-wert",
+      "vorbeugen",
+      "substrat",
+      "hanferde"
+    ],
+    "text": "Zum Vorbeugen empfiehlt das Video eine Erde, die für die Pflanze ausgelegt ist, da dort der pH meist schon gut eingestellt ist; er steht auf den meisten Säcken.",
+    "videoId": "7EAyUiaJSgk",
+    "videoTitle": "Nur so wächst Dein Gras optimal 😱 richtig oder falsch?  Der perfekte pH-Wert für den Anbau!",
+    "channel": "Pott Planter",
+    "start": 485
+  },
+  {
+    "id": "nutrients-ph-13",
+    "topic": "Gießwasser regelmäßig messen, auch bei Erde",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "gießwasser",
+      "ph-messung",
+      "erde",
+      "kleine töpfe",
+      "ph-drift"
+    ],
+    "text": "Besonders bei kleineren Töpfen empfiehlt das Video, das Gießwasser regelmäßig zu messen, auch bei Erde. Gießt man über Wochen immer mit einem pH von 8, ändert sich irgendwann auch der pH in der Erde.",
+    "videoId": "7EAyUiaJSgk",
+    "videoTitle": "Nur so wächst Dein Gras optimal 😱 richtig oder falsch?  Der perfekte pH-Wert für den Anbau!",
+    "channel": "Pott Planter",
+    "start": 556
+  },
+  {
+    "id": "nutrients-ph-14",
+    "topic": "Nährstoffblockade durch schlechten pH",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "nährstoffblockade",
+      "ph-wert",
+      "nährstoffaufnahme",
+      "mikroorganismen",
+      "dünger"
+    ],
+    "text": "Ein schlechter pH wirkt sich auf die Nährstoffaufnahme aus und kann zu einer kompletten Nährstoffblockade führen. Der pH muss nicht perfekt sein, doch je besser er eingestellt ist, desto mehr vom Dünger wird über die Wurzeln aufgenommen.",
+    "videoId": "7EAyUiaJSgk",
+    "videoTitle": "Nur so wächst Dein Gras optimal 😱 richtig oder falsch?  Der perfekte pH-Wert für den Anbau!",
+    "channel": "Pott Planter",
+    "start": 609
+  },
+  {
+    "id": "nutrients-calmag-08",
+    "topic": "Was CalMag ist",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "calmag",
+      "calcium",
+      "magnesium",
+      "präparat",
+      "gießwasser"
+    ],
+    "text": "CalMag ist ein Präparat, um dem Gießwasser Calcium und Magnesium hinzuzufügen. Oft sind auch Stickstoff, Schwefel und Spurenelemente enthalten, und das Verhältnis von Calcium zu Magnesium ist bei jedem Hersteller unterschiedlich.",
+    "videoId": "lc1rQaAto1c",
+    "videoTitle": "Calmag erklärt - Sind die alle gleich?!",
+    "channel": "High-And-Hydro",
+    "start": 26
+  },
+  {
+    "id": "nutrients-calmag-09",
+    "topic": "CalMag passend zur Düngerserie wählen",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "calmag",
+      "hersteller",
+      "düngerserie",
+      "verhältnis",
+      "konzentration"
+    ],
+    "text": "Das Video empfiehlt, das CalMag-Präparat des Herstellers zur eigenen Düngerserie zu nutzen, um sich das Rechnen zu sparen und Probleme durch ein falsches Verhältnis zu vermeiden. Auch die Konzentration unterscheidet sich stark zwischen den Herstellern.",
+    "videoId": "lc1rQaAto1c",
+    "videoTitle": "Calmag erklärt - Sind die alle gleich?!",
+    "channel": "High-And-Hydro",
+    "start": 58
+  },
+  {
+    "id": "nutrients-calmag-10",
+    "topic": "CalMag-Menge hängt vom Ausgangswasser ab",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "calmag",
+      "dosierung",
+      "ausgangswasser",
+      "regenwasser",
+      "leitungswasser"
+    ],
+    "text": "Wie viel CalMag man braucht, hängt vom Ausgangswasser ab. Regenwasser hat einen EC nahe null, kann aber Insekten und Eier enthalten; Leitungswasser variiert regional, von etwa 10 bis 15 mg Calcium bei weichem bis 180 oder 200 mg bei hartem Wasser.",
+    "videoId": "lc1rQaAto1c",
+    "videoTitle": "Calmag erklärt - Sind die alle gleich?!",
+    "channel": "High-And-Hydro",
+    "start": 129
+  },
+  {
+    "id": "nutrients-calmag-11",
+    "topic": "Wasserwerte beim Versorger erfragen",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "wasserwerte",
+      "wasserversorger",
+      "calcium",
+      "magnesium",
+      "ungleichgewicht"
+    ],
+    "text": "Die eigenen Wasserwerte erfährt man beim örtlichen Wasserversorger. Wichtig ist nur eine ungefähre Richtung, ob man weiches oder hartes Wasser hat, da ein starkes Ungleichgewicht von Calcium und Magnesium zu Problemen führen kann.",
+    "videoId": "lc1rQaAto1c",
+    "videoTitle": "Calmag erklärt - Sind die alle gleich?!",
+    "channel": "High-And-Hydro",
+    "start": 180
+  },
+  {
+    "id": "nutrients-calmag-12",
+    "topic": "CalMag-Dosierung je Medium",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "calmag",
+      "erde",
+      "dwc",
+      "hydro",
+      "dosierung"
+    ],
+    "text": "Auf Erde wird die CalMag-Dosierung von der Vegetations- zur Blütephase langsam gesteigert. In DWC gibt man es dagegen gleich von Anfang an, da nichts vorhanden ist, woraus die Pflanze sich sonst ernähren könnte.",
+    "videoId": "lc1rQaAto1c",
+    "videoTitle": "Calmag erklärt - Sind die alle gleich?!",
+    "channel": "High-And-Hydro",
+    "start": 240
+  },
+  {
+    "id": "nutrients-calmag-13",
+    "topic": "CalMag in Coco",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "calmag",
+      "coco",
+      "kokos",
+      "kalium",
+      "grunddünger"
+    ],
+    "text": "Bei Coco ist der richtige Grunddünger besonders wichtig, weil Coco viel Kalium enthält. Um es freizusetzen, kann man viel Calcium und Magnesium geben; so lässt sich mit demselben Dünger durch mehr CalMag eine Blütedüngermischung machen.",
+    "videoId": "lc1rQaAto1c",
+    "videoTitle": "Calmag erklärt - Sind die alle gleich?!",
+    "channel": "High-And-Hydro",
+    "start": 263
+  }
+]
