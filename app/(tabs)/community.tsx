@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { STORE_MODE } from "@/lib/store-mode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   ScrollView,
@@ -68,7 +69,9 @@ export default function CommunityScreen() {
   const { tier } = useSubscription();
   const { level, points } = useGamification();
 
-  const [activeTab, setActiveTab] = useState<TabType>("radar");
+  const [activeTab, setActiveTab] = useState<TabType>(
+    STORE_MODE ? "news" : "radar",
+  );
   const [newsCategory, setNewsCategory] = useState<"all" | "law" | "tips">(
     "all",
   );
@@ -134,14 +137,14 @@ export default function CommunityScreen() {
   );
   const leaderboard = leaderboardQuery.data || [];
   const auctionsQuery = trpc.marketplace.listAuctions.useQuery(undefined, {
-    enabled: activeTab === "contests",
+    enabled: activeTab === "contests" && !STORE_MODE,
   });
   const rafflesQuery = trpc.marketplace.listRaffles.useQuery(undefined, {
     enabled: activeTab === "contests",
   });
   const dealsQuery = trpc.marketplace.listProducts.useQuery(
     { featuredOnly: true, limit: 5 },
-    { enabled: activeTab === "contests" },
+    { enabled: activeTab === "contests" && !STORE_MODE },
   );
   const auctionsList = (auctionsQuery.data || []).slice(0, 5);
   const rafflesList = (rafflesQuery.data || []).slice(0, 5);
@@ -282,28 +285,30 @@ export default function CommunityScreen() {
           className="px-4 my-3"
           contentContainerStyle={{ gap: 8 }}
         >
-          {tabs.map((tab) => (
-            <TouchableOpacity
-              key={tab.id}
-              className={`flex-row items-center gap-1.5 px-3 py-2 rounded-full ${
-                activeTab === tab.id ? "bg-primary" : "bg-surface"
-              }`}
-              onPress={() => setActiveTab(tab.id)}
-            >
-              <IconSymbol
-                name={tab.icon as any}
-                size={16}
-                color={activeTab === tab.id ? "#fff" : colors.muted}
-              />
-              <Text
-                className={`text-sm font-medium ${
-                  activeTab === tab.id ? "text-white" : "text-muted"
+          {tabs
+            .filter((tab) => !(STORE_MODE && tab.id === "radar"))
+            .map((tab) => (
+              <TouchableOpacity
+                key={tab.id}
+                className={`flex-row items-center gap-1.5 px-3 py-2 rounded-full ${
+                  activeTab === tab.id ? "bg-primary" : "bg-surface"
                 }`}
+                onPress={() => setActiveTab(tab.id)}
               >
-                {tab.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                <IconSymbol
+                  name={tab.icon as any}
+                  size={16}
+                  color={activeTab === tab.id ? "#fff" : colors.muted}
+                />
+                <Text
+                  className={`text-sm font-medium ${
+                    activeTab === tab.id ? "text-white" : "text-muted"
+                  }`}
+                >
+                  {tab.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
         </ScrollView>
 
         {/* Radar Tab */}
@@ -1265,20 +1270,28 @@ export default function CommunityScreen() {
                 )}
 
                 <View className="flex-row gap-4 mt-3 pt-3 border-t border-border">
-                  <TouchableOpacity
-                    onPress={() => Linking.openURL(strain.source)}
-                  >
-                    <Text className="text-sm font-medium text-primary">
+                  {STORE_MODE ? (
+                    <Text className="text-sm text-muted">
                       Quelle: {strain.breeder}
                     </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => Linking.openURL(strainSearchUrl(strain))}
-                  >
-                    <Text className="text-sm font-medium text-primary">
-                      🔎 Samen suchen
-                    </Text>
-                  </TouchableOpacity>
+                  ) : (
+                    <>
+                      <TouchableOpacity
+                        onPress={() => Linking.openURL(strain.source)}
+                      >
+                        <Text className="text-sm font-medium text-primary">
+                          Quelle: {strain.breeder}
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => Linking.openURL(strainSearchUrl(strain))}
+                      >
+                        <Text className="text-sm font-medium text-primary">
+                          🔎 Samen suchen
+                        </Text>
+                      </TouchableOpacity>
+                    </>
+                  )}
                 </View>
               </TouchableOpacity>
             ))}
@@ -1343,15 +1356,17 @@ export default function CommunityScreen() {
             ))}
 
             {/* Auctions */}
-            <Text className="text-lg font-semibold text-foreground mt-4">
-              🔨 Auktionen
-            </Text>
-            {auctionsList.length === 0 && (
+            {!STORE_MODE && (
+              <Text className="text-lg font-semibold text-foreground mt-4">
+                🔨 Auktionen
+              </Text>
+            )}
+            {!STORE_MODE && auctionsList.length === 0 && (
               <Text className="text-sm text-muted">
                 Aktuell keine aktiven Auktionen.
               </Text>
             )}
-            {auctionsList.map((auction) => (
+            {(STORE_MODE ? [] : auctionsList).map((auction) => (
               <View
                 key={auction.id}
                 className="bg-surface rounded-xl p-4 border border-border"
@@ -1450,15 +1465,17 @@ export default function CommunityScreen() {
             ))}
 
             {/* Featured products */}
-            <Text className="text-lg font-semibold text-foreground mt-4">
-              💰 Empfohlene Produkte
-            </Text>
-            {dealsList.length === 0 && (
+            {!STORE_MODE && (
+              <Text className="text-lg font-semibold text-foreground mt-4">
+                💰 Empfohlene Produkte
+              </Text>
+            )}
+            {!STORE_MODE && dealsList.length === 0 && (
               <Text className="text-sm text-muted">
                 Aktuell keine empfohlenen Produkte.
               </Text>
             )}
-            {dealsList.map((deal) => (
+            {(STORE_MODE ? [] : dealsList).map((deal) => (
               <TouchableOpacity
                 key={deal.id}
                 className="bg-surface rounded-xl p-4 border border-border flex-row items-center gap-3"

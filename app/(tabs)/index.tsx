@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { STORE_MODE } from "@/lib/store-mode";
 import {
   ScrollView,
   Text,
@@ -394,16 +395,24 @@ export default function HomeScreen() {
               <Text className="text-xs text-muted">Rechner & Kalender</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              className="flex-1 bg-surface rounded-2xl p-4 items-center gap-2 border border-border"
-              onPress={() => router.push("/marketplace")}
-            >
-              <View className="w-12 h-12 rounded-full bg-success/20 items-center justify-center">
-                <IconSymbol name="cart.fill" size={24} color={colors.success} />
-              </View>
-              <Text className="text-base font-bold text-foreground">Shop</Text>
-              <Text className="text-xs text-muted">Seeds & Equipment</Text>
-            </TouchableOpacity>
+            {!STORE_MODE && (
+              <TouchableOpacity
+                className="flex-1 bg-surface rounded-2xl p-4 items-center gap-2 border border-border"
+                onPress={() => router.push("/marketplace")}
+              >
+                <View className="w-12 h-12 rounded-full bg-success/20 items-center justify-center">
+                  <IconSymbol
+                    name="cart.fill"
+                    size={24}
+                    color={colors.success}
+                  />
+                </View>
+                <Text className="text-base font-bold text-foreground">
+                  Shop
+                </Text>
+                <Text className="text-xs text-muted">Seeds & Equipment</Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           <TouchableOpacity
