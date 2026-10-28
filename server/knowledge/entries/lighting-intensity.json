@@ -1,0 +1,223 @@
+[
+  {
+    "id": "lighting-intensity-01",
+    "topic": "Lollipopping: was und wozu",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "lollipopping",
+      "ausdünnen",
+      "airflow",
+      "luftzirkulation",
+      "blüte",
+      "popcorn"
+    ],
+    "text": "Beim Lollipopping wird zu Beginn der Blüte das untere Drittel der Pflanze ausgedünnt. Laut Video verbessert das die Luftzirkulation unter und zwischen den Pflanzen, und die Energie der Pflanze fließt in größere Blüten oben statt in kleine Popcorn-Blüten unten.",
+    "videoId": "ljYZ4NM8-c4",
+    "videoTitle": "Wieviel LICHT können meine Pflanzen MAXIMAL vertragen ? | & alles zum Thema „Lollipopping“",
+    "channel": "GreenConnection",
+    "start": 143
+  },
+  {
+    "id": "lighting-intensity-02",
+    "topic": "Lollipopping gegen Mehltau und Schädlinge",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "lollipopping",
+      "mehltau",
+      "luftfeuchtigkeit",
+      "schädlinge",
+      "airflow"
+    ],
+    "text": "Mit gutem Airflow zwischen den Pflanzen sinkt die Luftfeuchtigkeit, und ohne kaputte kleine Blätter unten ist die Pflanze weniger anfällig für Schädlinge. Mehltau fühlt sich unter den unteren Blättern wohler, das Entfernen hilft, ihm aus dem Weg zu gehen.",
+    "videoId": "ljYZ4NM8-c4",
+    "videoTitle": "Wieviel LICHT können meine Pflanzen MAXIMAL vertragen ? | & alles zum Thema „Lollipopping“",
+    "channel": "GreenConnection",
+    "start": 213
+  },
+  {
+    "id": "lighting-intensity-03",
+    "topic": "Richtiger Zeitpunkt fürs Lollipopping",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "lollipopping",
+      "zeitpunkt",
+      "blütewoche",
+      "energie",
+      "triebe"
+    ],
+    "text": "Der Sprecher berichtet, dass er früher direkt zu Blütebeginn lollipopte, ihm aber geraten wurde, damit zu warten, bis die Pflanze deutlich in der Blüte ist (etwa zweite bis dritte Blütewoche). Sonst steckt sie wieder Energie in neue Blätter und Triebe statt in die Blütenproduktion.",
+    "videoId": "ljYZ4NM8-c4",
+    "videoTitle": "Wieviel LICHT können meine Pflanzen MAXIMAL vertragen ? | & alles zum Thema „Lollipopping“",
+    "channel": "GreenConnection",
+    "start": 247
+  },
+  {
+    "id": "lighting-intensity-04",
+    "topic": "Lichtsättigung: ab wann bringt mehr PPFD nichts mehr",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ppfd",
+      "lichtsättigung",
+      "ertrag",
+      "co2",
+      "lichtintensität",
+      "mikromol"
+    ],
+    "text": "Ziel des Versuchs im Video ist herauszufinden, wo der Sättigungseffekt bei Licht liegt, also ab welcher PPFD der Ertrag nicht weiter steigt und ab wann CO2 nötig wird. Die Theorie nennt etwa 1000 µmol als Grenze, ab der man CO2 einsetzen sollte. Bei höherer Intensität wird das Gramm-pro-Watt-Verhältnis schlechter, das Gramm-pro-Fläche-Verhältnis aber deutlich besser.",
+    "videoId": "ljYZ4NM8-c4",
+    "videoTitle": "Wieviel LICHT können meine Pflanzen MAXIMAL vertragen ? | & alles zum Thema „Lollipopping“",
+    "channel": "GreenConnection",
+    "start": 385
+  },
+  {
+    "id": "lighting-intensity-05",
+    "topic": "PPFD in der Vegetation langsam steigern",
+    "phases": [
+      "vegetative"
+    ],
+    "tags": [
+      "ppfd",
+      "vegetation",
+      "wurzeln",
+      "lichtintensität",
+      "stecklinge",
+      "mikromol"
+    ],
+    "text": "In der Vegetation wird im Video mit etwa 300 µmol gestartet, damit die Pflanzen mit wenig Wurzeln nicht zu viel Stress bekommen. Nach zwei Wochen sind sie bei 500 µmol angekommen.",
+    "videoId": "ljYZ4NM8-c4",
+    "videoTitle": "Wieviel LICHT können meine Pflanzen MAXIMAL vertragen ? | & alles zum Thema „Lollipopping“",
+    "channel": "GreenConnection",
+    "start": 466
+  },
+  {
+    "id": "lighting-intensity-06",
+    "topic": "Daylight Integral beim Wechsel auf 12 Stunden",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "daylight integral",
+      "dli",
+      "blüte",
+      "lichtzyklus",
+      "12/12",
+      "ppfd"
+    ],
+    "text": "Entscheidend ist das Daylight Integral, also das über den Tag aufsummierte Licht. Bei der Umstellung von 18 auf 12 Stunden bekommt die Pflanze ein Drittel weniger Licht pro Tag. Der Sprecher gleicht das aus, indem er die Intensität beim Wechsel um 33 % anhebt, von 500 auf etwa 750 µmol.",
+    "videoId": "ljYZ4NM8-c4",
+    "videoTitle": "Wieviel LICHT können meine Pflanzen MAXIMAL vertragen ? | & alles zum Thema „Lollipopping“",
+    "channel": "GreenConnection",
+    "start": 506
+  },
+  {
+    "id": "lighting-intensity-07",
+    "topic": "Intensität in den ersten Blütewochen",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "ppfd",
+      "blüte",
+      "lichtintensität",
+      "mikromol",
+      "streckung"
+    ],
+    "text": "In den ersten beiden Blütewochen wird laut Video nicht die volle Intensität gefahren, damit die Pflanzen nicht zu klein und gedrungen bleiben. Erst in der dritten Blütewoche wird weiter hochgeregelt, im Versuch auf etwa 900 µmol auf der einen und 1100 µmol auf der anderen Seite.",
+    "videoId": "ljYZ4NM8-c4",
+    "videoTitle": "Wieviel LICHT können meine Pflanzen MAXIMAL vertragen ? | & alles zum Thema „Lollipopping“",
+    "channel": "GreenConnection",
+    "start": 571
+  },
+  {
+    "id": "lighting-intensity-08",
+    "topic": "PPFD als Durchschnitt mehrerer Messpunkte",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ppfd",
+      "messen",
+      "messpunkte",
+      "durchschnitt",
+      "lichtverteilung",
+      "quantum meter"
+    ],
+    "text": "Ein PPFD-Wert gilt immer nur für den Messpunkt. Deshalb misst man an mehreren Punkten auf dem Tisch, etwa in der Mitte und am Rand, und bildet den Durchschnitt. So kommt der angegebene Wert zustande.",
+    "videoId": "ljYZ4NM8-c4",
+    "videoTitle": "Wieviel LICHT können meine Pflanzen MAXIMAL vertragen ? | & alles zum Thema „Lollipopping“",
+    "channel": "GreenConnection",
+    "start": 943
+  },
+  {
+    "id": "lighting-intensity-09",
+    "topic": "Homogene Lichtverteilung",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "lichtverteilung",
+      "homogen",
+      "ppfd",
+      "randpflanzen",
+      "ertrag",
+      "led"
+    ],
+    "text": "Eine gleichmäßige Lichtverteilung ist wichtig, damit Pflanzen am Rand gleich viel Licht bekommen wie in der Mitte. Bei guter Verteilung liegt der Unterschied zwischen Ecke und Mitte nur bei etwa 100 µmol, und der Ertrag ist überall ähnlich gut.",
+    "videoId": "ljYZ4NM8-c4",
+    "videoTitle": "Wieviel LICHT können meine Pflanzen MAXIMAL vertragen ? | & alles zum Thema „Lollipopping“",
+    "channel": "GreenConnection",
+    "start": 971
+  },
+  {
+    "id": "lighting-intensity-10",
+    "topic": "Messwerte nur in gleicher Umgebung vergleichbar",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "ppfd",
+      "messen",
+      "reflexion",
+      "messumgebung",
+      "messgerät",
+      "toleranz"
+    ],
+    "text": "Messgeräte haben eine Messtoleranz, und Wiederholungsmessungen am selben Punkt weichen leicht ab. PPFD-Werte hängen außerdem von der Umgebung ab, etwa von reflektierenden Wänden, Boden und Pflanzen. Messungen lassen sich deshalb nur vergleichen, wenn sie in derselben Messumgebung gemacht wurden.",
+    "videoId": "ljYZ4NM8-c4",
+    "videoTitle": "Wieviel LICHT können meine Pflanzen MAXIMAL vertragen ? | & alles zum Thema „Lollipopping“",
+    "channel": "GreenConnection",
+    "start": 1008
+  },
+  {
+    "id": "lighting-intensity-11",
+    "topic": "Sehr hohe PPFD: 1500 µmol am Limit",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "ppfd",
+      "1500",
+      "lichtintensität",
+      "maximum",
+      "co2",
+      "zu viel licht"
+    ],
+    "text": "Versuche mit 1500 µmol waren laut Video spannend, aber die Pflanzen sahen nicht mehr schön aus, da geht es ans Limit. Bei Intensitäten um 1000 bis 1100 µmol sollte man zusätzlich CO2 verwenden.",
+    "videoId": "ljYZ4NM8-c4",
+    "videoTitle": "Wieviel LICHT können meine Pflanzen MAXIMAL vertragen ? | & alles zum Thema „Lollipopping“",
+    "channel": "GreenConnection",
+    "start": 651
+  }
+]
