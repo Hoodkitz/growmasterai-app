@@ -90,7 +90,6 @@ function ImprintContent() {
 
       <Section title="Kontakt">
         <Text className="text-foreground leading-6">
-          Telefon: +4917645029598{"\n"}
           E-Mail: team@growmaster.app{"\n"}
           Website: https://growmaster.app
         </Text>
