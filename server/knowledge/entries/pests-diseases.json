@@ -1,1 +1,79 @@
-[]
+[
+  {
+    "id": "pests-fungnat-01",
+    "topic": "Trauermücken-Larven schädigen die Wurzeln",
+    "phases": ["seedling", "vegetative"],
+    "tags": ["trauermücken", "larven", "wurzeln", "keimling", "schädlinge"],
+    "text": "Nicht die fliegenden Mücken sind das eigentliche Problem, sondern die Larven im Topf. Sie sind kleine durchsichtige Würmchen mit dunklem Kopf und fressen an den feinen Wurzeln; besonders Jungpflanzen und Keimlinge sind gefährdet.",
+    "videoId": "W1rQY-GeClc",
+    "videoTitle": "Trauermücken schnell und einfach bekämpfen - Expertentipps vom Profi",
+    "channel": "Garten Staudinger",
+    "start": 123
+  },
+  {
+    "id": "pests-fungnat-02",
+    "topic": "Gelbtafeln fangen nur die erwachsenen Tiere",
+    "phases": ["seedling", "vegetative"],
+    "tags": ["trauermücken", "gelbtafeln", "gelbsticker", "larven", "eier"],
+    "text": "Gelbtafeln fangen die erwachsenen Mücken, aber weder Eier noch Larven. Wer nur oben bekämpft, verliert laut Video unten im Topf.",
+    "videoId": "W1rQY-GeClc",
+    "videoTitle": "Trauermücken schnell und einfach bekämpfen - Expertentipps vom Profi",
+    "channel": "Garten Staudinger",
+    "start": 143
+  },
+  {
+    "id": "pests-fungnat-03",
+    "topic": "Ursache Trauermücken: zu häufiges Gießen",
+    "phases": ["seedling", "vegetative"],
+    "tags": ["trauermücken", "gießen", "feuchtigkeit", "erde", "vorbeugen"],
+    "text": "Die Ursache ist meist dauerhaft zu feuchte Erde, oft durch zu häufiges Gießen. Das Video rät, die obersten zwei bis drei Zentimeter wirklich austrocknen zu lassen, bevor man wieder gießt; die Larven brauchen Feuchtigkeit.",
+    "videoId": "W1rQY-GeClc",
+    "videoTitle": "Trauermücken schnell und einfach bekämpfen - Expertentipps vom Profi",
+    "channel": "Garten Staudinger",
+    "start": 187
+  },
+  {
+    "id": "pests-fungnat-04",
+    "topic": "Sandschicht als Sperre gegen Trauermücken",
+    "phases": ["seedling", "vegetative"],
+    "tags": ["trauermücken", "sand", "sandsperre", "barriere", "eiablage"],
+    "text": "Eine mindestens 1 cm dicke Schicht feinen, trockenen Sands auf der Erde erschwert den Weibchen die Eiablage und blockiert den Weg der Larven nach oben. Die Erde darunter sollte nicht klatschnass sein.",
+    "videoId": "W1rQY-GeClc",
+    "videoTitle": "Trauermücken schnell und einfach bekämpfen - Expertentipps vom Profi",
+    "channel": "Garten Staudinger",
+    "start": 226
+  },
+  {
+    "id": "pests-fungnat-05",
+    "topic": "Töpfe ohne Drainage und zu große Töpfe",
+    "phases": ["seedling", "vegetative"],
+    "tags": ["trauermücken", "topf", "drainage", "staunässe", "übertopf"],
+    "text": "Töpfe ohne Drainagelöcher führen zu Staunässe, zu große Töpfe für kleine Pflanzen speichern unnötig viel Feuchtigkeit, und stehendes Wasser im Übertopf wird zum Brutplatz für Trauermücken.",
+    "videoId": "W1rQY-GeClc",
+    "videoTitle": "Trauermücken schnell und einfach bekämpfen - Expertentipps vom Profi",
+    "channel": "Garten Staudinger",
+    "start": 291
+  },
+  {
+    "id": "pests-fungnat-06",
+    "topic": "Wie lange die Bekämpfung dauert",
+    "phases": ["seedling", "vegetative"],
+    "tags": ["trauermücken", "lebenszyklus", "geduld", "dauer"],
+    "text": "Der Lebenszyklus der Trauermücken dauert rund zwei bis drei Wochen. Auch bei richtigem Vorgehen braucht es deshalb Zeit; wer nach drei Tagen aufgibt, verliert.",
+    "videoId": "W1rQY-GeClc",
+    "videoTitle": "Trauermücken schnell und einfach bekämpfen - Expertentipps vom Profi",
+    "channel": "Garten Staudinger",
+    "start": 314
+  },
+  {
+    "id": "pests-fungnat-07",
+    "topic": "Nematoden bei starkem Befall",
+    "phases": ["seedling", "vegetative"],
+    "tags": ["trauermücken", "nematoden", "biologisch", "nützlinge", "larven"],
+    "text": "Bei starkem Befall können Nematoden helfen, winzige Fadenwürmer, die gezielt die Larven im Boden befallen. Ohne angepasstes Gießverhalten wirkt das laut Video aber nicht dauerhaft.",
+    "videoId": "W1rQY-GeClc",
+    "videoTitle": "Trauermücken schnell und einfach bekämpfen - Expertentipps vom Profi",
+    "channel": "Garten Staudinger",
+    "start": 340
+  }
+]
