@@ -68,12 +68,15 @@ export default function CommunityScreen() {
   const { tier } = useSubscription();
   const { level, points } = useGamification();
 
-  const [activeTab, setActiveTab] = useState<TabType>("tutorials");
+  const [activeTab, setActiveTab] = useState<TabType>("radar");
   const [newsCategory, setNewsCategory] = useState<"all" | "law" | "tips">(
     "all",
   );
 
-  const postsQuery = trpc.community.listPosts.useQuery({ limit: 20 });
+  const postsQuery = trpc.community.listPosts.useQuery(
+    { limit: 20 },
+    { enabled: activeTab === "feed" },
+  );
   const posts = postsQuery.data?.items || [];
 
   const onRefresh = async () => {
@@ -125,7 +128,10 @@ export default function CommunityScreen() {
     createPostMutation.mutate({ type: "post", content });
   };
 
-  const leaderboardQuery = trpc.community.leaderboard.useQuery({ limit: 10 });
+  const leaderboardQuery = trpc.community.leaderboard.useQuery(
+    { limit: 10 },
+    { enabled: activeTab === "feed" || activeTab === "contests" },
+  );
   const leaderboard = leaderboardQuery.data || [];
   const auctionsQuery = trpc.marketplace.listAuctions.useQuery(undefined, {
     enabled: activeTab === "contests",
@@ -188,6 +194,9 @@ export default function CommunityScreen() {
     }
     placeBidMutation.mutate({ auctionId, amount });
   };
+  const PAGE_SIZE = 8;
+  const [tutorialLimit, setTutorialLimit] = useState(PAGE_SIZE);
+  const [strainLimit, setStrainLimit] = useState(PAGE_SIZE);
   const [tutorialCategory, setTutorialCategory] = useState<string>("all");
   const [expandedStrain, setExpandedStrain] = useState<string | null>(null);
   const [tipPhase, setTipPhase] = useState<TipPhase | null>(null);
@@ -195,6 +204,9 @@ export default function CommunityScreen() {
     "all" | "beginner" | "indica" | "sativa"
   >("all");
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => setTutorialLimit(PAGE_SIZE), [tutorialCategory]);
+  useEffect(() => setStrainLimit(PAGE_SIZE), [strainFilter, searchQuery]);
 
   const tabs = [
     { id: "feed" as TabType, label: "Feed", icon: "bubble.left.fill" },
@@ -262,11 +274,40 @@ export default function CommunityScreen() {
           />
         }
       >
-        <Text className="px-4 mb-2 mt-2 text-xl font-bold text-foreground">
-          📡 Radar
-        </Text>
+        {/* Tab-Leiste: es wird nur der aktive Reiter gezeichnet */}
+        <ScrollView
+          horizontal
+          style={{ flexGrow: 0 }}
+          showsHorizontalScrollIndicator={false}
+          className="px-4 my-3"
+          contentContainerStyle={{ gap: 8 }}
+        >
+          {tabs.map((tab) => (
+            <TouchableOpacity
+              key={tab.id}
+              className={`flex-row items-center gap-1.5 px-3 py-2 rounded-full ${
+                activeTab === tab.id ? "bg-primary" : "bg-surface"
+              }`}
+              onPress={() => setActiveTab(tab.id)}
+            >
+              <IconSymbol
+                name={tab.icon as any}
+                size={16}
+                color={activeTab === tab.id ? "#fff" : colors.muted}
+              />
+              <Text
+                className={`text-sm font-medium ${
+                  activeTab === tab.id ? "text-white" : "text-muted"
+                }`}
+              >
+                {tab.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
         {/* Radar Tab */}
-        {
+        {activeTab === "radar" && (
           <View className="px-4 gap-4">
             {/* Radar Sub-Tabs */}
             <View className="flex-row gap-2">
@@ -549,13 +590,10 @@ export default function CommunityScreen() {
               </View>
             )}
           </View>
-        }
+        )}
 
-        <Text className="px-4 mb-2 mt-2 text-xl font-bold text-foreground">
-          📰 News
-        </Text>
         {/* News Tab */}
-        {
+        {activeTab === "news" && (
           <View className="px-4 gap-4">
             {/* Category Filter */}
             <ScrollView
@@ -680,13 +718,10 @@ export default function CommunityScreen() {
               ))}
             </View>
           </View>
-        }
+        )}
 
-        <Text className="px-4 mb-2 mt-2 text-xl font-bold text-foreground">
-          💬 Feed
-        </Text>
         {/* Feed Tab */}
-        {
+        {activeTab === "feed" && (
           <View className="px-4 gap-4">
             {/* Create Post */}
             <TouchableOpacity
@@ -873,46 +908,7 @@ export default function CommunityScreen() {
 
             <AdBanner position="community" variant="medium" />
           </View>
-        }
-
-        {/* Submenü: Tutorials, Events, Sorten */}
-        <ScrollView
-          horizontal
-          style={{ flexGrow: 0 }}
-          showsHorizontalScrollIndicator={false}
-          className="px-4 my-4"
-          contentContainerStyle={{ gap: 8 }}
-        >
-          {tabs
-            .filter(
-              (t) =>
-                t.id === "tutorials" ||
-                t.id === "contests" ||
-                t.id === "strains",
-            )
-            .map((tab) => (
-              <TouchableOpacity
-                key={tab.id}
-                className={`flex-row items-center gap-1.5 px-3 py-2 rounded-full ${
-                  activeTab === tab.id ? "bg-primary" : "bg-surface"
-                }`}
-                onPress={() => setActiveTab(tab.id)}
-              >
-                <IconSymbol
-                  name={tab.icon as any}
-                  size={16}
-                  color={activeTab === tab.id ? "#fff" : colors.muted}
-                />
-                <Text
-                  className={`text-sm font-medium ${
-                    activeTab === tab.id ? "text-white" : "text-muted"
-                  }`}
-                >
-                  {tab.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-        </ScrollView>
+        )}
 
         {/* Tutorials Tab */}
         {activeTab === "tutorials" && (
@@ -986,7 +982,7 @@ export default function CommunityScreen() {
             </View>
 
             {/* Video List */}
-            {filteredTutorials.map((video) => (
+            {filteredTutorials.slice(0, tutorialLimit).map((video) => (
               <TouchableOpacity
                 key={video.id}
                 onPress={() =>
@@ -1049,6 +1045,16 @@ export default function CommunityScreen() {
                 </View>
               </TouchableOpacity>
             ))}
+            {filteredTutorials.length > tutorialLimit && (
+              <TouchableOpacity
+                className="bg-surface rounded-xl py-3 items-center border border-border"
+                onPress={() => setTutorialLimit((n) => n + PAGE_SIZE)}
+              >
+                <Text className="text-primary font-medium">
+                  Mehr anzeigen ({filteredTutorials.length - tutorialLimit})
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
 
@@ -1103,7 +1109,7 @@ export default function CommunityScreen() {
             </ScrollView>
 
             {/* Strain List */}
-            {filteredStrains.map((strain) => (
+            {filteredStrains.slice(0, strainLimit).map((strain) => (
               <TouchableOpacity
                 key={strain.id}
                 className="bg-surface rounded-xl p-4 border border-border"
@@ -1276,6 +1282,16 @@ export default function CommunityScreen() {
                 </View>
               </TouchableOpacity>
             ))}
+            {filteredStrains.length > strainLimit && (
+              <TouchableOpacity
+                className="bg-surface rounded-xl py-3 items-center border border-border"
+                onPress={() => setStrainLimit((n) => n + PAGE_SIZE)}
+              >
+                <Text className="text-primary font-medium">
+                  Mehr anzeigen ({filteredStrains.length - strainLimit})
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
 
