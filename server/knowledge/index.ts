@@ -13,6 +13,8 @@ import harvestTrichomes from "./entries/harvest-trichomes.json";
 import climateVpd from "./entries/climate-vpd.json";
 import autoflower from "./entries/autoflower.json";
 import beginnerMistakes from "./entries/beginner-mistakes.json";
+import lightingIntensity from "./entries/lighting-intensity.json";
+import climateGrow from "./entries/climate-grow.json";
 
 const VIDEO_ID = /^[A-Za-z0-9_-]{11}$/;
 
@@ -72,6 +74,8 @@ export const KNOWLEDGE: KnowledgeEntry[] = collect(
   climateVpd,
   autoflower,
   beginnerMistakes,
+  lightingIntensity,
+  climateGrow,
 );
 
 export function searchKnowledge(query: string, options?: SearchOptions) {
