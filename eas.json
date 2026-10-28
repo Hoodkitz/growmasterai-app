@@ -27,6 +27,16 @@
         "EXPO_PUBLIC_API_BASE_URL": "https://growmaster-api-production.up.railway.app"
       }
     },
+    "store": {
+      "android": {
+        "buildType": "app-bundle",
+        "credentialsSource": "local"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://growmaster-api-production.up.railway.app",
+        "EXPO_PUBLIC_STORE_MODE": "1"
+      }
+    },
     "production": {
       "android": {
         "buildType": "app-bundle",

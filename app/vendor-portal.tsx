@@ -10,7 +10,8 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
+import { STORE_MODE } from "@/lib/store-mode";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
@@ -27,7 +28,12 @@ import { de } from "date-fns/locale";
 
 type TabType = "dashboard" | "products" | "campaigns" | "leads" | "settings";
 
-export default function VendorPortalScreen() {
+export default function VendorPortalRoute() {
+  if (STORE_MODE) return <Redirect href="/" />;
+  return <VendorPortalScreen />;
+}
+
+function VendorPortalScreen() {
   const router = useRouter();
   const colors = useColors();
   useAppAuth();
