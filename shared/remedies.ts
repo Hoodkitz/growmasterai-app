@@ -422,6 +422,7 @@ const PRODUCTS: Record<string, RemedyProduct[]> = {
   Feuchtigkeitsmesser: [{ asin: "B08V85KVWX" }],
   Bodenfeuchtigkeitsmesser: [{ asin: "B08V85KVWX" }],
   "pH-Messgerät und pH-Down": [
+    { label: "Bluelab pH Pen (Profi-Messgerät)", asin: "B005POOJHG" },
     { label: "4-in-1 Messgerät (pH, EC, TDS, Temperatur)", asin: "B0DZNSB16W" },
     {
       label: "Weedness Digitalmessgerät für Wasser und Pflanzen",
@@ -549,12 +550,9 @@ const PRODUCTS: Record<string, RemedyProduct[]> = {
     { label: "Plagron Perlite 70 l", asin: "B00JJRCB2K" },
   ],
   "Hochwertige Blumenerde": [
-    {
-      label: "Substral Naturen Bio Universalerde torffrei",
-      asin: "B09PLF1Z53",
-    },
-    { label: "Neudorff NeudoHum Blumenerde 20 l", asin: "B0037ACVVG" },
-    { label: "BIOVITA Universalerde", asin: "B08RNN6695" },
+    { label: "Floragard Professional Growmix 70 l", asin: "B08J8YVR4R" },
+    { label: "BioBizz Light·Mix 50 l (Grow-Erde)", asin: "B004OOU3TG" },
+    { label: "Plagron Royalmix 50 l (Grow-Erde)", asin: "B07DVPG8Q2" },
   ],
   "ScrOG-Netz / Pflanzennetz": [
     { label: "AC Infinity Mesh-Netz 120", asin: "B0H3G1P5ZZ" },
@@ -571,6 +569,13 @@ const PRODUCTS: Record<string, RemedyProduct[]> = {
   "Wachstumsdünger (Stickstoff)": GROW_FERTILIZERS,
   "Blütedünger (PK)": BLOOM_FERTILIZERS,
   "Cal-Mag Ergänzung": CAL_MAG,
+  "Mykorrhiza / Wurzelstimulator": [
+    {
+      label: "BioBizz Root·Juice 250 ml (Wurzelstimulator)",
+      asin: "B09RFVMB9W",
+    },
+    { label: "CANNA Rhizotonic 1 L (Wurzelstimulator)", asin: "B003VNAT36" },
+  ],
 };
 
 export function productsForRemedy(name: string): RemedyProduct[] {
