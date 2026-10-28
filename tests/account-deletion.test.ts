@@ -6,6 +6,8 @@ import {
   type DeletionDb,
 } from "../server/account-deletion";
 
+const SECRET = "test-secret-with-at-least-32-characters!!";
+
 function fakeDb(selectRows: Record<string, { id: number }[]> = {}) {
   const deleted: string[] = [];
   const updated: { table: string; values: Record<string, unknown> }[] = [];
@@ -34,7 +36,7 @@ function fakeDb(selectRows: Record<string, { id: number }[]> = {}) {
 describe("deleteAccountData", () => {
   it("removes user-owned data and anonymises the user row instead of keeping it", async () => {
     const { db, deleted, updated } = fakeDb();
-    await deleteAccountData(db, { id: 7, openId: "open-7" });
+    await deleteAccountData(db, { id: 7, openId: "open-7" }, SECRET);
     for (const table of [
       "plants",
       "journalEntries",
@@ -51,11 +53,12 @@ describe("deleteAccountData", () => {
     ]) {
       expect(deleted, table).toContain(table);
     }
-    expect(deleted).not.toContain("users");
+    // only the cleanup of an older tombstone deletes from users, the account row itself is updated
+    expect(deleted.filter((t) => t === "users")).toHaveLength(1);
     expect(updated).toHaveLength(1);
     expect(updated[0].table).toBe("users");
     const values = updated[0].values;
-    expect(values.openId).toBe(tombstoneOpenId("open-7"));
+    expect(values.openId).toBe(tombstoneOpenId("open-7", SECRET));
     expect(values.openId).not.toContain("open-7");
     expect(values.loginMethod).toBe("deleted");
     expect(values.email).toBeNull();
@@ -63,14 +66,20 @@ describe("deleteAccountData", () => {
   });
 
   it("makes tombstone ids deterministic, hashed and within the column length", () => {
-    expect(tombstoneOpenId("a")).toBe(tombstoneOpenId("a"));
-    expect(tombstoneOpenId("a")).not.toBe(tombstoneOpenId("b"));
-    expect(tombstoneOpenId("a").length).toBeLessThanOrEqual(64);
+    expect(tombstoneOpenId("a", SECRET)).toBe(tombstoneOpenId("a", SECRET));
+    expect(tombstoneOpenId("a", SECRET)).not.toBe(tombstoneOpenId("b", SECRET));
+    expect(tombstoneOpenId("a", SECRET).length).toBeLessThanOrEqual(64);
+  });
+
+  it("cannot be recomputed without the server secret", () => {
+    expect(tombstoneOpenId("a", SECRET)).not.toBe(
+      tombstoneOpenId("a", "another-secret-with-32-characters!!!"),
+    );
   });
 
   it("skips vendor data when the user has no vendor profile", async () => {
     const { db, deleted } = fakeDb();
-    await deleteAccountData(db, { id: 7, openId: "open-7" });
+    await deleteAccountData(db, { id: 7, openId: "open-7" }, SECRET);
     expect(deleted).not.toContain("vendors");
     expect(deleted).not.toContain("vendorProducts");
   });
@@ -80,7 +89,7 @@ describe("deleteAccountData", () => {
       vendors: [{ id: 3 }],
       auctions: [{ id: 11 }],
     });
-    await deleteAccountData(db, { id: 7, openId: "open-7" });
+    await deleteAccountData(db, { id: 7, openId: "open-7" }, SECRET);
     for (const table of [
       "vendors",
       "vendorProducts",
@@ -97,7 +106,7 @@ describe("deleteAccountData", () => {
 
   it("deletes comments and likes on the user's own posts", async () => {
     const { db, deleted } = fakeDb({ communityPosts: [{ id: 5 }] });
-    await deleteAccountData(db, { id: 7, openId: "open-7" });
+    await deleteAccountData(db, { id: 7, openId: "open-7" }, SECRET);
     // once for comments on own posts, once for the user's own comments
     expect(deleted.filter((t) => t === "postComments")).toHaveLength(2);
     expect(deleted.filter((t) => t === "postLikes")).toHaveLength(2);

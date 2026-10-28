@@ -1,5 +1,6 @@
 import { sanitizeUserInput } from "./_core/security";
 import { deleteAccountData } from "./account-deletion";
+import { ENV } from "./_core/env";
 import { mergeRemedies, mergeCoachProducts } from "../shared/remedies";
 import {
   KNOWLEDGE,
@@ -149,10 +150,11 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
         await db.transaction(async (tx) => {
-          await deleteAccountData(tx, {
-            id: ctx.user.id,
-            openId: ctx.user.openId,
-          });
+          await deleteAccountData(
+            tx,
+            { id: ctx.user.id, openId: ctx.user.openId },
+            ENV.cookieSecret,
+          );
         });
         const cookieOptions = getSessionCookieOptions(ctx.req);
         ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });

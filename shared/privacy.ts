@@ -99,7 +99,7 @@ export const PRIVACY_SECTIONS: PrivacySection[] = [
     title: "13. Speicherdauer und Löschung",
     text: [
       "Wir speichern Ihre Daten, solange Ihr Konto besteht. In der App löschen Sie Ihr Konto unter Einstellungen > Konto > Konto löschen. Dabei werden alle damit gespeicherten Daten gelöscht: Pflanzen, Journal, Diagnosen, Beiträge, Nachrichten, Verlosungsteilnahmen, Push-Token und Zugangsdaten.",
-      "Zurück bleibt ein anonymer Löschvermerk (eine zufällige Kennung ohne Name und E-Mail-Adresse), damit alte Anmeldungen das Konto nicht neu anlegen können. Reste in Sicherungen und Server-Protokollen können vorübergehend erhalten bleiben. Sie können die Löschung auch per E-Mail an team@growmaster.app verlangen.",
+      "Zurück bleibt ein anonymer Löschvermerk (eine mit einem geheimen Schlüssel erzeugte Kennung ohne Name und E-Mail-Adresse, die sich nicht auf Ihre Daten zurückrechnen lässt), damit alte Anmeldungen das Konto nicht neu anlegen können. Reste in Sicherungen und Server-Protokollen können vorübergehend erhalten bleiben. Sie können die Löschung auch per E-Mail an team@growmaster.app verlangen.",
     ],
   },
   {
