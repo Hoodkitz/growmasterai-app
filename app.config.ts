@@ -14,6 +14,19 @@ const env = {
 const androidVersionCode =
   Number(process.env.ANDROID_VERSION_CODE) || Math.floor(Date.now() / 60000);
 
+// Store build (EXPO_PUBLIC_STORE_MODE=1): no radar, so no location; no voice input, no recording.
+// Fewer permissions keep the Play Data safety form and the permission review simple.
+const storeMode =
+  process.env.EXPO_PUBLIC_STORE_MODE === "1" ||
+  process.env.EXPO_PUBLIC_STORE_MODE?.toLowerCase() === "true";
+const STORE_BLOCKED_PERMISSIONS = [
+  "android.permission.ACCESS_FINE_LOCATION",
+  "android.permission.ACCESS_COARSE_LOCATION",
+  "android.permission.RECORD_AUDIO",
+  "android.permission.SYSTEM_ALERT_WINDOW",
+  "android.permission.WRITE_EXTERNAL_STORAGE",
+];
+
 const config: ExpoConfig = {
   name: env.appName,
   slug: env.appSlug,
@@ -46,6 +59,7 @@ const config: ExpoConfig = {
     package: env.androidPackage,
     versionCode: androidVersionCode,
     permissions: ["POST_NOTIFICATIONS"],
+    ...(storeMode ? { blockedPermissions: STORE_BLOCKED_PERMISSIONS } : {}),
     intentFilters: [
       {
         action: "VIEW",
