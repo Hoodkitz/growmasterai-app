@@ -7,11 +7,11 @@
  */
 
 /**
- * Amazon-PartnerNet-Kennung. Bewusst leer: "plantdoctor-21" ist vermutlich geschlossen
- * (Angabe des Betreibers, 2026-10-27). Echte Kennung per EXPO_PUBLIC_AFFILIATE_AMAZON setzen,
- * dann werden die Links getaggt und als Anzeige gekennzeichnet.
+ * Amazon-PartnerNet-Kennung (Angabe des Betreibers, 2026-10-28). "plantdoctor-21" ist vermutlich
+ * geschlossen und wird nicht verwendet. Per EXPO_PUBLIC_AFFILIATE_AMAZON überschreibbar; Links mit
+ * Kennung werden als Anzeige gekennzeichnet.
  */
-const AMAZON_PARTNER_TAG = "";
+const AMAZON_PARTNER_TAG = "growmaster-21";
 
 // Affiliate IDs aus Umgebungsvariablen (nach Registrierung eintragen)
 const AFFILIATE_IDS = {
