@@ -61,7 +61,7 @@ export default function WissenScreen() {
   // Free users get a server-side teaser per search.
   const teaser = trpc.knowledge.browse.useQuery(
     { query: debounced, phase: phase || undefined },
-    { enabled: !paid, retry: 1 },
+    { enabled: !paid || all.isError, retry: 1 },
   );
 
   useEffect(() => {
@@ -73,30 +73,32 @@ export default function WissenScreen() {
       saveCachedKnowledge(all.data as WissenEntry[]);
     }
   }, [paid, all.data]);
+  // Falls back to the teaser when the server refuses the full list (e.g. owner without admin role).
+  const full = paid && !all.isError;
 
-  const entries = paid
+  const entries = full
     ? ((all.data as WissenEntry[] | undefined) ?? cached)
     : [];
-  const offline = paid && !all.data && cached.length > 0;
+  const offline = full && !all.data && cached.length > 0;
   const results: Hit[] = useMemo(
     () =>
-      paid
+      full
         ? filterKnowledge(entries, query, phase || undefined)
         : (teaser.data?.entries ?? []),
-    [paid, entries, query, phase, teaser.data],
+    [full, entries, query, phase, teaser.data],
   );
-  const total = paid ? entries.length : (teaser.data?.total ?? 0);
-  const loading = paid
+  const total = full ? entries.length : (teaser.data?.total ?? 0);
+  const loading = full
     ? all.isLoading && cached.length === 0
     : teaser.isLoading;
   const hiddenCount =
-    !paid && teaser.data ? teaser.data.total - results.length : 0;
+    !full && teaser.data ? teaser.data.total - results.length : 0;
 
   return (
     <ScreenContainer className="p-4">
       <Text className="text-2xl font-bold text-foreground mb-1">Wissen</Text>
       <Text className="text-xs text-muted mb-3">
-        {paid
+        {full
           ? `${entries.length} geprüfte Aussagen aus Anbau-Videos${offline ? " (offline gespeichert)" : ""}`
           : "Geprüfte Aussagen aus Anbau-Videos. Gratis: 3 Treffer pro Suche."}
       </Text>
@@ -129,7 +131,7 @@ export default function WissenScreen() {
           </TouchableOpacity>
         ))}
       </View>
-      {loading || (paid && entries.length === 0) ? (
+      {loading || (full && entries.length === 0) ? (
         <Text className="text-sm text-muted">
           {loading
             ? "Lade Wissensdatenbank…"

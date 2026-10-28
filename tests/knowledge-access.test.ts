@@ -29,7 +29,7 @@ describe("hasPaidKnowledgeAccess", () => {
         subscriptionExpiresAt: past,
       }),
     ).toBe(false);
-    expect(hasPaidKnowledgeAccess({ email: "Hoodkitz@gmail.com" })).toBe(true);
+    expect(hasPaidKnowledgeAccess({ role: "admin" })).toBe(true);
   });
 });
 
