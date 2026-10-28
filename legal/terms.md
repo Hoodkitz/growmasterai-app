@@ -11,8 +11,8 @@ Mit der Registrierung und Nutzung der App akzeptieren Sie diese AGB.
 Anbieter der App ist:
 
 **GrowMaster AI**
-Julien Paarmann
-Klausing 19
+Julien Nicolas Paarmann
+Klausingring 19
 13627 Berlin
 Deutschland
 

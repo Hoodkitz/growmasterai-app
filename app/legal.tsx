@@ -81,16 +81,15 @@ function ImprintContent() {
       <Section title="Angaben gemäß § 5 TMG">
         <Text className="text-foreground leading-6">
           GrowMaster AI{"\n"}
-          Julien Paarmann{"\n"}
-          Kiefheider Weg 72{"\n"}
-          13503 Berlin{"\n"}
+          Julien Nicolas Paarmann{"\n"}
+          Klausingring 19{"\n"}
+          13627 Berlin{"\n"}
           Deutschland
         </Text>
       </Section>
 
       <Section title="Kontakt">
         <Text className="text-foreground leading-6">
-          Telefon: +4917645029598{"\n"}
           E-Mail: team@growmaster.app{"\n"}
           Website: https://growmaster.app
         </Text>
@@ -98,8 +97,8 @@ function ImprintContent() {
 
       <Section title="Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV">
         <Text className="text-foreground leading-6">
-          Julien Paarmann{"\n"}
-          Kiefheider Weg 72, 13503 Berlin
+          Julien Nicolas Paarmann{"\n"}
+          Klausingring 19, 13627 Berlin
         </Text>
       </Section>
 

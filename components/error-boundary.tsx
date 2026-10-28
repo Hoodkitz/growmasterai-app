@@ -1,6 +1,7 @@
-import React, { Component, ReactNode } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { logger } from '@/lib/logger';
+import React, { Component, ReactNode } from "react";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { logger } from "@/lib/logger";
+import { captureError } from "@/lib/sentry";
 
 interface Props {
   children: ReactNode;
@@ -27,7 +28,8 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    logger.error('ErrorBoundary caught an error', error, { data: errorInfo });
+    logger.error("ErrorBoundary caught an error", error, { data: errorInfo });
+    captureError(error, { componentStack: errorInfo.componentStack });
   }
 
   resetError = () => {
@@ -51,8 +53,8 @@ export class ErrorBoundary extends Component<Props, State> {
             <Text className="text-base text-foreground mb-4">
               Die App hat einen unerwarteten Fehler festgestellt.
             </Text>
-            
-            {process.env.NODE_ENV === 'development' && (
+
+            {process.env.NODE_ENV === "development" && (
               <ScrollView className="bg-surface border border-border rounded-lg p-3 mb-4 max-h-48">
                 <Text className="text-xs text-muted font-mono">
                   {this.state.error.toString()}
@@ -87,7 +89,7 @@ export class ErrorBoundary extends Component<Props, State> {
  */
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
-  fallback?: (error: Error, resetError: () => void) => ReactNode
+  fallback?: (error: Error, resetError: () => void) => ReactNode,
 ) {
   return function WithErrorBoundaryWrapper(props: P) {
     return (

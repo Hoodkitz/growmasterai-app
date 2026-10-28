@@ -9,6 +9,11 @@ const env = {
   androidPackage: "com.growmaster.app",
 };
 
+// Monoton steigender versionCode je Build (Minuten seit Epoch, ca. 29 Mio.),
+// ueberschreibbar per ANDROID_VERSION_CODE.
+const androidVersionCode =
+  Number(process.env.ANDROID_VERSION_CODE) || Math.floor(Date.now() / 60000);
+
 const config: ExpoConfig = {
   name: env.appName,
   slug: env.appSlug,
@@ -39,7 +44,7 @@ const config: ExpoConfig = {
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: env.androidPackage,
-    versionCode: 1,
+    versionCode: androidVersionCode,
     permissions: ["POST_NOTIFICATIONS"],
     intentFilters: [
       {

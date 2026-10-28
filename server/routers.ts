@@ -1,6 +1,7 @@
 import { sanitizeUserInput } from "./_core/security";
 import { mergeRemedies, mergeCoachProducts } from "../shared/remedies";
 import {
+  KNOWLEDGE,
   KNOWLEDGE_PHASES,
   knowledgeForPhase,
   searchKnowledge,
@@ -681,6 +682,8 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
           limit: input.limit,
         }).map((h) => h.entry),
       ),
+    /** Whole knowledge base; the app caches it for offline reading. */
+    all: publicProcedure.query(() => KNOWLEDGE),
     forPhase: publicProcedure
       .input(
         z.object({ phase: z.enum(KNOWLEDGE_PHASES as [string, ...string[]]) }),

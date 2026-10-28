@@ -405,6 +405,21 @@ export default function HomeScreen() {
               <Text className="text-xs text-muted">Seeds & Equipment</Text>
             </TouchableOpacity>
           </View>
+
+          <TouchableOpacity
+            className="bg-surface rounded-2xl p-4 mt-3 flex-row items-center gap-3 border border-border"
+            onPress={() => router.push("/wissen")}
+          >
+            <Text className="text-2xl">📚</Text>
+            <View className="flex-1">
+              <Text className="text-base font-bold text-foreground">
+                Wissen
+              </Text>
+              <Text className="text-xs text-muted">
+                Anbau-Wissen durchsuchen, auch offline
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
 
         {/* My Plants Quick View */}

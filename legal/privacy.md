@@ -45,13 +45,17 @@ Die Betreiber dieser App nehmen den Schutz Ihrer persönlichen Daten sehr ernst.
 Die verantwortliche Stelle für die Datenverarbeitung in dieser App ist:
 
 **GrowMaster AI**
-Julien Paarmann
-Klausing 19
+Julien Nicolas Paarmann
+Klausingring 19
 13627 Berlin
 
 E-Mail: team@growmaster.app
 
 Verantwortliche Stelle ist die natürliche oder juristische Person, die allein oder gemeinsam mit anderen über die Zwecke und Mittel der Verarbeitung von personenbezogenen Daten entscheidet.
+
+### Fehler- und Absturzberichte (Sentry)
+
+Bei Abstürzen und Fehlern senden wir technische Informationen (Fehlermeldung, Gerätemodell, Betriebssystem, App-Version) an Sentry (Functional Software, Inc.), um Fehler zu beheben. Es werden keine Nutzerprofile erstellt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (stabiler App-Betrieb).
 
 ### Speicherdauer
 
