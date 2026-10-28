@@ -39,6 +39,14 @@ const CATALOG: CatalogEntry[] = [
   },
   {
     keywords:
+      /trauermücke|trauermuecke|fungus gnat|larven im substrat|nematod/i,
+    name: "Nematoden gegen Trauermücken",
+    purpose:
+      "Nützlinge, die die Larven im Substrat fressen. Mit Gießwasser ausbringen.",
+    searchTerm: "Nematoden Trauermücken SF Nematoden",
+  },
+  {
+    keywords:
       /schimmel|mehltau|botrytis|knospenfäule|knospenfaeule|pilzbefall/i,
     name: "Hygrometer / Thermometer",
     purpose:
@@ -260,6 +268,55 @@ const COACH_CATALOG: CatalogEntry[] = [
     searchTerm: "Bodenfeuchtigkeitsmesser Pflanzen",
   },
   {
+    keywords:
+      /umluft|ventilator|luftbewegung|luftzirkulation|stehende luft|stängel stärk|staengel staerk/i,
+    name: "Umluft-Ventilator (Clip)",
+    purpose:
+      "Bewegt die Luft im Zelt, stärkt die Stängel und beugt Schimmel und Feuchtenestern vor.",
+    searchTerm: "Clip Ventilator Growzelt Umluft",
+  },
+  {
+    keywords:
+      /zeitschaltuhr|lichtzyklus|lichtrhythmus|lichtperiode|18\/6|12\/12|\btimer\b/i,
+    name: "Zeitschaltuhr (digital)",
+    purpose: "Schaltet Licht und Lüfter zuverlässig im richtigen Rhythmus.",
+    searchTerm: "Zeitschaltuhr digital Steckdose 16A",
+  },
+  {
+    keywords:
+      /bewässerungs|bewaesserungs|tropfbewäss|urlaub|automatisch\w* gieß|automatisch\w* giess|selbstbewäss/i,
+    name: "Bewässerungsset (Tropf/Urlaub)",
+    purpose: "Gleichmäßige Wasserversorgung, auch wenn du mal nicht da bist.",
+    searchTerm: "Tropfbewässerung Set Zimmerpflanzen Urlaub",
+  },
+  {
+    keywords: /coco|kokos/i,
+    name: "Kokossubstrat (Coco)",
+    purpose:
+      "Luftiges Substrat mit schneller Wirkung, braucht aber regelmäßige Düngung.",
+    searchTerm: "Kokossubstrat Pflanzen Coco ungedüngt",
+  },
+  {
+    keywords: /perlit|drainage|substrat auflockern|substrat mischen|verdicht/i,
+    name: "Perlite (Drainage)",
+    purpose: "Lockert Erde auf und verbessert Belüftung und Wasserabfluss.",
+    searchTerm: "Perlite Blähperlit Pflanzen 10 Liter",
+  },
+  {
+    keywords: /blumenerde|pflanzerde|\bsubstrat\b|light.?mix|erdmischung/i,
+    name: "Hochwertige Blumenerde",
+    purpose:
+      "Lockere, torfarme Erde als Basis. Vorgedüngte Mischungen brauchen anfangs wenig Dünger.",
+    searchTerm: "Blumenerde torffrei hochwertig 20 Liter",
+  },
+  {
+    keywords: /scrog|screen of green|pflanzennetz|spalier|sea of green/i,
+    name: "ScrOG-Netz / Pflanzennetz",
+    purpose:
+      "Elastisches Netz zum gleichmäßigen Verteilen der Triebe (Screen of Green).",
+    searchTerm: "ScrOG Netz Pflanzennetz Growzelt 120x120",
+  },
+  {
     keywords: /dünge|duenge|dünger|duenger|nährstoff|naehrstoff/i,
     name: "Pflanzendünger (Wachstum/Blüte)",
     purpose:
@@ -307,12 +364,50 @@ export interface RemedyProduct {
   asin: string;
 }
 
+/** Cannabis base fertilizers (Grow + Bloom), organic and mineral. */
 const FERTILIZERS: RemedyProduct[] = [
   { label: "BioBizz Grow + Bloom + Top-Max (organisch)", asin: "B008T0YBWG" },
   { label: "Plagron Terra Grow + Bloom (mineralisch)", asin: "B093RLJM7F" },
   { label: "Hesi Bio Grow + Bloom 1 L (organisch)", asin: "B0DD8R2K1X" },
   { label: "Hesi Bio Grow + Bloom 500 ml (organisch)", asin: "B0FJF7VNKP" },
   { label: "Green House Feeding BioBloom (Pulver, 50 g)", asin: "B0D8B8R1HF" },
+  {
+    label: "Advanced Nutrients Grow + Micro + Bloom (3 x 1 L)",
+    asin: "B004FYSDFQ",
+  },
+  { label: "Canna Terra Vega 1 L (Erde)", asin: "B003XDJI3Q" },
+  { label: "GHE Flora Series Tripart (Set)", asin: "B0GRV7NR9S" },
+];
+
+/** Growth-phase (nitrogen-led) cannabis fertilizers. */
+const GROW_FERTILIZERS: RemedyProduct[] = [
+  { label: "Canna Terra Vega 1 L (Wachstum, Erde)", asin: "B003XDJI3Q" },
+  { label: "Canna Bio Vega 1 L (Wachstum, organisch)", asin: "B00DCUI7PA" },
+  { label: "BioBizz Bio-Grow 1 L (organisch)", asin: "B005PX47FG" },
+  {
+    label: "Advanced Nutrients Grow + Micro + Bloom (3 x 1 L)",
+    asin: "B004FYSDFQ",
+  },
+  { label: "Hesi Bio Grow + Bloom 1 L (organisch)", asin: "B0DD8R2K1X" },
+];
+
+/** Bloom-phase (PK) cannabis fertilizers and boosters. */
+const BLOOM_FERTILIZERS: RemedyProduct[] = [
+  { label: "Canna Terra Flores 1 L (Blüte, Erde)", asin: "B00Q6QSRWU" },
+  { label: "Canna Bio Flores 1 L (Blüte, organisch)", asin: "B016K5C272" },
+  { label: "BioBizz Bio-Bloom 1 L (organisch)", asin: "B0038WMGOU" },
+  { label: "Plagron Terra Bloom 1 L (mineralisch)", asin: "B00871DJ70" },
+  { label: "Canna PK 13/14 (Booster, 1 L)", asin: "B00FKZU84S" },
+  { label: "Advanced Nutrients Bud Candy (Booster, 1 L)", asin: "B003OTZ2PW" },
+  { label: "Atami Bloombastic (Booster, 1,25 L)", asin: "B00FKZTT1G" },
+];
+
+/** Calcium/magnesium supplements (also from the candidate list in docs/product-candidates.md). */
+const CAL_MAG: RemedyProduct[] = [
+  { label: "Atami VGN CalMag 250 ml (stickstofffrei)", asin: "B0GNT46MP7" },
+  { label: "Xpert Nutrients Cal-Mag Amino 1 L", asin: "B09YJ19TCJ" },
+  { label: "BUDXXL CalMag Grow Dünger", asin: "B0DQQCLQF9" },
+  { label: "UP NUTRIENTS CALMAG UP 1 L", asin: "B0FDH1BN3X" },
 ];
 
 /**
@@ -320,27 +415,162 @@ const FERTILIZERS: RemedyProduct[] = [
  * the remedy's search term.
  */
 const PRODUCTS: Record<string, RemedyProduct[]> = {
-  "pH-Messgerät und pH-Down": [{ asin: "B0DZNSB16W" }],
-  "EC-Messgerät": [{ asin: "B0DZNSB16W" }],
-  "Hygrometer / Thermometer": [{ asin: "B0D1Q3TP7F" }],
-  "Thermo-Hygrometer": [{ asin: "B0D1Q3TP7F" }],
   "Lupe / Mikroskop-Aufsatz (Trichome prüfen)": [{ asin: "B09Y62T5B5" }],
-  "Präzisions-Pflanzenschere": [{ asin: "B07C2V85Q7" }],
   "Pflanzenclips / Bindedraht (Training)": [{ asin: "B07RZZJQXP" }],
   Anzuchterde: [{ asin: "B08TV1KWDP" }],
   "Mini-Gewächshaus / Anzuchtbox": [{ asin: "B09L4T4P5K" }],
   Feuchtigkeitsmesser: [{ asin: "B08V85KVWX" }],
   Bodenfeuchtigkeitsmesser: [{ asin: "B08V85KVWX" }],
-  Growzelt: [{ asin: "B07KM46T6W" }],
-  "Dimmbare LED-Pflanzenlampe": [{ asin: "B0F22F1MJT" }],
-  "Stofftöpfe (Fabric Pots)": [{ asin: "B0F6MQTW2T" }],
-  "Trocknungsnetz zum Aufhängen": [{ asin: "B0DRKNCH6F" }],
-  "Aktivkohlefilter mit Abluft": [{ asin: "B08RZ3WH7N" }],
-  Neemöl: [{ asin: "B09W9S27X6" }],
-  Gelbtafeln: [{ asin: "B0B9H1JJ83" }],
+  "pH-Messgerät und pH-Down": [
+    { label: "4-in-1 Messgerät (pH, EC, TDS, Temperatur)", asin: "B0DZNSB16W" },
+    {
+      label: "Weedness Digitalmessgerät für Wasser und Pflanzen",
+      asin: "B0D3Y3DLKK",
+    },
+    { label: "Weedness Aqua Master H600 Messgerät", asin: "B0GTHXZ1X8" },
+  ],
+  "EC-Messgerät": [
+    { label: "4-in-1 Messgerät (pH, EC, TDS, Temperatur)", asin: "B0DZNSB16W" },
+    {
+      label: "EZTOCH Leitwert-/Temperaturmesser (EC, Hydroponik)",
+      asin: "B0FXXG9H6C",
+    },
+  ],
+  "Thermo-Hygrometer": [
+    { label: "Govee WLAN Thermo-Hygrometer", asin: "B0D1Q3TP7F" },
+    { label: "TFA Dostmann Thermo-Hygrometer 30.5027.01", asin: "B0CCJGKGSR" },
+    {
+      label: "TFA Dostmann Thermo-Hygrometer 30.5046.02 (Min/Max)",
+      asin: "B0977DBXVD",
+    },
+    { label: "SwitchBot Hygrometer mit Bluetooth", asin: "B0BVLYPYT1" },
+  ],
+  "Hygrometer / Thermometer": [
+    { label: "Govee WLAN Thermo-Hygrometer", asin: "B0D1Q3TP7F" },
+    { label: "TFA Dostmann Thermo-Hygrometer 30.5019.01", asin: "B00WQNBK4O" },
+    { label: "TFA Dostmann Thermo-Hygrometer 30.5027.01", asin: "B0CCJGKGSR" },
+  ],
+  "Präzisions-Pflanzenschere": [
+    { label: "Zerodis Bonsai-Schere, 190 mm", asin: "B07C2V85Q7" },
+    { label: "Chikamasa B-600SUFB Präzisionsschere", asin: "B0CQKP68YT" },
+    { label: "Kamikaze Erntescheren", asin: "B08W9LYPXT" },
+    { label: "Gardena HerbCut Kräuterschere", asin: "B0BNLQ9HLK" },
+  ],
+  Growzelt: [
+    { label: "TRAFIKA Growzelt mit Mylar", asin: "B07KM46T6W" },
+    { label: "HORTOSOL Growzelt 120x120x200", asin: "B00GAEYNGW" },
+    { label: "HOMEbox Ambient R120", asin: "B01EANHLU4" },
+    {
+      label: "Relaxdays Growzelt, reflektierend und lichtdicht",
+      asin: "B08JYB3L5K",
+    },
+    { label: "your GEAR Plantsville Growzelt 120x120x200", asin: "B08WJG3X76" },
+  ],
+  "Dimmbare LED-Pflanzenlampe": [
+    {
+      label: "LED Grow Lampe 200 W (Samsung LM301D, dimmbar)",
+      asin: "B0F22F1MJT",
+    },
+    { label: "Spider Farmer SF1000D 100 W (dimmbar)", asin: "B09ZK71SY7" },
+    { label: "Mars Hydro TS1000 150 W (App-Steuerung)", asin: "B07ZVFBR34" },
+    { label: "Vivosun LumaLight 100 W (dimmbar)", asin: "B0FB8RK4X1" },
+    { label: "Greenception Vollspektrum-Lampe", asin: "B0CQ58V9SG" },
+  ],
+  "Stofftöpfe (Fabric Pots)": [
+    { label: "CHUENHEI Stofftöpfe 11/18/27 l (15er-Set)", asin: "B0F6MQTW2T" },
+    { label: "INTIRILIFE Pflanzsäcke aus Vlies", asin: "B08D6X6VHD" },
+    { label: "TTL Garden Vlies-Pflanzsäcke", asin: "B0BY2YJNYJ" },
+    { label: "OPPOLIFE Pflanzsäcke mit Griffen", asin: "B09P46NHCS" },
+  ],
+  "Trocknungsnetz zum Aufhängen": [
+    { label: "Cerkkapo Trocknungsnetz 6 Ebenen", asin: "B0DRKNCH6F" },
+    { label: "Weedness Grow-Trocknungsnetz mit Ebenen", asin: "B0DDTKHFC8" },
+    { label: "Relaxdays faltbares Trocknungsnetz", asin: "B0DG5F563H" },
+    { label: "Weedness Harvest Trocknungsset (3-teilig)", asin: "B08BYJ36HH" },
+  ],
+  "Aktivkohlefilter mit Abluft": [
+    {
+      label: "Mars Hydro Abluftset 100 mm mit Aktivkohlefilter",
+      asin: "B08RZ3WH7N",
+    },
+    { label: "Weedness Abluftset mit Flansch", asin: "B0D9SJ119S" },
+    {
+      label: "Spider Farmer Luftfilter-Kit mit Drehzahlregler",
+      asin: "B08KWGDY44",
+    },
+    { label: "Can-Lite Aktivkohlefilter mit Flansch", asin: "B0G5YXK4WJ" },
+  ],
+  Neemöl: [
+    { label: "GebEarth Neemöl-Spray 1 l", asin: "B09W9S27X6" },
+    { label: "Homegrow24 Neemöl-Spray", asin: "B0FPM2Y949" },
+    { label: "Neudorff Spruzit Neem", asin: "B0BTCCJNCW" },
+    { label: "Pure Zuprime Neemöl", asin: "B0CBW6MSKF" },
+  ],
+  Gelbtafeln: [
+    { label: "Super Ninja Gelbtafeln (30 Stück)", asin: "B0B9H1JJ83" },
+    { label: "nemabest Gelbsticker zum Einstecken", asin: "B09KM672QJ" },
+    { label: "Pattler Gelbsticker gegen Trauermücken", asin: "B0HM54R968" },
+    { label: "Neudorff Duo Gelbtafeln", asin: "B0F8NJ7WS8" },
+  ],
+  "Umluft-Ventilator (Clip)": [
+    { label: "Grow Clip-Ventilator, EC-Motor, 20 cm", asin: "B0D9PDB3WD" },
+    { label: "Garden HighPro ProFan Clip-Ventilator", asin: "B077P2PJ98" },
+    { label: "Garden HighPro Clip-Ventilator mit Halter", asin: "B07DVC18VJ" },
+    { label: "Grow Expert oszillierender Zeltventilator", asin: "B0DQVLN93L" },
+  ],
+  "Zeitschaltuhr (digital)": [
+    { label: "goobay Zeitschaltuhr digital, 16 Programme", asin: "B0CW9ZCFXV" },
+    { label: "Maxcio Digitale Zeitschaltuhr 16 A", asin: "B07PVYF6YB" },
+    {
+      label: "Brennenstuhl Comfort Line Digitale Zeitschaltuhr",
+      asin: "B083KVNDZ4",
+    },
+    { label: "UNITEC Digitale Wochen-Zeitschaltuhr", asin: "B09NDGH96R" },
+  ],
+  "Bewässerungsset (Tropf/Urlaub)": [
+    {
+      label: "Gardena Urlaubsbewässerung mit Vorratsbehälter",
+      asin: "B09J92VPH2",
+    },
+    { label: "Gardena Micro-Drip-System Balkon", asin: "B0BNLMJ7LQ" },
+    { label: "Blumat Tonkegel Bewässerung", asin: "B0001IOZ98" },
+    { label: "Relaxdays Urlaubsbewässerung", asin: "B08779K17M" },
+  ],
+  "Kokossubstrat (Coco)": [
+    { label: "BioBizz Coco Mix 50 l", asin: "B08BB2HBPS" },
+    { label: "Plagron Coco mit Perlite", asin: "B0G5Z1SD96" },
+    { label: "Novatool Kokossubstrat ohne Dünger", asin: "B09VY83HMR" },
+    { label: "Bio-Kokossubstrat XL", asin: "B07F7KMMWT" },
+  ],
+  "Perlite (Drainage)": [
+    { label: "BIOVITA Perlite 10 l", asin: "B0D4QQ4V9R" },
+    { label: "Plagron Perlite 10 l", asin: "B07WPKL662" },
+    { label: "Floragard Perlite Profi", asin: "B0BVVMQ2B9" },
+    { label: "Plagron Perlite 70 l", asin: "B00JJRCB2K" },
+  ],
+  "Hochwertige Blumenerde": [
+    {
+      label: "Substral Naturen Bio Universalerde torffrei",
+      asin: "B09PLF1Z53",
+    },
+    { label: "Neudorff NeudoHum Blumenerde 20 l", asin: "B0037ACVVG" },
+    { label: "BIOVITA Universalerde", asin: "B08RNN6695" },
+  ],
+  "ScrOG-Netz / Pflanzennetz": [
+    { label: "AC Infinity Mesh-Netz 120", asin: "B0H3G1P5ZZ" },
+    { label: "POTLAB elastisches Pflanzennetz", asin: "B09THJJ4WY" },
+    { label: "Hydrofarm HGN30S Polyester-Netz", asin: "B01NBU1VCM" },
+    { label: "Weedness Pflanzennetz für Growboxen", asin: "B09G1B7LQ7" },
+  ],
+  "Nematoden gegen Trauermücken": [
+    { label: "nemabest Nematoden gegen Trauermücken", asin: "B08SJF8Y7X" },
+    { label: "Weedness Nematoden gegen Trauermücken", asin: "B0FZV5MGP9" },
+    { label: "nemabest Hypoaspis miles (Raubmilben)", asin: "B0DZP6KSDW" },
+  ],
   "Pflanzendünger (Wachstum/Blüte)": FERTILIZERS,
-  "Wachstumsdünger (Stickstoff)": FERTILIZERS,
-  "Blütedünger (PK)": FERTILIZERS,
+  "Wachstumsdünger (Stickstoff)": GROW_FERTILIZERS,
+  "Blütedünger (PK)": BLOOM_FERTILIZERS,
+  "Cal-Mag Ergänzung": CAL_MAG,
 };
 
 export function productsForRemedy(name: string): RemedyProduct[] {

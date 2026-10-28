@@ -1,1 +1,2155 @@
-[]
+[
+  {
+    "id": "harvest-lager-packs-01",
+    "topic": "Feuchtigkeitspacks im Lagerbehälter",
+    "phases": ["harvest"],
+    "tags": [
+      "feuchtigkeitspack",
+      "feuchtigkeitsbeutel",
+      "lagerung",
+      "luftfeuchtigkeit",
+      "curing",
+      "behälter"
+    ],
+    "text": "Zweistufige Feuchtigkeitspacks können Feuchtigkeit aufnehmen und abgeben und halten so die Luftfeuchtigkeit im geschlossenen Behälter konstant, bei den vorgestellten Packs auf 58 % oder 62 %.",
+    "videoId": "TAiQoMk4OKQ",
+    "videoTitle": "Besten Produkte für deine Ernte? 🧐 richtig Lagern mit Boveda, Grove Bag oder Integra Boost?",
+    "channel": "Pott Planter",
+    "start": 195
+  },
+  {
+    "id": "harvest-lager-packs-02",
+    "topic": "Aktivierung der Packs",
+    "phases": ["harvest"],
+    "tags": [
+      "feuchtigkeitspack",
+      "feuchtigkeitsbeutel",
+      "aktivierung",
+      "lagerung",
+      "luftdicht"
+    ],
+    "text": "Die Packs brauchen einen luftdichten Behälter. Nach Herstellerangaben dauert es 24 bis 48 Stunden, bis sie sich optimal aktiviert haben.",
+    "videoId": "TAiQoMk4OKQ",
+    "videoTitle": "Besten Produkte für deine Ernte? 🧐 richtig Lagern mit Boveda, Grove Bag oder Integra Boost?",
+    "channel": "Pott Planter",
+    "start": 245
+  },
+  {
+    "id": "harvest-lager-packs-03",
+    "topic": "Packs kontrollieren",
+    "phases": ["harvest"],
+    "tags": [
+      "feuchtigkeitspack",
+      "thermohygrometer",
+      "hygrometer",
+      "lagerung",
+      "luftfeuchtigkeit",
+      "kontrolle"
+    ],
+    "text": "Ob ein Pack verbraucht ist, erkennt man an seiner Festigkeit oder an der Luftfeuchte im Behälter. Deshalb empfiehlt der Sprecher kleine, günstige Thermohygrometer zur Kontrolle.",
+    "videoId": "TAiQoMk4OKQ",
+    "videoTitle": "Besten Produkte für deine Ernte? 🧐 richtig Lagern mit Boveda, Grove Bag oder Integra Boost?",
+    "channel": "Pott Planter",
+    "start": 340
+  },
+  {
+    "id": "harvest-lager-packs-04",
+    "topic": "Auch mit Packs lüften",
+    "phases": ["harvest"],
+    "tags": ["feuchtigkeitspack", "lüften", "curing", "lagerung", "behälter"],
+    "text": "Auch bei Verwendung von Feuchtigkeitspacks muss der Behälter laut Sprecher regelmäßig geöffnet und gelüftet werden.",
+    "videoId": "TAiQoMk4OKQ",
+    "videoTitle": "Besten Produkte für deine Ernte? 🧐 richtig Lagern mit Boveda, Grove Bag oder Integra Boost?",
+    "channel": "Pott Planter",
+    "start": 429
+  },
+  {
+    "id": "harvest-lager-behaelter-01",
+    "topic": "Behälter nicht überfüllen",
+    "phases": ["harvest"],
+    "tags": [
+      "lagerung",
+      "behälter",
+      "überfüllen",
+      "glas",
+      "erntemenge",
+      "feuchtigkeitspack"
+    ],
+    "text": "Die vorgesehene Erntemenge pro Behälter nicht überschreiten: nichts hineinstopfen oder herunterdrücken, damit die Packs richtig arbeiten und die Ernte nicht beschädigt wird.",
+    "videoId": "TAiQoMk4OKQ",
+    "videoTitle": "Besten Produkte für deine Ernte? 🧐 richtig Lagern mit Boveda, Grove Bag oder Integra Boost?",
+    "channel": "Pott Planter",
+    "start": 556
+  },
+  {
+    "id": "harvest-lager-schimmel-01",
+    "topic": "Lagerung bei zu hoher Luftfeuchte",
+    "phases": ["harvest"],
+    "tags": [
+      "lagerung",
+      "luftfeuchtigkeit",
+      "schimmel",
+      "trocken",
+      "austrocknen",
+      "keller",
+      "feucht"
+    ],
+    "text": "Der Sprecher will mit den Packs verhindern, dass die Ernte an der Luft immer trockener wird oder zu feucht ist. Wird sie bei über 67 bis 69 % Luftfeuchtigkeit gelagert, sei die Schimmelgefahr sehr hoch und die ganze Ernte könne kaputtgehen.",
+    "videoId": "TAiQoMk4OKQ",
+    "videoTitle": "Besten Produkte für deine Ernte? 🧐 richtig Lagern mit Boveda, Grove Bag oder Integra Boost?",
+    "channel": "Pott Planter",
+    "start": 590
+  },
+  {
+    "id": "harvest-lager-schimmel-02",
+    "topic": "Vor dem Einlagern auf Schimmel prüfen",
+    "phases": ["harvest"],
+    "tags": [
+      "schimmel",
+      "kontrolle",
+      "einlagern",
+      "lagerung",
+      "behälter",
+      "ausbreiten"
+    ],
+    "text": "Die Ernte vor dem Einlagern auf Schimmel kontrollieren: Schimmel wächst weiter und überträgt sich auf die restliche Ernte im Behälter.",
+    "videoId": "TAiQoMk4OKQ",
+    "videoTitle": "Besten Produkte für deine Ernte? 🧐 richtig Lagern mit Boveda, Grove Bag oder Integra Boost?",
+    "channel": "Pott Planter",
+    "start": 650
+  },
+  {
+    "id": "harvest-trocknen-restfeuchte-01",
+    "topic": "Nicht zu schnell trocknen",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "trocknung",
+      "restfeuchte",
+      "schnell",
+      "trocken",
+      "lagerung"
+    ],
+    "text": "Vor dem Einlagern soll die Ernte nicht zu schnell getrocknet worden sein, damit noch eine kleine Restfeuchte in den Blüten bleibt.",
+    "videoId": "sx02puVyAVI",
+    "videoTitle": "Die Ernte ist da 😱 Lagern und richtig Fermentieren für Anfänger!",
+    "channel": "Pott Planter",
+    "start": 102
+  },
+  {
+    "id": "harvest-lager-glas-01",
+    "topic": "Geeignetes Lagergefäß",
+    "phases": ["harvest"],
+    "tags": [
+      "lagerung",
+      "glas",
+      "behälter",
+      "marmeladenglas",
+      "luftdicht",
+      "einmachglas",
+      "sauber"
+    ],
+    "text": "Zum Lagern eignet sich jedes saubere, luftdicht verschließbare Gefäß, zum Beispiel ein Marmeladenglas. Die Blüten sollten weder zu trocken noch zu feucht sein.",
+    "videoId": "sx02puVyAVI",
+    "videoTitle": "Die Ernte ist da 😱 Lagern und richtig Fermentieren für Anfänger!",
+    "channel": "Pott Planter",
+    "start": 145
+  },
+  {
+    "id": "harvest-lager-glas-02",
+    "topic": "Glas nur zu 75 % füllen",
+    "phases": ["harvest"],
+    "tags": [
+      "lagerung",
+      "glas",
+      "füllmenge",
+      "platz",
+      "luftfeuchtigkeit",
+      "schimmel",
+      "curing"
+    ],
+    "text": "Das Gefäß nur zu etwa 75 % füllen, damit die Luftfeuchtigkeit im Glas genug Pufferraum hat. Das dient der Qualität und senkt die Schimmelgefahr.",
+    "videoId": "sx02puVyAVI",
+    "videoTitle": "Die Ernte ist da 😱 Lagern und richtig Fermentieren für Anfänger!",
+    "channel": "Pott Planter",
+    "start": 210
+  },
+  {
+    "id": "harvest-lager-ort-01",
+    "topic": "Wo lagern?",
+    "phases": ["harvest"],
+    "tags": [
+      "lagerung",
+      "lagerort",
+      "temperatur",
+      "schrank",
+      "dunkel",
+      "aufbewahrung"
+    ],
+    "text": "Der Sprecher lagert in der Wohnung, im Raum mit den konstantesten Temperaturen, am besten dunkel im Schrank, und nicht draußen, in der Gartenhütte, im Keller oder in der Gefriertruhe. Temperaturen zwischen 17 und 22 °C sind für ihn in Ordnung.",
+    "videoId": "sx02puVyAVI",
+    "videoTitle": "Die Ernte ist da 😱 Lagern und richtig Fermentieren für Anfänger!",
+    "channel": "Pott Planter",
+    "start": 245
+  },
+  {
+    "id": "harvest-lager-licht-01",
+    "topic": "Dunkel lagern",
+    "phases": ["harvest"],
+    "tags": [
+      "lagerung",
+      "licht",
+      "uv",
+      "terpene",
+      "aroma",
+      "chlorophyll",
+      "dunkel",
+      "glas"
+    ],
+    "text": "Terpene sind licht- und UV-empfindlich, daher schützt dunkle Lagerung die Aromastoffe. Laut Sprecher hilft Dunkelheit außerdem, restliches Chlorophyll abzubauen, und Licht bleicht die Blüten aus.",
+    "videoId": "sx02puVyAVI",
+    "videoTitle": "Die Ernte ist da 😱 Lagern und richtig Fermentieren für Anfänger!",
+    "channel": "Pott Planter",
+    "start": 295
+  },
+  {
+    "id": "harvest-curing-lueften-01",
+    "topic": "Curing: erste Woche täglich lüften",
+    "phases": ["harvest"],
+    "tags": [
+      "curing",
+      "lüften",
+      "fermentieren",
+      "glas",
+      "aushärten",
+      "täglich",
+      "erste"
+    ],
+    "text": "In der ersten Woche jeden Tag mindestens 15 bis 30 Minuten lüften: Glas vorher leicht schwenken, langsam öffnen und mit offenem Deckel stehen lassen.",
+    "videoId": "sx02puVyAVI",
+    "videoTitle": "Die Ernte ist da 😱 Lagern und richtig Fermentieren für Anfänger!",
+    "channel": "Pott Planter",
+    "start": 525
+  },
+  {
+    "id": "harvest-curing-lueften-02",
+    "topic": "Ab Woche zwei seltener lüften",
+    "phases": ["harvest"],
+    "tags": ["curing", "lüften", "schimmel", "qualität", "glas"],
+    "text": "Ab der zweiten Woche reicht seltenes Lüften. Je seltener man das Glas öffnet, desto besser bleibt die Qualität, desto höher ist aber das Schimmelrisiko.",
+    "videoId": "sx02puVyAVI",
+    "videoTitle": "Die Ernte ist da 😱 Lagern und richtig Fermentieren für Anfänger!",
+    "channel": "Pott Planter",
+    "start": 580
+  },
+  {
+    "id": "harvest-curing-dauer-01",
+    "topic": "Curing nach etwa vier Wochen beendet",
+    "phases": ["harvest"],
+    "tags": [
+      "curing",
+      "dauer",
+      "veredelung",
+      "fermentieren",
+      "vier",
+      "lagerung"
+    ],
+    "text": "Nach etwa vier Wochen ist der Veredelungsprozess laut Sprecher im Grunde beendet; das ständige Öffnen und Schließen ist dann nicht mehr nötig, die Blüten können weiter im Glas lagern.",
+    "videoId": "sx02puVyAVI",
+    "videoTitle": "Die Ernte ist da 😱 Lagern und richtig Fermentieren für Anfänger!",
+    "channel": "Pott Planter",
+    "start": 612
+  },
+  {
+    "id": "harvest-curing-drehen-01",
+    "topic": "Glas drehen statt schütteln",
+    "phases": ["harvest"],
+    "tags": [
+      "curing",
+      "glas",
+      "schütteln",
+      "trichome",
+      "öffnen",
+      "lüften",
+      "drehen"
+    ],
+    "text": "Vor dem Öffnen das Glas leicht drehen, nicht fest schütteln, um die Trichome nicht zu beschädigen. Dann langsam öffnen, damit die Luft gleichmäßig entweicht.",
+    "videoId": "sx02puVyAVI",
+    "videoTitle": "Die Ernte ist da 😱 Lagern und richtig Fermentieren für Anfänger!",
+    "channel": "Pott Planter",
+    "start": 730
+  },
+  {
+    "id": "harvest-lager-hygrometer-01",
+    "topic": "Hygrometer im Behälter",
+    "phases": ["harvest"],
+    "tags": [
+      "hygrometer",
+      "thermometer",
+      "lagerung",
+      "luftfeuchtigkeit",
+      "kontrolle",
+      "glas"
+    ],
+    "text": "Ein kleines Hygrometer (meist mit Thermometer kombiniert) im Behälter zeigt Luftfeuchte und Temperatur. Ohne Messung sei es die Katze im Sack, gerade am Anfang sei es hilfreich.",
+    "videoId": "sx02puVyAVI",
+    "videoTitle": "Die Ernte ist da 😱 Lagern und richtig Fermentieren für Anfänger!",
+    "channel": "Pott Planter",
+    "start": 751
+  },
+  {
+    "id": "harvest-lager-packs-05",
+    "topic": "Feuchtigkeitsregulierende Packungen",
+    "phases": ["harvest"],
+    "tags": [
+      "feuchtigkeitspack",
+      "feuchtigkeitsbeutel",
+      "lagerung",
+      "schimmel",
+      "luftfeuchtigkeit",
+      "konstant"
+    ],
+    "text": "Als dritten Tipp nennt der Sprecher feuchtigkeitsregulierende Packungen im Behälter: Sie halten die Luftfeuchte konstant und senken die Schimmelgefahr; Erfahrungsberichte aus der Praxis sagen laut ihm, dass sie die Qualität verbessern.",
+    "videoId": "sx02puVyAVI",
+    "videoTitle": "Die Ernte ist da 😱 Lagern und richtig Fermentieren für Anfänger!",
+    "channel": "Pott Planter",
+    "start": 790
+  },
+  {
+    "id": "harvest-ernte-faecherblaetter-01",
+    "topic": "Große Blätter vor der Ernte",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "fächerblätter",
+      "blätter",
+      "entfernen",
+      "ernte",
+      "abzupfen",
+      "blüte"
+    ],
+    "text": "Die großen Fächerblätter fallen laut Sprecher fast von allein ab. Er zupft sie, wenn sie zu etwa 60 bis 70 % verfärbt sind; die letzten zwei Wochen steht die Pflanze dann nur mit den Blüten unter der Lampe.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 235
+  },
+  {
+    "id": "harvest-ernte-ausdursten-01",
+    "topic": "Vor der Ernte nicht mehr gießen",
+    "phases": ["flowering", "harvest"],
+    "tags": ["ausdursten", "gießen", "ernte", "wasser"],
+    "text": "Bei den gezeigten Pflanzen wurde in den letzten zwei Tagen vor der Ernte nicht mehr gegossen (ausdursten lassen).",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 275
+  },
+  {
+    "id": "harvest-bluete-erde-trocken-01",
+    "topic": "Erde in der Blüte nicht austrocknen",
+    "phases": ["flowering"],
+    "tags": [
+      "blüte",
+      "gießen",
+      "erde",
+      "austrocknen",
+      "wurzeln",
+      "wurzelspitzen",
+      "gießfehler"
+    ],
+    "text": "Laut Sprecher darf die Erde in der Blütephase nicht austrocknen: Sobald sie trocken wird, trocknen die Wurzelspitzen aus und die Pflanze ist schon beschädigt.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 570
+  },
+  {
+    "id": "harvest-ernte-hygiene-01",
+    "topic": "Sauber ernten",
+    "phases": ["harvest"],
+    "tags": [
+      "ernte",
+      "hygiene",
+      "handschuhe",
+      "sauber",
+      "arbeiten",
+      "lebensmittel"
+    ],
+    "text": "Beim Ernten Handschuhe tragen und sauber arbeiten, denn Blüten sind ein Lebensmittel und Hygiene ist wichtig.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 320
+  },
+  {
+    "id": "harvest-trimmen-reste-01",
+    "topic": "Abgeschnittene Blätter trocknen",
+    "phases": ["harvest"],
+    "tags": [
+      "trimmen",
+      "blätter",
+      "reste",
+      "trocknen",
+      "zeitungspapier",
+      "schimmel"
+    ],
+    "text": "Abgemachte Blätter kann man auf Zeitungspapier oder dem Boxboden ausbreiten und trocknen. Sie sollten in den Tagen immer wieder durchgemischt werden, damit kein Schimmelansatz entsteht.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 372
+  },
+  {
+    "id": "harvest-trimmen-trocken-01",
+    "topic": "Trockentrimm: Zuckerblätter bleiben dran",
+    "phases": ["harvest"],
+    "tags": [
+      "trockentrimm",
+      "dry",
+      "trim",
+      "zuckerblätter",
+      "sugar",
+      "leaves",
+      "trimmen"
+    ],
+    "text": "Beim Dry Trim lässt man die Blätter an den Blüten, die sogenannten Sugar Leaves, zunächst dran.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 415
+  },
+  {
+    "id": "harvest-trimmen-nass-01",
+    "topic": "Nass-Trimm: nur die Blattspitzen",
+    "phases": ["harvest"],
+    "tags": [
+      "nasstrimm",
+      "wet",
+      "trim",
+      "schere",
+      "blattspitzen",
+      "trimmen",
+      "haushaltsschere"
+    ],
+    "text": "Beim Wet Trim werden die großen Blätter abgezupft und nur die abstehenden Blattspitzen vorsichtig abgeschnitten, nicht an der Blüte selbst. Dafür reicht eine normale Haushaltsschere.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 445
+  },
+  {
+    "id": "harvest-ernte-geruch-01",
+    "topic": "Geruch beim Ernten",
+    "phases": ["harvest"],
+    "tags": ["ernte", "geruch", "aktivkohlefilter", "box", "nachbarn"],
+    "text": "Zu Hause am besten in der Box unter dem Aktivkohlefilter ernten (Töpfe in die Box stellen), damit der intensive Geruch gefiltert wird und nicht in den Flur zieht.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 500
+  },
+  {
+    "id": "harvest-trimmen-nass-02",
+    "topic": "Nass-Trimm: Blüte freilegen",
+    "phases": ["harvest"],
+    "tags": [
+      "nasstrimm",
+      "blätter",
+      "schimmelgefahr",
+      "ertrag",
+      "blüte",
+      "freilegen"
+    ],
+    "text": "Beim Wet Trim legt der Sprecher die Blüte komplett frei, sodass nach dem Trocknen nichts mehr zu tun ist. Werden in den letzten zwei Wochen alle großen Blätter entfernt, gibt es laut ihm mehr Ertrag und weniger Schimmelgefahr.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 628
+  },
+  {
+    "id": "harvest-trimmen-wahl-01",
+    "topic": "Nass oder trocken trimmen",
+    "phases": ["harvest"],
+    "tags": [
+      "trimmen",
+      "nass",
+      "trocken",
+      "wettrim",
+      "drytrim",
+      "entscheidung",
+      "erfahrung"
+    ],
+    "text": "Ob nass oder trocken getrimmt wird, soll nach Ansicht des Sprechers jeder selbst entscheiden und seine Erfahrungen machen. Unter guten Trocknungsbedingungen werde die Pflanze beides gut.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 660
+  },
+  {
+    "id": "harvest-trimmen-blaetter-01",
+    "topic": "Warum Blätter entfernen",
+    "phases": ["harvest"],
+    "tags": [
+      "trimmen",
+      "blätter",
+      "chlorophyll",
+      "schimmelgefahr",
+      "entfernen"
+    ],
+    "text": "Die Blätter entfernt man, damit grundsätzlich weniger Schimmelgefahr entsteht. Außerdem bestehen sie hauptsächlich aus Chlorophyll, und es geht um die Blüten mit dem eigentlichen Wirkstoff.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 700
+  },
+  {
+    "id": "harvest-trocknen-ganze-pflanze-01",
+    "topic": "Pflanze am Stück aufhängen",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "aufhängen",
+      "ganze",
+      "pflanze",
+      "wet",
+      "trim",
+      "ernte",
+      "methode"
+    ],
+    "text": "Eine Methode: die Pflanze am Stück abschneiden und aufhängen; wenn sie trocken ist, nimmt man die einzelnen Blüten ab.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 975
+  },
+  {
+    "id": "harvest-schimmel-ursache-01",
+    "topic": "Schimmel durch Bakterien und Klima",
+    "phases": ["harvest"],
+    "tags": [
+      "schimmel",
+      "hygiene",
+      "handschuhe",
+      "bakterien",
+      "klima",
+      "trocknung",
+      "ernte"
+    ],
+    "text": "Handschuhe, damit die Blüten frei von Bakterien bleiben: Schimmel wird laut Sprecher durch Bakterien und durch ein schlechtes Klima in der Box begünstigt, beides zusammen kann die Ernte ruinieren.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 1000
+  },
+  {
+    "id": "harvest-schimmel-befall-01",
+    "topic": "Bei Schimmel nichts verwenden",
+    "phases": ["harvest"],
+    "tags": [
+      "schimmel",
+      "befall",
+      "sporen",
+      "ernte",
+      "entsorgen",
+      "gesundheit"
+    ],
+    "text": "Ist Schimmel an der Pflanze, würde der Sprecher die ganze Pflanze nicht mehr verwenden, weil sich Sporen verbreitet haben könnten; das sei gesundheitsschädlich.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 1040
+  },
+  {
+    "id": "harvest-trocknen-dry-trim-01",
+    "topic": "Dry Trim: Pflanze ganz lassen",
+    "phases": ["harvest"],
+    "tags": [
+      "trockentrimm",
+      "dry",
+      "trim",
+      "schimmelgefahr",
+      "dicke",
+      "blüten",
+      "abschneiden",
+      "stängel"
+    ],
+    "text": "Beim Dry Trim bleibt die Pflanze ganz hängen; hat sie sehr dicke Blüten, wird vorher ein Teil der Blätter entfernt, um die Schimmelgefahr zu verringern. Abgeschnitten wird knapp über dem Boden, damit man den Stängel gut anfassen kann.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 1085
+  },
+  {
+    "id": "harvest-trocknen-klima-01",
+    "topic": "Trockenraum: Temperatur und Luftfeuchte",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "trocknung",
+      "temperatur",
+      "luftfeuchtigkeit",
+      "dunkel",
+      "dauer",
+      "zelt"
+    ],
+    "text": "Der Sprecher empfiehlt, dunkel zu trocknen, bei 19 bis 22 °C und 50 bis 55 % Luftfeuchtigkeit, etwa zwei bis drei Wochen, danach in Dose oder Glas.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 1236
+  },
+  {
+    "id": "harvest-trocknen-luft-01",
+    "topic": "Luft bewegen, Geruch filtern",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "ventilator",
+      "luftbewegung",
+      "aktivkohlefilter",
+      "abluft",
+      "geruch"
+    ],
+    "text": "In Trockenraum oder -zelt soll die Luft in Bewegung sein: ein Ventilator nicht direkt auf die Pflanzen, sondern an ihnen vorbei zur Wand für eine Verwirbelung. Ideal ist ein Aktivkohlefilter mit Schlauch nach draußen.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 1262
+  },
+  {
+    "id": "harvest-trocknen-ventilator-01",
+    "topic": "Ventilator nicht auf die Pflanzen",
+    "phases": ["harvest"],
+    "tags": ["trocknen", "ventilator", "gleichmäßig", "schnell", "windkanal"],
+    "text": "Bläst der Ventilator direkt auf die Pflanze, trocknet sie an dieser Stelle zu schnell. Gewollt ist gleichmäßiges Trocknen, bei dem die Raumluft die Restfeuchte aufnimmt und abtransportiert.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 1400
+  },
+  {
+    "id": "harvest-trocknen-geduld-01",
+    "topic": "Erste Trocknungswoche und Geruch",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "geduld",
+      "geruch",
+      "modrig",
+      "erste",
+      "trocknung",
+      "zeit"
+    ],
+    "text": "Die erste Woche muss man nicht nachsehen. Nach einer Woche riecht die Ernte laut Sprecher modrig, eine Woche später, wenn sie ganz knusprig trocken ist, riecht sie wie feinstes Cannabis; wer keine Panik will, wartet zwei bis drei Wochen.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 1471
+  },
+  {
+    "id": "harvest-schimmel-kontrolle-01",
+    "topic": "Schimmelkontrolle beim Trocknen",
+    "phases": ["harvest"],
+    "tags": [
+      "schimmel",
+      "kontrolle",
+      "trocknen",
+      "handschuhe",
+      "kelch",
+      "stängel",
+      "dicke",
+      "blüten"
+    ],
+    "text": "Man kann alle zwei bis drei Tage nachsehen, mit Handschuhen, die erste Kontrolle nach etwa einer Woche, besonders in den dicken Blüten. Schimmel entsteht laut Sprecher in der Mitte am Stängel, dort, wo die Blüten nach oben gehen.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 1516
+  },
+  {
+    "id": "harvest-trocknen-staengeltest-01",
+    "topic": "Stängeltest: Seitentrieb knicken",
+    "phases": ["harvest"],
+    "tags": [
+      "stängeltest",
+      "knicktest",
+      "trocknen",
+      "fertig",
+      "seitentrieb",
+      "knacken"
+    ],
+    "text": "Zum Test knickt der Sprecher einen Seitentrieb: Bricht er komplett mit einem Knack durch, ist der Stängel trocken. Das kann bis zu drei Wochen dauern, nach zwei Wochen sind die ersten kleinen Blüten schon so weit.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 1585
+  },
+  {
+    "id": "harvest-curing-start-01",
+    "topic": "Nach dem Stängeltest ins Glas",
+    "phases": ["harvest"],
+    "tags": [
+      "curing",
+      "glas",
+      "dose",
+      "restfeuchte",
+      "stängeltest",
+      "schütteln",
+      "lagern"
+    ],
+    "text": "Bricht der Stängel, kommen alle Blüten ins Glas oder in die Dose; die Restfeuchte von innen verteilt sich, nach 48 Stunden ist das Produkt laut Sprecher sehr gut. Er schüttelt die Dose zwei Wochen lang zweimal am Tag durch und öffnet und schließt sie.",
+    "videoId": "8TZ0J7fKe84",
+    "videoTitle": "Anleitung Cannabis Ernten Trocknen Schneidetechnik  nass & trocken Schimmel frei für sichere Medizin",
+    "channel": "WEED LAND",
+    "start": 1632
+  },
+  {
+    "id": "harvest-trocknen-bedingungen-01",
+    "topic": "Trocknen: dunkel und kühl",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "dunkel",
+      "licht",
+      "temperatur",
+      "kühl",
+      "terpene",
+      "trocknung"
+    ],
+    "text": "Es sollte dunkel getrocknet werden, Licht gilt als Feind der Wirkstoffe. Als Temperatur nennt der Sprecher alles zwischen 15 und 21 °C; je kühler, desto besser sollen sekundäre Pflanzenstoffe erhalten bleiben.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 28
+  },
+  {
+    "id": "harvest-trocknen-bedingungen-02",
+    "topic": "Trocknen: Luftfeuchte, VPD, Luftzirkulation",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "luftfeuchtigkeit",
+      "vpd",
+      "luftzirkulation",
+      "ventilator",
+      "stabil"
+    ],
+    "text": "Die Luftfeuchtigkeit liegt je nach Temperatur bei 45 bis gut 65 %, das ergibt einen VPD von etwa 0,8 bis 1,2. Im Trockenbereich soll ein schwacher Ventilator die Luft bewegen, nicht direkt auf die Pflanzen, und die Bedingungen sollen stabil bleiben, damit die Blüten nicht hin und her de- und rehydrieren.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 52
+  },
+  {
+    "id": "harvest-trocknen-haengen-01",
+    "topic": "Blüten frei hängen",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "aufhängen",
+      "frei",
+      "hängen",
+      "zelt",
+      "pflanze",
+      "zerteilen",
+      "abstand"
+    ],
+    "text": "Die Blüten sollten frei hängen, sich weder gegenseitig noch die Zeltwand berühren. Unter Umständen sollte man die Pflanze dafür zerteilen.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 77
+  },
+  {
+    "id": "harvest-trocknen-living-dead-01",
+    "topic": "Living-Dead-Methode (Florganics)",
+    "phases": ["harvest"],
+    "tags": [
+      "living",
+      "dead",
+      "schnittblumentechnik",
+      "trocknen",
+      "phosphorsäure",
+      "chlorophyll",
+      "florganics"
+    ],
+    "text": "Der Sprecher beschreibt die Schnittblumentechnik von Flo (Florganics): Pflanzen nach dem Abschneiden in Wasser mit 2 bis 3 Tropfen Phosphorsäure pro Liter stellen, auf bis zu 12 °C kühlen und gut zwei Wochen im Dunkeln lassen, um Nährstoffreste und Chlorophyll abzubauen. Flo selbst findet sie später zu aufwendig, sie koste auch Terpene.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 225
+  },
+  {
+    "id": "harvest-trocknen-flo-01",
+    "topic": "Flos bevorzugter Trocknungsablauf",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "florganics",
+      "luftfeuchtigkeit",
+      "knicktest",
+      "karton",
+      "papiertüte"
+    ],
+    "text": "Flos aktueller Ansatz laut Sprecher: Direkt nach dem Abschneiden 2 bis 3 Tage bei 18 bis 20 °C und 50 bis 60 % Luftfeuchte trocknen, dann bei 12 °C und etwa 35 % bis zum bestandenen Knicktest. Danach einige Tage in Karton oder Papiertüten.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 255
+  },
+  {
+    "id": "harvest-trocknen-wasseraktivitaet-01",
+    "topic": "Wasseraktivität und Glas-Hygrometer",
+    "phases": ["harvest"],
+    "tags": [
+      "wasseraktivität",
+      "hygrometer",
+      "glas",
+      "trocken",
+      "schimmel",
+      "curing"
+    ],
+    "text": "Nach Flo kommen die Blüten in zu zwei Dritteln gefüllte Gläser mit Hygrometer. Zeigt es bei etwa 20 °C höchstens 65 % an, sei die Ernte trocken genug, ohne Schimmel, Pilzwachstum oder Fermentation; sonst muss sie nochmal in Karton oder Papier. Die Wasseraktivität unter 0,65 entspricht bei 20 °C etwa der Luftfeuchte.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 300
+  },
+  {
+    "id": "harvest-curing-streit-01",
+    "topic": "Fermentieren: umstritten",
+    "phases": ["harvest"],
+    "tags": [
+      "curing",
+      "fermentieren",
+      "umstritten",
+      "florganics",
+      "aroma",
+      "pilze",
+      "meinung"
+    ],
+    "text": "Ob Fermentieren beziehungsweise Curen nötig ist, sei umstritten. Flo lässt es weg, weil durch mikrobielle Aktivität Aromen verloren gehen und sich bedenkliche Pilze vermehren könnten; er betont, es sei nur seine bevorzugte Methode, nicht die beste.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 375
+  },
+  {
+    "id": "harvest-trocknen-zelt-01",
+    "topic": "Trocknen im Zelt mit Hygrostat",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "zelt",
+      "vpd",
+      "hygrostat",
+      "luftfeuchtigkeit",
+      "schwankungen"
+    ],
+    "text": "Am häufigsten hängt man die Pflanzen ins Zelt, arbeitet mit der Raumtemperatur und stellt die Luftfeuchte so ein, dass der VPD passt (der Sprecher tendiert zu 0,9). Grobe Schwankungen vermeiden; als wichtigste Anschaffung nennt er einen Hygrostat, dessen Fühler nahe an den Blüten hängt.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 451
+  },
+  {
+    "id": "harvest-trocknen-zweites-zelt-01",
+    "topic": "Zweites Zelt oder Karton an die Zuluft",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "zweites",
+      "zelt",
+      "karton",
+      "zuluft",
+      "geruch",
+      "lüfter"
+    ],
+    "text": "Wer das Growzelt noch betreibt, kann ein zweites, kleineres Zelt oder einen Karton an die Zuluft des Hauptzelts hängen. So spart man sich extra Lüfter und Geruchsfilter.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 538
+  },
+  {
+    "id": "harvest-trocknen-karton-01",
+    "topic": "Trocknen im Karton: Vorteile",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "karton",
+      "günstig",
+      "luftfeuchtigkeit",
+      "licht",
+      "pappkarton"
+    ],
+    "text": "Ein sauberer Karton nimmt Feuchtigkeit auf und schützt vor Licht; in Herbst, Winter und Frühling findet man laut Sprecher meist einen Bereich mit 18 bis 22 °C und 45 bis 55 % Luftfeuchte. Mit etwas Glück trocknet es sich darin ganz passabel.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 602
+  },
+  {
+    "id": "harvest-trocknen-karton-02",
+    "topic": "Trocknen im Karton: Nachteile",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "karton",
+      "schimmel",
+      "geruch",
+      "luftlöcher",
+      "nachteile"
+    ],
+    "text": "Beim Karton lässt sich kaum etwas einstellen (nur Luftlöcher vergrößern oder abdecken), nichts gegen den Geruch tun und aktive Luftbewegung ist schwer, die Schimmelgefahr also tendenziell höher. Der Sprecher vermutet, dass manchen die Ernte im Karton anschimmelt, ohne dass es erzählt wird.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 626
+  },
+  {
+    "id": "harvest-trocknen-papiertuete-01",
+    "topic": "Trocknen in Papiertüten",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "papiertüte",
+      "tüten",
+      "schimmelprävention",
+      "schütteln"
+    ],
+    "text": "Bei Papiertüten (für Lebensmittel geeignet) schneidet man die Blüten kleiner, bedeckt pro Tüte nur den Boden und lässt die Tüte oben etwas offen. Die Tüten sollen zur Schimmelprävention regelmäßig leicht geschüttelt werden; der Sprecher hat es selbst nicht probiert.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 671
+  },
+  {
+    "id": "harvest-trocknen-haengen-02",
+    "topic": "Hängend im dunklen Raum",
+    "phases": ["harvest"],
+    "tags": ["trocknen", "aufhängen", "wäscheständer", "decke", "dunkel"],
+    "text": "Wer einen dunklen Ort mit einigermaßen passenden Bedingungen hat, hängt die Pflanzen laut Sprecher fast besser einfach an die Decke oder auf einen Wäscheständer.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 702
+  },
+  {
+    "id": "harvest-trimmen-vergleich-01",
+    "topic": "Nass oder trocken trimmen: Sprechers Einschätzung",
+    "phases": ["harvest"],
+    "tags": [
+      "trimmen",
+      "nass",
+      "trocken",
+      "aroma",
+      "trichome",
+      "verlust",
+      "trend"
+    ],
+    "text": "Beides führt zum Erfolg, der Trend geht laut Sprecher Richtung trocken, weil die Aromen besser erhalten bleiben sollen, wenn die Blüten samt Blättern trocknen. Dafür gehen beim Trockentrimm mehr Trichome verloren; er selbst tendiert zu nass.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 721
+  },
+  {
+    "id": "harvest-trimmen-vpd-01",
+    "topic": "Trimmart nach Trocknungsklima wählen",
+    "phases": ["harvest"],
+    "tags": [
+      "trimmen",
+      "nass",
+      "trocken",
+      "vpd",
+      "schimmelrisiko",
+      "trocknungsbedingungen"
+    ],
+    "text": "Sind die Bedingungen nicht steuerbar, hängt die Wahl davon ab: Bei kühl und feucht (VPD unter etwa 0,9) eher nass trimmen, das senkt das Schimmelrisiko; zwischen 0,9 und 1,1 geht beides; ab 1,1 eher trocken, weil es sonst zu schnell trocknet.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 745
+  },
+  {
+    "id": "harvest-trocknen-anpassen-01",
+    "topic": "Trocknungsbedingungen im Verlauf anpassen?",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "bedingungen",
+      "anpassen",
+      "vpd",
+      "widersprüchlich",
+      "meinungen"
+    ],
+    "text": "Der Sprecher rät nach gut 30 gesichteten Quellen, die Bedingungen nicht anzupassen, weil man beides hört: Die einen empfehlen anfangs etwa 18 bis 20 °C und rund 50 % Luftfeuchte, dann kühler und feuchter, andere umgekehrt zuerst einen niedrigeren VPD.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 765
+  },
+  {
+    "id": "harvest-trocknen-fertig-01",
+    "topic": "Woran man trockene Blüten erkennt",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "fertig",
+      "knack",
+      "zweige",
+      "innen",
+      "feucht",
+      "kleine",
+      "buds"
+    ],
+    "text": "Kleine Buds brauchen kürzer, größere länger. Zwei Indikatoren: kleinere Zweige brechen mit einem kleinen Knack, größere noch nicht, und die Blüten fühlen sich außen trocken, beim Zusammendrücken innen aber noch leicht feucht an.",
+    "videoId": "ztjCauoCtrA",
+    "videoTitle": "Ernte richtig trocknen 🥦 | Bedingungen | Ablauf | Mit und ohne Zelt, Automat, Box, Karton | Anfänger",
+    "channel": "Der Hanf lebt",
+    "start": 840
+  },
+  {
+    "id": "harvest-erntezeit-bluetedauer-01",
+    "topic": "Blütedauer je Sorte",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "blütezeit",
+      "blütewochen",
+      "erntezeitpunkt",
+      "indica",
+      "sativa",
+      "samenpackung"
+    ],
+    "text": "Je nach Sorte ist die Blüte nach etwa 7 bis 14 Wochen fertig: Indica-dominante Pflanzen eher kürzer, Sativa-dominante meist länger. Die Angabe des Samenherstellers ist nur eine grobe Orientierung, meist kann man minimal länger rechnen.",
+    "videoId": "Gf4qZcyQnoo",
+    "videoTitle": "Zeit zu Ernten 🥦 Anbau #3 🌿Trocknung & Curing",
+    "channel": "CannaZen",
+    "start": 27
+  },
+  {
+    "id": "harvest-erntezeit-zufrueh-01",
+    "topic": "Zu früh oder zu spät ernten",
+    "phases": ["harvest"],
+    "tags": ["erntezeitpunkt", "früh", "spät", "ernte", "wirkstoffe"],
+    "text": "Wer zu früh erntet, bei dem haben sich die Wirkstoffe teilweise noch nicht richtig entwickelt; wer zu spät erntet, bei dem können sie sich teilweise wieder verflüchtigt haben.",
+    "videoId": "Gf4qZcyQnoo",
+    "videoTitle": "Zeit zu Ernten 🥦 Anbau #3 🌿Trocknung & Curing",
+    "channel": "CannaZen",
+    "start": 54
+  },
+  {
+    "id": "harvest-erntezeit-trichome-farben-01",
+    "topic": "Trichomfarben",
+    "phases": ["harvest"],
+    "tags": [
+      "trichome",
+      "farben",
+      "klar",
+      "milchig",
+      "bernstein",
+      "erntezeitpunkt",
+      "harz"
+    ],
+    "text": "Trichome sind kleine Harzdrüsen, die wie ein Pilz mit Stiel und Kopf aussehen und auf Blüten und Zuckerblättern sitzen. Es gibt drei Zustände: glasig-klar (noch nicht reif), milchig-trüb (für die meisten der optimale Erntezeitpunkt) und bernsteinfarben (THC beginnt sich abzubauen, unter anderem zu CBN).",
+    "videoId": "Gf4qZcyQnoo",
+    "videoTitle": "Zeit zu Ernten 🥦 Anbau #3 🌿Trocknung & Curing",
+    "channel": "CannaZen",
+    "start": 101
+  },
+  {
+    "id": "harvest-erntezeit-laenger-01",
+    "topic": "Lieber etwas länger stehen lassen",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "erntezeitpunkt",
+      "reifegrad",
+      "untere",
+      "blüten",
+      "länger",
+      "trichome"
+    ],
+    "text": "An der Pflanze findet man immer alle Reifegrade, weil die unteren Blütenstände später reif werden. CannaZen rät deshalb, die Pflanzen etwas länger stehen zu lassen als man denkt, damit unten nicht alles noch unreif ist.",
+    "videoId": "Gf4qZcyQnoo",
+    "videoTitle": "Zeit zu Ernten 🥦 Anbau #3 🌿Trocknung & Curing",
+    "channel": "CannaZen",
+    "start": 180
+  },
+  {
+    "id": "harvest-erntezeit-richtwert-01",
+    "topic": "Richtwert für den Trichomanteil",
+    "phases": ["harvest"],
+    "tags": [
+      "erntezeitpunkt",
+      "trichome",
+      "milchig",
+      "bernstein",
+      "richtwert",
+      "klar"
+    ],
+    "text": "Als guter Richtwert gelten 70 bis 90 % milchige und 10 bis 30 % bernsteinfarbene Trichome. Wer früher ernten will, kann bei etwa 30 % klar und 70 % milchig ernten; nie im komplett klaren Zustand.",
+    "videoId": "Gf4qZcyQnoo",
+    "videoTitle": "Zeit zu Ernten 🥦 Anbau #3 🌿Trocknung & Curing",
+    "channel": "CannaZen",
+    "start": 213
+  },
+  {
+    "id": "harvest-erntezeit-pistillen-01",
+    "topic": "Pistillen als Hinweis",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "pistillen",
+      "härchen",
+      "braun",
+      "erntezeitpunkt",
+      "trichome",
+      "prüfen"
+    ],
+    "text": "CannaZen schaut auf die Pistillen: Ist der Großteil braun, geht es in die richtige Richtung, dann sollte man die Trichome regelmäßiger prüfen. Verlassen kann man sich nicht immer darauf, weil Pistillen teils deutlich früher braun werden als die Trichome reif sind.",
+    "videoId": "Gf4qZcyQnoo",
+    "videoTitle": "Zeit zu Ernten 🥦 Anbau #3 🌿Trocknung & Curing",
+    "channel": "CannaZen",
+    "start": 258
+  },
+  {
+    "id": "harvest-erntezeit-lupe-01",
+    "topic": "Trichome prüfen: Handy-Mikroskop und Lupe",
+    "phases": ["harvest"],
+    "tags": [
+      "trichome",
+      "lupe",
+      "mikroskop",
+      "juwelierslupe",
+      "handy",
+      "makro",
+      "prüfen"
+    ],
+    "text": "Die Sprecher nutzen ein Aufsteck-Handymikroskop (mit Foto und Video, die Blüte muss etwas angedrückt werden) und eine günstige Juwelierslupe mit Licht. Ein USB-Mikroskop soll sehr gute Bilder liefern, sei aber friemelig; manche neueren Smartphones haben eine Makrofunktion.",
+    "videoId": "Gf4qZcyQnoo",
+    "videoTitle": "Zeit zu Ernten 🥦 Anbau #3 🌿Trocknung & Curing",
+    "channel": "CannaZen",
+    "start": 297
+  },
+  {
+    "id": "harvest-spuelen-warum-01",
+    "topic": "Warum spülen (Flushing)?",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "spülen",
+      "flushing",
+      "nährstoffe",
+      "ausspülen",
+      "verblühen",
+      "dünger",
+      "geschmack"
+    ],
+    "text": "Beim Spülen sollen restliche Nährstoffe in der Pflanze abgebaut und im Topf ausgespült werden, damit die Pflanze keine mehr aufnimmt und zu verblühen beginnt. Der Sprecher meint, das sorge für einen angenehmeren, nicht so kratzigen Rauch.",
+    "videoId": "VuH2kyDfKsM",
+    "videoTitle": "Spülen 💧(Flushen) von Cannabis🌿: Warum und wie es gemacht wird! 🌿",
+    "channel": "Blackforest Craft&Grow",
+    "start": 25
+  },
+  {
+    "id": "harvest-spuelen-beginn-01",
+    "topic": "Wann mit dem Spülen beginnen",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "spülen",
+      "flushing",
+      "dünger",
+      "weglassen",
+      "gelbe",
+      "blätter",
+      "chlorophyll",
+      "blüte"
+    ],
+    "text": "Der Sprecher gibt zwei Wochen vor Ende der Blüte keinen neuen Dünger mehr. Nach ein paar Tagen bekommt die Pflanze gelbe Blätter und baut Nährstoffe und Chlorophyll ab.",
+    "videoId": "VuH2kyDfKsM",
+    "videoTitle": "Spülen 💧(Flushen) von Cannabis🌿: Warum und wie es gemacht wird! 🌿",
+    "channel": "Blackforest Craft&Grow",
+    "start": 55
+  },
+  {
+    "id": "harvest-spuelen-vorbereitung-01",
+    "topic": "Vor dem Spülen: Topf anfeuchten",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "spülen",
+      "flushing",
+      "topf",
+      "anfeuchten",
+      "trockene",
+      "erde",
+      "trockenstress",
+      "vorbereitung"
+    ],
+    "text": "Die Pflanze bekam vor dem Spülen zwei Tage kein Wasser. Dann wird der Topf zuerst mit etwas Wasser komplett durchfeuchtet, damit sich die Nährstoffe lösen und das Wasser nicht sofort durch die trockene Erde durchläuft.",
+    "videoId": "VuH2kyDfKsM",
+    "videoTitle": "Spülen 💧(Flushen) von Cannabis🌿: Warum und wie es gemacht wird! 🌿",
+    "channel": "Blackforest Craft&Grow",
+    "start": 152
+  },
+  {
+    "id": "harvest-spuelen-durchfuehrung-01",
+    "topic": "Spülen: Wasser durchlaufen lassen",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "spülen",
+      "flushing",
+      "badewanne",
+      "wasser",
+      "klares",
+      "durchspülen",
+      "topf"
+    ],
+    "text": "In der Badewanne lässt der Sprecher mit der Brause etwa 10 Liter Wasser durch den Topf laufen und wiederholt das mehrfach, bis nur noch klares Wasser unten herauskommt; die Farbe des Ablaufs prüft er zwischendurch.",
+    "videoId": "VuH2kyDfKsM",
+    "videoTitle": "Spülen 💧(Flushen) von Cannabis🌿: Warum und wie es gemacht wird! 🌿",
+    "channel": "Blackforest Craft&Grow",
+    "start": 300
+  },
+  {
+    "id": "harvest-spuelen-kontrolle-01",
+    "topic": "Spülerfolg messen",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "spülen",
+      "flushing",
+      "ph-meter",
+      "leitwert",
+      "ablaufwasser",
+      "kontrolle",
+      "restnährstoffe"
+    ],
+    "text": "Zur Kontrolle fängt er das zuletzt durchgelaufene Wasser auf und misst pH und Leitwert. Weil nur noch klares Wasser durchläuft, sieht er das Spülen als gelungen an; Die letzten Nährstoffe im Restwasser kann die Pflanze noch aufbrauchen.",
+    "videoId": "VuH2kyDfKsM",
+    "videoTitle": "Spülen 💧(Flushen) von Cannabis🌿: Warum und wie es gemacht wird! 🌿",
+    "channel": "Blackforest Craft&Grow",
+    "start": 505
+  },
+  {
+    "id": "harvest-zwitter-pollensack-01",
+    "topic": "Pollensäcke erkennen",
+    "phases": ["flowering"],
+    "tags": [
+      "zwitter",
+      "pollensäcke",
+      "männlich",
+      "nodien",
+      "knotenpunkt",
+      "isolieren"
+    ],
+    "text": "Wachsen an den Knotenpunkten statt weißer Härchen runde Gebilde (Pollensäcke), rät der Sprecher Anfängern, die Pflanze schnell zu isolieren oder sogar zu vernichten, wie es einige machen.",
+    "videoId": "0MxKQJDGrOk",
+    "videoTitle": "Anbau für Anfänger: Blütephase 😨 Das musst du über Blüten wissen!",
+    "channel": "Pott Planter",
+    "start": 283
+  },
+  {
+    "id": "harvest-zwitter-bestaeubung-01",
+    "topic": "Bestäubung durch Pollen",
+    "phases": ["flowering"],
+    "tags": [
+      "zwitter",
+      "pollen",
+      "bestäubung",
+      "samen",
+      "männliche",
+      "blüten",
+      "ernte"
+    ],
+    "text": "Öffnen sich die männlichen Blütensäcke, bestäubt der Pollen die weiblichen Blüten, und die Pflanze bildet Samen. Wer nur ernten will, bekommt dadurch keine normalen weiblichen Blüten; wer kreuzen möchte, kann die Pflanze leben lassen.",
+    "videoId": "0MxKQJDGrOk",
+    "videoTitle": "Anbau für Anfänger: Blütephase 😨 Das musst du über Blüten wissen!",
+    "channel": "Pott Planter",
+    "start": 328
+  },
+  {
+    "id": "harvest-zwitter-kontrolle-01",
+    "topic": "Täglich auf männliche Blüten prüfen",
+    "phases": ["flowering"],
+    "tags": [
+      "zwitter",
+      "männlich",
+      "weiblich",
+      "kontrolle",
+      "täglich",
+      "säckchen",
+      "eselsbrücke"
+    ],
+    "text": "Man soll die Pflanze möglichst täglich auf männliche oder weibliche Blüten oder beides kontrollieren. Eselsbrücke des Sprechers: Kleine Säckchen an der Pflanze bedeuten männlich.",
+    "videoId": "0MxKQJDGrOk",
+    "videoTitle": "Anbau für Anfänger: Blütephase 😨 Das musst du über Blüten wissen!",
+    "channel": "Pott Planter",
+    "start": 391
+  },
+  {
+    "id": "harvest-bluete-duengen-01",
+    "topic": "Düngen in der Blüte: Phosphor und Kalium",
+    "phases": ["flowering"],
+    "tags": [
+      "blüte",
+      "düngen",
+      "blühdünger",
+      "phosphor",
+      "kalium",
+      "stickstoff",
+      "erntequalität"
+    ],
+    "text": "In der Wachstumsphase düngt man stickstoffbetont, in der Blütephase mehr Phosphor und Kalium. Der Blühdünger sei wichtig und mitentscheidend für Erntequalität und Erntemenge.",
+    "videoId": "0MxKQJDGrOk",
+    "videoTitle": "Anbau für Anfänger: Blütephase 😨 Das musst du über Blüten wissen!",
+    "channel": "Pott Planter",
+    "start": 722
+  },
+  {
+    "id": "harvest-bluete-duengen-02",
+    "topic": "Wenige Düngerkomponenten",
+    "phases": ["flowering"],
+    "tags": [
+      "blüte",
+      "düngen",
+      "blühdünger",
+      "wachstumsdünger",
+      "mangel",
+      "einfach"
+    ],
+    "text": "Der Sprecher kommt mit zwei Komponenten aus, einem Blüh- und einem Wachstumsdünger, und gibt nur bei akutem Mangel etwas Zusätzliches. Die guten Dünger auf dem Markt seien im Regelfall alle gut; man solle nicht das billigste kaufen.",
+    "videoId": "0MxKQJDGrOk",
+    "videoTitle": "Anbau für Anfänger: Blütephase 😨 Das musst du über Blüten wissen!",
+    "channel": "Pott Planter",
+    "start": 748
+  },
+  {
+    "id": "harvest-bluete-luftfeuchte-01",
+    "topic": "Luftfeuchte in der Blüte senken",
+    "phases": ["flowering"],
+    "tags": [
+      "blüte",
+      "luftfeuchtigkeit",
+      "senken",
+      "luftfeuchte",
+      "blütephase"
+    ],
+    "text": "Als ersten von drei wichtigen Punkten für die Blütephase nennt der Sprecher, die Luftfeuchtigkeit ein bisschen herunterzudrehen.",
+    "videoId": "0MxKQJDGrOk",
+    "videoTitle": "Anbau für Anfänger: Blütephase 😨 Das musst du über Blüten wissen!",
+    "channel": "Pott Planter",
+    "start": 841
+  },
+  {
+    "id": "harvest-bluete-licht-stress-01",
+    "topic": "Lichtdauer in der Blüte",
+    "phases": ["flowering"],
+    "tags": [
+      "blüte",
+      "lichtdauer",
+      "stunden",
+      "autoflower",
+      "stress",
+      "zwitter"
+    ],
+    "text": "Fotoperiodische Pflanzen sollen in der Blüte bei etwa 12 Stunden Licht bleiben. Bei Autoflowern rät der Sprecher, die Lichtdauer nicht zu übertreiben: 24 Stunden Licht seien Dauerstress ohne Erholung, was unter anderem zu schlechterer Ernte und Zwittrigkeit führen könne.",
+    "videoId": "0MxKQJDGrOk",
+    "videoTitle": "Anbau für Anfänger: Blütephase 😨 Das musst du über Blüten wissen!",
+    "channel": "Pott Planter",
+    "start": 862
+  },
+  {
+    "id": "harvest-bluete-durst-01",
+    "topic": "Durst in der Blüte",
+    "phases": ["flowering"],
+    "tags": ["blüte", "gießen", "durst", "topf", "anheben", "gewicht"],
+    "text": "In der Blütephase ist die Pflanze richtig durstig. Der Sprecher empfiehlt, den Topf täglich zu prüfen und anzuheben, um ein Gefühl für leicht oder schwer zu bekommen.",
+    "videoId": "0MxKQJDGrOk",
+    "videoTitle": "Anbau für Anfänger: Blütephase 😨 Das musst du über Blüten wissen!",
+    "channel": "Pott Planter",
+    "start": 932
+  },
+  {
+    "id": "harvest-spuelen-growmotion-01",
+    "topic": "Gelbe Blätter und letzte Spülwoche",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "spülen",
+      "flushing",
+      "gelbe",
+      "blätter",
+      "stickstoff",
+      "düngerrückstände",
+      "sauber"
+    ],
+    "text": "Gelbe Blätter in der letzten Blütephase sind laut Growmotion normal, weil kaum noch Stickstoff da ist und die Pflanze von ihren letzten Reserven lebt. In der letzten Woche wird nur noch mit Wasser gespült, damit keine Düngerrückstände in der Pflanze sind.",
+    "videoId": "0Qx-riNCO6c",
+    "videoTitle": "Der RICHTIGE ZEITPUNKT zum ERNTEN💜",
+    "channel": "Growmotion",
+    "start": 41
+  },
+  {
+    "id": "harvest-duengen-trockene-erde-01",
+    "topic": "Trockene Erde vor dem Düngen",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "düngen",
+      "trockene",
+      "erde",
+      "anfeuchten",
+      "wurzeln",
+      "salz",
+      "verbrennung"
+    ],
+    "text": "War die Erde vor dem Gießen sehr trocken, die Erde immer erst mit Wasser ohne Dünger anfeuchten. Das beugt chemischen Verbrennungen der Wurzeln durch Salze vor.",
+    "videoId": "hoOlh-VOfGg",
+    "videoTitle": "Mineralisch Düngen für Anfänger - Von der Keimung bis zur Ernte, Dünger richtig anwenden!",
+    "channel": "Vince and Weed",
+    "start": 370
+  },
+  {
+    "id": "harvest-duengen-ueberduengung-01",
+    "topic": "Weniger ist mehr beim Düngen",
+    "phases": ["vegetative", "flowering"],
+    "tags": ["düngen", "überdüngung", "unterversorgung", "anfänger", "ec"],
+    "text": "Für Anfänger ist weniger oft mehr: Eine Überdüngung kann man nicht reparieren, eine Unterversorgung dagegen immer noch korrigieren. Wer Angst vor zu viel Dünger hat, kann nur bei jedem zweiten Gießen mit den besprochenen Werten düngen.",
+    "videoId": "hoOlh-VOfGg",
+    "videoTitle": "Mineralisch Düngen für Anfänger - Von der Keimung bis zur Ernte, Dünger richtig anwenden!",
+    "channel": "Vince and Weed",
+    "start": 428
+  },
+  {
+    "id": "harvest-bluete-vince-stretch-01",
+    "topic": "Umstellung auf Blütedünger",
+    "phases": ["vegetative", "flowering"],
+    "tags": [
+      "blüte",
+      "dünger",
+      "stretch",
+      "phosphor",
+      "kalium",
+      "stickstoff",
+      "ec",
+      "mineralisch"
+    ],
+    "text": "Beim Übergang von Wachstum zu Blüte (Stretch) braucht die Pflanze erst stickstofflastige Nahrung, die sich in den folgenden zwei bis drei Wochen auf Phosphor und Kalium umstellt. Gesunde Pflanzen vertragen dann einen EC von 1,2 bis 1,3, der bis Woche 6 konstant steigt.",
+    "videoId": "hoOlh-VOfGg",
+    "videoTitle": "Mineralisch Düngen für Anfänger - Von der Keimung bis zur Ernte, Dünger richtig anwenden!",
+    "channel": "Vince and Weed",
+    "start": 485
+  },
+  {
+    "id": "harvest-bluete-vince-ph-01",
+    "topic": "pH-Wert in der Blüte",
+    "phases": ["flowering"],
+    "tags": ["blüte", "ph", "wert", "gießwasser", "mineralisch", "dünger"],
+    "text": "Der pH-Wert soll in der ersten Blütewoche bei 6,1 liegen und bis Woche sechs langsam auf 6,3 steigen.",
+    "videoId": "hoOlh-VOfGg",
+    "videoTitle": "Mineralisch Düngen für Anfänger - Von der Keimung bis zur Ernte, Dünger richtig anwenden!",
+    "channel": "Vince and Weed",
+    "start": 512
+  },
+  {
+    "id": "harvest-bluete-vince-booster-01",
+    "topic": "Phosphor-Kalium-Booster ab Woche 7",
+    "phases": ["flowering"],
+    "tags": [
+      "blüte",
+      "booster",
+      "phosphor",
+      "kalium",
+      "ec",
+      "sieben",
+      "dünger"
+    ],
+    "text": "Ab Blütewoche 7 kommt zum Basisdünger ein Phosphor-Kalium-Booster dazu. Beispiel: EC 1,2 vom Basisdünger plus 0,4 vom Booster ergibt 1,6; der Booster wird bis Ende der neunten Woche gegeben, dann beginnt die zehnte und letzte Woche.",
+    "videoId": "hoOlh-VOfGg",
+    "videoTitle": "Mineralisch Düngen für Anfänger - Von der Keimung bis zur Ernte, Dünger richtig anwenden!",
+    "channel": "Vince and Weed",
+    "start": 520
+  },
+  {
+    "id": "harvest-spuelen-vince-01",
+    "topic": "Vince: Spülen bringt laut Studien nichts",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "spülen",
+      "flushing",
+      "studien",
+      "laboranalyse",
+      "nährstoffe",
+      "auswaschen",
+      "meinung"
+    ],
+    "text": "Viele Gärtner beginnen in der letzten Woche zu spülen, also Nährstoffe mit viel Wasser auszuwaschen, um die Qualität zu steigern. Vince verweist auf neue Studien, nach denen Spülen bis zu 14 Tagen keinen signifikanten Unterschied in Laboranalysen gezeigt hat.",
+    "videoId": "hoOlh-VOfGg",
+    "videoTitle": "Mineralisch Düngen für Anfänger - Von der Keimung bis zur Ernte, Dünger richtig anwenden!",
+    "channel": "Vince and Weed",
+    "start": 570
+  },
+  {
+    "id": "harvest-spuelen-vince-02",
+    "topic": "Vince: Dünger weglassen statt spülen",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "spülen",
+      "flushing",
+      "dünger",
+      "weglassen",
+      "nährstoffe",
+      "erde",
+      "stoffwechsel"
+    ],
+    "text": "Lässt man den Dünger weg und gießt nur mit Wasser, wird die Pflanze weiter mit Nährstoffen versorgt, die noch in der Erde sind. So könne sie bis zum letzten Tag ihres Lebens weiter Inhaltsstoffe produzieren.",
+    "videoId": "hoOlh-VOfGg",
+    "videoTitle": "Mineralisch Düngen für Anfänger - Von der Keimung bis zur Ernte, Dünger richtig anwenden!",
+    "channel": "Vince and Weed",
+    "start": 604
+  },
+  {
+    "id": "harvest-endphase-stress-01",
+    "topic": "Endphase: stabile Bedingungen",
+    "phases": ["flowering"],
+    "tags": [
+      "endphase",
+      "blüte",
+      "temperatur",
+      "schwankungen",
+      "stress",
+      "luftfeuchtigkeit",
+      "vpd",
+      "nacht"
+    ],
+    "text": "In der Endphase hält der Sprecher bei Licht etwa 24 bis 25 °C und senkt die Temperatur in der Dunkelphase nicht stark ab. Große Schwankungen bedeuten Stress, den er jetzt vermeiden will; die Luftfeuchte bleibt unter 60 %.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 95
+  },
+  {
+    "id": "harvest-endphase-ec-01",
+    "topic": "EC in den letzten Wochen senken",
+    "phases": ["flowering"],
+    "tags": [
+      "endphase",
+      "blüte",
+      "ec",
+      "senken",
+      "ausreifen",
+      "mineralisch",
+      "düngen"
+    ],
+    "text": "Bei der mineralischen Düngung hat der Sprecher in den letzten Wochen den EC schrittweise auf 1,5 gesenkt, damit die Pflanzen nicht weiter im Vollgasmodus bleiben, sondern kontrolliert ausreifen.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 138
+  },
+  {
+    "id": "harvest-messgeraet-kalibrieren-01",
+    "topic": "EC-Messgerät kalibrieren",
+    "phases": ["flowering"],
+    "tags": [
+      "ec",
+      "messgerät",
+      "kalibrieren",
+      "messfehler",
+      "düngen",
+      "blüte",
+      "reife"
+    ],
+    "text": "Der Sprecher kalibriert sein EC-Messgerät normalerweise einmal pro Woche. Als er es vergaß, arbeitete er fast zwei Wochen mit einem zu hohen EC; seiner Einschätzung nach schob das die Reife leicht nach hinten.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 154
+  },
+  {
+    "id": "harvest-herbstfaerbung-01",
+    "topic": "Aufhellende Blätter am Blüteende",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "herbstfärbung",
+      "blätter",
+      "heller",
+      "abbau",
+      "mangel",
+      "reife",
+      "ernte"
+    ],
+    "text": "Hellen die Blätter am Ende auf und steht die Pflanze nicht mehr voll im Saft, ist das laut Sprecher kein klassischer Mangel, sondern ein natürlicher Abbauprozess: Die Pflanze mobilisiert Reserven und investiert die letzte Energie in die Blüten.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 178
+  },
+  {
+    "id": "harvest-trichome-led-01",
+    "topic": "Trichome nicht unter LED-Licht beurteilen",
+    "phases": ["harvest"],
+    "tags": [
+      "trichome",
+      "erntezeitpunkt",
+      "led",
+      "licht",
+      "nacht",
+      "untere",
+      "blüten",
+      "prüfen"
+    ],
+    "text": "Unter eingeschalteten LED-Lampen reflektieren die Trichomköpfe stark und können täuschen. Der Sprecher prüft sie deshalb gern in der Dunkelphase mit moderatem Licht und schaut auch die Buds aus den unteren Bereichen an, die oft später reif sind.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 214
+  },
+  {
+    "id": "harvest-erntezeit-trichome-01",
+    "topic": "Erntefenster nach Trichomen",
+    "phases": ["harvest"],
+    "tags": [
+      "erntefenster",
+      "trichome",
+      "milchig",
+      "bernstein",
+      "klar",
+      "erntezeitpunkt"
+    ],
+    "text": "Beim Sprecher überwogen milchige Köpfe deutlich gegenüber klaren und es waren schon einige bernsteinfarbene zu sehen; damit war für ihn das Erntefenster erreicht. Er hätte auch noch einige Tage warten oder die Sorten zu unterschiedlichen Zeiten ernten können.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 237
+  },
+  {
+    "id": "harvest-ernte-blaetter-02",
+    "topic": "Große Blätter vor dem Trimmen",
+    "phases": ["harvest"],
+    "tags": [
+      "ernte",
+      "große",
+      "blätter",
+      "feuchtigkeit",
+      "head",
+      "buds",
+      "nasstrimm"
+    ],
+    "text": "Vor dem Abschneiden der besten Blüten (Head Buds) entfernt der Sprecher die größten Blätter, damit sich später keine Feuchtigkeit zwischen den Blattflächen staut. Die ausgewählten Blüten bekommen einen groben Nass-Trim.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 330
+  },
+  {
+    "id": "harvest-trocknen-beutel-01",
+    "topic": "Trocknungsbeutel befüllen und schließen",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknungsbeutel",
+      "dry",
+      "ferm",
+      "bag",
+      "trocknen",
+      "befüllen",
+      "kammern",
+      "luftig"
+    ],
+    "text": "Die Trocknungsbeutel so befüllen, dass die Blüten nicht stark aufeinander liegen oder gequetscht werden, und luftig verschließen. Der Sprecher bildet mit Clips oder Verschweißen einzelne Kammern, damit bei einem Problem nicht alles in einem Block liegt.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 392
+  },
+  {
+    "id": "harvest-trocknen-beutel-02",
+    "topic": "Trocknungsbeutel: Vorteile",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknungsbeutel",
+      "dry",
+      "ferm",
+      "bag",
+      "mikroklima",
+      "gleichmäßig",
+      "schimmelsporen"
+    ],
+    "text": "Der Sprecher mag an den Beuteln, dass die Blüten in einem eigenen Mikroklima hängen, die Trocknung gleichmäßiger verläuft und das Material vor Staub, Haaren und Schimmelsporen geschützt ist. Außerdem habe man meist ein bis zwei Tage mehr Spielraum, bevor übertrocknet wird.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 511
+  },
+  {
+    "id": "harvest-trocknen-segmente-01",
+    "topic": "Dichte Pflanzen zerteilen",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "kompakte",
+      "pflanze",
+      "segmente",
+      "teilen",
+      "schimmel",
+      "blüten",
+      "abstand"
+    ],
+    "text": "Eine sehr voluminöse, kompakte Pflanze teilt der Sprecher in mehrere Segmente, weil die Blüten sonst zu sehr aufeinander drücken. Dadurch kann selbst bei guten Bedingungen Schimmel entstehen.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 553
+  },
+  {
+    "id": "harvest-trocknen-klima-02",
+    "topic": "Zielwerte beim Trocknen",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "temperatur",
+      "luftfeuchtigkeit",
+      "aroma",
+      "langsam",
+      "luftbefeuchter"
+    ],
+    "text": "Die Zielwerte des Sprechers liegen bei etwa 18 bis 20 °C und 55 bis 60 % Luftfeuchtigkeit, ein bewährter Bereich, um langsam zu trocknen und viel Aroma zu erhalten. Ein Luftbefeuchter verhindert, dass die Luftfeuchte zu stark absackt.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 596
+  },
+  {
+    "id": "harvest-trocknen-ventilator-02",
+    "topic": "Ventilator auf niedrigster Stufe nach unten",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "ventilator",
+      "direkter",
+      "luftstrom",
+      "ungleichmäßig",
+      "niedrigste",
+      "stufe"
+    ],
+    "text": "Der Ventilator läuft auf niedrigster Stufe nach unten gerichtet. Direkter Luftstrom trocknet die Oberfläche zu schnell und die Trocknung wird ungleichmäßig; das Ziel ist Kontrolle statt Geschwindigkeit.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 607
+  },
+  {
+    "id": "harvest-trocknen-dauer-01",
+    "topic": "Nach dem Aufhängen in Ruhe lassen",
+    "phases": ["harvest"],
+    "tags": ["trocknen", "dauer", "dunkel", "anfassen", "trocknung"],
+    "text": "Wenn alles hängt und die Werte stimmen, ist das Wichtigste laut Sprecher, nichts mehr anzufassen. Die Pflanzen hängen dann etwa 8 bis 12 Tage im Dunkeln; bei ihm waren frei hängende Pflanzen nach rund 10 Tagen so weit.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 633
+  },
+  {
+    "id": "harvest-trocknen-ende-01",
+    "topic": "Trocknung beenden: Stängel und Blüten fühlen",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknen",
+      "fertig",
+      "stängel",
+      "knicken",
+      "knacken",
+      "restfeuchte",
+      "crunchy"
+    ],
+    "text": "Die Trocknung beendet der Sprecher, wenn sich die Stängel beim Knicken nicht mehr weich und elastisch anfühlen, aber noch nicht richtig knacken: Er sucht den Moment kurz davor. Die Blüten sollen außen trocken und leicht crunchy wirken, beim Draufdrücken aber innen noch Restfeuchte haben.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 662
+  },
+  {
+    "id": "harvest-trocknen-beutel-03",
+    "topic": "Trocknungsende bei Beuteln",
+    "phases": ["harvest"],
+    "tags": [
+      "trocknungsbeutel",
+      "gewicht",
+      "wiegen",
+      "fingerspitzengefühl",
+      "trocknen",
+      "fertig"
+    ],
+    "text": "Bei den Beuteln drückt der Sprecher von außen durch die Folie auf die Buds und merkt, ob sie noch zu weich sind. Viele wiegen die Beutel und beenden die Trocknung, wenn das Gewicht über einige Zeit nicht mehr sinkt; für die ersten Durchläufe sei das eine gute, objektive Methode.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 760
+  },
+  {
+    "id": "harvest-curing-edelstahl-01",
+    "topic": "Aushärten im lichtdichten Behälter",
+    "phases": ["harvest"],
+    "tags": [
+      "curing",
+      "aushärten",
+      "edelstahl",
+      "behälter",
+      "hygrometer",
+      "restfeuchte",
+      "lagerung"
+    ],
+    "text": "Zum Aushärten und Lagern nutzt der Sprecher am liebsten lichtundurchlässige, leicht zu reinigende Edelstahlbehälter mit Fach für Feuchtigkeitspads. Er startet erst ohne Pads, aber mit Hygrometer, um die tatsächliche Restfeuchte zu erfahren, und prüft nach spätestens einem halben Tag.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 813
+  },
+  {
+    "id": "harvest-curing-feuchte-01",
+    "topic": "Luftfeuchte im Curing-Behälter",
+    "phases": ["harvest"],
+    "tags": [
+      "curing",
+      "luftfeuchtigkeit",
+      "trocken",
+      "kritisch",
+      "behälter",
+      "hygrometer"
+    ],
+    "text": "Als grobe Orientierung gelten im Behälter 55 bis 60 % als ideal. 50 bis 55 % sind schon etwas zu trocken, und alles über 64 % wird kritisch.",
+    "videoId": "KINYa-ATbys",
+    "videoTitle": "440g in 90 Tagen mit 2 Pflanzen | Autoflower Ernte & Trocknung | Ganja Farmer Ep. 3",
+    "channel": "Growstorys",
+    "start": 841
+  },
+  {
+    "id": "harvest-zwitter-was-01",
+    "topic": "Was ist ein Zwitter?",
+    "phases": ["flowering"],
+    "tags": [
+      "zwitter",
+      "hermaphrodit",
+      "männliche",
+      "blüten",
+      "selbstbestäubung",
+      "bananen"
+    ],
+    "text": "Hermaphroditismus bedeutet bei Cannabis, dass eine eigentlich weibliche Pflanze sowohl weibliche als auch männliche Geschlechtsorgane ausbildet und sich meist selbst bestäubt.",
+    "videoId": "zdsmVUl0dmc",
+    "videoTitle": "Zwitter erkennen & vermeiden ",
+    "channel": "Growmotion",
+    "start": 24
+  },
+  {
+    "id": "harvest-zwitter-mechanismus-01",
+    "topic": "Warum Pflanzen zwittern",
+    "phases": ["flowering"],
+    "tags": ["zwitter", "ursache", "stress", "arterhaltung", "bestäubung"],
+    "text": "Zwittern ist laut Sprecher ein Mechanismus zur Arterhaltung: Bekommt die Pflanze das Gefühl, nicht bestäubt zu werden oder nicht rechtzeitig fertig zu werden, bildet sie männliche Geschlechtsteile aus und bestäubt sich selbst.",
+    "videoId": "zdsmVUl0dmc",
+    "videoTitle": "Zwitter erkennen & vermeiden ",
+    "channel": "Growmotion",
+    "start": 48
+  },
+  {
+    "id": "harvest-zwitter-lichtstress-01",
+    "topic": "Zwitter durch Lichtstress",
+    "phases": ["flowering"],
+    "tags": [
+      "zwitter",
+      "lichtstress",
+      "nachtphase",
+      "zelt",
+      "öffnen",
+      "lichtleck"
+    ],
+    "text": "Der häufigste Stressfaktor ist Lichtstress: Bekommt die Pflanze in der Blüte 12 Stunden Tag und 12 Stunden Nacht, reichen schon wenige Minuten, wenn man nachts das Zelt öffnet, um ihr Tag zu signalisieren.",
+    "videoId": "zdsmVUl0dmc",
+    "videoTitle": "Zwitter erkennen & vermeiden ",
+    "channel": "Growmotion",
+    "start": 106
+  },
+  {
+    "id": "harvest-zwitter-hitze-01",
+    "topic": "Zwitter durch Hitze",
+    "phases": ["flowering"],
+    "tags": ["zwitter", "temperatur", "hitze", "späte", "blüte", "stress"],
+    "text": "Hohe Temperaturen sind gerade im späten Blütestadium sehr stressig für Cannabis, weil die Pflanze das Signal bekommt, auszutrocknen oder nicht mehr genug Wasser zu haben.",
+    "videoId": "zdsmVUl0dmc",
+    "videoTitle": "Zwitter erkennen & vermeiden ",
+    "channel": "Growmotion",
+    "start": 142
+  },
+  {
+    "id": "harvest-zwitter-genetik-01",
+    "topic": "Zwitter durch instabile Genetik",
+    "phases": ["flowering"],
+    "tags": [
+      "zwitter",
+      "genetik",
+      "backseeds",
+      "selektion",
+      "samen",
+      "instabil"
+    ],
+    "text": "Instabile Genetik ist ein weiterer Grund. Pflanzen aus Backseeds, also Samen ohne gezielte Selektion auf stabile Pflanzen, sind laut Sprecher besonders instabil.",
+    "videoId": "zdsmVUl0dmc",
+    "videoTitle": "Zwitter erkennen & vermeiden ",
+    "channel": "Growmotion",
+    "start": 158
+  },
+  {
+    "id": "harvest-zwitter-mechanisch-01",
+    "topic": "Zwitter durch mechanischen Stress",
+    "phases": ["flowering"],
+    "tags": [
+      "zwitter",
+      "mechanischer",
+      "stress",
+      "pistillen",
+      "berühren",
+      "oxidativer",
+      "braun"
+    ],
+    "text": "Berührt man in der Blüte immer wieder die Pistillen, werden sie schnell braun. Das zeigt oxidativen Stress und ist ein Frühanzeichen; hoher oxidativer Stress kann bis zum Zwittern führen.",
+    "videoId": "zdsmVUl0dmc",
+    "videoTitle": "Zwitter erkennen & vermeiden ",
+    "channel": "Growmotion",
+    "start": 194
+  },
+  {
+    "id": "harvest-zwitter-naehrstoffe-01",
+    "topic": "Zwitter durch Nährstoffstress",
+    "phases": ["flowering"],
+    "tags": [
+      "zwitter",
+      "nährstoffe",
+      "mangel",
+      "überschuss",
+      "düngeplan",
+      "stress"
+    ],
+    "text": "Nährstoffdisbalancen und falsche Düngepläne führen schnell zu Stress, weil die Pflanze durch Mangel oder Überschuss das Gefühl bekommt, ihren Lebenszyklus nicht vollenden zu können.",
+    "videoId": "zdsmVUl0dmc",
+    "videoTitle": "Zwitter erkennen & vermeiden ",
+    "channel": "Growmotion",
+    "start": 216
+  },
+  {
+    "id": "harvest-zwitter-ueberreif-01",
+    "topic": "Zwitter durch Überreife",
+    "phases": ["flowering", "harvest"],
+    "tags": ["zwitter", "überreif", "späte", "blüte", "erntezeitpunkt"],
+    "text": "Lässt man eine wenig gestresste Pflanze in der späten Blüte sehr lange stehen, bekommt sie das Gefühl, trotz guter Bedingungen keine Nachkommen erzeugen zu können, und kann zwittern.",
+    "videoId": "zdsmVUl0dmc",
+    "videoTitle": "Zwitter erkennen & vermeiden ",
+    "channel": "Growmotion",
+    "start": 234
+  },
+  {
+    "id": "harvest-zwitter-vermeiden-01",
+    "topic": "Zwitter vermeiden",
+    "phases": ["flowering"],
+    "tags": [
+      "zwitter",
+      "vermeiden",
+      "stress",
+      "konstant",
+      "kontrolle",
+      "feminisiert",
+      "versteckt"
+    ],
+    "text": "Man sollte die Pflanze möglichst wenig stressen und die Umweltbedingungen konstant halten. Außerdem gut kontrollieren, da Zwitter bei feminisiertem Saatgut oft schwer zu erkennen sind und tief in den Blüten sitzen.",
+    "videoId": "zdsmVUl0dmc",
+    "videoTitle": "Zwitter erkennen & vermeiden ",
+    "channel": "Growmotion",
+    "start": 268
+  },
+  {
+    "id": "harvest-zwitter-aussortieren-01",
+    "topic": "Zwitter aussortieren",
+    "phases": ["flowering"],
+    "tags": [
+      "zwitter",
+      "aussortieren",
+      "entfernen",
+      "bestäubt",
+      "andere",
+      "pflanzen",
+      "samen"
+    ],
+    "text": "Entdeckt man einen Zwitter, ist klar: aussortieren. Er kann andere Pflanzen im Zelt bestäuben, und eine bestäubte Pflanze konzentriert sich nur noch auf die Samenproduktion, die Wirkstoffproduktion wird weitgehend eingestellt.",
+    "videoId": "zdsmVUl0dmc",
+    "videoTitle": "Zwitter erkennen & vermeiden ",
+    "channel": "Growmotion",
+    "start": 290
+  },
+  {
+    "id": "harvest-zwitter-erkennen-01",
+    "topic": "Männliche Organe erkennen: Bananen",
+    "phases": ["flowering"],
+    "tags": [
+      "zwitter",
+      "erkennen",
+      "bananen",
+      "männliche",
+      "organe",
+      "pistillen",
+      "kelche",
+      "pollen"
+    ],
+    "text": "Männliche Organe sehen aus wie spitz zulaufende, bananenförmige Knospen zwischen den Pistillen und Blütenkelchen. Je nach Genetik muss man die Blüte aufmachen; solange die Bananen noch nicht geöffnet sind, wurde meist noch kein Pollen freigegeben.",
+    "videoId": "zdsmVUl0dmc",
+    "videoTitle": "Zwitter erkennen & vermeiden ",
+    "channel": "Growmotion",
+    "start": 340
+  },
+  {
+    "id": "harvest-zwitter-nodien-01",
+    "topic": "Wo Zwitterblüten entstehen",
+    "phases": ["flowering"],
+    "tags": ["zwitter", "nodien", "knotenpunkte", "kontrolle", "verästelung"],
+    "text": "Männliche Geschlechtsorgane entstehen meist an den Nodien, den Knotenpunkten, an denen sich die Pflanze verästelt. Diese Punkte sollte man besonders im Auge behalten.",
+    "videoId": "zdsmVUl0dmc",
+    "videoTitle": "Zwitter erkennen & vermeiden ",
+    "channel": "Growmotion",
+    "start": 400
+  },
+  {
+    "id": "harvest-zwitter-samen-01",
+    "topic": "Samenbildung vermeiden",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "zwitter",
+      "samenbildung",
+      "blütenmasse",
+      "qualität",
+      "kontrolle",
+      "aussortieren"
+    ],
+    "text": "Samenbildung und Zwitter mindern Blütenmasse und Qualität. Deshalb regelmäßig kontrollieren; hat man ein männliches Organ gefunden, die Pflanze aussortieren und sicherstellen, dass sich nichts öffnet.",
+    "videoId": "zdsmVUl0dmc",
+    "videoTitle": "Zwitter erkennen & vermeiden ",
+    "channel": "Growmotion",
+    "start": 430
+  },
+  {
+    "id": "harvest-dunkelphase-lager-01",
+    "topic": "Zwei Lager: Dunkelphase oder Licht vor der Ernte",
+    "phases": ["harvest"],
+    "tags": [
+      "dunkelphase",
+      "stunden",
+      "licht",
+      "ernte",
+      "dunkelheit",
+      "terpene",
+      "trichome"
+    ],
+    "text": "Es gibt zwei Lager: Die einen nehmen vor der Ernte 48 Stunden das Licht komplett weg und trocknen danach weitere 7 bis 10 Tage im Dunkeln. Die anderen lassen die Pflanzen 48 Stunden im vollen Licht, damit sie weiter Terpene und Trichome bilden.",
+    "videoId": "e9NMLP4Plmk",
+    "videoTitle": "48 hours LICHT oder DUNKELHEIT vorm ERNTEN | Welche Methode? Afro Ace Talk",
+    "channel": "Afro Ace",
+    "start": 3
+  },
+  {
+    "id": "harvest-dunkelphase-pro-01",
+    "topic": "Argument für die Dunkelphase",
+    "phases": ["harvest"],
+    "tags": [
+      "dunkelphase",
+      "chlorophyll",
+      "geschmack",
+      "photosynthese",
+      "abbauen",
+      "ernte"
+    ],
+    "text": "Das Hauptargument der Dunkelphase-Anhänger: Ohne Dunkelphase hat die Pflanze zu viel Chlorophyll, das zu einem unangenehmen Geschmack führen kann. Ohne Licht gibt es keine Photosynthese, und das Chlorophyll werde abgebaut.",
+    "videoId": "e9NMLP4Plmk",
+    "videoTitle": "48 hours LICHT oder DUNKELHEIT vorm ERNTEN | Welche Methode? Afro Ace Talk",
+    "channel": "Afro Ace",
+    "start": 78
+  },
+  {
+    "id": "harvest-dunkelphase-contra-01",
+    "topic": "Argument gegen die Dunkelphase",
+    "phases": ["harvest"],
+    "tags": [
+      "dunkelphase",
+      "gegenargument",
+      "terpene",
+      "zucker",
+      "photosynthese",
+      "studie",
+      "licht"
+    ],
+    "text": "Im besprochenen US-Video wird argumentiert: Terpene und Trichome werden aus Zucker der Photosynthese gebildet, in Dunkelheit können also keine neuen entstehen. Der Sprecher fordert eine Studie, die Vorteile der 48 Stunden Dunkelheit belegt.",
+    "videoId": "e9NMLP4Plmk",
+    "videoTitle": "48 hours LICHT oder DUNKELHEIT vorm ERNTEN | Welche Methode? Afro Ace Talk",
+    "channel": "Afro Ace",
+    "start": 246
+  },
+  {
+    "id": "harvest-dunkelphase-kaelte-01",
+    "topic": "Kälte statt Dunkelheit?",
+    "phases": ["harvest"],
+    "tags": [
+      "dunkelphase",
+      "kälte",
+      "temperatur",
+      "terpene",
+      "konservieren",
+      "ernte"
+    ],
+    "text": "Laut dem besprochenen Video könnte eher kalte Temperatur als Dunkelheit helfen; Kälte soll Terpene konservieren, aber keine neuen herstellen, während höhere Temperaturen die Neubildung begünstigen.",
+    "videoId": "e9NMLP4Plmk",
+    "videoTitle": "48 hours LICHT oder DUNKELHEIT vorm ERNTEN | Welche Methode? Afro Ace Talk",
+    "channel": "Afro Ace",
+    "start": 500
+  },
+  {
+    "id": "harvest-dunkelphase-autoflower-01",
+    "topic": "48 Stunden Licht bei Autoflowern",
+    "phases": ["harvest"],
+    "tags": ["autoflower", "stunden", "licht", "ernte", "dunkelphase"],
+    "text": "Autoflower können ab Blütebeginn auch 24 Stunden Licht bekommen. Das war für den Sprecher ein Argument, seine Pflanzen vor der Ernte noch 48 Stunden im Licht zu lassen.",
+    "videoId": "e9NMLP4Plmk",
+    "videoTitle": "48 hours LICHT oder DUNKELHEIT vorm ERNTEN | Welche Methode? Afro Ace Talk",
+    "channel": "Afro Ace",
+    "start": 436
+  },
+  {
+    "id": "harvest-dunkelphase-kombi-01",
+    "topic": "Sprecher: Kombination beider Seiten",
+    "phases": ["harvest"],
+    "tags": [
+      "dunkelphase",
+      "licht",
+      "kombination",
+      "aufhängen",
+      "zucker",
+      "chlorophyll",
+      "ernte"
+    ],
+    "text": "Der Sprecher kombiniert beide Seiten: Autoflower nutzen das Licht bis zum Ende, die am Stück abgeschnittenen und aufgehängten Pflanzen bekommen eine Dunkelphase. Er vermutet, dass dann Zucker und Chlorophyll aus den Stängeln abgebaut werden.",
+    "videoId": "e9NMLP4Plmk",
+    "videoTitle": "48 hours LICHT oder DUNKELHEIT vorm ERNTEN | Welche Methode? Afro Ace Talk",
+    "channel": "Afro Ace",
+    "start": 641
+  },
+  {
+    "id": "harvest-dunkelphase-meinung-01",
+    "topic": "Eigene Meinung bilden",
+    "phases": ["harvest"],
+    "tags": [
+      "dunkelphase",
+      "meinung",
+      "entscheiden",
+      "trocknungsdauer",
+      "chlorophyll",
+      "ernte"
+    ],
+    "text": "Jeder solle die Argumente abwägen und sich eine eigene Meinung bilden. Hätte er einzelne Buds im Karton getrocknet, hätte er sich wegen Trocknungsdauer und Chlorophyll vielleicht anders entschieden.",
+    "videoId": "e9NMLP4Plmk",
+    "videoTitle": "48 hours LICHT oder DUNKELHEIT vorm ERNTEN | Welche Methode? Afro Ace Talk",
+    "channel": "Afro Ace",
+    "start": 681
+  }
+]

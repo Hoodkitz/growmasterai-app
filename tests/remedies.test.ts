@@ -148,18 +148,30 @@ describe("fixed products", () => {
 });
 
 describe("fertilizers and curing containers", () => {
-  it("offers all five chosen fertilizers for every fertilizer remedy", () => {
+  it("offers cannabis fertilizers with valid ASINs and unique labels per remedy", () => {
     for (const name of [
       "Pflanzendünger (Wachstum/Blüte)",
       "Wachstumsdünger (Stickstoff)",
       "Blütedünger (PK)",
+      "Cal-Mag Ergänzung",
     ]) {
       const products = productsForRemedy(name);
-      expect(products).toHaveLength(5);
+      expect(products.length).toBeGreaterThanOrEqual(4);
       expect(
         products.every((p) => p.label && /^[A-Z0-9]{10}$/.test(p.asin)),
       ).toBe(true);
+      expect(new Set(products.map((p) => p.label)).size).toBe(products.length);
     }
+  });
+
+  it("includes boosters for bloom and known cannabis brands", () => {
+    const labels = productsForRemedy("Blütedünger (PK)").map((p) => p.label);
+    expect(labels.some((l) => /Booster/.test(l ?? ""))).toBe(true);
+    const all = productsForRemedy("Pflanzendünger (Wachstum/Blüte)")
+      .map((p) => p.label)
+      .join(" ");
+    for (const brand of ["BioBizz", "Plagron", "Advanced Nutrients", "GHE"])
+      expect(all).toContain(brand);
   });
 
   it("suggests light-protected containers instead of clear jars", () => {
@@ -176,5 +188,71 @@ describe("findStrainByName", () => {
     expect(findStrainByName("amnesia HAZE")?.breeder).toBe("Royal Queen Seeds");
     expect(findStrainByName("Selbstgemixte Sorte")).toBeUndefined();
     expect(findStrainByName("")).toBeUndefined();
+  });
+});
+
+describe("equipment and substrate products", () => {
+  const NEW_CATEGORIES = [
+    "Growzelt",
+    "Dimmbare LED-Pflanzenlampe",
+    "Aktivkohlefilter mit Abluft",
+    "Umluft-Ventilator (Clip)",
+    "Thermo-Hygrometer",
+    "pH-Messgerät und pH-Down",
+    "Zeitschaltuhr (digital)",
+    "Bewässerungsset (Tropf/Urlaub)",
+    "Stofftöpfe (Fabric Pots)",
+    "Kokossubstrat (Coco)",
+    "Perlite (Drainage)",
+    "Hochwertige Blumenerde",
+    "ScrOG-Netz / Pflanzennetz",
+    "Gelbtafeln",
+    "Nematoden gegen Trauermücken",
+    "Neemöl",
+    "Präzisions-Pflanzenschere",
+    "Trocknungsnetz zum Aufhängen",
+  ];
+
+  it("has labelled products with valid, unique ASINs per category", () => {
+    const names = new Set(catalogRemedyNames());
+    for (const name of NEW_CATEGORIES) {
+      expect(names.has(name), name).toBe(true);
+      const products = productsForRemedy(name);
+      expect(products.length, name).toBeGreaterThanOrEqual(2);
+      expect(
+        products.every((p) => p.label && /^[A-Z0-9]{10}$/.test(p.asin)),
+        name,
+      ).toBe(true);
+      expect(new Set(products.map((p) => p.asin)).size, name).toBe(
+        products.length,
+      );
+      expect(new Set(products.map((p) => p.label)).size, name).toBe(
+        products.length,
+      );
+    }
+  });
+
+  it("suggests the new categories from coach topics", () => {
+    const names = suggestCoachProducts(
+      "Brauche ich einen Clip-Ventilator, eine Zeitschaltuhr und ein ScrOG-Netz? Coco oder Erde mit Perlite?",
+    ).map((r) => r.name);
+    for (const n of [
+      "Umluft-Ventilator (Clip)",
+      "Zeitschaltuhr (digital)",
+      "ScrOG-Netz / Pflanzennetz",
+      "Kokossubstrat (Coco)",
+      "Perlite (Drainage)",
+    ])
+      expect(names).toContain(n);
+  });
+
+  it("suggests nematodes for fungus gnats and never offers clear jars", () => {
+    const names = suggestRemedies("Trauermücken im Substrat").map(
+      (r) => r.name,
+    );
+    expect(names).toContain("Nematoden gegen Trauermücken");
+    for (const name of NEW_CATEGORIES)
+      for (const p of productsForRemedy(name))
+        expect(p.label).not.toMatch(/Einmach|Weck/i);
   });
 });

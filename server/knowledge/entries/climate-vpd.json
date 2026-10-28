@@ -1,0 +1,186 @@
+[
+  {
+    "id": "climate-vpd-01",
+    "topic": "Befeuchter und Entfeuchter hängen nicht von der Phase ab",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "vpd",
+      "luftbefeuchter",
+      "luftentfeuchter",
+      "luftfeuchtigkeit",
+      "klima",
+      "mythos"
+    ],
+    "text": "Die Faustregel Luftbefeuchter in der Vegetation und Entfeuchter in der Blüte ist laut Video so nicht richtig. Ob man einen Befeuchter oder Entfeuchter braucht, entscheidet das Klima im Zelt und vor allem der VPD, nicht die Phase.",
+    "videoId": "kgE6tDkZcEs",
+    "videoTitle": "Luftbefeuchter NUR in der Vegi? ❌ Der größte Mythos! | VPD erklärt  #viral #GrowSetup ",
+    "channel": "CJBuds",
+    "start": 0
+  },
+  {
+    "id": "climate-vpd-02",
+    "topic": "Was der VPD ist",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "vpd",
+      "vapor pressure deficit",
+      "temperatur",
+      "luftfeuchtigkeit",
+      "luftfeuchte"
+    ],
+    "text": "VPD steht für Vapor Pressure Deficit und beschreibt vereinfacht, wie stark die Luft Wasser von der Pflanze aufnehmen kann. Dafür spielen vor allem Temperatur und relative Luftfeuchtigkeit zusammen.",
+    "videoId": "kgE6tDkZcEs",
+    "videoTitle": "Luftbefeuchter NUR in der Vegi? ❌ Der größte Mythos! | VPD erklärt  #viral #GrowSetup ",
+    "channel": "CJBuds",
+    "start": 49
+  },
+  {
+    "id": "climate-vpd-03",
+    "topic": "VPD-Tabelle als Orientierung pro Phase",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "vpd",
+      "vpd-tabelle",
+      "wachstumsphase",
+      "temperatur",
+      "luftfeuchtigkeit"
+    ],
+    "text": "VPD-Tabellen zeigen abhängig von der Wachstumsphase ungefähr, welche Kombination aus Temperatur und Luftfeuchtigkeit sinnvoll ist. Sie dienen als Leitfaden: Werte nicht blind übernehmen, sondern das Klima an das eigene Setup anpassen.",
+    "videoId": "kgE6tDkZcEs",
+    "videoTitle": "Luftbefeuchter NUR in der Vegi? ❌ Der größte Mythos! | VPD erklärt  #viral #GrowSetup ",
+    "channel": "CJBuds",
+    "start": 67
+  },
+  {
+    "id": "climate-vpd-04",
+    "topic": "Blatttemperatur und Messung auf Pflanzenhöhe",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "vpd",
+      "blatttemperatur",
+      "sensor",
+      "temperatur",
+      "ppfd",
+      "messen"
+    ],
+    "text": "Genau berechnet wird der VPD mit der Blatttemperatur statt der Raumtemperatur. Ohne Blatttemperatursensor dient die Lufttemperatur auf Pflanzenhöhe als Näherung. Die Abweichung unter einer starken LED sollte nicht pauschal mit 2 Grad angesetzt werden, sie hängt von Lichtleistung und Luftbewegung ab.",
+    "videoId": "kgE6tDkZcEs",
+    "videoTitle": "Luftbefeuchter NUR in der Vegi? ❌ Der größte Mythos! | VPD erklärt  #viral #GrowSetup ",
+    "channel": "CJBuds",
+    "start": 98
+  },
+  {
+    "id": "climate-vpd-05",
+    "topic": "Entfeuchter auch in der Vegetation",
+    "phases": [
+      "vegetative"
+    ],
+    "tags": [
+      "vpd",
+      "vegetation",
+      "luftbefeuchter",
+      "entfeuchter",
+      "nacht",
+      "luftfeuchtigkeit"
+    ],
+    "text": "In der Vegetation hilft ein Luftbefeuchter, wenn es wärmer und die Luft zu trocken ist. Steigt die Luftfeuchtigkeit aber nachts, etwa im Sommer, und der VPD wird zu niedrig, braucht man stattdessen einen Entfeuchter.",
+    "videoId": "kgE6tDkZcEs",
+    "videoTitle": "Luftbefeuchter NUR in der Vegi? ❌ Der größte Mythos! | VPD erklärt  #viral #GrowSetup ",
+    "channel": "CJBuds",
+    "start": 188
+  },
+  {
+    "id": "climate-vpd-06",
+    "topic": "Befeuchter auch in der Blüte",
+    "phases": [
+      "flowering"
+    ],
+    "tags": [
+      "vpd",
+      "blüte",
+      "luftbefeuchter",
+      "luftfeuchtigkeit",
+      "trocken",
+      "vpd zu hoch"
+    ],
+    "text": "Gegen Ende der Blüte arbeitet man oft mit niedrigerer Luftfeuchtigkeit. Fällt sie bei 24 bis 25 Grad aber unter etwa 35 %, kann der VPD deutlich höher sein als gewünscht, und dann ist ein Luftbefeuchter nötig.",
+    "videoId": "kgE6tDkZcEs",
+    "videoTitle": "Luftbefeuchter NUR in der Vegi? ❌ Der größte Mythos! | VPD erklärt  #viral #GrowSetup ",
+    "channel": "CJBuds",
+    "start": 227
+  },
+  {
+    "id": "climate-vpd-07",
+    "topic": "Relative Luftfeuchtigkeit allein reicht nicht",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "vpd",
+      "relative luftfeuchtigkeit",
+      "temperatur",
+      "rlf",
+      "luftfeuchte"
+    ],
+    "text": "50 % Luftfeuchtigkeit bei 20 Grad sind etwas völlig anderes als 50 % bei 28 Grad. Deshalb orientiert sich der Sprecher am VPD statt an einem festen Luftfeuchtewert.",
+    "videoId": "kgE6tDkZcEs",
+    "videoTitle": "Luftbefeuchter NUR in der Vegi? ❌ Der größte Mythos! | VPD erklärt  #viral #GrowSetup ",
+    "channel": "CJBuds",
+    "start": 270
+  },
+  {
+    "id": "climate-vpd-08",
+    "topic": "Standort, Jahreszeit und Wetter beeinflussen das Zeltklima",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "klima",
+      "standort",
+      "keller",
+      "dachgeschoss",
+      "jahreszeit",
+      "zelt"
+    ],
+    "text": "Der Standort des Zeltes (Keller, Erdgeschoss, mittlere Etage oder Dachgeschoss) kann einen enormen Unterschied machen. Dazu kommen Jahreszeit und Wetter, und selbst innerhalb eines Tages verändert sich das Klima deutlich.",
+    "videoId": "kgE6tDkZcEs",
+    "videoTitle": "Luftbefeuchter NUR in der Vegi? ❌ Der größte Mythos! | VPD erklärt  #viral #GrowSetup ",
+    "channel": "CJBuds",
+    "start": 296
+  },
+  {
+    "id": "climate-vpd-09",
+    "topic": "Klimageräte nach Messwerten steuern",
+    "phases": [
+      "vegetative",
+      "flowering"
+    ],
+    "tags": [
+      "automatisierung",
+      "klima",
+      "entfeuchter",
+      "luftbefeuchter",
+      "messen",
+      "vpd"
+    ],
+    "text": "Statt nach dem Motto Blüte gleich Entfeuchter an zu arbeiten, überwacht der Sprecher seine Werte und lässt die Geräte reagieren: Wird die Luft zu trocken, gegensteuert der Befeuchter, steigt die Feuchtigkeit zu stark, übernimmt der Entfeuchter.",
+    "videoId": "kgE6tDkZcEs",
+    "videoTitle": "Luftbefeuchter NUR in der Vegi? ❌ Der größte Mythos! | VPD erklärt  #viral #GrowSetup ",
+    "channel": "CJBuds",
+    "start": 324
+  }
+]
