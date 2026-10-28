@@ -25,6 +25,10 @@ const STORE_BLOCKED_PERMISSIONS = [
   "android.permission.RECORD_AUDIO",
   "android.permission.SYSTEM_ALERT_WINDOW",
   "android.permission.WRITE_EXTERNAL_STORAGE",
+  // No audio or video playback features, so no media foreground service (needs a Play declaration).
+  "android.permission.FOREGROUND_SERVICE",
+  "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+  "android.permission.MODIFY_AUDIO_SETTINGS",
 ];
 
 const config: ExpoConfig = {
