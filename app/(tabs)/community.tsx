@@ -1434,6 +1434,10 @@ export default function CommunityScreen() {
                 <Text className="text-xs text-muted mt-0.5">
                   Preis: {raffle.prize}
                 </Text>
+                <Text className="text-xs text-muted mt-0.5">
+                  Kostenlose Teilnahme ab 18 Jahren · 1 Gewinner · Ziehung nach
+                  Ablauf der Frist
+                </Text>
                 <View className="flex-row items-center justify-between mt-2">
                   <Text className="text-sm text-muted">
                     {raffle.totalEntries ?? 0}

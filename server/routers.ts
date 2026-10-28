@@ -1305,6 +1305,7 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
             maxEntries: g.maxEntries,
             totalEntries: g.totalEntries ?? 0,
             alreadyEntered: !!existing,
+            entryFee: g.entryFee,
           });
           if (!check.ok)
             throw new TRPCError({ code: check.code, message: check.message });

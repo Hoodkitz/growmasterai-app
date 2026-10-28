@@ -65,7 +65,7 @@ export default function SettingsScreen() {
       } catch {
         Alert.alert(
           "Löschen fehlgeschlagen",
-          "Dein Konto konnte nicht gelöscht werden. Bitte versuche es später erneut oder schreibe an julien@growmaster.app.",
+          "Dein Konto konnte nicht gelöscht werden. Bitte versuche es später erneut oder schreibe an team@growmaster.app.",
         );
       }
     };

@@ -1,10 +1,22 @@
 import { describe, expect, it } from "vitest";
 import { getTableName } from "drizzle-orm";
-import { deleteAccountData, type DeletionDb } from "../server/account-deletion";
+import {
+  deleteAccountData,
+  tombstoneOpenId,
+  type DeletionDb,
+} from "../server/account-deletion";
 
 function fakeDb(selectRows: Record<string, { id: number }[]> = {}) {
   const deleted: string[] = [];
+  const updated: { table: string; values: Record<string, unknown> }[] = [];
   const db: DeletionDb = {
+    update: (table) => ({
+      set: (values) => ({
+        where: async () => {
+          updated.push({ table: getTableName(table), values });
+        },
+      }),
+    }),
     delete: (table) => ({
       where: async () => {
         deleted.push(getTableName(table));
@@ -16,12 +28,12 @@ function fakeDb(selectRows: Record<string, { id: number }[]> = {}) {
       }),
     }),
   };
-  return { db, deleted };
+  return { db, deleted, updated };
 }
 
 describe("deleteAccountData", () => {
-  it("removes user-owned data and the user row last", async () => {
-    const { db, deleted } = fakeDb();
+  it("removes user-owned data and anonymises the user row instead of keeping it", async () => {
+    const { db, deleted, updated } = fakeDb();
     await deleteAccountData(db, { id: 7, openId: "open-7" });
     for (const table of [
       "plants",
@@ -39,7 +51,21 @@ describe("deleteAccountData", () => {
     ]) {
       expect(deleted, table).toContain(table);
     }
-    expect(deleted[deleted.length - 1]).toBe("users");
+    expect(deleted).not.toContain("users");
+    expect(updated).toHaveLength(1);
+    expect(updated[0].table).toBe("users");
+    const values = updated[0].values;
+    expect(values.openId).toBe(tombstoneOpenId("open-7"));
+    expect(values.openId).not.toContain("open-7");
+    expect(values.loginMethod).toBe("deleted");
+    expect(values.email).toBeNull();
+    expect(values.name).toBeNull();
+  });
+
+  it("makes tombstone ids deterministic, hashed and within the column length", () => {
+    expect(tombstoneOpenId("a")).toBe(tombstoneOpenId("a"));
+    expect(tombstoneOpenId("a")).not.toBe(tombstoneOpenId("b"));
+    expect(tombstoneOpenId("a").length).toBeLessThanOrEqual(64);
   });
 
   it("skips vendor data when the user has no vendor profile", async () => {

@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { MIN_BID_INCREMENT, minimumNextBid, validateBid, validateRaffleEntry } from "../lib/auction-rules";
+import {
+  MIN_BID_INCREMENT,
+  minimumNextBid,
+  validateBid,
+  validateRaffleEntry,
+} from "../lib/auction-rules";
 
 const now = new Date("2026-01-10T12:00:00Z");
 const base = {
@@ -31,9 +36,15 @@ describe("validateBid", () => {
     expect(r).toMatchObject({ ok: false, code: "FORBIDDEN" });
   });
   it("rejects ended / inactive / not started", () => {
-    expect(validateBid(base, 1, 50, new Date("2026-01-21T00:00:00Z")).ok).toBe(false);
-    expect(validateBid({ ...base, status: "ended" }, 1, 50, now).ok).toBe(false);
-    expect(validateBid(base, 1, 50, new Date("2025-12-31T00:00:00Z")).ok).toBe(false);
+    expect(validateBid(base, 1, 50, new Date("2026-01-21T00:00:00Z")).ok).toBe(
+      false,
+    );
+    expect(validateBid({ ...base, status: "ended" }, 1, 50, now).ok).toBe(
+      false,
+    );
+    expect(validateBid(base, 1, 50, new Date("2025-12-31T00:00:00Z")).ok).toBe(
+      false,
+    );
   });
   it("rejects invalid amounts", () => {
     expect(validateBid(base, 1, NaN, now).ok).toBe(false);
@@ -42,10 +53,44 @@ describe("validateBid", () => {
 });
 
 describe("validateRaffleEntry", () => {
-  const raffle = { status: "active" as const, startsAt: base.startsAt, endsAt: base.endsAt, maxEntries: 2, totalEntries: 1, alreadyEntered: false };
-  it("accepts a fresh entry", () => expect(validateRaffleEntry(raffle, now).ok).toBe(true));
-  it("rejects duplicates", () => expect(validateRaffleEntry({ ...raffle, alreadyEntered: true }, now)).toMatchObject({ ok: false, code: "CONFLICT" }));
-  it("rejects ended", () => expect(validateRaffleEntry(raffle, new Date("2026-02-01T00:00:00Z")).ok).toBe(false));
-  it("rejects when full", () => expect(validateRaffleEntry({ ...raffle, totalEntries: 2 }, now).ok).toBe(false));
-  it("rejects inactive", () => expect(validateRaffleEntry({ ...raffle, status: "cancelled" }, now).ok).toBe(false));
+  const raffle = {
+    status: "active" as const,
+    startsAt: base.startsAt,
+    endsAt: base.endsAt,
+    maxEntries: 2,
+    totalEntries: 1,
+    alreadyEntered: false,
+  };
+  it("accepts a fresh entry", () =>
+    expect(validateRaffleEntry(raffle, now).ok).toBe(true));
+  it("rejects duplicates", () =>
+    expect(
+      validateRaffleEntry({ ...raffle, alreadyEntered: true }, now),
+    ).toMatchObject({ ok: false, code: "CONFLICT" }));
+  it("rejects ended", () =>
+    expect(
+      validateRaffleEntry(raffle, new Date("2026-02-01T00:00:00Z")).ok,
+    ).toBe(false));
+  it("rejects when full", () =>
+    expect(validateRaffleEntry({ ...raffle, totalEntries: 2 }, now).ok).toBe(
+      false,
+    ));
+  it("rejects inactive", () =>
+    expect(
+      validateRaffleEntry({ ...raffle, status: "cancelled" }, now).ok,
+    ).toBe(false));
+  it("rejects raffles with an entry fee", () => {
+    expect(validateRaffleEntry({ ...raffle, entryFee: "2.50" }, now).ok).toBe(
+      false,
+    );
+    expect(validateRaffleEntry({ ...raffle, entryFee: 1 }, now).ok).toBe(false);
+  });
+  it("accepts a zero or missing entry fee", () => {
+    expect(validateRaffleEntry({ ...raffle, entryFee: "0.00" }, now).ok).toBe(
+      true,
+    );
+    expect(validateRaffleEntry({ ...raffle, entryFee: null }, now).ok).toBe(
+      true,
+    );
+  });
 });
