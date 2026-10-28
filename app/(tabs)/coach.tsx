@@ -26,6 +26,11 @@ import { InlineError } from "@/components/error-display";
 import { getCoachErrorMessage } from "@/lib/error-handling";
 import { CoachSkeletonLoader } from "@/components/skeleton-loaders";
 import { RemedyList } from "@/components/remedy-list";
+import { LinkedAnswer } from "@/components/linked-answer";
+import {
+  linkedRemedyIndexes,
+  splitAnswerWithLinks,
+} from "@/shared/inline-links";
 import { formatTimestamp, tipVideoUrl } from "@/lib/phase-tips";
 import type { Remedy } from "@/shared/remedies";
 
@@ -249,11 +254,22 @@ export default function CoachScreen() {
                     : "bg-surface border border-border rounded-bl-sm"
                 }`}
               >
-                <Text
-                  className={`text-base ${message.role === "user" ? "text-background" : "text-foreground"}`}
-                >
-                  {message.content}
-                </Text>
+                {message.role === "assistant" &&
+                message.remedies &&
+                message.remedies.length > 0 ? (
+                  <LinkedAnswer
+                    answer={message.content}
+                    remedies={message.remedies}
+                    linkColor={colors.primary}
+                    className="text-base text-foreground"
+                  />
+                ) : (
+                  <Text
+                    className={`text-base ${message.role === "user" ? "text-background" : "text-foreground"}`}
+                  >
+                    {message.content.replace(/\[\[([^\]]+)\]\]/g, "$1")}
+                  </Text>
+                )}
               </View>
 
               {message.tips && message.tips.length > 0 && (
@@ -305,12 +321,26 @@ export default function CoachScreen() {
                 </View>
               ) : null}
 
-              {message.remedies && message.remedies.length > 0 ? (
-                <RemedyList
-                  remedies={message.remedies}
-                  title="🛒 Passende Hilfsmittel"
-                />
-              ) : null}
+              {message.role === "assistant" && message.remedies
+                ? (() => {
+                    const inline = linkedRemedyIndexes(
+                      splitAnswerWithLinks(message.content, message.remedies),
+                    );
+                    const rest = message.remedies.filter(
+                      (_r, idx) => !inline.has(idx),
+                    );
+                    return rest.length > 0 ? (
+                      <RemedyList
+                        remedies={rest}
+                        title={
+                          inline.size > 0
+                            ? "🛒 Weitere Hilfsmittel"
+                            : "🛒 Passende Hilfsmittel"
+                        }
+                      />
+                    ) : null;
+                  })()
+                : null}
             </View>
           ))}
 

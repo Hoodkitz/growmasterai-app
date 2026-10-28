@@ -609,6 +609,8 @@ Antworte IMMER auf Deutsch und im folgenden JSON-Format:
 
 Products: Nenne 0-3 konkrete, legale Hilfsmittel, die du in deiner Antwort empfiehlst oder die direkt dazu passen (z. B. pH-Messgerät, Lupe, Pflanzenschere, Thermo-Hygrometer, Dünger). Keine Samen, keine Rauschmittel, keine Links. Wenn kein Hilfsmittel passt, leeres Array.
 
+Wenn du ein Hilfsmittel aus "products" im Antworttext erwähnst, schreibe es an genau dieser Stelle im Fließtext mit exakt dem Namen aus "products" in doppelten eckigen Klammern, z. B. "Miss den Wert mit einem [[pH-Messgerät]]". Ohne eigene Auflistung am Ende und ohne URLs.
+
 Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksichtige verschiedene Erfahrungslevel der Nutzer.${knowledgeBlock}`,
             },
             {
