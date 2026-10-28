@@ -9,6 +9,7 @@ import {
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { useColors } from "@/hooks/use-colors";
+import { PRIVACY_SECTIONS, PRIVACY_UPDATED } from "@/shared/privacy";
 
 type LegalSection = "imprint" | "privacy" | "terms";
 
@@ -154,77 +155,23 @@ function PrivacyContent() {
         Datenschutzerklärung
       </Text>
 
-      <Section title="1. Datenschutz auf einen Blick">
-        <Text className="text-foreground leading-6">
-          Die folgenden Hinweise geben einen Überblick darüber, was mit Ihren
-          personenbezogenen Daten passiert, wenn Sie die GrowMaster AI App
-          nutzen.
-        </Text>
-      </Section>
+      {PRIVACY_SECTIONS.map((section) => (
+        <Section key={section.title} title={section.title}>
+          {(section.text ?? []).map((paragraph) => (
+            <Text key={paragraph} className="text-foreground leading-6">
+              {paragraph}
+            </Text>
+          ))}
+          {(section.bullets ?? []).map((bullet) => (
+            <Text key={bullet} className="text-foreground leading-6">
+              {"\u2022 "}
+              {bullet}
+            </Text>
+          ))}
+        </Section>
+      ))}
 
-      <Section title="Datenerfassung">
-        <Text className="text-foreground leading-6">
-          <Text className="font-semibold">Wer ist verantwortlich?</Text>
-          {"\n"}
-          Die Datenverarbeitung erfolgt durch den App-Betreiber (siehe
-          Impressum).{"\n\n"}
-          <Text className="font-semibold">Welche Daten werden erfasst?</Text>
-          {"\n"}• E-Mail-Adresse und Name bei Registrierung{"\n"}•
-          Pflanzen-Daten und Journal-Einträge{"\n"}• Diagnose-Anfragen und Fotos
-          {"\n"}• Community-Beiträge{"\n"}• Technische Daten (Gerätetyp, OS)
-        </Text>
-      </Section>
-
-      <Section title="Ihre Rechte">
-        <Text className="text-foreground leading-6">
-          Sie haben jederzeit das Recht auf:{"\n"}• Auskunft über Ihre Daten
-          {"\n"}• Berichtigung oder Löschung{"\n"}• Einschränkung der
-          Verarbeitung{"\n"}• Datenübertragbarkeit{"\n"}• Widerruf erteilter
-          Einwilligungen
-        </Text>
-      </Section>
-
-      <Section title="Registrierung">
-        <Text className="text-foreground leading-6">
-          Bei der Registrierung werden erfasst:{"\n"}• E-Mail-Adresse{"\n"}•
-          Name (optional){"\n"}• Profilbild (optional){"\n\n"}
-          Die Verarbeitung erfolgt auf Grundlage Ihrer Einwilligung (Art. 6 Abs.
-          1 lit. a DSGVO).
-        </Text>
-      </Section>
-
-      <Section title="Kamera und Fotos">
-        <Text className="text-foreground leading-6">
-          Die App benötigt Zugriff auf Ihre Kamera für:{"\n"}• Pflanzen-Diagnose
-          {"\n"}• Journal-Fotos{"\n"}• Community-Beiträge{"\n\n"}
-          Die Verarbeitung erfolgt nur nach Ihrer ausdrücklichen Einwilligung.
-        </Text>
-      </Section>
-
-      <Section title="Zahlungsabwicklung">
-        <Text className="text-foreground leading-6">
-          Für Premium-Abonnements nutzen wir Apple/Google Zahlungsdienste. Wir
-          erhalten keine Zahlungsdaten wie Kreditkartennummern.{"\n\n"}
-          Wir nutzen RevenueCat zur Abo-Verwaltung.
-        </Text>
-      </Section>
-
-      <Section title="KI-Dienste">
-        <Text className="text-foreground leading-6">
-          Für Pflanzen-Diagnose und Grow-Coach werden:{"\n"}• Hochgeladene
-          Bilder analysiert{"\n"}• Chat-Nachrichten verarbeitet{"\n\n"}
-          Die Verarbeitung erfolgt zur Bereitstellung der App-Funktionen.
-        </Text>
-      </Section>
-
-      <Section title="Kontakt">
-        <Text className="text-foreground leading-6">
-          Zur Ausübung Ihrer Rechte kontaktieren Sie uns unter:{"\n"}
-          team@growmaster.app
-        </Text>
-      </Section>
-
-      <Text className="text-muted text-sm mt-4">Stand: Januar 2026</Text>
+      <Text className="text-muted text-sm mt-4">Stand: {PRIVACY_UPDATED}</Text>
     </View>
   );
 }

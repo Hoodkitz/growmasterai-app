@@ -1,4 +1,5 @@
 import { sanitizeUserInput } from "./_core/security";
+import { deleteAccountData } from "./account-deletion";
 import { mergeRemedies, mergeCoachProducts } from "../shared/remedies";
 import {
   KNOWLEDGE,
@@ -141,6 +142,22 @@ export const appRouter = router({
         success: true,
       } as const;
     }),
+    /** Deletes the signed-in account and all data stored about it (Play Store requirement). */
+    deleteAccount: protectedProcedure
+      .input(z.object({ confirm: z.literal("DELETE") }))
+      .mutation(async ({ ctx }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        await db.transaction(async (tx) => {
+          await deleteAccountData(tx, {
+            id: ctx.user.id,
+            openId: ctx.user.openId,
+          });
+        });
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
+        return { success: true } as const;
+      }),
   }),
 
   // Plant diagnosis with AI
@@ -1288,6 +1305,7 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
             maxEntries: g.maxEntries,
             totalEntries: g.totalEntries ?? 0,
             alreadyEntered: !!existing,
+            entryFee: g.entryFee,
           });
           if (!check.ok)
             throw new TRPCError({ code: check.code, message: check.message });

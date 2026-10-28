@@ -10,6 +10,7 @@ import type { Request } from "express";
 import { SignJWT, jwtVerify } from "jose";
 import type { User } from "../../drizzle/schema";
 import * as db from "../db";
+import { tombstoneOpenId } from "../account-deletion";
 import { ENV } from "./env";
 import type {
   ExchangeTokenRequest,
@@ -280,6 +281,10 @@ class SDKServer {
 
     // If user not in DB, sync from OAuth server automatically
     if (!user) {
+      // A deleted account leaves an anonymous tombstone; its old tokens must not re-create it.
+      if (await db.getUserByOpenId(tombstoneOpenId(sessionUserId))) {
+        throw ForbiddenError("Account deleted");
+      }
       try {
         const userInfo = await this.getUserInfoWithJwt(sessionCookie ?? "");
         await db.upsertUser({

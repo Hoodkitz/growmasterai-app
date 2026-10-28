@@ -1,80 +1,65 @@
-# Google Play Store Listing - GrowMaster AI
+# Google Play Store Listing - GrowMaster AI (Store-Version)
 
-## App-Name
+Store-Build: EXPO_PUBLIC_STORE_MODE=1 (siehe docs/PLAY_STORE_BUILD.md). Keine Shop-, Samen- oder Marktplatz-Funktionen.
+
+## App-Name (max 30 Zeichen)
 GrowMaster AI: Grow Assistent
 
-## Kurzbesch reibung (max 80 Zeichen)
-KI-Pflanzendiagnose, Grow-Coach & Community fuer Cannabis-Anbau
+## Kurzbeschreibung (max 80 Zeichen)
+KI-Diagnose, Coach und Wissen für den legalen Eigenanbau (ab 18)
 
-## Vollstaendige Beschreibung (max 4000 Zeichen)
+## Vollständige Beschreibung (max 4000 Zeichen)
 
-GrowMaster AI ist dein intelligenter Begleiter fuer den Cannabis-Anbau. Egal ob Anfaenger oder Profi - unsere KI-gestuetzte App hilft dir bei jedem Schritt, von der Keimung bis zur Ernte.
+GrowMaster AI begleitet Erwachsene beim legalen Eigenanbau von Pflanzen. Foto machen, Problem erkennen, Lösung bekommen: Die KI hilft dir bei Nährstoffmangel, Schädlingen und Klimaproblemen und beantwortet deine Fragen im Chat.
 
-PFLANZEN-DIAGNOSE MIT KI
-Fotografiere deine Pflanze und unsere KI erkennt sofort Probleme: Naehrstoffmangel, Schaedlinge, Krankheiten und mehr. Du erhaelst praezise Diagnosen mit konkreten Loesungsvorschlaegen.
+PFLANZEN-DIAGNOSE PER FOTO
+Lade ein Foto deiner Pflanze hoch und beschreibe optional, was dir auffällt. Die KI nennt das wahrscheinliche Problem, den Schweregrad und konkrete nächste Schritte.
 
-AI GROW-COACH
-Dein persoenlicher Grow-Berater ist 24/7 verfuegbar. Stelle Fragen zu Bewaesserung, Naehrstoffen, Beleuchtung, Training-Techniken und mehr. Der Coach kennt deine Pflanzen und gibt individuelle Tipps.
+GROW COACH
+Dein persönlicher Anbau-Experte im Chat. Frag nach Gießen, Dünger, Licht, Klima, Training oder Ernte und bekomme Antworten in normaler Sprache.
 
-PFLANZEN-MANAGEMENT
-Verwalte all deine Pflanzen an einem Ort. Verfolge Wachstumsphasen, dokumentiere Fortschritte und behalte den Ueberblick ueber deinen gesamten Grow.
+WISSEN
+Eine durchsuchbare Wissensdatenbank mit mehr als 800 Einträgen aus Anbau-Videos, zum Beispiel zu Nährstoffen, Schädlingen, Klima, Wachstum und Ernte. Dazu mehr als 450 Sorten-Profile mit Anbau-Hinweisen. Mit Quellenangabe.
 
-GROW JOURNAL
-Fuehre ein detailliertes Tagebuch mit Fotos, Messwerten und Notizen. Dokumentiere jeden Tag deines Grows und lerne aus deinen Erfahrungen.
+MEINE PFLANZEN UND JOURNAL
+Verwalte deine Pflanzen, verfolge Phase und Tag, schreibe Notizen und halte deinen Grow mit Fotos fest.
 
-SORTEN-DATENBANK
-Ueber 1000 Cannabis-Sorten mit detaillierten Informationen zu THC/CBD-Gehalt, Bluetenzeit, Ertrag, Schwierigkeitsgrad und Anbau-Tipps.
+TOOLS
+Mondkalender mit Tagestipp, VPD-Rechner, Nährstoff-Rechner und mehr.
 
 COMMUNITY
-Tausche dich mit anderen Growern aus. Teile deine Erfolge, stelle Fragen und lerne von der Community. Mit Likes, Kommentaren und Direktnachrichten.
+News und aktuelle Rechtslage, Rangliste, XP, Streaks und Erfolge. Gelegentlich kostenlose Verlosungen von Partnern mit klaren Teilnahmebedingungen.
 
-GAMIFICATION
-Sammle XP, steige Level auf und schalte Achievements frei. Taegliche Streaks und ein Leaderboard motivieren dich, dranzubleiben.
+GRATIS UND PRO
+Du kannst die App kostenlos nutzen. Mit Pro bekommst du unbegrenzte Diagnosen, Coach-Nachrichten und Pflanzen sowie mehr Wissen offline.
 
-MARKETPLACE
-Entdecke Seeds, Naehrstoffe, Equipment und mehr von verifizierten Haendlern. Mit Community-Bewertungen und Empfehlungen.
+WICHTIG
+Die App ist nur für Personen ab 18 Jahren. Sie verkauft kein Cannabis und vermittelt keinen Verkauf. Die Antworten der KI sind Hinweise und ersetzen keine Fachberatung. Informiere dich über die Gesetze in deinem Land. Produktempfehlungen sind als Anzeige gekennzeichnet.
 
-SMART TOOLS
-- VPD-Rechner
-- Naehrstoff-Rechner
-- CO2-Rechner
-- Grow-Kalender mit Mondphasen
-- Kosten-Tracker
-- Ernte-Prognose
-
-PREMIUM FEATURES
-- Erweiterte KI-Diagnosen
-- Unbegrenzter Grow-Coach
-- Mehr Pflanzen verwalten
-- Werbefreie Nutzung
-- Prioritaets-Support
-
-Die App wird in Deutschland entwickelt und ist DSGVO-konform. Alle Daten werden sicher gespeichert.
-
-Hinweis: Diese App dient ausschliesslich dem legalen Cannabis-Anbau im Rahmen der geltenden Gesetze. Bitte informiere dich ueber die in deinem Land geltenden Regelungen.
+Entwickelt in Deutschland.
 
 ## Kategorie
-Lifestyle oder Tools
+Lifestyle
 
-## Content Rating
-Mature 17+ (Cannabis-Bezug)
+## Altersfreigabe (IARC-Fragebogen)
+Ab 18 (Cannabis-Bezug); Zielgruppe nur Erwachsene.
 
 ## Datenschutz-URL
 https://hoodkitz.github.io/growmasterai-legal/privacy.html
 
-## Tags/Keywords
-cannabis, grow, anbau, pflanze, diagnose, ki, ai, grow assistant, pflanzen tracker, grow journal, cannabis app, garten, indoor grow, outdoor grow, hanf
-
 ## Kontakt
 - E-Mail: team@growmaster.app
-- Website: https://hoodkitz.github.io/growmasterai-legal/
+- Website: https://growmaster.app
 
-## Screenshots benoetigt (pro Geraet)
-1. Home Dashboard mit Pflanzen-Uebersicht
-2. KI-Diagnose mit Kamera
-3. AI Coach Chat
-4. Grow Journal Eintrag
-5. Sorten-Datenbank
-6. Community Feed
-7. Marketplace
-8. Gamification / Achievements
+## Release Notes (de, max 500 Zeichen)
+Erste öffentliche Version: KI-Diagnose per Foto, Grow Coach, Wissensdatenbank, Pflanzen und Journal, Tools, News und Community.
+
+## Screenshots (Phone, mindestens 2, empfohlen 4 bis 8)
+1. Home mit Mondphase und Tagestipp
+2. Diagnose: Foto auswählen
+3. Diagnose: Ergebnis mit Empfehlungen
+4. Grow Coach im Chat
+5. Wissen
+6. Grow Tools (Mondkalender)
+7. Pflanzen
+8. Community (News, Rangliste)
