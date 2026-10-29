@@ -61,15 +61,25 @@ describe("csrfOriginGuard", () => {
   });
 });
 
-describe("clientKey", () => {
-  it("uses X-Real-IP only on Railway", async () => {
+describe("clientKey and account limiter", () => {
+  it("ignores X-Real-IP and uses req.ip", async () => {
     const { clientKey } = await import("../server/_core/rateLimit");
     const req = { ip: "10.0.0.1", headers: { "x-real-ip": "1.2.3.4" } };
-    delete process.env.RAILWAY_ENVIRONMENT_NAME;
     expect(clientKey(req)).toBe("10.0.0.1");
-    process.env.RAILWAY_ENVIRONMENT_NAME = "production";
-    expect(clientKey(req)).toBe("1.2.3.4");
-    expect(clientKey({ ip: "10.0.0.1", headers: {} })).toBe("10.0.0.1");
-    delete process.env.RAILWAY_ENVIRONMENT_NAME;
+  });
+
+  it("limits logins per account regardless of IP and normalises the email", async () => {
+    const { accountLoginLimiter, accountKey } =
+      await import("../server/_core/rateLimit");
+    for (let i = 0; i < 10; i++)
+      expect(accountLoginLimiter.check(accountKey("A@x.de")).allowed).toBe(
+        true,
+      );
+    expect(accountLoginLimiter.check(accountKey(" a@X.de ")).allowed).toBe(
+      false,
+    );
+    expect(accountLoginLimiter.check(accountKey("other@x.de")).allowed).toBe(
+      true,
+    );
   });
 });

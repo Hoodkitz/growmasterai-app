@@ -11,6 +11,8 @@ import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
 import {
   loginLimiter,
+  accountLoginLimiter,
+  accountKey,
   registerLimiter,
   rateLimitMiddleware,
   forgotPasswordLimiter,
@@ -242,6 +244,16 @@ export function registerOAuthRoutes(app: Express) {
         res.status(400).json({ error: "E-Mail und Passwort erforderlich" });
         return;
       }
+      const acct = accountLoginLimiter.check(accountKey(email));
+      if (!acct.allowed) {
+        res.setHeader("Retry-After", String(acct.retryAfterSec));
+        res
+          .status(429)
+          .json({
+            error: "Zu viele Anmeldeversuche. Bitte später erneut versuchen.",
+          });
+        return;
+      }
       try {
         const user = await verifyEmailLogin(email, password);
         if (!user) {
@@ -303,12 +315,10 @@ export function registerOAuthRoutes(app: Express) {
         return;
       }
       if (ENV.isProduction && !isMailConfigured()) {
-        res
-          .status(503)
-          .json({
-            error:
-              "E-Mail-Versand ist auf dem Server nicht konfiguriert. Bitte kontaktiere den Support.",
-          });
+        res.status(503).json({
+          error:
+            "E-Mail-Versand ist auf dem Server nicht konfiguriert. Bitte kontaktiere den Support.",
+        });
         return;
       }
       const normalized = email.trim().toLowerCase();

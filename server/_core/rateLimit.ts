@@ -51,15 +51,9 @@ export function createRateLimiter(opts: {
 export function clientKey(req: {
   ip?: string;
   socket?: { remoteAddress?: string };
-  headers?: Record<string, string | string[] | undefined>;
 }): string {
-  // Railway documents X-Real-IP as the client's remote IP (set by its edge). Use it there; it is
-  // only trusted on Railway because elsewhere a client could send the header itself.
-  if (process.env.RAILWAY_ENVIRONMENT_NAME) {
-    const real = req.headers?.["x-real-ip"];
-    const v = Array.isArray(real) ? real[0] : real;
-    if (v) return v.trim();
-  }
+  // Behind Railway, Express resolves req.ip through `trust proxy` (see server/_core/index.ts).
+  // X-Real-IP is deliberately not used: Railway documents it but not that client values are overwritten.
   return req.ip || req.socket?.remoteAddress || "unknown";
 }
 
@@ -113,3 +107,13 @@ export const verifyEmailLimiter = createRateLimiter({
   windowMs: 15 * 60_000,
   max: 20,
 });
+
+/** Failed-login brake per account, so rotating IPs does not bypass the per-IP limit. */
+export const accountLoginLimiter = createRateLimiter({
+  windowMs: 15 * 60_000,
+  max: 10,
+});
+
+export function accountKey(email: string): string {
+  return `acct:${email.trim().toLowerCase().slice(0, 320)}`;
+}
