@@ -12,6 +12,11 @@ import { sdk } from "./sdk";
 import {
   loginLimiter,
   accountLoginFailures,
+  accountWideFailures,
+  progressiveDelayMs,
+  rememberIp,
+  isKnownIp,
+  normalizeAccount,
   accountKey,
   clientKey,
   registerLimiter,
@@ -254,14 +259,23 @@ export function registerOAuthRoutes(app: Express) {
         });
         return;
       }
+      const account = normalizeAccount(email);
+      const ip = clientKey(req);
+      // Distributed guessing on one account: slow down unknown IPs, never block known ones.
+      const delay = isKnownIp(account, ip)
+        ? 0
+        : progressiveDelayMs(accountWideFailures.count(account));
+      if (delay > 0) await new Promise((r) => setTimeout(r, delay));
       try {
         const user = await verifyEmailLogin(email, password);
         if (!user) {
           accountLoginFailures.fail(acctKey);
+          accountWideFailures.fail(account);
           res.status(401).json({ error: "E-Mail oder Passwort falsch" });
           return;
         }
         accountLoginFailures.clear(acctKey);
+        rememberIp(account, ip);
         await issueEmailSession(req, res, user);
       } catch (error) {
         console.error("[Auth] Login failed", error);

@@ -86,4 +86,35 @@ describe("clientKey and account limiter", () => {
     t += 1001;
     expect(tr.isBlocked(attackerB).blocked).toBe(false);
   });
+
+  it("slows distributed guessing on one account and never blocks it", async () => {
+    const { createFailureTracker, progressiveDelayMs, rememberIp, isKnownIp } =
+      await import("../server/_core/rateLimit");
+    const wide = createFailureTracker({ windowMs: 1000, max: Infinity });
+    for (let ip = 0; ip < 60; ip++) wide.fail("victim@x.de"); // 60 different IPs, 1 failure each
+    expect(wide.isBlocked("victim@x.de").blocked).toBe(false);
+    const d = progressiveDelayMs(wide.count("victim@x.de"));
+    expect(d).toBeGreaterThan(0);
+    expect(progressiveDelayMs(10_000)).toBeLessThanOrEqual(10_000);
+    expect(progressiveDelayMs(49)).toBe(0);
+    rememberIp("victim@x.de", "9.9.9.9");
+    expect(isKnownIp("victim@x.de", "9.9.9.9")).toBe(true);
+    expect(isKnownIp("victim@x.de", "8.8.8.8")).toBe(false);
+  });
+
+  it("keeps memory bounded and sweeps expired entries", async () => {
+    const { createFailureTracker } = await import("../server/_core/rateLimit");
+    let t = 0;
+    const tr = createFailureTracker({
+      windowMs: 1000,
+      max: 3,
+      maxEntries: 100,
+      now: () => t,
+    });
+    for (let i = 0; i < 500; i++) tr.fail(`k${i}`);
+    expect(tr.size()).toBeLessThanOrEqual(100);
+    t += 2000;
+    tr.fail("new");
+    expect(tr.size()).toBe(1);
+  });
 });

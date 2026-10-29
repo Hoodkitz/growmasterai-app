@@ -112,11 +112,33 @@ export const verifyEmailLimiter = createRateLimiter({
 export function createFailureTracker(opts: {
   windowMs: number;
   max: number;
+  maxEntries?: number;
   now?: () => number;
 }) {
   const now = opts.now ?? Date.now;
+  const maxEntries = opts.maxEntries ?? 10_000;
   const fails = new Map<string, { count: number; resetAt: number }>();
+  let lastSweep = 0;
+
+  function sweep(t: number) {
+    // Opportunistic sweep of expired entries, like createRateLimiter.
+    if (t - lastSweep >= opts.windowMs / 2 || fails.size > maxEntries) {
+      lastSweep = t;
+      for (const [k, v] of fails) if (v.resetAt <= t) fails.delete(k);
+    }
+    // Still too big (many live keys): drop the oldest inserted entries.
+    while (fails.size > maxEntries) {
+      const oldest = fails.keys().next().value;
+      if (oldest === undefined) break;
+      fails.delete(oldest);
+    }
+  }
+
   return {
+    count(key: string): number {
+      const e = fails.get(key);
+      return e && e.resetAt > now() ? e.count : 0;
+    },
     isBlocked(key: string): { blocked: boolean; retryAfterSec: number } {
       const e = fails.get(key);
       if (!e || e.resetAt <= now()) {
@@ -129,23 +151,67 @@ export function createFailureTracker(opts: {
       };
     },
     fail(key: string): void {
+      const t = now();
       const e = fails.get(key);
-      if (!e || e.resetAt <= now())
-        fails.set(key, { count: 1, resetAt: now() + opts.windowMs });
-      else e.count += 1;
+      if (!e || e.resetAt <= t) {
+        fails.delete(key); // re-insert so insertion order tracks age
+        fails.set(key, { count: 1, resetAt: t + opts.windowMs });
+      } else e.count += 1;
+      sweep(t);
     },
     clear(key: string): void {
       fails.delete(key);
     },
+    size: () => fails.size,
   };
 }
 
-/** Failed-login brake per account AND client IP: an attacker elsewhere cannot lock the owner out. */
+/** Per account AND client IP: an attacker elsewhere cannot lock the owner out. Hard limit. */
 export const accountLoginFailures = createFailureTracker({
   windowMs: 15 * 60_000,
   max: 10,
 });
 
+/** Per account over all IPs: slows distributed guessing with a growing delay, never locks. */
+export const accountWideFailures = createFailureTracker({
+  windowMs: 15 * 60_000,
+  max: Number.POSITIVE_INFINITY,
+});
+export const ACCOUNT_WIDE_THRESHOLD = 50;
+export const MAX_LOGIN_DELAY_MS = 10_000;
+
+/** Delay for a login attempt after `fails` account-wide failures (0 below the threshold). */
+export function progressiveDelayMs(
+  fails: number,
+  threshold = ACCOUNT_WIDE_THRESHOLD,
+): number {
+  if (fails < threshold) return 0;
+  return Math.min(MAX_LOGIN_DELAY_MS, (fails - threshold + 1) * 250);
+}
+
+/** IPs that logged in successfully for an account: they skip the account-wide delay. */
+const knownIps = new Map<string, Set<string>>();
+export function rememberIp(account: string, ip: string): void {
+  let set = knownIps.get(account);
+  if (!set) {
+    set = new Set();
+    if (knownIps.size >= 10_000) {
+      const oldest = knownIps.keys().next().value;
+      if (oldest !== undefined) knownIps.delete(oldest);
+    }
+    knownIps.set(account, set);
+  }
+  if (set.size >= 20) set.delete(set.values().next().value as string);
+  set.add(ip);
+}
+export function isKnownIp(account: string, ip: string): boolean {
+  return knownIps.get(account)?.has(ip) ?? false;
+}
+
+export function normalizeAccount(email: string): string {
+  return email.trim().toLowerCase().slice(0, 320);
+}
+
 export function accountKey(email: string, ip: string): string {
-  return `acct:${email.trim().toLowerCase().slice(0, 320)}|${ip}`;
+  return `acct:${normalizeAccount(email)}|${ip}`;
 }
