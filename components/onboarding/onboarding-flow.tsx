@@ -4,10 +4,11 @@
  */
 
 import { View, Text, TouchableOpacity } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
+import { hasConfirmedAge, confirmAge } from "@/lib/age-gate";
 
 interface OnboardingStep {
   id: number;
@@ -46,10 +47,11 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
 
 const ONBOARDING_KEY = "@growmaster_onboarding_completed";
 
+/** Onboarding counts as done only after the 18+ confirmation as well. */
 export async function getOnboardingStatus(): Promise<boolean> {
   try {
     const v = await AsyncStorage.getItem(ONBOARDING_KEY);
-    return v === "true";
+    return v === "true" && (await hasConfirmedAge());
   } catch {
     return false;
   }
@@ -61,8 +63,63 @@ export async function resetOnboarding(): Promise<void> {
   await AsyncStorage.removeItem(ONBOARDING_KEY);
 }
 
+function AgeGate({ onConfirm }: { onConfirm: () => void }) {
+  const [busy, setBusy] = useState(false);
+  const [declined, setDeclined] = useState(false);
+  const accept = async () => {
+    setBusy(true);
+    await confirmAge();
+    onConfirm();
+  };
+  return (
+    <View className="flex-1 bg-background">
+      <LinearGradient colors={["#10B981", "#059669"]} className="flex-1">
+        <View className="flex-1 justify-center items-center px-8">
+          <Text className="text-9xl mb-8">🔞</Text>
+          <Text className="text-white text-3xl font-bold text-center mb-4">
+            Nur ab 18 Jahren
+          </Text>
+          <Text className="text-white/90 text-lg text-center mb-4 leading-relaxed">
+            GrowMaster AI richtet sich ausschließlich an Erwachsene und zeigt
+            Anbau-Informationen. Bist du mindestens 18 Jahre alt?
+          </Text>
+          {declined && (
+            <Text className="text-white text-base text-center font-semibold">
+              Dann kannst du die App leider nicht nutzen.
+            </Text>
+          )}
+        </View>
+        <View className="p-8 pb-12">
+          <TouchableOpacity
+            disabled={busy}
+            onPress={accept}
+            className="bg-white rounded-2xl py-4 px-8 shadow-lg mb-3"
+          >
+            <Text className="text-primary text-center text-lg font-bold">
+              Ja, ich bin 18 oder älter
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setDeclined(true)} className="py-3">
+            <Text className="text-white/80 text-center text-base font-semibold">
+              Nein
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </LinearGradient>
+    </View>
+  );
+}
+
 export function OnboardingFlow() {
   const [currentStep, setCurrentStep] = useState(0);
+  const [ageOk, setAgeOk] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    hasConfirmedAge().then(setAgeOk);
+  }, []);
+
+  if (ageOk === null) return <View className="flex-1 bg-background" />;
+  if (!ageOk) return <AgeGate onConfirm={() => setAgeOk(true)} />;
 
   const handleNext = () => {
     if (currentStep < ONBOARDING_STEPS.length - 1) {
