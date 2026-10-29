@@ -51,7 +51,15 @@ export function createRateLimiter(opts: {
 export function clientKey(req: {
   ip?: string;
   socket?: { remoteAddress?: string };
+  headers?: Record<string, string | string[] | undefined>;
 }): string {
+  // Railway documents X-Real-IP as the client's remote IP (set by its edge). Use it there; it is
+  // only trusted on Railway because elsewhere a client could send the header itself.
+  if (process.env.RAILWAY_ENVIRONMENT_NAME) {
+    const real = req.headers?.["x-real-ip"];
+    const v = Array.isArray(real) ? real[0] : real;
+    if (v) return v.trim();
+  }
   return req.ip || req.socket?.remoteAddress || "unknown";
 }
 
