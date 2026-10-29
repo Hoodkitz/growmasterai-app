@@ -363,7 +363,24 @@ export default function MessagesScreen() {
             const isMe = item.senderId === "me";
             return (
               <View className={`mb-3 ${isMe ? "items-end" : "items-start"}`}>
-                <View
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  disabled={isMe}
+                  accessibilityHint="Lange drücken, um die Nachricht zu melden"
+                  onLongPress={() =>
+                    Alert.alert("Nachricht", undefined, [
+                      {
+                        text: "Nachricht melden",
+                        onPress: () =>
+                          reportMutation.mutate({
+                            targetType: "message",
+                            targetId: parseInt(item.id),
+                            reason: "harassment",
+                          }),
+                      },
+                      { text: "Abbrechen", style: "cancel" },
+                    ])
+                  }
                   className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                     isMe
                       ? "bg-primary rounded-br-sm"
@@ -375,7 +392,7 @@ export default function MessagesScreen() {
                   >
                     {item.text}
                   </Text>
-                </View>
+                </TouchableOpacity>
                 <Text className="text-xs text-muted mt-1">
                   {item.timestamp.toLocaleTimeString("de-DE", {
                     hour: "2-digit",
