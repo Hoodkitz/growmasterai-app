@@ -6,6 +6,19 @@ import {
 } from "@/shared/inline-links";
 import { productsForRemedy, type Remedy } from "@/shared/remedies";
 
+/** Renders **bold** markers from the model as real bold text instead of raw asterisks. */
+function renderBold(text: string) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((chunk, i) =>
+    /^\*\*[^*]+\*\*$/.test(chunk) ? (
+      <Text key={i} style={{ fontWeight: "700" }}>
+        {chunk.slice(2, -2)}
+      </Text>
+    ) : (
+      chunk
+    ),
+  );
+}
+
 /** Coach answer with product names as tappable Amazon links right in the text. */
 export function LinkedAnswer({
   answer,
@@ -24,7 +37,9 @@ export function LinkedAnswer({
   return (
     <Text className={className}>
       {parts.map((part, i) => {
-        if (part.remedyIndex === undefined) return part.text;
+        if (part.remedyIndex === undefined) {
+          return <Text key={i}>{renderBold(part.text)}</Text>;
+        }
         const remedy = remedies[part.remedyIndex];
         const product = productsForRemedy(remedy.name)[0];
         const link = buildRemedyLink(
