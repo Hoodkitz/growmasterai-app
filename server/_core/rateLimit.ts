@@ -108,11 +108,28 @@ export const verifyEmailLimiter = createRateLimiter({
   max: 20,
 });
 
+/** IPv6 addresses are grouped by /64 (one subscriber owns a whole /64); IPv4 stays as is. */
+export function ipGroup(ip: string): string {
+  if (!ip.includes(":")) return ip;
+  const v4tail = ip.match(/^(?:::ffff:)(\d+\.\d+\.\d+\.\d+)$/i);
+  if (v4tail) return v4tail[1];
+  const [head, tail = ""] = ip.split("::");
+  const h = head ? head.split(":") : [];
+  const t = tail ? tail.split(":") : [];
+  const full = ip.includes("::")
+    ? [...h, ...Array(Math.max(0, 8 - h.length - t.length)).fill("0"), ...t]
+    : h;
+  return `${full
+    .slice(0, 4)
+    .map((g) => g.toLowerCase().replace(/^0+(?=.)/, ""))
+    .join(":")}::/64`;
+}
+
 /**
  * Attempt counter with pre-counting: `acquire` counts an attempt BEFORE the (async) password check,
- * so parallel attempts are counted too; `release` takes it back on success. No sleeping, no
- * eviction of live entries: when the table is full of live keys, new keys share one overflow
- * counter (fail closed) instead of pushing out other accounts' counters.
+ * so parallel attempts are counted too; `release` takes it back on success. No sleeping and no
+ * eviction of live entries. When the table is full of live keys, a new key is counted per client IP
+ * (/64 for IPv6) in a second bounded table instead, so one flood IP cannot affect others.
  */
 export function createAttemptCounter(opts: {
   windowMs: number;
@@ -122,49 +139,62 @@ export function createAttemptCounter(opts: {
 }) {
   const now = opts.now ?? Date.now;
   const maxEntries = opts.maxEntries ?? 10_000;
-  const OVERFLOW = "\u0000overflow";
-  const table = new Map<string, { count: number; resetAt: number }>();
+  type Entry = { count: number; resetAt: number };
+  const main = new Map<string, Entry>();
+  const perIp = new Map<string, Entry>();
 
-  function sweep(t: number) {
+  function sweep(table: Map<string, Entry>, t: number) {
     for (const [k, v] of table) if (v.resetAt <= t) table.delete(k);
   }
 
-  function entry(key: string, t: number) {
+  function get(
+    table: Map<string, Entry>,
+    key: string,
+    t: number,
+  ): Entry | null {
     let e = table.get(key);
     if (e && e.resetAt <= t) {
       table.delete(key);
       e = undefined;
     }
-    if (!e) {
-      if (table.size >= maxEntries) {
-        sweep(t);
-        if (table.size >= maxEntries && key !== OVERFLOW)
-          return entry(OVERFLOW, t);
-      }
-      e = { count: 0, resetAt: t + opts.windowMs };
-      table.set(key, e);
+    if (e) return e;
+    if (table.size >= maxEntries) {
+      sweep(table, t);
+      if (table.size >= maxEntries) return null;
     }
+    e = { count: 0, resetAt: t + opts.windowMs };
+    table.set(key, e);
     return e;
   }
 
   return {
     /** Counts the attempt if allowed; synchronous, so no await can interleave. */
-    acquire(key: string): { allowed: boolean; retryAfterSec: number } {
+    acquire(
+      key: string,
+      ip: string,
+    ): { allowed: boolean; retryAfterSec: number } {
       const t = now();
-      const e = entry(key, t);
+      const e = get(main, key, t) ?? get(perIp, ipGroup(ip), t);
+      // Both tables full of live entries: refuse (fail closed).
+      if (!e)
+        return {
+          allowed: false,
+          retryAfterSec: Math.ceil(opts.windowMs / 1000),
+        };
       const retryAfterSec = Math.max(1, Math.ceil((e.resetAt - t) / 1000));
       if (e.count >= opts.max) return { allowed: false, retryAfterSec };
       e.count += 1;
       return { allowed: true, retryAfterSec };
     },
-    release(key: string): void {
-      const e = table.get(key) ?? table.get(OVERFLOW);
+    release(key: string, ip: string): void {
+      const e = main.get(key) ?? perIp.get(ipGroup(ip));
       if (e && e.count > 0) e.count -= 1;
     },
     clear(key: string): void {
-      table.delete(key);
+      main.delete(key);
     },
-    size: () => table.size,
+    size: () => main.size,
+    ipTableSize: () => perIp.size,
   };
 }
 
@@ -198,8 +228,9 @@ export function isKnownIp(account: string, ip: string): boolean {
   return knownIps.get(account)?.has(ip) ?? false;
 }
 
+/** NFKC + lowercase + trim: look-alike spellings of one mailbox share one counter. */
 export function normalizeAccount(email: string): string {
-  return email.trim().toLowerCase().slice(0, 320);
+  return email.normalize("NFKC").trim().toLowerCase().slice(0, 320);
 }
 
 /**
@@ -213,18 +244,18 @@ export function beginLoginAttempt(
   const account = normalizeAccount(email);
   const pair = `${account}|${ip}`;
   const known = isKnownIp(account, ip);
-  const p = loginByAccountIp.acquire(pair);
+  const p = loginByAccountIp.acquire(pair, ip);
   if (!p.allowed) return { ok: false, retryAfterSec: p.retryAfterSec };
-  const w = loginByAccount.acquire(account);
+  const w = loginByAccount.acquire(account, ip);
   if (!w.allowed && !known) {
-    loginByAccountIp.release(pair);
+    loginByAccountIp.release(pair, ip);
     return { ok: false, retryAfterSec: w.retryAfterSec };
   }
   return {
     ok: true,
     succeeded: () => {
       loginByAccountIp.clear(pair);
-      if (w.allowed) loginByAccount.release(account);
+      if (w.allowed) loginByAccount.release(account, ip);
       rememberIp(account, ip);
     },
   };

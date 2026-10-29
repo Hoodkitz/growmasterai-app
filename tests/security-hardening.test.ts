@@ -102,15 +102,16 @@ describe("clientKey and login attempt budget", () => {
     expect(beginLoginAttempt("reset@x.de", "3.3.3.3").ok).toBe(true);
   });
 
-  it("table overflow never evicts other accounts' counters and fails closed", async () => {
+  it("table overflow keeps other counters and falls back to a per-IP budget", async () => {
     const { createAttemptCounter } = await import("../server/_core/rateLimit");
     const c = createAttemptCounter({ windowMs: 60_000, max: 2, maxEntries: 5 });
-    expect(c.acquire("victim").allowed).toBe(true);
-    expect(c.acquire("victim").allowed).toBe(true);
-    for (let i = 0; i < 100; i++) c.acquire(`flood${i}`);
-    expect(c.size()).toBeLessThanOrEqual(6);
-    expect(c.acquire("victim").allowed).toBe(false); // counter survived the flood
-    expect(c.acquire("brand-new").allowed).toBe(false); // shared overflow budget is used up
+    expect(c.acquire("victim", "1.1.1.1").allowed).toBe(true);
+    expect(c.acquire("victim", "1.1.1.1").allowed).toBe(true);
+    for (let i = 0; i < 100; i++) c.acquire(`flood${i}`, "6.6.6.6");
+    expect(c.size()).toBeLessThanOrEqual(5);
+    expect(c.acquire("victim", "1.1.1.1").allowed).toBe(false); // not evicted
+    expect(c.acquire("new-key", "6.6.6.6").allowed).toBe(false); // flood IP used its own budget
+    expect(c.acquire("new-key", "7.7.7.7").allowed).toBe(true); // other IPs unaffected
   });
 
   it("sweeps expired entries before treating the table as full", async () => {
@@ -122,9 +123,24 @@ describe("clientKey and login attempt budget", () => {
       maxEntries: 3,
       now: () => t,
     });
-    for (let i = 0; i < 3; i++) c.acquire(`k${i}`);
+    for (let i = 0; i < 3; i++) c.acquire(`k${i}`, "1.1.1.1");
     t += 1500;
-    expect(c.acquire("fresh").allowed).toBe(true);
+    expect(c.acquire("fresh", "1.1.1.1").allowed).toBe(true);
     expect(c.size()).toBe(1);
+    expect(c.ipTableSize()).toBe(0);
+  });
+
+  it("normalises look-alike emails and groups IPv6 by /64", async () => {
+    const { normalizeAccount, ipGroup } =
+      await import("../server/_core/rateLimit");
+    expect(normalizeAccount(" ＵＳＥＲ@Ｘ.de ")).toBe(
+      normalizeAccount("user@x.de"),
+    );
+    expect(ipGroup("2001:db8:1:2:aaaa:bbbb:cccc:dddd")).toBe(
+      ipGroup("2001:DB8:1:2::1"),
+    );
+    expect(ipGroup("2001:db8:1:3::1")).not.toBe(ipGroup("2001:db8:1:2::1"));
+    expect(ipGroup("::ffff:1.2.3.4")).toBe("1.2.3.4");
+    expect(ipGroup("1.2.3.4")).toBe("1.2.3.4");
   });
 });
