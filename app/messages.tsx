@@ -7,6 +7,7 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
@@ -61,6 +62,43 @@ export default function MessagesScreen() {
   const markReadMutation = trpc.messages.markRead.useMutation({
     onSuccess: () => messagesQuery.refetch(),
   });
+
+  const blockMutation = trpc.community.blockUser.useMutation({
+    onSuccess: () => {
+      setSelectedConversation(null);
+      messagesQuery.refetch();
+      Alert.alert(
+        "Blockiert",
+        "Du erhältst keine Nachrichten dieses Nutzers mehr.",
+      );
+    },
+    onError: (e) => Alert.alert("Blockieren nicht möglich", e.message),
+  });
+  const reportMutation = trpc.community.reportContent.useMutation({
+    onSuccess: () => Alert.alert("Danke", "Wir prüfen die Meldung."),
+    onError: (e) => Alert.alert("Meldung nicht möglich", e.message),
+  });
+
+  const openChatMenu = (conv: Conversation) => {
+    const userId = parseInt(conv.id);
+    Alert.alert(conv.participantName, undefined, [
+      {
+        text: "Nutzer melden",
+        onPress: () =>
+          reportMutation.mutate({
+            targetType: "user",
+            targetId: userId,
+            reason: "harassment",
+          }),
+      },
+      {
+        text: "Nutzer blockieren",
+        style: "destructive",
+        onPress: () => blockMutation.mutate({ userId, block: true }),
+      },
+      { text: "Abbrechen", style: "cancel" },
+    ]);
+  };
 
   const openConversation = (conv: Conversation) => {
     setSelectedConversation(conv);
@@ -306,7 +344,11 @@ export default function MessagesScreen() {
             </Text>
           </View>
 
-          <TouchableOpacity className="p-2">
+          <TouchableOpacity
+            className="p-2"
+            accessibilityLabel="Nutzer melden oder blockieren"
+            onPress={() => openChatMenu(selectedConversation)}
+          >
             <IconSymbol name="ellipsis" size={20} color={colors.muted} />
           </TouchableOpacity>
         </View>

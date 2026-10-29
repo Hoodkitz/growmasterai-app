@@ -115,6 +115,52 @@ export default function CommunityScreen() {
       ),
   });
 
+  const reportMutation = trpc.community.reportContent.useMutation({
+    onSuccess: () => {
+      utils.community.listPosts.invalidate();
+      Alert.alert(
+        "Danke",
+        "Wir prüfen die Meldung. Bei mehreren Meldungen wird der Beitrag vorläufig ausgeblendet.",
+      );
+    },
+    onError: (e) => Alert.alert("Meldung nicht möglich", e.message),
+  });
+  const blockMutation = trpc.community.blockUser.useMutation({
+    onSuccess: () => {
+      utils.community.listPosts.invalidate();
+      utils.messages.list.invalidate();
+      Alert.alert("Blockiert", "Du siehst keine Inhalte dieses Nutzers mehr.");
+    },
+    onError: (e) => Alert.alert("Blockieren nicht möglich", e.message),
+  });
+
+  const openPostMenu = (postId: number, authorId: number) => {
+    const report = (
+      reason: "spam" | "harassment" | "illegal" | "sexual" | "selling",
+    ) =>
+      reportMutation.mutate({ targetType: "post", targetId: postId, reason });
+    Alert.alert("Beitrag", undefined, [
+      {
+        text: "Melden: Spam",
+        onPress: () => report("spam"),
+      },
+      {
+        text: "Melden: Beleidigung/Belästigung",
+        onPress: () => report("harassment"),
+      },
+      {
+        text: "Melden: Illegal oder Verkaufsangebot",
+        onPress: () => report("selling"),
+      },
+      {
+        text: "Nutzer blockieren",
+        style: "destructive",
+        onPress: () => blockMutation.mutate({ userId: authorId, block: true }),
+      },
+      { text: "Abbrechen", style: "cancel" },
+    ]);
+  };
+
   const toggleLike = (postId: number) => {
     const liked = likedPosts.includes(postId);
     const next = liked
@@ -816,6 +862,13 @@ export default function CommunityScreen() {
                           {formatRelativeTime(new Date(post.createdAt))}
                         </Text>
                       </View>
+                      <TouchableOpacity
+                        accessibilityLabel="Beitrag melden oder Nutzer blockieren"
+                        className="p-2"
+                        onPress={() => openPostMenu(post.id, post.userId)}
+                      >
+                        <Text className="text-xl text-muted">⋯</Text>
+                      </TouchableOpacity>
                     </View>
                     <Text className="text-base text-foreground mb-3">
                       {post.content}
