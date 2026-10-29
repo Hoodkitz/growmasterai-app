@@ -68,18 +68,22 @@ describe("clientKey and account limiter", () => {
     expect(clientKey(req)).toBe("10.0.0.1");
   });
 
-  it("limits logins per account regardless of IP and normalises the email", async () => {
-    const { accountLoginLimiter, accountKey } =
+  it("counts only failures, clears on success, and isolates by IP", async () => {
+    const { createFailureTracker, accountKey } =
       await import("../server/_core/rateLimit");
-    for (let i = 0; i < 10; i++)
-      expect(accountLoginLimiter.check(accountKey("A@x.de")).allowed).toBe(
-        true,
-      );
-    expect(accountLoginLimiter.check(accountKey(" a@X.de ")).allowed).toBe(
-      false,
-    );
-    expect(accountLoginLimiter.check(accountKey("other@x.de")).allowed).toBe(
-      true,
-    );
+    let t = 0;
+    const tr = createFailureTracker({ windowMs: 1000, max: 3, now: () => t });
+    const victimA = accountKey(" U@x.de ", "1.1.1.1");
+    const attackerB = accountKey("u@x.de", "2.2.2.2");
+    for (let i = 0; i < 3; i++) tr.fail(attackerB);
+    expect(tr.isBlocked(attackerB).blocked).toBe(true);
+    expect(tr.isBlocked(attackerB).retryAfterSec).toBeGreaterThanOrEqual(1);
+    expect(tr.isBlocked(victimA).blocked).toBe(false); // owner on IP A unaffected
+    tr.fail(victimA);
+    tr.clear(victimA); // successful login resets
+    for (let i = 0; i < 2; i++) tr.fail(victimA);
+    expect(tr.isBlocked(victimA).blocked).toBe(false);
+    t += 1001;
+    expect(tr.isBlocked(attackerB).blocked).toBe(false);
   });
 });

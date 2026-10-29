@@ -11,8 +11,9 @@ import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
 import {
   loginLimiter,
-  accountLoginLimiter,
+  accountLoginFailures,
   accountKey,
+  clientKey,
   registerLimiter,
   rateLimitMiddleware,
   forgotPasswordLimiter,
@@ -244,22 +245,23 @@ export function registerOAuthRoutes(app: Express) {
         res.status(400).json({ error: "E-Mail und Passwort erforderlich" });
         return;
       }
-      const acct = accountLoginLimiter.check(accountKey(email));
-      if (!acct.allowed) {
-        res.setHeader("Retry-After", String(acct.retryAfterSec));
-        res
-          .status(429)
-          .json({
-            error: "Zu viele Anmeldeversuche. Bitte später erneut versuchen.",
-          });
+      const acctKey = accountKey(email, clientKey(req));
+      const gate = accountLoginFailures.isBlocked(acctKey);
+      if (gate.blocked) {
+        res.setHeader("Retry-After", String(gate.retryAfterSec));
+        res.status(429).json({
+          error: "Zu viele Anmeldeversuche. Bitte später erneut versuchen.",
+        });
         return;
       }
       try {
         const user = await verifyEmailLogin(email, password);
         if (!user) {
+          accountLoginFailures.fail(acctKey);
           res.status(401).json({ error: "E-Mail oder Passwort falsch" });
           return;
         }
+        accountLoginFailures.clear(acctKey);
         await issueEmailSession(req, res, user);
       } catch (error) {
         console.error("[Auth] Login failed", error);

@@ -108,12 +108,44 @@ export const verifyEmailLimiter = createRateLimiter({
   max: 20,
 });
 
-/** Failed-login brake per account, so rotating IPs does not bypass the per-IP limit. */
-export const accountLoginLimiter = createRateLimiter({
+/** Counts only failures per key; success clears. Blocking one key never affects others. */
+export function createFailureTracker(opts: {
+  windowMs: number;
+  max: number;
+  now?: () => number;
+}) {
+  const now = opts.now ?? Date.now;
+  const fails = new Map<string, { count: number; resetAt: number }>();
+  return {
+    isBlocked(key: string): { blocked: boolean; retryAfterSec: number } {
+      const e = fails.get(key);
+      if (!e || e.resetAt <= now()) {
+        fails.delete(key);
+        return { blocked: false, retryAfterSec: 0 };
+      }
+      return {
+        blocked: e.count >= opts.max,
+        retryAfterSec: Math.max(1, Math.ceil((e.resetAt - now()) / 1000)),
+      };
+    },
+    fail(key: string): void {
+      const e = fails.get(key);
+      if (!e || e.resetAt <= now())
+        fails.set(key, { count: 1, resetAt: now() + opts.windowMs });
+      else e.count += 1;
+    },
+    clear(key: string): void {
+      fails.delete(key);
+    },
+  };
+}
+
+/** Failed-login brake per account AND client IP: an attacker elsewhere cannot lock the owner out. */
+export const accountLoginFailures = createFailureTracker({
   windowMs: 15 * 60_000,
   max: 10,
 });
 
-export function accountKey(email: string): string {
-  return `acct:${email.trim().toLowerCase().slice(0, 320)}`;
+export function accountKey(email: string, ip: string): string {
+  return `acct:${email.trim().toLowerCase().slice(0, 320)}|${ip}`;
 }
