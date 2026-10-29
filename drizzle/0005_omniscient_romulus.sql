@@ -1,0 +1,1 @@
+ALTER TABLE `communityPosts` ADD `hiddenReason` varchar(10);

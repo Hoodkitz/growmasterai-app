@@ -59,9 +59,15 @@ import {
   MAX_POST_CONTENT,
   MAX_COMMENT_CONTENT,
   MAX_MESSAGE_CONTENT,
+  reporterCutoff,
+  REPORTS_PER_HOUR,
 } from "./moderation";
+import {
+  createRateLimiter,
+  liveScanLimiter,
+  clientKey,
+} from "./_core/rateLimit";
 import { TRPCError } from "@trpc/server";
-import { liveScanLimiter, clientKey } from "./_core/rateLimit";
 import { computeStreak } from "./streak";
 import {
   mergePlants,
@@ -141,6 +147,11 @@ const coachResponseSchema = z.object({
   answer: z.string(),
   tips: z.array(z.string()),
   products: z.unknown().optional(),
+});
+
+const reportLimiter = createRateLimiter({
+  windowMs: 60 * 60_000,
+  max: REPORTS_PER_HOUR,
 });
 
 /** Ids hidden from a user: people they blocked and people who blocked them. */
@@ -1147,13 +1158,28 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
 
+        if (!reportLimiter.check(String(ctx.user.id)).allowed)
+          throw new TRPCError({
+            code: "TOO_MANY_REQUESTS",
+            message: "Too many reports, try again later",
+          });
+
         let reportedUserId: number | undefined;
         if (input.targetType === "post") {
           const [r] = await db
-            .select({ userId: communityPosts.userId })
+            .select({
+              userId: communityPosts.userId,
+              isApproved: communityPosts.isApproved,
+            })
             .from(communityPosts)
             .where(eq(communityPosts.id, input.targetId))
             .limit(1);
+          // Already hidden or removed posts need no further reports.
+          if (r && r.isApproved === false)
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Already under review",
+            });
           reportedUserId = r?.userId;
         } else if (input.targetType === "comment") {
           const [r] = await db
@@ -1199,21 +1225,30 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
 
         // Enough independent reports hide a post until an admin reviews it.
         if (input.targetType === "post") {
+          // One report per reporter and target (unique index); only established accounts count.
+          const cutoff = reporterCutoff();
           const [c] = await db
             .select({ c: count() })
             .from(contentReports)
+            .innerJoin(users, eq(users.id, contentReports.reporterId))
             .where(
               and(
                 eq(contentReports.targetType, "post"),
                 eq(contentReports.targetId, input.targetId),
                 eq(contentReports.status, "open"),
+                sql`${users.createdAt} <= ${cutoff}`,
               ),
             );
           if (shouldAutoHide(Number(c?.c ?? 0))) {
             await db
               .update(communityPosts)
-              .set({ isApproved: false })
-              .where(eq(communityPosts.id, input.targetId));
+              .set({ isApproved: false, hiddenReason: "auto" })
+              .where(
+                and(
+                  eq(communityPosts.id, input.targetId),
+                  eq(communityPosts.isApproved, true),
+                ),
+              );
           }
         }
         return { success: true };
@@ -2021,18 +2056,23 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
           if (rep.targetType === "post")
             await db
               .update(communityPosts)
-              .set({ isApproved: false })
+              .set({ isApproved: false, hiddenReason: "admin" })
               .where(eq(communityPosts.id, rep.targetId));
           if (rep.targetType === "comment")
             await db
               .delete(postComments)
               .where(eq(postComments.id, rep.targetId));
         } else if (rep.targetType === "post") {
-          // Dismissed: show the post again unless other open reports remain.
+          // Dismissed: only undo an automatic hide, never an admin removal.
           await db
             .update(communityPosts)
-            .set({ isApproved: true })
-            .where(eq(communityPosts.id, rep.targetId));
+            .set({ isApproved: true, hiddenReason: null })
+            .where(
+              and(
+                eq(communityPosts.id, rep.targetId),
+                eq(communityPosts.hiddenReason, "auto"), // dismissRestoresPost("auto")
+              ),
+            );
         }
         await db
           .update(contentReports)

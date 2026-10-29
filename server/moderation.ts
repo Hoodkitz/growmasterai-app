@@ -34,3 +34,17 @@ export function hiddenUserIds(
   }
   return out;
 }
+
+/** Only reports from accounts at least this old count towards auto-hide (stops fresh sock puppets). */
+export const MIN_REPORTER_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+export const REPORTS_PER_HOUR = 10;
+
+/** Accounts created after this moment do not count towards auto-hide. */
+export function reporterCutoff(now: number = Date.now()): Date {
+  return new Date(now - MIN_REPORTER_AGE_MS);
+}
+
+/** Dismissing reports may only undo an automatic hide, never an admin removal. */
+export function dismissRestoresPost(hiddenReason: string | null): boolean {
+  return hiddenReason === "auto";
+}

@@ -234,6 +234,8 @@ export const communityPosts = mysqlTable("communityPosts", {
 
   // Moderation
   isApproved: boolean("isApproved").default(true),
+  // Why a post is hidden: "auto" = threshold of reports (reversible by dismiss), "admin" = removed by an admin.
+  hiddenReason: varchar("hiddenReason", { length: 10 }),
   isPinned: boolean("isPinned").default(false),
 
   // Giveaway specific
