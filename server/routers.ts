@@ -59,6 +59,8 @@ import {
   MAX_POST_CONTENT,
   MAX_COMMENT_CONTENT,
   MAX_MESSAGE_CONTENT,
+  MAX_POST_IMAGE_CHARS,
+  MAX_POST_IMAGES,
   reporterCutoff,
   REPORTS_PER_HOUR,
 } from "./moderation";
@@ -1027,7 +1029,10 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
           type: z.enum(["post", "question", "showcase", "giveaway"]),
           title: z.string().max(MAX_POST_TITLE).optional(),
           content: z.string().min(1).max(MAX_POST_CONTENT),
-          images: z.array(z.string()).max(6).optional(),
+          images: z
+            .array(z.string().max(MAX_POST_IMAGE_CHARS))
+            .max(MAX_POST_IMAGES)
+            .optional(),
         }),
       )
       .mutation(async ({ ctx, input }) => {

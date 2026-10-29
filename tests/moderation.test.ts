@@ -6,6 +6,8 @@ import {
   MIN_REPORTER_AGE_MS,
   dismissRestoresPost,
   reporterCutoff,
+  MAX_POST_IMAGES,
+  MAX_POST_IMAGE_CHARS,
 } from "../server/moderation";
 
 describe("moderation rules", () => {
@@ -34,5 +36,13 @@ describe("report abuse protection", () => {
     expect(dismissRestoresPost("auto")).toBe(true);
     expect(dismissRestoresPost("admin")).toBe(false);
     expect(dismissRestoresPost(null)).toBe(false);
+  });
+});
+
+describe("post image limits", () => {
+  it("keeps total stored image data under the 15 MB request body cap", () => {
+    expect(MAX_POST_IMAGES * MAX_POST_IMAGE_CHARS).toBeLessThan(
+      15 * 1024 * 1024,
+    );
   });
 });
