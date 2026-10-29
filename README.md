@@ -310,8 +310,8 @@ Edit `app.config.ts`:
   appName: "GrowMaster AI",
   appSlug: "growmaster-app",
   logoUrl: "your-logo-url",
-  iosBundleId: "space.manus.growmaster.app.xxx",
-  androidPackage: "space.manus.growmaster.app.xxx"
+  iosBundleId: "com.growmaster.app",
+  androidPackage: "com.growmaster.app"
 }
 ```
 
@@ -397,9 +397,7 @@ Created with ❤️ by the GrowMaster AI Team
 
 ## 📞 Support
 
-- Email: support@growmaster.ai
-- Documentation: [Link to docs]
-- Community: [Link to community]
+- Email: team@growmaster.app
 
 ---
 
