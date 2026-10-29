@@ -61,60 +61,70 @@ describe("csrfOriginGuard", () => {
   });
 });
 
-describe("clientKey and account limiter", () => {
+describe("clientKey and login attempt budget", () => {
   it("ignores X-Real-IP and uses req.ip", async () => {
     const { clientKey } = await import("../server/_core/rateLimit");
     const req = { ip: "10.0.0.1", headers: { "x-real-ip": "1.2.3.4" } };
     expect(clientKey(req)).toBe("10.0.0.1");
   });
 
-  it("counts only failures, clears on success, and isolates by IP", async () => {
-    const { createFailureTracker, accountKey } =
-      await import("../server/_core/rateLimit");
-    let t = 0;
-    const tr = createFailureTracker({ windowMs: 1000, max: 3, now: () => t });
-    const victimA = accountKey(" U@x.de ", "1.1.1.1");
-    const attackerB = accountKey("u@x.de", "2.2.2.2");
-    for (let i = 0; i < 3; i++) tr.fail(attackerB);
-    expect(tr.isBlocked(attackerB).blocked).toBe(true);
-    expect(tr.isBlocked(attackerB).retryAfterSec).toBeGreaterThanOrEqual(1);
-    expect(tr.isBlocked(victimA).blocked).toBe(false); // owner on IP A unaffected
-    tr.fail(victimA);
-    tr.clear(victimA); // successful login resets
-    for (let i = 0; i < 2; i++) tr.fail(victimA);
-    expect(tr.isBlocked(victimA).blocked).toBe(false);
-    t += 1001;
-    expect(tr.isBlocked(attackerB).blocked).toBe(false);
+  it("limits parallel attempts because they are counted before the password check", async () => {
+    const { beginLoginAttempt } = await import("../server/_core/rateLimit");
+    const results = Array.from({ length: 50 }, () =>
+      beginLoginAttempt("par@x.de", "5.5.5.5"),
+    );
+    expect(results.filter((r) => r.ok).length).toBe(10);
+    const blocked = results.find((r) => !r.ok);
+    expect(
+      blocked && !blocked.ok && blocked.retryAfterSec,
+    ).toBeGreaterThanOrEqual(1);
   });
 
-  it("slows distributed guessing on one account and never blocks it", async () => {
-    const { createFailureTracker, progressiveDelayMs, rememberIp, isKnownIp } =
-      await import("../server/_core/rateLimit");
-    const wide = createFailureTracker({ windowMs: 1000, max: Infinity });
-    for (let ip = 0; ip < 60; ip++) wide.fail("victim@x.de"); // 60 different IPs, 1 failure each
-    expect(wide.isBlocked("victim@x.de").blocked).toBe(false);
-    const d = progressiveDelayMs(wide.count("victim@x.de"));
-    expect(d).toBeGreaterThan(0);
-    expect(progressiveDelayMs(10_000)).toBeLessThanOrEqual(10_000);
-    expect(progressiveDelayMs(49)).toBe(0);
-    rememberIp("victim@x.de", "9.9.9.9");
-    expect(isKnownIp("victim@x.de", "9.9.9.9")).toBe(true);
-    expect(isKnownIp("victim@x.de", "8.8.8.8")).toBe(false);
+  it("does not let an attacker on IP B lock out the owner on IP A", async () => {
+    const { beginLoginAttempt } = await import("../server/_core/rateLimit");
+    for (let i = 0; i < 20; i++) beginLoginAttempt("own@x.de", "2.2.2.2");
+    expect(beginLoginAttempt("own@x.de", "1.1.1.1").ok).toBe(true);
   });
 
-  it("keeps memory bounded and sweeps expired entries", async () => {
-    const { createFailureTracker } = await import("../server/_core/rateLimit");
+  it("stops distributed guessing from unknown IPs but not a known IP, and success resets", async () => {
+    const { beginLoginAttempt, rememberIp } =
+      await import("../server/_core/rateLimit");
+    rememberIp("dist@x.de", "9.9.9.9");
+    let okCount = 0;
+    for (let i = 0; i < 80; i++) {
+      if (beginLoginAttempt("dist@x.de", `7.7.${i}.1`).ok) okCount++;
+    }
+    expect(okCount).toBe(50);
+    expect(beginLoginAttempt("dist@x.de", "9.9.9.9").ok).toBe(true);
+    const a = beginLoginAttempt("reset@x.de", "3.3.3.3");
+    if (a.ok) a.succeeded();
+    for (let i = 0; i < 9; i++) beginLoginAttempt("reset@x.de", "3.3.3.3");
+    expect(beginLoginAttempt("reset@x.de", "3.3.3.3").ok).toBe(true);
+  });
+
+  it("table overflow never evicts other accounts' counters and fails closed", async () => {
+    const { createAttemptCounter } = await import("../server/_core/rateLimit");
+    const c = createAttemptCounter({ windowMs: 60_000, max: 2, maxEntries: 5 });
+    expect(c.acquire("victim").allowed).toBe(true);
+    expect(c.acquire("victim").allowed).toBe(true);
+    for (let i = 0; i < 100; i++) c.acquire(`flood${i}`);
+    expect(c.size()).toBeLessThanOrEqual(6);
+    expect(c.acquire("victim").allowed).toBe(false); // counter survived the flood
+    expect(c.acquire("brand-new").allowed).toBe(false); // shared overflow budget is used up
+  });
+
+  it("sweeps expired entries before treating the table as full", async () => {
+    const { createAttemptCounter } = await import("../server/_core/rateLimit");
     let t = 0;
-    const tr = createFailureTracker({
+    const c = createAttemptCounter({
       windowMs: 1000,
-      max: 3,
-      maxEntries: 100,
+      max: 2,
+      maxEntries: 3,
       now: () => t,
     });
-    for (let i = 0; i < 500; i++) tr.fail(`k${i}`);
-    expect(tr.size()).toBeLessThanOrEqual(100);
-    t += 2000;
-    tr.fail("new");
-    expect(tr.size()).toBe(1);
+    for (let i = 0; i < 3; i++) c.acquire(`k${i}`);
+    t += 1500;
+    expect(c.acquire("fresh").allowed).toBe(true);
+    expect(c.size()).toBe(1);
   });
 });

@@ -108,8 +108,13 @@ export const verifyEmailLimiter = createRateLimiter({
   max: 20,
 });
 
-/** Counts only failures per key; success clears. Blocking one key never affects others. */
-export function createFailureTracker(opts: {
+/**
+ * Attempt counter with pre-counting: `acquire` counts an attempt BEFORE the (async) password check,
+ * so parallel attempts are counted too; `release` takes it back on success. No sleeping, no
+ * eviction of live entries: when the table is full of live keys, new keys share one overflow
+ * counter (fail closed) instead of pushing out other accounts' counters.
+ */
+export function createAttemptCounter(opts: {
   windowMs: number;
   max: number;
   maxEntries?: number;
@@ -117,79 +122,64 @@ export function createFailureTracker(opts: {
 }) {
   const now = opts.now ?? Date.now;
   const maxEntries = opts.maxEntries ?? 10_000;
-  const fails = new Map<string, { count: number; resetAt: number }>();
-  let lastSweep = 0;
+  const OVERFLOW = "\u0000overflow";
+  const table = new Map<string, { count: number; resetAt: number }>();
 
   function sweep(t: number) {
-    // Opportunistic sweep of expired entries, like createRateLimiter.
-    if (t - lastSweep >= opts.windowMs / 2 || fails.size > maxEntries) {
-      lastSweep = t;
-      for (const [k, v] of fails) if (v.resetAt <= t) fails.delete(k);
+    for (const [k, v] of table) if (v.resetAt <= t) table.delete(k);
+  }
+
+  function entry(key: string, t: number) {
+    let e = table.get(key);
+    if (e && e.resetAt <= t) {
+      table.delete(key);
+      e = undefined;
     }
-    // Still too big (many live keys): drop the oldest inserted entries.
-    while (fails.size > maxEntries) {
-      const oldest = fails.keys().next().value;
-      if (oldest === undefined) break;
-      fails.delete(oldest);
+    if (!e) {
+      if (table.size >= maxEntries) {
+        sweep(t);
+        if (table.size >= maxEntries && key !== OVERFLOW)
+          return entry(OVERFLOW, t);
+      }
+      e = { count: 0, resetAt: t + opts.windowMs };
+      table.set(key, e);
     }
+    return e;
   }
 
   return {
-    count(key: string): number {
-      const e = fails.get(key);
-      return e && e.resetAt > now() ? e.count : 0;
-    },
-    isBlocked(key: string): { blocked: boolean; retryAfterSec: number } {
-      const e = fails.get(key);
-      if (!e || e.resetAt <= now()) {
-        fails.delete(key);
-        return { blocked: false, retryAfterSec: 0 };
-      }
-      return {
-        blocked: e.count >= opts.max,
-        retryAfterSec: Math.max(1, Math.ceil((e.resetAt - now()) / 1000)),
-      };
-    },
-    fail(key: string): void {
+    /** Counts the attempt if allowed; synchronous, so no await can interleave. */
+    acquire(key: string): { allowed: boolean; retryAfterSec: number } {
       const t = now();
-      const e = fails.get(key);
-      if (!e || e.resetAt <= t) {
-        fails.delete(key); // re-insert so insertion order tracks age
-        fails.set(key, { count: 1, resetAt: t + opts.windowMs });
-      } else e.count += 1;
-      sweep(t);
+      const e = entry(key, t);
+      const retryAfterSec = Math.max(1, Math.ceil((e.resetAt - t) / 1000));
+      if (e.count >= opts.max) return { allowed: false, retryAfterSec };
+      e.count += 1;
+      return { allowed: true, retryAfterSec };
+    },
+    release(key: string): void {
+      const e = table.get(key) ?? table.get(OVERFLOW);
+      if (e && e.count > 0) e.count -= 1;
     },
     clear(key: string): void {
-      fails.delete(key);
+      table.delete(key);
     },
-    size: () => fails.size,
+    size: () => table.size,
   };
 }
 
-/** Per account AND client IP: an attacker elsewhere cannot lock the owner out. Hard limit. */
-export const accountLoginFailures = createFailureTracker({
+/** Failed-login budget per account AND client IP (strict): others cannot lock the owner out. */
+export const loginByAccountIp = createAttemptCounter({
   windowMs: 15 * 60_000,
   max: 10,
 });
-
-/** Per account over all IPs: slows distributed guessing with a growing delay, never locks. */
-export const accountWideFailures = createFailureTracker({
+/** Budget per account over all IPs (looser): stops distributed guessing for unknown IPs. */
+export const loginByAccount = createAttemptCounter({
   windowMs: 15 * 60_000,
-  max: Number.POSITIVE_INFINITY,
+  max: 50,
 });
-export const ACCOUNT_WIDE_THRESHOLD = 50;
-export const MAX_LOGIN_DELAY_MS = 10_000;
 
-/** Delay for a login attempt after `fails` account-wide failures (0 below the threshold). */
-export function progressiveDelayMs(
-  fails: number,
-  threshold = ACCOUNT_WIDE_THRESHOLD,
-): number {
-  if (fails < threshold) return 0;
-  return Math.min(MAX_LOGIN_DELAY_MS, (fails - threshold + 1) * 250);
-}
-
-/** IPs that logged in successfully for an account: they skip the account-wide delay. */
+/** IPs with an earlier successful login for the account; they skip the account-wide budget. */
 const knownIps = new Map<string, Set<string>>();
 export function rememberIp(account: string, ip: string): void {
   let set = knownIps.get(account);
@@ -197,7 +187,7 @@ export function rememberIp(account: string, ip: string): void {
     set = new Set();
     if (knownIps.size >= 10_000) {
       const oldest = knownIps.keys().next().value;
-      if (oldest !== undefined) knownIps.delete(oldest);
+      if (oldest !== undefined) knownIps.delete(oldest); // only a convenience list, not a limit
     }
     knownIps.set(account, set);
   }
@@ -212,6 +202,30 @@ export function normalizeAccount(email: string): string {
   return email.trim().toLowerCase().slice(0, 320);
 }
 
-export function accountKey(email: string, ip: string): string {
-  return `acct:${normalizeAccount(email)}|${ip}`;
+/**
+ * Decides a login attempt before the password check. Returns a release function on success
+ * (call it after a correct password) or the seconds to wait.
+ */
+export function beginLoginAttempt(
+  email: string,
+  ip: string,
+): { ok: true; succeeded: () => void } | { ok: false; retryAfterSec: number } {
+  const account = normalizeAccount(email);
+  const pair = `${account}|${ip}`;
+  const known = isKnownIp(account, ip);
+  const p = loginByAccountIp.acquire(pair);
+  if (!p.allowed) return { ok: false, retryAfterSec: p.retryAfterSec };
+  const w = loginByAccount.acquire(account);
+  if (!w.allowed && !known) {
+    loginByAccountIp.release(pair);
+    return { ok: false, retryAfterSec: w.retryAfterSec };
+  }
+  return {
+    ok: true,
+    succeeded: () => {
+      loginByAccountIp.clear(pair);
+      if (w.allowed) loginByAccount.release(account);
+      rememberIp(account, ip);
+    },
+  };
 }
