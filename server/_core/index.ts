@@ -32,6 +32,9 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 
 async function startServer() {
   const app = express();
+  // Railway terminates TLS in one proxy hop. Without this req.ip is the proxy address, so every
+  // client would share one rate-limit bucket (global lockout after 10 logins) and logs show no real IPs.
+  app.set("trust proxy", 1);
   const server = createServer(app);
 
   // SECURITY: Restricted CORS - only allow specific trusted origins
