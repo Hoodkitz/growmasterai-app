@@ -18,7 +18,13 @@ import { useColors } from "@/hooks/use-colors";
 import { useAppAuth } from "@/lib/auth-context";
 import { trpc } from "@/lib/trpc";
 
-type TabType = "dashboard" | "vendors" | "contests" | "ads" | "requests";
+type TabType =
+  | "dashboard"
+  | "vendors"
+  | "contests"
+  | "ads"
+  | "requests"
+  | "reports";
 
 const isPending = (status: string) =>
   status === "new" || status === "contacted" || status === "negotiating";
@@ -54,6 +60,13 @@ export default function AdminScreen() {
   });
   const giveawaysQuery = trpc.admin.giveaways.useQuery(undefined, {
     enabled: isAdmin && activeTab === "contests",
+  });
+  const reportsQuery = trpc.admin.reports.useQuery(undefined, {
+    enabled: isAdmin && activeTab === "reports",
+  });
+  const resolveReport = trpc.admin.resolveReport.useMutation({
+    onSuccess: () => utils.admin.reports.invalidate(),
+    onError: (e) => Alert.alert("Fehler", e.message),
   });
   const updateInquiry = trpc.admin.updateInquiry.useMutation({
     onSuccess: () => {
@@ -357,6 +370,11 @@ export default function AdminScreen() {
               {
                 id: "requests" as TabType,
                 label: "Anfragen",
+                icon: "envelope.fill",
+              },
+              {
+                id: "reports" as TabType,
+                label: "Meldungen",
                 icon: "envelope.fill",
               },
               {
@@ -668,6 +686,59 @@ export default function AdminScreen() {
                   Keine Anfragen vorhanden
                 </Text>
               </View>
+            )}
+          </>
+        )}
+
+        {activeTab === "reports" && (
+          <>
+            <Text className="text-lg font-semibold text-foreground mb-3">
+              Offene Meldungen
+            </Text>
+            {reportsQuery.isLoading && loadingView}
+            {reportsQuery.isError && (
+              <Text className="text-error py-4">
+                {reportsQuery.error.message}
+              </Text>
+            )}
+            {(reportsQuery.data ?? []).map((r) => (
+              <View
+                key={r.id}
+                className="bg-surface rounded-xl p-4 border border-border mb-3"
+              >
+                <Text className="text-sm font-semibold text-foreground">
+                  {r.targetType} #{r.targetId} · {r.reason}
+                </Text>
+                {r.excerpt ? (
+                  <Text className="text-sm text-muted mt-1">{r.excerpt}</Text>
+                ) : null}
+                {r.details ? (
+                  <Text className="text-xs text-muted mt-1">{r.details}</Text>
+                ) : null}
+                <View className="flex-row gap-3 mt-3">
+                  <TouchableOpacity
+                    className="bg-error px-3 py-2 rounded-lg"
+                    onPress={() =>
+                      resolveReport.mutate({ id: r.id, action: "remove" })
+                    }
+                  >
+                    <Text className="text-white text-sm">Entfernen</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    className="bg-surface border border-border px-3 py-2 rounded-lg"
+                    onPress={() =>
+                      resolveReport.mutate({ id: r.id, action: "dismiss" })
+                    }
+                  >
+                    <Text className="text-foreground text-sm">Ablehnen</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))}
+            {reportsQuery.data?.length === 0 && (
+              <Text className="text-muted py-6 text-center">
+                Keine offenen Meldungen
+              </Text>
             )}
           </>
         )}

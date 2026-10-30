@@ -50,7 +50,17 @@ import {
   setCachedDiagnosis,
   deduplicateRequest,
 } from "./_core/diagnosisCache";
-import { eq, and, desc, sql, or, count, gte, notInArray } from "drizzle-orm";
+import {
+  eq,
+  and,
+  desc,
+  sql,
+  or,
+  count,
+  gte,
+  notInArray,
+  inArray,
+} from "drizzle-orm";
 import {
   REPORT_REASONS,
   shouldAutoHide,
@@ -2028,12 +2038,30 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
     reports: adminProcedure.query(async () => {
       const db = await getDb();
       if (!db) throw new Error("Database connection failed");
-      return db
+      const rows = await db
         .select()
         .from(contentReports)
         .where(eq(contentReports.status, "open"))
         .orderBy(desc(contentReports.createdAt))
         .limit(100);
+      // Show the reported text so an admin can decide without opening the DB.
+      const postIds = rows
+        .filter((r) => r.targetType === "post")
+        .map((r) => r.targetId);
+      const posts = postIds.length
+        ? await db
+            .select({ id: communityPosts.id, content: communityPosts.content })
+            .from(communityPosts)
+            .where(inArray(communityPosts.id, postIds))
+        : [];
+      const byId = new Map(posts.map((p) => [p.id, p.content]));
+      return rows.map((r) => ({
+        ...r,
+        excerpt:
+          r.targetType === "post"
+            ? (byId.get(r.targetId) ?? "").slice(0, 300)
+            : null,
+      }));
     }),
 
     resolveReport: adminProcedure
