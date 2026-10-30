@@ -1,3 +1,5 @@
+> **Hinweis:** Diese Datei ist VERALTET (nennt Marktplatz, Samen, Cannabis im Namen: widerspricht der Play-Cannabis-Richtlinie). Maßgeblich ist store-assets/descriptions/play-store-de.txt und docs/PLAY_CONSOLE_ANSWERS.md.
+
 # Google Play Store Listing - GrowMaster AI
 
 ## App-Name

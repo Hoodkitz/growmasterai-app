@@ -50,6 +50,10 @@ const config: ExpoConfig = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: env.iosBundleId,
+    infoPlist: {
+      // Only standard HTTPS/OS crypto: skips the export-compliance question on every iOS upload.
+      ITSAppUsesNonExemptEncryption: false,
+    },
   },
   android: {
     adaptiveIcon: {

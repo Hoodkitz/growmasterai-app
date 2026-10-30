@@ -1,3 +1,5 @@
+> **Hinweis:** Diese Checkliste ist teils VERALTET (alte Paket-ID com.growmasterai.app, SDK 35, Grafiken "fehlend"). Aktueller Stand: Paket com.growmaster.app, SDK 36, Grafiken in store-assets/. Maßgeblich ist docs/PLAY_CONSOLE_ANSWERS.md.
+
 # App Store & Play Store Veröffentlichungs-Checkliste
 
 ## GrowMaster AI - Komplette Pre-Launch Checkliste
