@@ -75,7 +75,12 @@ function AgeGate({ onConfirm }: { onConfirm: () => void }) {
     <View className="flex-1 bg-background">
       <LinearGradient colors={["#10B981", "#059669"]} className="flex-1">
         <View className="flex-1 justify-center items-center px-8">
-          <Text className="text-9xl mb-8">🔞</Text>
+          <Text
+            className="mb-8 text-center"
+            style={{ fontSize: 96, lineHeight: 120, paddingVertical: 8 }}
+          >
+            🔞
+          </Text>
           <Text className="text-white text-3xl font-bold text-center mb-4">
             Nur ab 18 Jahren
           </Text>
