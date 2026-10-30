@@ -31,7 +31,14 @@ const STORE_BLOCKED_PERMISSIONS = [
   "android.permission.MODIFY_AUDIO_SETTINGS",
 ];
 
-const config: ExpoConfig = {
+// Store build has no radar (location) and no voice input (microphone): leave those plugins out so
+// the iOS usage strings and Android manifest entries do not appear at all.
+const STORE_SKIPPED_PLUGINS = ["expo-location", "expo-audio"];
+const keepPlugin = (plugin: unknown) =>
+  !storeMode ||
+  !STORE_SKIPPED_PLUGINS.includes(Array.isArray(plugin) ? plugin[0] : plugin);
+
+const baseConfig: ExpoConfig = {
   name: env.appName,
   slug: env.appSlug,
   version: "1.0.0",
@@ -122,8 +129,9 @@ const config: ExpoConfig = {
     [
       "expo-video",
       {
-        supportsBackgroundPlayback: true,
-        supportsPictureInPicture: true,
+        // No in-app video playback (tutorials open externally): no background audio mode needed.
+        supportsBackgroundPlayback: false,
+        supportsPictureInPicture: false,
       },
     ],
     [
@@ -166,6 +174,11 @@ const config: ExpoConfig = {
     typedRoutes: true,
     reactCompiler: true,
   },
+};
+
+const config: ExpoConfig = {
+  ...baseConfig,
+  plugins: baseConfig.plugins?.filter(keepPlugin),
 };
 
 export default config;
