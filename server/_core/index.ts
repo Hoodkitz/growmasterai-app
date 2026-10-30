@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { ensureModerationSchema } from "../schema-bootstrap";
 import express from "express";
 import { createServer } from "http";
 import net from "net";
@@ -31,6 +32,7 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 }
 
 async function startServer() {
+  await ensureModerationSchema();
   const app = express();
   const server = createServer(app);
 
