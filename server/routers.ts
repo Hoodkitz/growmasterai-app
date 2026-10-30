@@ -28,6 +28,8 @@ import {
   vendors,
   vendorProducts,
   messages,
+  contentReports,
+  userBlocks,
   users,
   auctions,
   auctionBids,
@@ -48,9 +50,24 @@ import {
   setCachedDiagnosis,
   deduplicateRequest,
 } from "./_core/diagnosisCache";
-import { eq, and, desc, sql, or, count, gte } from "drizzle-orm";
+import { eq, and, desc, sql, or, count, gte, notInArray } from "drizzle-orm";
+import {
+  REPORT_REASONS,
+  shouldAutoHide,
+  hiddenUserIds,
+  MAX_POST_TITLE,
+  MAX_POST_CONTENT,
+  MAX_COMMENT_CONTENT,
+  MAX_MESSAGE_CONTENT,
+  reporterCutoff,
+  REPORTS_PER_HOUR,
+} from "./moderation";
+import {
+  createRateLimiter,
+  liveScanLimiter,
+  clientKey,
+} from "./_core/rateLimit";
 import { TRPCError } from "@trpc/server";
-import { liveScanLimiter, clientKey } from "./_core/rateLimit";
 import { computeStreak } from "./streak";
 import {
   mergePlants,
@@ -131,6 +148,26 @@ const coachResponseSchema = z.object({
   tips: z.array(z.string()),
   products: z.unknown().optional(),
 });
+
+const reportLimiter = createRateLimiter({
+  windowMs: 60 * 60_000,
+  max: REPORTS_PER_HOUR,
+});
+
+/** Ids hidden from a user: people they blocked and people who blocked them. */
+async function loadHiddenUsers(
+  db: NonNullable<Awaited<ReturnType<typeof getDb>>>,
+  me: number,
+): Promise<number[]> {
+  const rows = await db
+    .select({
+      blockerId: userBlocks.blockerId,
+      blockedId: userBlocks.blockedId,
+    })
+    .from(userBlocks)
+    .where(or(eq(userBlocks.blockerId, me), eq(userBlocks.blockedId, me)));
+  return [...hiddenUserIds(me, rows)];
+}
 
 export const appRouter = router({
   system: systemRouter,
@@ -988,9 +1025,9 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
       .input(
         z.object({
           type: z.enum(["post", "question", "showcase", "giveaway"]),
-          title: z.string().optional(),
-          content: z.string().min(1),
-          images: z.array(z.string()).optional(),
+          title: z.string().max(MAX_POST_TITLE).optional(),
+          content: z.string().min(1).max(MAX_POST_CONTENT),
+          images: z.array(z.string()).max(6).optional(),
         }),
       )
       .mutation(async ({ ctx, input }) => {
@@ -1015,12 +1052,13 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
           cursor: z.number().nullish(), // For pagination (offset or ID based)
         }),
       )
-      .query(async ({ input }) => {
+      .query(async ({ input, ctx }) => {
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
 
         const limit = input.limit;
         const offset = input.cursor || 0;
+        const hidden = ctx.user ? await loadHiddenUsers(db, ctx.user.id) : [];
 
         const posts = await db
           .select({
@@ -1033,7 +1071,14 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
           })
           .from(communityPosts)
           .leftJoin(users, eq(communityPosts.userId, users.id))
-          .where(eq(communityPosts.isApproved, true))
+          .where(
+            hidden.length > 0
+              ? and(
+                  eq(communityPosts.isApproved, true),
+                  notInArray(communityPosts.userId, hidden),
+                )
+              : eq(communityPosts.isApproved, true),
+          )
           .orderBy(desc(communityPosts.createdAt))
           .limit(limit + 1)
           .offset(offset);
@@ -1100,6 +1145,143 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         return { success: true, liked: input.like, likes: post?.likes ?? 0 };
       }),
 
+    reportContent: protectedProcedure
+      .input(
+        z.object({
+          targetType: z.enum(["post", "comment", "message", "user"]),
+          targetId: z.number().int(),
+          reason: z.enum(REPORT_REASONS),
+          details: z.string().max(500).optional(),
+        }),
+      )
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+
+        if (!reportLimiter.check(String(ctx.user.id)).allowed)
+          throw new TRPCError({
+            code: "TOO_MANY_REQUESTS",
+            message: "Too many reports, try again later",
+          });
+
+        let reportedUserId: number | undefined;
+        if (input.targetType === "post") {
+          const [r] = await db
+            .select({
+              userId: communityPosts.userId,
+              isApproved: communityPosts.isApproved,
+            })
+            .from(communityPosts)
+            .where(eq(communityPosts.id, input.targetId))
+            .limit(1);
+          // Already hidden or removed posts need no further reports.
+          if (r && r.isApproved === false)
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Already under review",
+            });
+          reportedUserId = r?.userId;
+        } else if (input.targetType === "comment") {
+          const [r] = await db
+            .select({ userId: postComments.userId })
+            .from(postComments)
+            .where(eq(postComments.id, input.targetId))
+            .limit(1);
+          reportedUserId = r?.userId;
+        } else if (input.targetType === "message") {
+          const [r] = await db
+            .select({
+              senderId: messages.senderId,
+              receiverId: messages.receiverId,
+            })
+            .from(messages)
+            .where(eq(messages.id, input.targetId))
+            .limit(1);
+          // Only a party of the conversation may report a message.
+          if (r && (r.receiverId === ctx.user.id || r.senderId === ctx.user.id))
+            reportedUserId = r.senderId;
+        } else {
+          reportedUserId = input.targetId;
+        }
+        if (reportedUserId === undefined)
+          throw new TRPCError({ code: "NOT_FOUND", message: "Not found" });
+        if (reportedUserId === ctx.user.id)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "You cannot report yourself",
+          });
+
+        await db
+          .insert(contentReports)
+          .ignore()
+          .values({
+            reporterId: ctx.user.id,
+            targetType: input.targetType,
+            targetId: input.targetId,
+            reportedUserId,
+            reason: input.reason,
+            details: input.details ? sanitizeUserInput(input.details) : null,
+          });
+
+        // Enough independent reports hide a post until an admin reviews it.
+        if (input.targetType === "post") {
+          // One report per reporter and target (unique index); only established accounts count.
+          const cutoff = reporterCutoff();
+          const [c] = await db
+            .select({ c: count() })
+            .from(contentReports)
+            .innerJoin(users, eq(users.id, contentReports.reporterId))
+            .where(
+              and(
+                eq(contentReports.targetType, "post"),
+                eq(contentReports.targetId, input.targetId),
+                eq(contentReports.status, "open"),
+                sql`${users.createdAt} <= ${cutoff}`,
+              ),
+            );
+          if (shouldAutoHide(Number(c?.c ?? 0))) {
+            await db
+              .update(communityPosts)
+              .set({ isApproved: false, hiddenReason: "auto" })
+              .where(
+                and(
+                  eq(communityPosts.id, input.targetId),
+                  eq(communityPosts.isApproved, true),
+                ),
+              );
+          }
+        }
+        return { success: true };
+      }),
+
+    blockUser: protectedProcedure
+      .input(z.object({ userId: z.number().int(), block: z.boolean() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        if (input.userId === ctx.user.id)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "You cannot block yourself",
+          });
+        if (input.block) {
+          await db
+            .insert(userBlocks)
+            .ignore()
+            .values({ blockerId: ctx.user.id, blockedId: input.userId });
+        } else {
+          await db
+            .delete(userBlocks)
+            .where(
+              and(
+                eq(userBlocks.blockerId, ctx.user.id),
+                eq(userBlocks.blockedId, input.userId),
+              ),
+            );
+        }
+        return { success: true };
+      }),
+
     leaderboard: publicProcedure
       .input(
         z.object({ limit: z.number().min(1).max(50).default(10) }).optional(),
@@ -1126,7 +1308,7 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
       .input(
         z.object({
           postId: z.number(),
-          content: z.string().min(1),
+          content: z.string().min(1).max(MAX_COMMENT_CONTENT),
         }),
       )
       .mutation(async ({ ctx, input }) => {
@@ -1538,7 +1720,7 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
       .input(
         z.object({
           receiverId: z.number(),
-          content: z.string().min(1),
+          content: z.string().min(1).max(MAX_MESSAGE_CONTENT),
         }),
       )
       .mutation(async ({ ctx, input }) => {
@@ -1553,6 +1735,8 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
           .where(eq(users.id, input.receiverId))
           .limit(1);
         if (!recipient) throw new Error("Recipient not found");
+        if ((await loadHiddenUsers(db, ctx.user.id)).includes(input.receiverId))
+          throw new Error("Message not possible");
 
         await db.insert(messages).values({
           senderId: ctx.user.id,
@@ -1586,6 +1770,7 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
       const db = await getDb();
       if (!db) throw new Error("Database connection failed");
 
+      const hiddenForMe = await loadHiddenUsers(db, ctx.user.id);
       const sender = alias(users, "sender");
       const receiver = alias(users, "receiver");
 
@@ -1611,9 +1796,17 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         .leftJoin(sender, eq(messages.senderId, sender.id))
         .leftJoin(receiver, eq(messages.receiverId, receiver.id))
         .where(
-          or(
-            eq(messages.senderId, ctx.user.id),
-            eq(messages.receiverId, ctx.user.id),
+          and(
+            or(
+              eq(messages.senderId, ctx.user.id),
+              eq(messages.receiverId, ctx.user.id),
+            ),
+            hiddenForMe.length > 0
+              ? and(
+                  notInArray(messages.senderId, hiddenForMe),
+                  notInArray(messages.receiverId, hiddenForMe),
+                )
+              : undefined,
           ),
         )
         .orderBy(desc(messages.createdAt))
@@ -1832,6 +2025,68 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
         adRevenue: Number(ad?.revenue ?? 0),
       };
     }),
+    reports: adminProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) throw new Error("Database connection failed");
+      return db
+        .select()
+        .from(contentReports)
+        .where(eq(contentReports.status, "open"))
+        .orderBy(desc(contentReports.createdAt))
+        .limit(100);
+    }),
+
+    resolveReport: adminProcedure
+      .input(
+        z.object({
+          id: z.number().int(),
+          action: z.enum(["remove", "dismiss"]),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        const [rep] = await db
+          .select()
+          .from(contentReports)
+          .where(eq(contentReports.id, input.id))
+          .limit(1);
+        if (!rep) throw new TRPCError({ code: "NOT_FOUND" });
+        if (input.action === "remove") {
+          if (rep.targetType === "post")
+            await db
+              .update(communityPosts)
+              .set({ isApproved: false, hiddenReason: "admin" })
+              .where(eq(communityPosts.id, rep.targetId));
+          if (rep.targetType === "comment")
+            await db
+              .delete(postComments)
+              .where(eq(postComments.id, rep.targetId));
+        } else if (rep.targetType === "post") {
+          // Dismissed: only undo an automatic hide, never an admin removal.
+          await db
+            .update(communityPosts)
+            .set({ isApproved: true, hiddenReason: null })
+            .where(
+              and(
+                eq(communityPosts.id, rep.targetId),
+                eq(communityPosts.hiddenReason, "auto"), // dismissRestoresPost("auto")
+              ),
+            );
+        }
+        await db
+          .update(contentReports)
+          .set({ status: input.action === "remove" ? "actioned" : "dismissed" })
+          .where(
+            and(
+              eq(contentReports.targetType, rep.targetType),
+              eq(contentReports.targetId, rep.targetId),
+              eq(contentReports.status, "open"),
+            ),
+          );
+        return { success: true };
+      }),
+
     vendors: adminProcedure.query(async () => {
       const db = await getDb();
       if (!db) throw new Error("Database connection failed");

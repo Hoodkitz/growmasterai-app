@@ -1,8 +1,20 @@
-import { int, bigint, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, decimal, json, uniqueIndex } from "drizzle-orm/mysql-core";
+import {
+  int,
+  bigint,
+  mysqlEnum,
+  mysqlTable,
+  text,
+  timestamp,
+  varchar,
+  boolean,
+  decimal,
+  json,
+  uniqueIndex,
+} from "drizzle-orm/mysql-core";
 
 /**
  * GrowMaster AI - Database Schema
- * 
+ *
  * Dieses Schema definiert alle Tabellen für die App:
  * - Users: Benutzerkonten und Auth
  * - Plants: Pflanzen-Tracking
@@ -22,7 +34,9 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "admin", "vendor"]).default("user").notNull(),
+  role: mysqlEnum("role", ["user", "admin", "vendor"])
+    .default("user")
+    .notNull(),
 
   // Profile
   avatarUrl: text("avatarUrl"),
@@ -38,7 +52,9 @@ export const users = mysqlTable("users", {
   lastActiveAt: timestamp("lastActiveAt"),
 
   // Subscription
-  subscriptionTier: mysqlEnum("subscriptionTier", ["free", "premium", "pro"]).default("free").notNull(),
+  subscriptionTier: mysqlEnum("subscriptionTier", ["free", "premium", "pro"])
+    .default("free")
+    .notNull(),
   subscriptionExpiresAt: timestamp("subscriptionExpiresAt"),
   revenuecatId: varchar("revenuecatId", { length: 64 }),
 
@@ -56,41 +72,61 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
 // ==================== PLANTS ====================
-export const plants = mysqlTable("plants", {
-  id: int("id").autoincrement().primaryKey(),
-  userId: int("userId").notNull(),
+export const plants = mysqlTable(
+  "plants",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    userId: int("userId").notNull(),
 
-  name: varchar("name", { length: 100 }).notNull(),
-  strain: varchar("strain", { length: 100 }),
-  strainType: mysqlEnum("strainType", ["indica", "sativa", "hybrid"]),
+    name: varchar("name", { length: 100 }).notNull(),
+    strain: varchar("strain", { length: 100 }),
+    strainType: mysqlEnum("strainType", ["indica", "sativa", "hybrid"]),
 
-  phase: mysqlEnum("phase", ["seedling", "vegetative", "flowering", "harvest", "curing", "completed"]).default("seedling").notNull(),
-  startDate: timestamp("startDate").defaultNow().notNull(),
-  harvestDate: timestamp("harvestDate"),
+    phase: mysqlEnum("phase", [
+      "seedling",
+      "vegetative",
+      "flowering",
+      "harvest",
+      "curing",
+      "completed",
+    ])
+      .default("seedling")
+      .notNull(),
+    startDate: timestamp("startDate").defaultNow().notNull(),
+    harvestDate: timestamp("harvestDate"),
 
-  // Growing conditions
-  growType: mysqlEnum("growType", ["indoor", "outdoor", "greenhouse"]).default("indoor"),
-  medium: varchar("medium", { length: 50 }),
-  lightSchedule: varchar("lightSchedule", { length: 20 }),
+    // Growing conditions
+    growType: mysqlEnum("growType", [
+      "indoor",
+      "outdoor",
+      "greenhouse",
+    ]).default("indoor"),
+    medium: varchar("medium", { length: 50 }),
+    lightSchedule: varchar("lightSchedule", { length: 20 }),
 
-  // Stats
-  height: decimal("height", { precision: 5, scale: 1 }),
-  yield: decimal("yield", { precision: 8, scale: 2 }),
+    // Stats
+    height: decimal("height", { precision: 5, scale: 1 }),
+    yield: decimal("yield", { precision: 8, scale: 2 }),
 
-  notes: text("notes"),
-  imageUrl: text("imageUrl"),
-  isArchived: boolean("isArchived").default(false),
+    notes: text("notes"),
+    imageUrl: text("imageUrl"),
+    isArchived: boolean("isArchived").default(false),
 
-  // Offline sync: client-generated id, client-side last-modified (epoch ms) and soft-delete marker (epoch ms)
-  clientId: varchar("clientId", { length: 64 }),
-  clientUpdatedAt: bigint("clientUpdatedAt", { mode: "number" }),
-  deletedAt: bigint("deletedAt", { mode: "number" }),
+    // Offline sync: client-generated id, client-side last-modified (epoch ms) and soft-delete marker (epoch ms)
+    clientId: varchar("clientId", { length: 64 }),
+    clientUpdatedAt: bigint("clientUpdatedAt", { mode: "number" }),
+    deletedAt: bigint("deletedAt", { mode: "number" }),
 
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-}, (t) => ({
-  userClientUnique: uniqueIndex("plants_user_client_unique").on(t.userId, t.clientId),
-}));
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  (t) => ({
+    userClientUnique: uniqueIndex("plants_user_client_unique").on(
+      t.userId,
+      t.clientId,
+    ),
+  }),
+);
 
 export type Plant = typeof plants.$inferSelect;
 export type InsertPlant = typeof plants.$inferInsert;
@@ -101,7 +137,18 @@ export const journalEntries = mysqlTable("journalEntries", {
   userId: int("userId").notNull(),
   plantId: int("plantId"),
 
-  type: mysqlEnum("type", ["note", "watering", "feeding", "training", "photo", "measurement", "issue", "milestone"]).default("note").notNull(),
+  type: mysqlEnum("type", [
+    "note",
+    "watering",
+    "feeding",
+    "training",
+    "photo",
+    "measurement",
+    "issue",
+    "milestone",
+  ])
+    .default("note")
+    .notNull(),
   title: varchar("title", { length: 200 }),
   content: text("content"),
 
@@ -138,7 +185,12 @@ export const diagnoses = mysqlTable("diagnoses", {
 
   // Additional AI Analysis
   identifiedStrain: varchar("identifiedStrain", { length: 100 }),
-  identifiedGender: mysqlEnum("identifiedGender", ["male", "female", "hermaphrodite", "unknown"]),
+  identifiedGender: mysqlEnum("identifiedGender", [
+    "male",
+    "female",
+    "hermaphrodite",
+    "unknown",
+  ]),
   growthStage: varchar("growthStage", { length: 50 }),
   healthScore: int("healthScore"),
 
@@ -168,7 +220,9 @@ export const communityPosts = mysqlTable("communityPosts", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
 
-  type: mysqlEnum("type", ["post", "question", "showcase", "giveaway"]).default("post").notNull(),
+  type: mysqlEnum("type", ["post", "question", "showcase", "giveaway"])
+    .default("post")
+    .notNull(),
   title: varchar("title", { length: 200 }),
   content: text("content").notNull(),
   images: json("images").$type<string[]>(),
@@ -180,6 +234,8 @@ export const communityPosts = mysqlTable("communityPosts", {
 
   // Moderation
   isApproved: boolean("isApproved").default(true),
+  // Why a post is hidden: "auto" = threshold of reports (reversible by dismiss), "admin" = removed by an admin.
+  hiddenReason: varchar("hiddenReason", { length: 10 }),
   isPinned: boolean("isPinned").default(false),
 
   // Giveaway specific
@@ -236,10 +292,21 @@ export const vendors = mysqlTable("vendors", {
   description: text("description"),
   logoUrl: text("logoUrl"),
 
-  type: mysqlEnum("type", ["seedbank", "growshop", "headshop", "nutrient", "equipment", "other"]).default("other").notNull(),
+  type: mysqlEnum("type", [
+    "seedbank",
+    "growshop",
+    "headshop",
+    "nutrient",
+    "equipment",
+    "other",
+  ])
+    .default("other")
+    .notNull(),
 
   // Subscription
-  plan: mysqlEnum("plan", ["basic", "professional", "enterprise"]).default("basic").notNull(),
+  plan: mysqlEnum("plan", ["basic", "professional", "enterprise"])
+    .default("basic")
+    .notNull(),
   planExpiresAt: timestamp("planExpiresAt"),
 
   // Stats
@@ -268,7 +335,15 @@ export const vendorProducts = mysqlTable("vendorProducts", {
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   currency: varchar("currency", { length: 3 }).default("EUR"),
 
-  category: mysqlEnum("category", ["seeds", "equipment", "nutrients", "accessories", "other"]).default("other").notNull(),
+  category: mysqlEnum("category", [
+    "seeds",
+    "equipment",
+    "nutrients",
+    "accessories",
+    "other",
+  ])
+    .default("other")
+    .notNull(),
   imageUrl: text("imageUrl"),
   externalUrl: text("externalUrl"),
 
@@ -305,7 +380,9 @@ export const auctions = mysqlTable("auctions", {
   endsAt: timestamp("endsAt").notNull(),
 
   winnerId: int("winnerId"),
-  status: mysqlEnum("status", ["pending", "active", "ended", "cancelled"]).default("pending").notNull(),
+  status: mysqlEnum("status", ["pending", "active", "ended", "cancelled"])
+    .default("pending")
+    .notNull(),
 
   totalBids: int("totalBids").default(0),
 
@@ -348,7 +425,9 @@ export const giveaways = mysqlTable("giveaways", {
   endsAt: timestamp("endsAt").notNull(),
 
   winnerId: int("winnerId"),
-  status: mysqlEnum("status", ["pending", "active", "ended", "cancelled"]).default("pending").notNull(),
+  status: mysqlEnum("status", ["pending", "active", "ended", "cancelled"])
+    .default("pending")
+    .notNull(),
 
   totalEntries: int("totalEntries").default(0),
 
@@ -360,18 +439,25 @@ export type Giveaway = typeof giveaways.$inferSelect;
 export type InsertGiveaway = typeof giveaways.$inferInsert;
 
 // ==================== GIVEAWAY ENTRIES ====================
-export const giveawayEntries = mysqlTable("giveawayEntries", {
-  id: int("id").autoincrement().primaryKey(),
-  giveawayId: int("giveawayId").notNull(),
-  userId: int("userId").notNull(),
+export const giveawayEntries = mysqlTable(
+  "giveawayEntries",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    giveawayId: int("giveawayId").notNull(),
+    userId: int("userId").notNull(),
 
-  ticketCount: int("ticketCount").default(1),
+    ticketCount: int("ticketCount").default(1),
 
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-}, (t) => ({
-  // one entry per user and raffle
-  giveawayUserUnique: uniqueIndex("giveawayEntries_giveaway_user_unique").on(t.giveawayId, t.userId),
-}));
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  (t) => ({
+    // one entry per user and raffle
+    giveawayUserUnique: uniqueIndex("giveawayEntries_giveaway_user_unique").on(
+      t.giveawayId,
+      t.userId,
+    ),
+  }),
+);
 
 export type GiveawayEntry = typeof giveawayEntries.$inferSelect;
 export type InsertGiveawayEntry = typeof giveawayEntries.$inferInsert;
@@ -385,7 +471,15 @@ export const adBanners = mysqlTable("adBanners", {
   imageUrl: text("imageUrl").notNull(),
   targetUrl: text("targetUrl").notNull(),
 
-  placement: mysqlEnum("placement", ["home", "community", "strains", "tools", "marketplace"]).default("home").notNull(),
+  placement: mysqlEnum("placement", [
+    "home",
+    "community",
+    "strains",
+    "tools",
+    "marketplace",
+  ])
+    .default("home")
+    .notNull(),
 
   startsAt: timestamp("startsAt").notNull(),
   endsAt: timestamp("endsAt").notNull(),
@@ -415,10 +509,25 @@ export const vendorInquiries = mysqlTable("vendorInquiries", {
   phone: varchar("phone", { length: 50 }),
   website: text("website"),
 
-  businessType: mysqlEnum("businessType", ["seedbank", "growshop", "headshop", "nutrient", "equipment", "other"]).notNull(),
+  businessType: mysqlEnum("businessType", [
+    "seedbank",
+    "growshop",
+    "headshop",
+    "nutrient",
+    "equipment",
+    "other",
+  ]).notNull(),
   message: text("message"),
 
-  status: mysqlEnum("status", ["new", "contacted", "negotiating", "approved", "rejected"]).default("new").notNull(),
+  status: mysqlEnum("status", [
+    "new",
+    "contacted",
+    "negotiating",
+    "approved",
+    "rejected",
+  ])
+    .default("new")
+    .notNull(),
   notes: text("notes"),
 
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -435,9 +544,24 @@ export const vendorLeads = mysqlTable("vendorLeads", {
 
   customerName: varchar("customerName", { length: 200 }).notNull(),
   customerEmail: varchar("customerEmail", { length: 320 }),
-  type: mysqlEnum("type", ["product_inquiry", "bulk_order", "consultation", "other"]).default("product_inquiry").notNull(),
+  type: mysqlEnum("type", [
+    "product_inquiry",
+    "bulk_order",
+    "consultation",
+    "other",
+  ])
+    .default("product_inquiry")
+    .notNull(),
   value: decimal("value", { precision: 10, scale: 2 }).default("0"),
-  status: mysqlEnum("status", ["new", "contacted", "qualified", "converted", "lost"]).default("new").notNull(),
+  status: mysqlEnum("status", [
+    "new",
+    "contacted",
+    "qualified",
+    "converted",
+    "lost",
+  ])
+    .default("new")
+    .notNull(),
 
   message: text("message"),
   notes: text("notes"),
@@ -484,14 +608,21 @@ export type UserCredential = typeof userCredentials.$inferSelect;
 export type InsertUserCredential = typeof userCredentials.$inferInsert;
 
 // ==================== POST LIKES ====================
-export const postLikes = mysqlTable("postLikes", {
-  id: int("id").autoincrement().primaryKey(),
-  postId: int("postId").notNull(),
-  userId: int("userId").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-}, (t) => ({
-  postUserUnique: uniqueIndex("postLikes_post_user_unique").on(t.postId, t.userId),
-}));
+export const postLikes = mysqlTable(
+  "postLikes",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    postId: int("postId").notNull(),
+    userId: int("userId").notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  (t) => ({
+    postUserUnique: uniqueIndex("postLikes_post_user_unique").on(
+      t.postId,
+      t.userId,
+    ),
+  }),
+);
 
 export type PostLike = typeof postLikes.$inferSelect;
 export type InsertPostLike = typeof postLikes.$inferInsert;
@@ -503,10 +634,28 @@ export const vendorOutreach = mysqlTable("vendorOutreach", {
   contactName: varchar("contactName", { length: 200 }),
   email: varchar("email", { length: 320 }).notNull(),
   website: varchar("website", { length: 500 }),
-  vendorType: mysqlEnum("vendorType", ["seedbank", "growshop", "headshop", "nutrient", "equipment", "other"]).default("other").notNull(),
+  vendorType: mysqlEnum("vendorType", [
+    "seedbank",
+    "growshop",
+    "headshop",
+    "nutrient",
+    "equipment",
+    "other",
+  ])
+    .default("other")
+    .notNull(),
   country: varchar("country", { length: 8 }),
   templateId: varchar("templateId", { length: 64 }).notNull(),
-  status: mysqlEnum("status", ["pending", "sent", "opened", "replied", "converted", "rejected"]).default("pending").notNull(),
+  status: mysqlEnum("status", [
+    "pending",
+    "sent",
+    "opened",
+    "replied",
+    "converted",
+    "rejected",
+  ])
+    .default("pending")
+    .notNull(),
   notes: text("notes"),
   sentAt: timestamp("sentAt"),
   openedAt: timestamp("openedAt"),
@@ -520,32 +669,89 @@ export type InsertVendorOutreach = typeof vendorOutreach.$inferInsert;
 
 // ==================== AUTH TOKENS (Passwort-Reset / E-Mail-Verifizierung) ====================
 // Only the SHA-256 hash of the token is stored; tokens are single-use (usedAt) and expire (expiresAt).
-export const authTokens = mysqlTable("auth_tokens", {
-  id: int("id").autoincrement().primaryKey(),
-  openId: varchar("openId", { length: 64 }).notNull(),
-  type: mysqlEnum("type", ["password_reset", "email_verify"]).notNull(),
-  tokenHash: varchar("tokenHash", { length: 64 }).notNull(),
-  expiresAt: timestamp("expiresAt").notNull(),
-  usedAt: timestamp("usedAt"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-}, (t) => ({
-  tokenHashUnique: uniqueIndex("auth_tokens_hash_unique").on(t.tokenHash),
-}));
+export const authTokens = mysqlTable(
+  "auth_tokens",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    openId: varchar("openId", { length: 64 }).notNull(),
+    type: mysqlEnum("type", ["password_reset", "email_verify"]).notNull(),
+    tokenHash: varchar("tokenHash", { length: 64 }).notNull(),
+    expiresAt: timestamp("expiresAt").notNull(),
+    usedAt: timestamp("usedAt"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  (t) => ({
+    tokenHashUnique: uniqueIndex("auth_tokens_hash_unique").on(t.tokenHash),
+  }),
+);
 
 export type AuthToken = typeof authTokens.$inferSelect;
 export type InsertAuthToken = typeof authTokens.$inferInsert;
 
 // ==================== PUSH TOKENS ====================
-export const pushTokens = mysqlTable("pushTokens", {
-  id: int("id").autoincrement().primaryKey(),
-  userId: int("userId").notNull(),
-  token: varchar("token", { length: 255 }).notNull(),
-  platform: varchar("platform", { length: 16 }),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-}, (t) => ({
-  tokenUnique: uniqueIndex("pushTokens_token_unique").on(t.token),
-}));
+export const pushTokens = mysqlTable(
+  "pushTokens",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    userId: int("userId").notNull(),
+    token: varchar("token", { length: 255 }).notNull(),
+    platform: varchar("platform", { length: 16 }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  (t) => ({
+    tokenUnique: uniqueIndex("pushTokens_token_unique").on(t.token),
+  }),
+);
 
 export type PushToken = typeof pushTokens.$inferSelect;
 export type InsertPushToken = typeof pushTokens.$inferInsert;
+
+// ==================== CONTENT REPORTS (UGC moderation) ====================
+export const contentReports = mysqlTable(
+  "contentReports",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    reporterId: int("reporterId").notNull(),
+    targetType: mysqlEnum("targetType", [
+      "post",
+      "comment",
+      "message",
+      "user",
+    ]).notNull(),
+    targetId: int("targetId").notNull(),
+    reportedUserId: int("reportedUserId").notNull(),
+    reason: varchar("reason", { length: 40 }).notNull(),
+    details: varchar("details", { length: 500 }),
+    status: mysqlEnum("status", ["open", "actioned", "dismissed"])
+      .default("open")
+      .notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  (t) => ({
+    reporterTargetUnique: uniqueIndex(
+      "contentReports_reporter_target_unique",
+    ).on(t.reporterId, t.targetType, t.targetId),
+  }),
+);
+
+export type ContentReport = typeof contentReports.$inferSelect;
+
+// ==================== USER BLOCKS ====================
+export const userBlocks = mysqlTable(
+  "userBlocks",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    blockerId: int("blockerId").notNull(),
+    blockedId: int("blockedId").notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  (t) => ({
+    blockUnique: uniqueIndex("userBlocks_blocker_blocked_unique").on(
+      t.blockerId,
+      t.blockedId,
+    ),
+  }),
+);
+
+export type UserBlock = typeof userBlocks.$inferSelect;

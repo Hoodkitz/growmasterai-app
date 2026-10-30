@@ -48,6 +48,8 @@ describe("deleteAccountData", () => {
       "auctionBids",
       "giveawayEntries",
       "pushTokens",
+      "contentReports",
+      "userBlocks",
       "auth_tokens",
       "user_credentials",
     ]) {

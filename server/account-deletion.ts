@@ -6,6 +6,7 @@ import {
   auctions,
   authTokens,
   communityPosts,
+  contentReports,
   diagnoses,
   giveawayEntries,
   journalEntries,
@@ -16,6 +17,7 @@ import {
   postLikes,
   pushTokens,
   userAchievements,
+  userBlocks,
   userCredentials,
   users,
   vendorLeads,
@@ -98,6 +100,11 @@ export async function deleteAccountData(
   await db
     .delete(messages)
     .where(or(eq(messages.senderId, uid), eq(messages.receiverId, uid)));
+
+  await db.delete(contentReports).where(eq(contentReports.reporterId, uid));
+  await db
+    .delete(userBlocks)
+    .where(or(eq(userBlocks.blockerId, uid), eq(userBlocks.blockedId, uid)));
 
   await db.delete(plants).where(eq(plants.userId, uid));
   await db.delete(journalEntries).where(eq(journalEntries.userId, uid));
