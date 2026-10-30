@@ -48,3 +48,7 @@ export function reporterCutoff(now: number = Date.now()): Date {
 export function dismissRestoresPost(hiddenReason: string | null): boolean {
   return hiddenReason === "auto";
 }
+
+/** Max characters of one base64 post image (about 750 KB of binary data). */
+export const MAX_POST_IMAGE_CHARS = 1_000_000;
+export const MAX_POST_IMAGES = 4;
