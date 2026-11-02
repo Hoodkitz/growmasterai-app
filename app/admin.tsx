@@ -16,6 +16,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useAppAuth } from "@/lib/auth-context";
+import { useIsAdmin } from "@/lib/use-is-admin";
 import { trpc } from "@/lib/trpc";
 
 type TabType = "dashboard" | "vendors" | "contests" | "ads" | "requests";
@@ -35,7 +36,8 @@ export default function AdminScreen() {
   const router = useRouter();
   const colors = useColors();
   useSafeAreaInsets();
-  const { user, isAdmin } = useAppAuth();
+  const { user } = useAppAuth();
+  const isAdmin = useIsAdmin();
 
   const [activeTab, setActiveTab] = useState<TabType>("dashboard");
   const [emailTemplate, setEmailTemplate] = useState("");
