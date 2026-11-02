@@ -21,9 +21,9 @@ export async function getDb() {
 }
 
 /**
- * `trustedIdentity`: the caller has proven control of the account's mailbox (Google login or
- * a verified email/password login). Only then may the owner role be granted, because the owner
- * openId is derived from the email address.
+ * `trustedIdentity`: the caller has proven control of the account's mailbox via Google
+ * (verified email). Only then may the owner role be granted, because the owner openId is
+ * derived from the email address and email/password accounts are self-registrable.
  */
 export async function upsertUser(
   user: InsertUser,
@@ -288,15 +288,12 @@ export async function verifyEmailLogin(email: string, password: string) {
     .select({
       openId: userCredentials.openId,
       passwordHash: userCredentials.passwordHash,
-      emailVerifiedAt: userCredentials.emailVerifiedAt,
     })
     .from(userCredentials)
     .where(eq(userCredentials.email, normalized))
     .limit(1);
   if (!row || !verifyPasswordHash(password, row.passwordHash)) return null;
-  await upsertUser(
-    { openId: row.openId, lastSignedIn: new Date() },
-    row.emailVerifiedAt !== null,
-  );
+  // Password logins never grant the owner role (a verified flag does not prove who set the password).
+  await upsertUser({ openId: row.openId, lastSignedIn: new Date() });
   return (await getUserByOpenId(row.openId)) ?? null;
 }
