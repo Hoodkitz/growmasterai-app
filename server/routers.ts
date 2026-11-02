@@ -100,6 +100,8 @@ const diagnosisResponseSchema = z.object({
     .optional(),
   genderConfidence: z.number().min(0).max(100).optional(),
   voiceResponse: z.string().optional(),
+  healthy: z.boolean().optional(),
+  harvestEstimate: z.string().max(200).optional(),
   remedies: z
     .array(
       z.object({
@@ -113,8 +115,15 @@ const diagnosisResponseSchema = z.object({
 
 /** Adds remedy suggestions (model proposals plus catalog fallback) to any diagnosis result. */
 function withRemedies<
-  T extends { problem: string; recommendations: string[]; remedies?: unknown },
+  T extends {
+    problem: string;
+    recommendations: string[];
+    remedies?: unknown;
+    healthy?: boolean;
+  },
 >(result: T) {
+  // A healthy plant gets no treatment suggestions (they read as advertising).
+  if (result.healthy === true) return { ...result, remedies: [] };
   const text = [result.problem, ...result.recommendations].join(" \n");
   return { ...result, remedies: mergeRemedies(result.remedies, text) };
 }
@@ -255,6 +264,8 @@ Antworte IMMER auf Deutsch und im folgenden JSON-Format:
   "plantGender": "male" | "female" | "hermaphrodite" | "unknown",
   "genderConfidence": 0-100 (Zahl),
   "voiceResponse": "Kurze, gesprochene Zusammenfassung für Text-to-Speech (1-2 Sätze)",
+  "healthy": true | false (true, wenn die Pflanze gesund ist und kein Problem vorliegt),
+  "harvestEstimate": "Nur in der Blüte: grobe Schätzung bis zur Ernte, z. B. \"noch etwa 2-4 Wochen\"; sonst weglassen",
   "remedies": [{"name": "Produkt oder Mittel, z. B. Neemöl", "purpose": "Ein Satz, warum es hilft", "searchTerm": "Suchbegriff für den Online-Shop"}]
 }
 
@@ -269,7 +280,9 @@ Geschlechts-Bestimmung:
 Die voiceResponse sollte eine natürlich klingende Zusammenfassung sein, z.B.:
 "Deine Pflanze zeigt Anzeichen von Stickstoffmangel. Die Blätter sind gelblich. Erhöhe die Düngergabe."
 
-Wenn die Pflanze gesund aussieht, beschreibe ihren guten Zustand und gib allgemeine Pflegetipps.`,
+Wenn die Pflanze gesund aussieht, setze "healthy": true, "severity": "low" und "remedies": [], beschreibe ihren guten Zustand und gib allgemeine Pflegetipps. Schreibe "problem" dann nicht als Problem, sondern als Zustandsbeschreibung.
+
+Sprich den Nutzer durchgehend mit "du" an (dein, dir), niemals mit "Sie".`,
               },
               {
                 role: "user",

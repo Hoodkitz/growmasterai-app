@@ -143,10 +143,22 @@ export function sanitizeRemedies(input: unknown): Remedy[] {
 }
 
 /** Catalog lookup from free text (problem description plus recommendations). */
+/** Drops clauses that negate their content ("keine Schädlinge oder Mängel"), so those words never trigger a remedy. */
+export function stripNegatedClauses(text: string): string {
+  return text
+    .split(/[.;:!?\n,]/)
+    .filter(
+      (clause) =>
+        !/\b(kein\w*|ohne|frei von|nicht|weder|nirgends)\b/i.test(clause),
+    )
+    .join(". ");
+}
+
 export function suggestRemedies(text: string): Remedy[] {
   const hits: Remedy[] = [];
+  const positive = stripNegatedClauses(text);
   for (const { keywords, name, purpose, searchTerm } of CATALOG) {
-    if (keywords.test(text) && !hits.some((h) => h.name === name)) {
+    if (keywords.test(positive) && !hits.some((h) => h.name === name)) {
       hits.push({ name, purpose, searchTerm });
     }
   }

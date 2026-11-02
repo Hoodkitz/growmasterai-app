@@ -256,3 +256,18 @@ describe("equipment and substrate products", () => {
         expect(p.label).not.toMatch(/Einmach|Weck/i);
   });
 });
+
+describe("suggestRemedies with negations", () => {
+  it("does not suggest pest remedies when pests are explicitly absent", () => {
+    const text =
+      "Gesunde weibliche Pflanze in später Blüte, kräftige Blätter, keine Schädlinge oder Mängel sichtbar.";
+    expect(suggestRemedies(text)).toEqual([]);
+  });
+
+  it("still suggests neem oil when pests are reported", () => {
+    const names = suggestRemedies(
+      "Kein Pilzbefall, aber Spinnmilben auf der Blattunterseite.",
+    ).map((r) => r.name);
+    expect(names).toContain("Neemöl");
+  });
+});
