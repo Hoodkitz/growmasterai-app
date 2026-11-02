@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  careToolsOnly,
   mergeRemedies,
   sanitizeRemedies,
   suggestRemedies,
@@ -269,5 +270,16 @@ describe("suggestRemedies with negations", () => {
       "Kein Pilzbefall, aber Spinnmilben auf der Blattunterseite.",
     ).map((r) => r.name);
     expect(names).toContain("Neemöl");
+  });
+});
+
+describe("careToolsOnly", () => {
+  it("keeps one measuring tool and drops treatment products", () => {
+    const out = careToolsOnly([
+      { name: "Neemöl", purpose: "", searchTerm: "Neemöl bio" },
+      { name: "Hygrometer", purpose: "", searchTerm: "Hygrometer Thermometer" },
+      { name: "pH-Messgerät", purpose: "", searchTerm: "pH Messgerät" },
+    ]);
+    expect(out.map((r) => r.name)).toEqual(["Hygrometer"]);
   });
 });

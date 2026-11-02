@@ -142,7 +142,6 @@ export function sanitizeRemedies(input: unknown): Remedy[] {
   return out;
 }
 
-/** Catalog lookup from free text (problem description plus recommendations). */
 /** Drops clauses that negate their content ("keine Schädlinge oder Mängel"), so those words never trigger a remedy. */
 export function stripNegatedClauses(text: string): string {
   return text
@@ -154,6 +153,7 @@ export function stripNegatedClauses(text: string): string {
     .join(". ");
 }
 
+/** Catalog lookup from free text (problem description plus recommendations). */
 export function suggestRemedies(text: string): Remedy[] {
   const hits: Remedy[] = [];
   const positive = stripNegatedClauses(text);
@@ -606,4 +606,14 @@ export function catalogRemedyNames(): string[] {
 
 export function productAsinNames(): string[] {
   return Object.keys(PRODUCTS);
+}
+
+/** Treatment products make no sense for a healthy plant; measuring and care tools still do. */
+const TREATMENT =
+  /neem|spray|fungizid|pilz|mehltau|schädling|schaedling|insektizid|nematod|gelbtafel|bekämpf/i;
+
+export function careToolsOnly(remedies: Remedy[]): Remedy[] {
+  return remedies
+    .filter((r) => !TREATMENT.test(`${r.name} ${r.searchTerm}`))
+    .slice(0, 1);
 }
