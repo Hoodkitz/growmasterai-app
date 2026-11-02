@@ -20,7 +20,15 @@ export async function getDb() {
   return _db;
 }
 
-export async function upsertUser(user: InsertUser): Promise<void> {
+/**
+ * `trustedIdentity`: the caller has proven control of the account's mailbox (Google login or
+ * a verified email/password login). Only then may the owner role be granted, because the owner
+ * openId is derived from the email address.
+ */
+export async function upsertUser(
+  user: InsertUser,
+  trustedIdentity = false,
+): Promise<void> {
   if (!user.openId) {
     throw new Error("User openId is required for upsert");
   }
@@ -57,7 +65,7 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     if (user.role !== undefined) {
       values.role = user.role;
       updateSet.role = user.role;
-    } else if (ENV.ownerOpenIds.includes(user.openId)) {
+    } else if (trustedIdentity && ENV.ownerOpenIds.includes(user.openId)) {
       values.role = "admin";
       updateSet.role = "admin";
     }
@@ -280,11 +288,15 @@ export async function verifyEmailLogin(email: string, password: string) {
     .select({
       openId: userCredentials.openId,
       passwordHash: userCredentials.passwordHash,
+      emailVerifiedAt: userCredentials.emailVerifiedAt,
     })
     .from(userCredentials)
     .where(eq(userCredentials.email, normalized))
     .limit(1);
   if (!row || !verifyPasswordHash(password, row.passwordHash)) return null;
-  await upsertUser({ openId: row.openId, lastSignedIn: new Date() });
+  await upsertUser(
+    { openId: row.openId, lastSignedIn: new Date() },
+    row.emailVerifiedAt !== null,
+  );
   return (await getUserByOpenId(row.openId)) ?? null;
 }
