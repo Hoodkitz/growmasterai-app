@@ -56,6 +56,8 @@ interface DiagnosisResult {
   voiceResponse?: string;
   healthy?: boolean;
   harvestEstimate?: string;
+  possibleCauses?: { cause: string; probability: number }[];
+  followUpQuestion?: string;
   remedies?: Remedy[];
 }
 
@@ -495,6 +497,36 @@ export default function DiagnoseScreen() {
                 </Text>
               ) : null}
             </View>
+
+            {diagnosis.possibleCauses &&
+              diagnosis.possibleCauses.length > 1 && (
+                <View className="bg-surface rounded-2xl p-4 border border-border gap-2">
+                  <Text className="text-lg font-semibold text-foreground">
+                    Mögliche Ursachen
+                  </Text>
+                  {diagnosis.possibleCauses.map((c) => (
+                    <View key={c.cause} className="flex-row justify-between">
+                      <Text className="text-base text-foreground flex-1 pr-2">
+                        {c.cause}
+                      </Text>
+                      <Text className="text-base text-muted">
+                        {Math.round(c.probability)} %
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+
+            {diagnosis.followUpQuestion ? (
+              <View className="bg-primary/10 rounded-2xl p-4 border border-primary/30 gap-1">
+                <Text className="text-base font-semibold text-foreground">
+                  Rückfrage zur Eingrenzung
+                </Text>
+                <Text className="text-base text-foreground">
+                  {diagnosis.followUpQuestion}
+                </Text>
+              </View>
+            ) : null}
 
             {genderMode &&
               (!diagnosis.plantGender ||

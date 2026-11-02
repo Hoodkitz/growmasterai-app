@@ -1,7 +1,12 @@
 import { sanitizeUserInput } from "./_core/security";
 import { deleteAccountData } from "./account-deletion";
 import { ENV } from "./_core/env";
-import { mergeRemedies, mergeCoachProducts } from "../shared/remedies";
+import {
+  mergeRemedies,
+  mergeCoachProducts,
+  sanitizeRemedies,
+  careToolsOnly,
+} from "../shared/remedies";
 import {
   KNOWLEDGE,
   KNOWLEDGE_PHASES,
@@ -102,6 +107,16 @@ const diagnosisResponseSchema = z.object({
   voiceResponse: z.string().optional(),
   healthy: z.boolean().optional(),
   harvestEstimate: z.string().max(200).optional(),
+  possibleCauses: z
+    .array(
+      z.object({
+        cause: z.string().max(120),
+        probability: z.number().min(0).max(100),
+      }),
+    )
+    .max(4)
+    .optional(),
+  followUpQuestion: z.string().max(300).optional(),
   remedies: z
     .array(
       z.object({
@@ -122,8 +137,13 @@ function withRemedies<
     healthy?: boolean;
   },
 >(result: T) {
-  // A healthy plant gets no treatment suggestions (they read as advertising).
-  if (result.healthy === true) return { ...result, remedies: [] };
+  // A healthy plant gets no treatment products, at most one measuring/care tool.
+  if (result.healthy === true) {
+    return {
+      ...result,
+      remedies: careToolsOnly(sanitizeRemedies(result.remedies)),
+    };
+  }
   const text = [result.problem, ...result.recommendations].join(" \n");
   return { ...result, remedies: mergeRemedies(result.remedies, text) };
 }
@@ -265,11 +285,15 @@ Antworte IMMER auf Deutsch und im folgenden JSON-Format:
   "genderConfidence": 0-100 (Zahl),
   "voiceResponse": "Kurze, gesprochene Zusammenfassung für Text-to-Speech (1-2 Sätze)",
   "healthy": true | false (true, wenn die Pflanze gesund ist und kein Problem vorliegt),
+  "possibleCauses": [{"cause": "Mögliche Ursache", "probability": 0-100}] (nur wenn die Ursache nicht eindeutig ist: 2-4 Ursachen, wahrscheinlichste zuerst; die wahrscheinlichste steht auch in "problem"),
+  "followUpQuestion": "Eine konkrete Rückfrage an den Nutzer, die zwischen den Ursachen unterscheidet (z. B. ob die Flecken nur an alten, unteren Blättern sind oder sich auf neue ausbreiten); nur bei unklarer Ursache, sonst weglassen",
   "harvestEstimate": "Nur in der Blüte: grobe Schätzung bis zur Ernte, z. B. \"noch etwa 2-4 Wochen\"; sonst weglassen",
   "remedies": [{"name": "Produkt oder Mittel, z. B. Neemöl", "purpose": "Ein Satz, warum es hilft", "searchTerm": "Suchbegriff für den Online-Shop"}]
 }
 
-Remedies: Nenne 1-4 konkrete, legale Pflege- oder Pflanzenschutzmittel bzw. Messgeräte, die zum erkannten Problem passen (z. B. Neemöl, Cal-Mag, pH-Messgerät). Keine Samen, keine Rauschmittel, keine Links. Bei gesunden Pflanzen leeres Array.
+Differenzialdiagnose: Runde, scharf begrenzte dunkle Flecken mit gelbem Hof, die über das ganze Blatt verteilt sind, sprechen eher für Pilz-Blattflecken (z. B. Septoria, Alternaria) als für Nährstoffmangel. Mangel zeigt sich meist zuerst an Rändern und Spitzen älterer Blätter. Lege dich auf die wahrscheinlichste Ursache fest und setze den Schweregrad entsprechend.
+
+Remedies: Nenne 1-4 konkrete, legale Pflege- oder Pflanzenschutzmittel bzw. Messgeräte, die zum erkannten Problem passen (z. B. Neemöl, Cal-Mag, pH-Messgerät). Keine Samen, keine Rauschmittel, keine Links. Bei gesunden Pflanzen höchstens ein Mess- oder Pflegegerät (z. B. Hygrometer), keine Pflanzenschutzmittel.
 
 Geschlechts-Bestimmung:
 - "male": Pollensäcke sichtbar (kleine grüne Bälle an Nodien)
@@ -280,7 +304,7 @@ Geschlechts-Bestimmung:
 Die voiceResponse sollte eine natürlich klingende Zusammenfassung sein, z.B.:
 "Deine Pflanze zeigt Anzeichen von Stickstoffmangel. Die Blätter sind gelblich. Erhöhe die Düngergabe."
 
-Wenn die Pflanze gesund aussieht, setze "healthy": true, "severity": "low" und "remedies": [], beschreibe ihren guten Zustand und gib allgemeine Pflegetipps. Schreibe "problem" dann nicht als Problem, sondern als Zustandsbeschreibung.
+Wenn die Pflanze gesund aussieht, setze "healthy": true, "severity": "low", beschreibe ihren guten Zustand und gib allgemeine Pflegetipps. Schreibe "problem" dann nicht als Problem, sondern als Zustandsbeschreibung.
 
 Sprich den Nutzer durchgehend mit "du" an (dein, dir), niemals mit "Sie".`,
               },
