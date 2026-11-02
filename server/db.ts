@@ -106,28 +106,55 @@ export async function setUserSubscriptionByOpenIds(
     throw new Error("database not available");
   }
   // Single query: update all matching users at once (avoids N+1)
-  const result = await db
+  const [header] = await db
     .update(users)
     .set({ subscriptionTier: tier, subscriptionExpiresAt: expiresAt })
     .where(sql`${users.openId} IN ${openIds}`);
-  return (result as unknown as { affectedRows: number }).affectedRows > 0;
+  return header.affectedRows > 0;
 }
 
-/** Admin: setzt Tier/Ablauf für alle Konten mit dieser E-Mail. Gibt die Zahl der geänderten Konten zurück. */
+export type SetTierResult =
+  | { status: "ok"; emailVerified: boolean }
+  | { status: "not_found" }
+  | { status: "ambiguous"; matches: number };
+
+/**
+ * Admin: setzt Tier/Ablauf für genau ein Konto mit dieser E-Mail.
+ * Bei mehreren Treffern wird nichts geändert; emailVerified zeigt, ob das
+ * Passwort-Konto seine E-Mail bestätigt hat (Google-Konten gelten als verifiziert).
+ */
 export async function setUserTierByEmail(
   email: string,
   tier: "free" | "premium" | "pro",
   expiresAt: Date | null,
-): Promise<number> {
+): Promise<SetTierResult> {
   const db = await getDb();
   if (!db) {
     throw new Error("database not available");
   }
-  const result = await db
+  const normalized = email.trim().toLowerCase();
+  const matches = await db
+    .select({ id: users.id, openId: users.openId })
+    .from(users)
+    .where(sql`LOWER(${users.email}) = ${normalized}`)
+    .limit(2);
+  if (matches.length === 0) return { status: "not_found" };
+  if (matches.length > 1)
+    return { status: "ambiguous", matches: matches.length };
+
+  const target = matches[0];
+  const [credential] = await db
+    .select({ verifiedAt: userCredentials.emailVerifiedAt })
+    .from(userCredentials)
+    .where(eq(userCredentials.openId, target.openId))
+    .limit(1);
+  const emailVerified = credential ? credential.verifiedAt !== null : true;
+
+  await db
     .update(users)
     .set({ subscriptionTier: tier, subscriptionExpiresAt: expiresAt })
-    .where(sql`LOWER(${users.email}) = ${email.trim().toLowerCase()}`);
-  return (result as unknown as { affectedRows: number }).affectedRows;
+    .where(eq(users.id, target.id));
+  return { status: "ok", emailVerified };
 }
 
 // ==================== EMAIL / PASSWORD CREDENTIALS ====================

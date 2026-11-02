@@ -1953,18 +1953,24 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
     setUserTier: adminProcedure
       .input(setUserTierInput)
       .mutation(async ({ input }) => {
-        const updated = await setUserTierByEmail(
+        const result = await setUserTierByEmail(
           input.email,
           input.tier,
           input.expiresAt ? new Date(input.expiresAt) : null,
         );
-        if (updated === 0) {
+        if (result.status === "not_found") {
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "Kein Konto mit dieser E-Mail gefunden.",
           });
         }
-        return { updated };
+        if (result.status === "ambiguous") {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: `${result.matches} Konten mit dieser E-Mail, nichts geändert.`,
+          });
+        }
+        return { emailVerified: result.emailVerified };
       }),
 
     stats: adminProcedure.query(async () => {

@@ -83,8 +83,11 @@ export default function AdminScreen() {
   const [tierEmail, setTierEmail] = useState("");
   const [tierValue, setTierValue] = useState<"free" | "premium" | "pro">("pro");
   const setUserTier = trpc.admin.setUserTier.useMutation({
-    onSuccess: () => {
-      Alert.alert("Gespeichert", `${tierEmail.trim()} → ${tierValue}`);
+    onSuccess: (r) => {
+      Alert.alert(
+        "Gespeichert",
+        `${tierEmail.trim()} → ${tierValue}${r.emailVerified ? "" : "\nAchtung: E-Mail des Kontos ist noch nicht bestätigt."}`,
+      );
       setTierEmail("");
     },
     onError: (e) => Alert.alert("Fehler", e.message),
