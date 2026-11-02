@@ -113,6 +113,23 @@ export async function setUserSubscriptionByOpenIds(
   return (result as unknown as { affectedRows: number }).affectedRows > 0;
 }
 
+/** Admin: setzt Tier/Ablauf für alle Konten mit dieser E-Mail. Gibt die Zahl der geänderten Konten zurück. */
+export async function setUserTierByEmail(
+  email: string,
+  tier: "free" | "premium" | "pro",
+  expiresAt: Date | null,
+): Promise<number> {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("database not available");
+  }
+  const result = await db
+    .update(users)
+    .set({ subscriptionTier: tier, subscriptionExpiresAt: expiresAt })
+    .where(sql`LOWER(${users.email}) = ${email.trim().toLowerCase()}`);
+  return (result as unknown as { affectedRows: number }).affectedRows;
+}
+
 // ==================== EMAIL / PASSWORD CREDENTIALS ====================
 // Table `user_credentials` is defined in drizzle/schema.ts and created by migration 0002.
 
@@ -160,20 +177,15 @@ export async function registerEmailUser(
   if (existing.length > 0) throw new Error("EMAIL_EXISTS");
   // Google-only account with this address: registering a password here would
   // grant access to it without proving mailbox ownership.
-  if (
-    (await getUserByOpenId(openId)) ||
-    (await getUserByOpenId(normalized))
-  ) {
+  if ((await getUserByOpenId(openId)) || (await getUserByOpenId(normalized))) {
     throw new Error("EMAIL_EXISTS");
   }
   try {
-    await db
-      .insert(userCredentials)
-      .values({
-        openId,
-        email: normalized,
-        passwordHash: hashPassword(password),
-      });
+    await db.insert(userCredentials).values({
+      openId,
+      email: normalized,
+      passwordHash: hashPassword(password),
+    });
   } catch (error) {
     // Unique constraint race (duplicate email / openId)
     if (
