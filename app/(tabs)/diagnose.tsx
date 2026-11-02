@@ -54,6 +54,8 @@ interface DiagnosisResult {
   plantGender?: "male" | "female" | "hermaphrodite" | "unknown";
   genderConfidence?: number;
   voiceResponse?: string;
+  healthy?: boolean;
+  harvestEstimate?: string;
   remedies?: Remedy[];
 }
 
@@ -462,27 +464,36 @@ export default function DiagnoseScreen() {
                     color={colors.primary}
                   />
                   <Text className="text-lg font-semibold text-foreground">
-                    Problem identifiziert
+                    {diagnosis.healthy
+                      ? "Pflanze gesund"
+                      : "Problem identifiziert"}
                   </Text>
                 </View>
-                <View
-                  className="px-3 py-1 rounded-full"
-                  style={{
-                    backgroundColor:
-                      getSeverityColor(diagnosis.severity) + "30",
-                  }}
-                >
-                  <Text
-                    style={{ color: getSeverityColor(diagnosis.severity) }}
-                    className="text-sm font-medium"
+                {!diagnosis.healthy && (
+                  <View
+                    className="px-3 py-1 rounded-full"
+                    style={{
+                      backgroundColor:
+                        getSeverityColor(diagnosis.severity) + "30",
+                    }}
                   >
-                    {getSeverityLabel(diagnosis.severity)}
-                  </Text>
-                </View>
+                    <Text
+                      style={{ color: getSeverityColor(diagnosis.severity) }}
+                      className="text-sm font-medium"
+                    >
+                      {getSeverityLabel(diagnosis.severity)}
+                    </Text>
+                  </View>
+                )}
               </View>
               <Text className="text-base text-foreground leading-6">
                 {diagnosis.problem}
               </Text>
+              {diagnosis.harvestEstimate ? (
+                <Text className="text-sm text-muted">
+                  Ernte: {diagnosis.harvestEstimate}
+                </Text>
+              ) : null}
             </View>
 
             {genderMode &&
