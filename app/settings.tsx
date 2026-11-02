@@ -18,6 +18,7 @@ import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
 import { TIER_INFO, TIER_LIMITS } from "@/lib/subscription";
 import { useAppAuth } from "@/lib/auth-context";
+import { useIsAdmin } from "@/lib/use-is-admin";
 import { trpc } from "@/lib/trpc";
 import { ExpenseTracker } from "@/components/expenses/expense-tracker";
 import type { Expense } from "@/lib/cost-tracking";
@@ -30,7 +31,8 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const { tier, upgradeTo, dailyDiagnoses, dailyMessages, refresh } =
     useSubscription();
-  const { isAdmin, isAuthenticated, user, logout } = useAppAuth();
+  const { isAuthenticated, user, logout } = useAppAuth();
+  const isAdmin = useIsAdmin();
   const [notifications, setNotificationsState] = useState(true);
   const [expenses, setExpenses] = useState<Expense[]>([]);
 
