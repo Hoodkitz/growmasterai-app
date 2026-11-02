@@ -1,21 +1,25 @@
 /**
  * Validates that a secret meets minimum security requirements
  */
-function validateSecret(value: string | undefined, name: string, minLength: number = 32): string {
+function validateSecret(
+  value: string | undefined,
+  name: string,
+  minLength: number = 32,
+): string {
   if (!value) {
     throw new Error(
       `${name} must be set in environment variables.\n` +
-      `Generate a secure secret with: openssl rand -base64 48`
+        `Generate a secure secret with: openssl rand -base64 48`,
     );
   }
-  
+
   if (value.length < minLength) {
     throw new Error(
       `${name} must be at least ${minLength} characters (currently ${value.length}).\n` +
-      `Generate a secure secret with: openssl rand -base64 48`
+        `Generate a secure secret with: openssl rand -base64 48`,
     );
   }
-  
+
   return value;
 }
 
@@ -28,6 +32,11 @@ export const ENV = {
   databaseUrl: process.env.DATABASE_URL ?? "",
   oAuthServerUrl: process.env.OAUTH_SERVER_URL ?? "",
   ownerOpenId: process.env.OWNER_OPEN_ID ?? "",
+  /** OWNER_OPEN_ID may list several ids separated by commas (e.g. legacy raw-email and hashed id). */
+  ownerOpenIds: (process.env.OWNER_OPEN_ID ?? "")
+    .split(",")
+    .map((v) => v.trim())
+    .filter(Boolean),
   isProduction: process.env.NODE_ENV === "production",
   forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
