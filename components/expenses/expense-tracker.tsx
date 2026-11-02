@@ -3,6 +3,7 @@
  * Track and visualize grow expenses
  */
 
+import { STORE_MODE } from "@/lib/store-mode";
 import {
   View,
   Text,
@@ -71,9 +72,11 @@ export function ExpenseTracker({
 
   const total = calculateTotalExpenses(expenses);
   const breakdown = getExpenseBreakdown(expenses);
-  const profitAnalysis = yieldGrams
-    ? analyzeProfitability(expenses, yieldGrams)
-    : null;
+  // Marktwert/ROI/Gewinn rechnet mit einem Gramm-Verkaufspreis: im Store-Build ausgeblendet.
+  const profitAnalysis =
+    !STORE_MODE && yieldGrams
+      ? analyzeProfitability(expenses, yieldGrams)
+      : null;
 
   const categories: {
     key: Expense["category"];
