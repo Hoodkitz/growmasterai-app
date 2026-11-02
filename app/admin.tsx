@@ -80,6 +80,18 @@ export default function AdminScreen() {
     },
     onError: (e) => Alert.alert("Fehler", e.message),
   });
+  const [tierEmail, setTierEmail] = useState("");
+  const [tierValue, setTierValue] = useState<"free" | "premium" | "pro">("pro");
+  const setUserTier = trpc.admin.setUserTier.useMutation({
+    onSuccess: (r) => {
+      Alert.alert(
+        "Gespeichert",
+        `${tierEmail.trim()} → ${tierValue}${r.emailVerified ? "" : "\nAchtung: E-Mail des Kontos ist noch nicht bestätigt."}`,
+      );
+      setTierEmail("");
+    },
+    onError: (e) => Alert.alert("Fehler", e.message),
+  });
   const [pushTitle, setPushTitle] = useState("");
   const [pushBody, setPushBody] = useState("");
   const pushCountQuery = trpc.push.tokenCount.useQuery(undefined, {
@@ -510,6 +522,59 @@ export default function AdminScreen() {
                   size={18}
                   color={colors.muted}
                 />
+              </TouchableOpacity>
+            </View>
+
+            {/* Tier vergeben */}
+            <View className="bg-surface rounded-xl p-4 border border-border mt-4 gap-3">
+              <Text className="text-base font-semibold text-foreground">
+                Abo-Stufe vergeben
+              </Text>
+              <Text className="text-xs text-muted">
+                Unbefristet, für Tester. Das Konto muss existieren.
+              </Text>
+              <TextInput
+                className="bg-background border border-border rounded-lg px-3 py-2 text-foreground"
+                placeholder="E-Mail des Kontos"
+                placeholderTextColor={colors.muted}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                maxLength={320}
+                value={tierEmail}
+                onChangeText={setTierEmail}
+              />
+              <View className="flex-row gap-2">
+                {(["free", "premium", "pro"] as const).map((t) => (
+                  <TouchableOpacity
+                    key={t}
+                    className={`flex-1 py-2 rounded-lg ${tierValue === t ? "bg-primary" : "bg-background border border-border"}`}
+                    onPress={() => setTierValue(t)}
+                  >
+                    <Text
+                      className={`text-center text-sm ${tierValue === t ? "text-white" : "text-foreground"}`}
+                    >
+                      {t}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <TouchableOpacity
+                className="bg-primary py-3 rounded-lg"
+                onPress={() => {
+                  if (!tierEmail.trim()) {
+                    Alert.alert("Fehler", "E-Mail ist erforderlich.");
+                    return;
+                  }
+                  setUserTier.mutate({
+                    email: tierEmail.trim(),
+                    tier: tierValue,
+                  });
+                }}
+                disabled={setUserTier.isPending}
+              >
+                <Text className="text-white text-center font-semibold">
+                  {setUserTier.isPending ? "Speichere..." : "Setzen"}
+                </Text>
               </TouchableOpacity>
             </View>
 

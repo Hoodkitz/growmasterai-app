@@ -19,7 +19,8 @@ import {
 import { z } from "zod";
 import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
-import { getDb } from "./db";
+import { getDb, setUserTierByEmail } from "./db";
+import { setUserTierInput } from "./admin-tier";
 import {
   plants,
   journalEntries,
@@ -1948,6 +1949,30 @@ Sei freundlich, informativ und gib konkrete, umsetzbare Ratschläge. Berücksich
 
   // Admin panel (admin role only)
   admin: router({
+    // Pro/Premium manuell vergeben (z. B. für Tester); wird bei RevenueCat-Events überschrieben.
+    setUserTier: adminProcedure
+      .input(setUserTierInput)
+      .mutation(async ({ input }) => {
+        const result = await setUserTierByEmail(
+          input.email,
+          input.tier,
+          input.expiresAt ? new Date(input.expiresAt) : null,
+        );
+        if (result.status === "not_found") {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Kein Konto mit dieser E-Mail gefunden.",
+          });
+        }
+        if (result.status === "ambiguous") {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: `${result.matches} Konten mit dieser E-Mail, nichts geändert.`,
+          });
+        }
+        return { emailVerified: result.emailVerified };
+      }),
+
     stats: adminProcedure.query(async () => {
       const db = await getDb();
       if (!db) throw new Error("Database connection failed");
