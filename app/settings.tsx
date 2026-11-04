@@ -35,6 +35,7 @@ export default function SettingsScreen() {
   const isAdmin = useIsAdmin();
   const [notifications, setNotificationsState] = useState(true);
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const handleLogout = () => {
     const doLogout = async () => {
@@ -441,31 +442,56 @@ export default function SettingsScreen() {
           </View>
         )}
 
-        {/* API Keys Section */}
+        {/* Erweitert (API-Keys / Webhooks), standardmäßig eingeklappt */}
         <View className="bg-surface rounded-2xl border border-border mb-6 overflow-hidden">
-          <Text className="text-lg font-semibold text-foreground p-4 pb-2">
-            API-Zugang
-          </Text>
-
           <TouchableOpacity
-            className="flex-row items-center justify-between p-4 border-t border-border"
-            onPress={() => router.push("/api-keys")}
+            className="flex-row items-center justify-between p-4"
+            onPress={() => setShowAdvanced((v) => !v)}
           >
-            <Text className="text-base text-foreground">
-              API-Keys verwalten
-            </Text>
-            <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+            <View className="flex-1 pr-2">
+              <Text className="text-lg font-semibold text-foreground">
+                Erweitert
+              </Text>
+              <Text className="text-xs text-muted mt-1">
+                Für Entwickler: API-Keys und Webhooks
+              </Text>
+            </View>
+            <IconSymbol
+              name={showAdvanced ? "chevron.down" : "chevron.right"}
+              size={20}
+              color={colors.muted}
+            />
           </TouchableOpacity>
-
-          <TouchableOpacity
-            className="flex-row items-center justify-between p-4 border-t border-border"
-            onPress={() => router.push("/webhooks")}
-          >
-            <Text className="text-base text-foreground">
-              Webhooks verwalten
-            </Text>
-            <IconSymbol name="chevron.right" size={20} color={colors.muted} />
-          </TouchableOpacity>
+          {showAdvanced && (
+            <>
+              <TouchableOpacity
+                className="flex-row items-center justify-between p-4 border-t border-border"
+                onPress={() => router.push("/api-keys")}
+              >
+                <Text className="text-base text-foreground">
+                  API-Keys verwalten
+                </Text>
+                <IconSymbol
+                  name="chevron.right"
+                  size={20}
+                  color={colors.muted}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="flex-row items-center justify-between p-4 border-t border-border"
+                onPress={() => router.push("/webhooks")}
+              >
+                <Text className="text-base text-foreground">
+                  Webhooks verwalten
+                </Text>
+                <IconSymbol
+                  name="chevron.right"
+                  size={20}
+                  color={colors.muted}
+                />
+              </TouchableOpacity>
+            </>
+          )}
         </View>
 
         {/* Account Section */}

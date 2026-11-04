@@ -3,6 +3,7 @@
  * Track and visualize grow expenses
  */
 
+import { STORE_MODE } from "@/lib/store-mode";
 import {
   View,
   Text,
@@ -45,7 +46,10 @@ export function ExpenseTracker({
 
   const handleExport = async (kind: "csv" | "pdf") => {
     if (expenses.length === 0) {
-      Alert.alert("Nothing to export", "Add at least one expense first.");
+      Alert.alert(
+        "Nichts zu exportieren",
+        "Trage zuerst mindestens eine Ausgabe ein.",
+      );
       return;
     }
     setExporting(true);
@@ -58,8 +62,8 @@ export function ExpenseTracker({
       if (path) await shareFile(path);
     } catch (e) {
       Alert.alert(
-        "Export failed",
-        e instanceof Error ? e.message : "Unknown error",
+        "Export fehlgeschlagen",
+        e instanceof Error ? e.message : "Unbekannter Fehler",
       );
     } finally {
       setExporting(false);
@@ -68,22 +72,24 @@ export function ExpenseTracker({
 
   const total = calculateTotalExpenses(expenses);
   const breakdown = getExpenseBreakdown(expenses);
-  const profitAnalysis = yieldGrams
-    ? analyzeProfitability(expenses, yieldGrams)
-    : null;
+  // Marktwert/ROI/Gewinn rechnet mit einem Gramm-Verkaufspreis: im Store-Build ausgeblendet.
+  const profitAnalysis =
+    !STORE_MODE && yieldGrams
+      ? analyzeProfitability(expenses, yieldGrams)
+      : null;
 
   const categories: {
     key: Expense["category"];
     label: string;
     icon: string;
   }[] = [
-    { key: "seeds", label: "Seeds", icon: "🌱" },
-    { key: "nutrients", label: "Nutrients", icon: "🌿" },
-    { key: "lights", label: "Lights", icon: "💡" },
-    { key: "equipment", label: "Equipment", icon: "🔧" },
-    { key: "electricity", label: "Electricity", icon: "⚡" },
-    { key: "water", label: "Water", icon: "💧" },
-    { key: "other", label: "Other", icon: "📦" },
+    { key: "seeds", label: "Saatgut", icon: "🌱" },
+    { key: "nutrients", label: "Dünger", icon: "🌿" },
+    { key: "lights", label: "Beleuchtung", icon: "💡" },
+    { key: "equipment", label: "Ausstattung", icon: "🔧" },
+    { key: "electricity", label: "Strom", icon: "⚡" },
+    { key: "water", label: "Wasser", icon: "💧" },
+    { key: "other", label: "Sonstiges", icon: "📦" },
   ];
 
   const handleAddExpense = () => {
@@ -116,17 +122,17 @@ export function ExpenseTracker({
       {/* Summary Cards */}
       <View className="flex-row mb-4">
         <View className="flex-1 bg-primary/10 border border-primary/20 rounded-xl p-4 mr-2">
-          <Text className="text-sm text-muted mb-1">Total Spent</Text>
+          <Text className="text-sm text-muted mb-1">Gesamtausgaben</Text>
           <Text className="text-2xl font-bold text-primary">
-            ${total.toFixed(2)}
+            {total.toFixed(2)} €
           </Text>
         </View>
 
         {profitAnalysis && (
           <View className="flex-1 bg-green-500/10 border border-green-500/20 rounded-xl p-4">
-            <Text className="text-sm text-muted mb-1">Cost/Gram</Text>
+            <Text className="text-sm text-muted mb-1">Kosten/Gramm</Text>
             <Text className="text-2xl font-bold text-green-600">
-              ${profitAnalysis.costPerGram.toFixed(2)}
+              {profitAnalysis.costPerGram.toFixed(2)} €
             </Text>
           </View>
         )}
@@ -142,8 +148,8 @@ export function ExpenseTracker({
             {profitAnalysis.roi}%
           </Text>
           <Text className="text-sm text-muted">
-            Market Value: ${profitAnalysis.marketValue.toFixed(2)} • Profit: $
-            {profitAnalysis.profit.toFixed(2)}
+            Marktwert: {profitAnalysis.marketValue.toFixed(2)} € • Gewinn:{" "}
+            {profitAnalysis.profit.toFixed(2)} €
           </Text>
         </View>
       )}
@@ -156,7 +162,7 @@ export function ExpenseTracker({
           onPress={() => handleExport("csv")}
         >
           <Text className="text-center font-semibold text-foreground">
-            {exporting ? "..." : "Export CSV"}
+            {exporting ? "..." : "CSV exportieren"}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -165,7 +171,7 @@ export function ExpenseTracker({
           onPress={() => handleExport("pdf")}
         >
           <Text className="text-center font-semibold text-foreground">
-            {exporting ? "..." : "Export PDF"}
+            {exporting ? "..." : "PDF exportieren"}
           </Text>
         </TouchableOpacity>
       </View>
@@ -173,7 +179,7 @@ export function ExpenseTracker({
       {/* Category Breakdown */}
       <View className="bg-surface rounded-xl p-4 mb-4">
         <Text className="text-lg font-bold text-foreground mb-3">
-          Expense Breakdown
+          Ausgaben nach Kategorie
         </Text>
         {breakdown.map((item) => (
           <View key={item.category} className="flex-row items-center mb-3">
@@ -183,7 +189,7 @@ export function ExpenseTracker({
                   {item.category}
                 </Text>
                 <Text className="text-sm font-semibold text-foreground">
-                  ${item.amount.toFixed(2)}
+                  {item.amount.toFixed(2)} €
                 </Text>
               </View>
               <View className="h-2 bg-border rounded-full overflow-hidden">
@@ -203,16 +209,16 @@ export function ExpenseTracker({
         ))}
       </View>
 
-      {/* Add Expense Button/Form */}
+      {/* Ausgabe hinzufügen Button/Form */}
       {showAddForm ? (
         <View className="bg-surface rounded-xl p-4 mb-4">
           <Text className="text-lg font-bold text-foreground mb-3">
-            Add Expense
+            Ausgabe hinzufügen
           </Text>
 
           {/* Category Selection */}
           <Text className="text-sm font-semibold text-foreground mb-2">
-            Category
+            Kategorie
           </Text>
           <ScrollView
             horizontal
@@ -239,7 +245,7 @@ export function ExpenseTracker({
 
           {/* Amount Input */}
           <Text className="text-sm font-semibold text-foreground mb-2">
-            Amount ($)
+            Betrag (€)
           </Text>
           <TextInput
             value={amount}
@@ -251,12 +257,12 @@ export function ExpenseTracker({
 
           {/* Description Input */}
           <Text className="text-sm font-semibold text-foreground mb-2">
-            Description
+            Beschreibung
           </Text>
           <TextInput
             value={description}
             onChangeText={setDescription}
-            placeholder="What did you buy?"
+            placeholder="Was hast du gekauft?"
             className="bg-background border border-border rounded-lg px-4 py-3 text-foreground mb-4"
           />
 
@@ -267,7 +273,7 @@ export function ExpenseTracker({
               className="flex-1 bg-primary rounded-lg py-3"
             >
               <Text className="text-white text-center font-semibold">
-                Add Expense
+                Ausgabe hinzufügen
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -275,7 +281,7 @@ export function ExpenseTracker({
               className="px-6 bg-border rounded-lg py-3"
             >
               <Text className="text-foreground text-center font-semibold">
-                Cancel
+                Abbrechen
               </Text>
             </TouchableOpacity>
           </View>
@@ -286,14 +292,14 @@ export function ExpenseTracker({
           className="bg-primary rounded-xl py-4 shadow-lg"
         >
           <Text className="text-white text-center text-lg font-bold">
-            + Add Expense
+            + Ausgabe hinzufügen
           </Text>
         </TouchableOpacity>
       )}
 
-      {/* Recent Expenses List */}
+      {/* Letzte Ausgaben List */}
       <Text className="text-lg font-bold text-foreground mt-6 mb-3">
-        Recent Expenses
+        Letzte Ausgaben
       </Text>
       <ScrollView>
         {expenses.slice(0, 10).map((expense) => (
@@ -306,7 +312,7 @@ export function ExpenseTracker({
                 {expense.category}
               </Text>
               <Text className="text-lg font-bold text-primary">
-                ${expense.amount.toFixed(2)}
+                {expense.amount.toFixed(2)} €
               </Text>
             </View>
             <Text className="text-sm text-muted">{expense.description}</Text>
