@@ -704,7 +704,7 @@ Klar = zu früh, Milchig = THC-Peak, Bernstein = mehr CBD/CBN, entspannender`,
 
 Antworte IMMER auf Deutsch und im folgenden JSON-Format:
 {
-  "answer": "Deine ausführliche Antwort auf die Frage",
+  "answer": "Deine Antwort auf die Frage, kompakt und praxisnah (höchstens ca. 150 Wörter)",
   "tips": ["Praktischer Tipp 1", "Praktischer Tipp 2", "Praktischer Tipp 3"],
   "products": [{"name": "Hilfsmittel, z. B. pH-Messgerät", "purpose": "Ein Satz, wofür es hier nützt", "searchTerm": "Suchbegriff für den Online-Shop"}]
 }

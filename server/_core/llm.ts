@@ -167,7 +167,10 @@ const GEMINI_FALLBACK_MODELS = [
 
 // A model that hangs must not eat the whole request budget: give up on it
 // and move to the next one in the chain.
-const GEMINI_ATTEMPT_TIMEOUT_MS = 30_000;
+const GEMINI_ATTEMPT_TIMEOUT_MS = 20_000;
+// Gesamtbudget aller Versuche: Mobile Clients geben nach ca. 60 s mit
+// "Network request failed" auf, daher lieber frueher aufgeben/weiterschalten.
+const GEMINI_TOTAL_BUDGET_MS = 50_000;
 
 const resolveApiUrl = (model: string) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${ENV.geminiApiKey}`;
@@ -219,15 +222,18 @@ async function fetchWithRetry(
   payload: Record<string, unknown>,
 ): Promise<Response> {
   let lastResponse: Response | null = null;
+  const startedAt = Date.now();
 
   for (const model of GEMINI_FALLBACK_MODELS) {
+    const left = GEMINI_TOTAL_BUDGET_MS - (Date.now() - startedAt);
+    if (left < 4_000) break;
     let response: Response;
     try {
       response = await fetch(resolveApiUrl(model), {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(payload),
-        signal: AbortSignal.timeout(GEMINI_ATTEMPT_TIMEOUT_MS),
+        signal: AbortSignal.timeout(Math.min(GEMINI_ATTEMPT_TIMEOUT_MS, left)),
       });
     } catch (e) {
       console.warn(

@@ -152,6 +152,16 @@ export default function CoachScreen() {
     },
   });
 
+  // Lade-Blase sichtbar halten: nach dem Einblenden ans Listenende scrollen.
+  useEffect(() => {
+    if (!coachMutation.isPending) return;
+    const t = setTimeout(
+      () => scrollViewRef.current?.scrollToEnd({ animated: true }),
+      120,
+    );
+    return () => clearTimeout(t);
+  }, [coachMutation.isPending]);
+
   const sendMessage = async () => {
     if (!input.trim() || coachMutation.isPending) return;
 
@@ -236,7 +246,7 @@ export default function CoachScreen() {
         <ScrollView
           ref={scrollViewRef}
           className="flex-1 p-4"
-          contentContainerStyle={{ gap: 16, paddingBottom: 8 }}
+          contentContainerStyle={{ gap: 16, paddingBottom: 32 }}
           showsVerticalScrollIndicator={false}
           onContentSizeChange={() =>
             scrollViewRef.current?.scrollToEnd({ animated: true })
@@ -345,8 +355,9 @@ export default function CoachScreen() {
           ))}
 
           {coachMutation.isPending && (
-            <View className="self-start bg-surface border border-border rounded-2xl rounded-bl-sm p-4">
+            <View className="self-start flex-row items-center gap-3 bg-surface border border-border rounded-2xl rounded-bl-sm p-4">
               <ActivityIndicator color={colors.primary} />
+              <Text className="text-sm text-muted">Coach denkt nach …</Text>
             </View>
           )}
         </ScrollView>
