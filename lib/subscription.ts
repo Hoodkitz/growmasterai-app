@@ -56,6 +56,30 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
   },
 };
 
+const TIER_RANK: Record<SubscriptionTier, number> = {
+  free: 0,
+  premium: 1,
+  pro: 2,
+};
+
+/**
+ * Effektive Stufe = höhere von lokal (Kauf/RevenueCat) und Server (z. B. im Admin-Panel
+ * vergeben). Server-Stufen mit abgelaufenem Datum zählen nicht.
+ */
+export function resolveTier(
+  local: SubscriptionTier,
+  server?: {
+    tier?: string | null;
+    expiresAt?: Date | string | null;
+  } | null,
+  now: Date = new Date(),
+): SubscriptionTier {
+  const st = server?.tier;
+  if (st !== "premium" && st !== "pro") return local;
+  if (server?.expiresAt && new Date(server.expiresAt) <= now) return local;
+  return TIER_RANK[st] > TIER_RANK[local] ? st : local;
+}
+
 // Accounts with all limits lifted (owner/testing)
 const UNLIMITED_EMAILS = ["hoodkitz@gmail.com", "julpaarmann@gmail.com"];
 

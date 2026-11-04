@@ -7,6 +7,7 @@ import React, {
   ReactNode,
 } from "react";
 import { useAppAuth } from "./auth-context";
+import { trpc } from "./trpc";
 import {
   SubscriptionTier,
   TIER_LIMITS,
@@ -25,6 +26,7 @@ import {
   getRemainingDiagnoses,
   getRemainingMessages,
   isUnlimitedAccount,
+  resolveTier,
 } from "./subscription";
 
 interface SubscriptionContextType {
@@ -68,9 +70,25 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const { user } = useAppAuth();
   const [storedTier, setTier] = useState<SubscriptionTier>("free");
   // Owner accounts get every Pro limit lifted regardless of purchase state.
+  // Vom Server vergebene Stufe (z. B. Admin-Panel) – gilt zusätzlich zu lokalen Käufen.
+  const meQuery = trpc.auth.me.useQuery(undefined, {
+    enabled: !!user,
+    staleTime: 60_000,
+    refetchInterval: 5 * 60_000,
+  });
+  const serverUser = meQuery.data as
+    | {
+        subscriptionTier?: string | null;
+        subscriptionExpiresAt?: Date | string | null;
+      }
+    | null
+    | undefined;
   const tier: SubscriptionTier = isUnlimitedAccount(user?.email)
     ? "pro"
-    : storedTier;
+    : resolveTier(storedTier, {
+        tier: serverUser?.subscriptionTier,
+        expiresAt: serverUser?.subscriptionExpiresAt,
+      });
   const [dailyDiagnoses, setDailyDiagnoses] = useState(0);
   const [dailyMessages, setDailyMessages] = useState(0);
   const [loading, setLoading] = useState(true);
