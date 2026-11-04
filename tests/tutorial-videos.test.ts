@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { TUTORIAL_VIDEOS, getTutorialUrl } from "../lib/locations-data";
+import {
+  TUTORIAL_VIDEOS,
+  getTutorialUrl,
+  getTutorialThumbnailUrl,
+} from "../lib/locations-data";
 import { strainSearchUrl } from "../lib/strains-data";
 
 describe("tutorial videos", () => {
@@ -25,6 +29,14 @@ describe("strainSearchUrl", () => {
       strainSearchUrl({ name: "Northern Lights", breeder: "Sensi Seeds" }),
     ).toBe(
       "https://www.google.com/search?q=Northern%20Lights%20Sensi%20Seeds%20Samen",
+    );
+  });
+});
+
+describe("getTutorialThumbnailUrl", () => {
+  it("baut die i.ytimg.com-Vorschau-URL aus der Video-ID", () => {
+    expect(getTutorialThumbnailUrl({ videoId: "54JClBM_cOc" })).toBe(
+      "https://i.ytimg.com/vi/54JClBM_cOc/hqdefault.jpg",
     );
   });
 });

@@ -1075,6 +1075,13 @@ export function formatViews(views: number): string {
   return views.toString();
 }
 
+/** Vorschaubild eines YouTube-Videos (öffentlich, ohne API-Schlüssel). */
+export function getTutorialThumbnailUrl(
+  video: Pick<TutorialVideo, "videoId">,
+): string {
+  return `https://i.ytimg.com/vi/${encodeURIComponent(video.videoId)}/hqdefault.jpg`;
+}
+
 export function getTutorialUrl(video: TutorialVideo): string {
   return `https://www.youtube.com/watch?v=${video.videoId}`;
 }

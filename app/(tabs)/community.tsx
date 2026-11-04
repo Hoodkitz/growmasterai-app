@@ -12,6 +12,7 @@ import {
   Dimensions,
   ActivityIndicator,
   Alert,
+  Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { trpc } from "@/lib/trpc";
@@ -38,6 +39,7 @@ import {
 } from "@/lib/news-data";
 import {
   TUTORIAL_VIDEOS,
+  getTutorialThumbnailUrl,
   getTutorialUrl,
   getCategoryLabel as getTutorialCategory,
   fetchNearbyShops,
@@ -324,12 +326,9 @@ export default function CommunityScreen() {
         }
       >
         {/* Tab-Leiste: es wird nur der aktive Reiter gezeichnet */}
-        <ScrollView
-          horizontal
-          style={{ flexGrow: 0 }}
-          showsHorizontalScrollIndicator={false}
+        <View
           className="px-4 my-3"
-          contentContainerStyle={{ gap: 8 }}
+          style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}
         >
           {tabs
             .filter((tab) => !(STORE_MODE && tab.id === "radar"))
@@ -355,7 +354,7 @@ export default function CommunityScreen() {
                 </Text>
               </TouchableOpacity>
             ))}
-        </ScrollView>
+        </View>
 
         {/* Radar Tab */}
         {activeTab === "radar" && (
@@ -1051,11 +1050,34 @@ export default function CommunityScreen() {
                 className="bg-surface rounded-xl border border-border overflow-hidden"
               >
                 <View className="h-40 bg-background items-center justify-center relative">
-                  <IconSymbol
-                    name="play.circle.fill"
-                    size={48}
-                    color={colors.primary}
+                  <Image
+                    source={{ uri: getTutorialThumbnailUrl(video) }}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                    }}
+                    resizeMode="cover"
+                    accessibilityIgnoresInvertColors
                   />
+                  <View
+                    style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: 28,
+                      backgroundColor: "rgba(0,0,0,0.55)",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <IconSymbol
+                      name="play.circle.fill"
+                      size={44}
+                      color="#ffffff"
+                    />
+                  </View>
                   {video.isPremium && tier === "free" && (
                     <View className="absolute inset-0 bg-black/50 items-center justify-center">
                       <IconSymbol name="lock.fill" size={32} color="#fff" />
