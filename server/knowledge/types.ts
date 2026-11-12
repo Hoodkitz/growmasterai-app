@@ -27,6 +27,10 @@ export interface KnowledgeEntry {
   text: string;
   /** "video" (Standard): belegte Aussage aus einem Video. "praxis": Praxis-Tipp ohne Video, im Text als solcher gekennzeichnet. */
   source?: "video" | "praxis";
+  /** Praxis-Tipps von Profis: Person/Kanal, Region und Quelle (Artikel) */
+  expert?: string;
+  city?: string;
+  sourceUrl?: string;
   /** 11-character YouTube id; the video must exist (checked via oEmbed). Pflicht außer bei Praxis-Tipps. */
   videoId?: string;
   /** Title of the video, as YouTube's oEmbed reports it. */

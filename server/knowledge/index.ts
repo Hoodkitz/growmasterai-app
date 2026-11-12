@@ -18,6 +18,7 @@ import climateGrow from "./entries/climate-grow.json";
 import lightingDistance from "./entries/lighting-distance.json";
 import lightingCycle from "./entries/lighting-cycle.json";
 import praxis from "./entries/praxis.json";
+import profis from "./entries/profis.json";
 
 const VIDEO_ID = /^[A-Za-z0-9_-]{11}$/;
 
@@ -88,6 +89,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = collect(
   lightingDistance,
   lightingCycle,
   praxis,
+  profis,
 );
 
 export function searchKnowledge(query: string, options?: SearchOptions) {

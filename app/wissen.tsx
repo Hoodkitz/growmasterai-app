@@ -171,9 +171,31 @@ export default function WissenScreen() {
                   </Text>
                 </TouchableOpacity>
               ) : (item as { source?: string }).source === "praxis" ? (
-                <Text className="text-xs text-muted">
-                  💡 Praxis-Tipp (ohne Video)
-                </Text>
+                (item as { sourceUrl?: string }).sourceUrl ? (
+                  <TouchableOpacity
+                    onPress={() =>
+                      Linking.openURL(
+                        (item as { sourceUrl: string }).sourceUrl,
+                      ).catch(() => {})
+                    }
+                  >
+                    <Text
+                      className="text-xs font-medium"
+                      style={{ color: colors.primary }}
+                    >
+                      💡 Profi-Tipp:{" "}
+                      {(item as { expert?: string }).expert ?? "Quelle"}
+                      {(item as { city?: string }).city
+                        ? ` (${(item as { city?: string }).city})`
+                        : ""}{" "}
+                      – Quelle öffnen
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <Text className="text-xs text-muted">
+                    💡 Praxis-Tipp (ohne Video)
+                  </Text>
+                )
               ) : null}
               <TouchableOpacity onPress={() => router.push("/(tabs)/coach")}>
                 <Text className="text-xs text-muted">

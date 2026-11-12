@@ -17,6 +17,8 @@ export type HwItem = {
   via: "homeassistant" | "esp32" | "both";
   price: string;
   searchTerm: string;
+  /** geprüfte Amazon-Produktnummer -> direkter Produktlink statt Suche */
+  asin?: string;
   note?: string;
 };
 

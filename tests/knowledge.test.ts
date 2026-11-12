@@ -65,3 +65,21 @@ describe("knowledge base", () => {
     expect(isValidEntry({ ...KNOWLEDGE[0], source: "praxis" })).toBe(false); // Praxis-Tipps tragen kein Video
   });
 });
+
+describe("Profi-Wissen (Recherche Hermes)", () => {
+  it("jeder Profi-Tipp hat Experte und https-Quelle und ist gültig", () => {
+    const profis = KNOWLEDGE.filter((e) => e.id.startsWith("profi-"));
+    expect(profis.length).toBeGreaterThanOrEqual(20);
+    for (const e of profis) {
+      expect(e.source).toBe("praxis");
+      expect(e.expert?.length).toBeGreaterThan(2);
+      expect(e.sourceUrl).toMatch(/^https:\/\//);
+      expect(isValidEntry(e)).toBe(true);
+    }
+    expect(
+      searchKnowledge("Wie trockne ich richtig, 60/60 Regel?", {
+        limit: 5,
+      }).some((h) => h.entry.id.startsWith("profi-")),
+    ).toBe(true);
+  });
+});

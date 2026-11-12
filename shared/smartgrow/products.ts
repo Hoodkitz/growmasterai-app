@@ -9,6 +9,8 @@ export type GrowProduct = {
   searchTerm: string;
   brand: string;
   priceRange: string;
+  /** geprüfte Amazon-Produktnummer -> direkter Produktlink */
+  asin?: string;
 };
 
 export const GROW_PRODUCTS: GrowProduct[] = [

@@ -9,6 +9,9 @@ export interface WissenEntry {
   tags: string[];
   text: string;
   source?: "video" | "praxis";
+  expert?: string;
+  city?: string;
+  sourceUrl?: string;
   videoId?: string;
   videoTitle?: string;
   channel?: string;

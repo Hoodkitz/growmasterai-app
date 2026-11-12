@@ -78,7 +78,7 @@ function PathView({
 
       <Text className="text-base font-bold text-foreground">Einkaufsliste</Text>
       {path.items.map((it) => {
-        const link = buildRemedyLink(it.searchTerm);
+        const link = buildRemedyLink(it.searchTerm, undefined, it.asin);
         const what = [
           ...(it.metrics ?? []).map((m) => METRIC_INFO[m].label),
           ...(it.actuators ?? []).map((a) => ACTUATOR_LABEL[a]),
@@ -112,7 +112,8 @@ function PathView({
               }}
             >
               <Text className="text-xs font-semibold text-white">
-                Bei Amazon suchen{link.isAffiliate ? " (Anzeige)" : ""}
+                {it.asin ? "Bei Amazon ansehen" : "Bei Amazon suchen"}
+                {link.isAffiliate ? " (Anzeige)" : ""}
               </Text>
             </TouchableOpacity>
           </View>
@@ -166,7 +167,7 @@ function ProductsView({ isAffiliate }: { isAffiliate: boolean }) {
         testIDPrefix="cat"
       />
       {GROW_PRODUCTS.filter((p) => p.category === cat).map((p) => {
-        const link = buildRemedyLink(p.searchTerm);
+        const link = buildRemedyLink(p.searchTerm, undefined, p.asin);
         return (
           <View
             key={p.name}
@@ -190,7 +191,8 @@ function ProductsView({ isAffiliate }: { isAffiliate: boolean }) {
               }}
             >
               <Text className="text-xs font-semibold text-white">
-                Bei Amazon suchen{link.isAffiliate ? " (Anzeige)" : ""}
+                {p.asin ? "Bei Amazon ansehen" : "Bei Amazon suchen"}
+                {link.isAffiliate ? " (Anzeige)" : ""}
               </Text>
             </TouchableOpacity>
           </View>
