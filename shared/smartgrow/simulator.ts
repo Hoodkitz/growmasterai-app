@@ -5,9 +5,23 @@
  */
 import type { Actuator, Command, Metric } from "./types";
 
-export type SimState = Record<Exclude<Metric, "leak">, number> & {
-  leak: number;
-};
+type SimMetric =
+  | "airTemp"
+  | "airRh"
+  | "co2"
+  | "leafTemp"
+  | "waterTemp"
+  | "waterEc"
+  | "waterPh"
+  | "waterLevel"
+  | "soilMoisture"
+  | "soilEc"
+  | "soilPh"
+  | "soilTemp"
+  | "ppfd"
+  | "leak";
+export type SimState = Record<SimMetric, number> &
+  Partial<Record<Metric, number>>;
 
 export const SIM_START: SimState = {
   airTemp: 22,

@@ -163,7 +163,9 @@ describe("Home-Assistant-Brücke", () => {
       actuators: { exhaust: "fan.abluft" },
     };
     const r = await readAll(cfg, f);
-    expect(r.readings).toEqual([{ metric: "airTemp", value: 24.5 }]);
+    expect(r.readings).toEqual([
+      { metric: "airTemp", value: 24.5, ts: expect.any(Number) },
+    ]);
     expect(r.state).toEqual({ exhaust: 30 });
     await execute(cfg, { actuator: "exhaust", kind: "set", value: 70 }, f);
     const last = calls[calls.length - 1];
@@ -234,5 +236,42 @@ describe("Home-Assistant-Brücke", () => {
     await expect(
       cameraSnapshot({ ...cfg, camera: "camera.../x" }, f),
     ).rejects.toThrow(/Keine Kamera/);
+  });
+
+  it("nimmt den echten Messzeitpunkt aus HA (toter Sensor wird als veraltet erkannt)", async () => {
+    const { haTimestamp } = await import("../server/smartgrow/homeassistant");
+    const now = Date.parse("2026-11-12T12:00:00Z");
+    expect(
+      haTimestamp(
+        {
+          entity_id: "sensor.t",
+          state: "20",
+          last_updated: "2026-11-12T10:00:00Z",
+        },
+        now,
+      ),
+    ).toBe(Date.parse("2026-11-12T10:00:00Z"));
+    expect(
+      haTimestamp(
+        {
+          entity_id: "sensor.t",
+          state: "20",
+          last_updated: "2026-11-12T10:00:00Z",
+          last_reported: "2026-11-12T11:59:00Z",
+        },
+        now,
+      ),
+    ).toBe(Date.parse("2026-11-12T11:59:00Z"));
+    expect(haTimestamp({ entity_id: "sensor.t", state: "20" }, now)).toBe(now);
+    expect(
+      haTimestamp(
+        {
+          entity_id: "sensor.t",
+          state: "20",
+          last_updated: "2027-01-01T00:00:00Z",
+        },
+        now,
+      ),
+    ).toBe(now); // Zukunft -> jetzt
   });
 });

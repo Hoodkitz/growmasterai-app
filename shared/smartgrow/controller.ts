@@ -64,6 +64,8 @@ export type ControllerInput = {
   dosedToday: Partial<Record<DoserChannel, number>>;
   lastDoseAt?: number | null;
   now: number;
+  /** angemeldete Sensoren (aus den Geräten) – fehlt einer davon, greift der Sensor-Notbetrieb */
+  sensors?: Metric[];
 };
 
 export type Decision = { cmd: Command; reason: string; safety?: boolean };
@@ -81,6 +83,14 @@ export type ControllerOutput = {
 
 /** Messwerte älter als das gelten als veraltet. */
 export const STALE_MS = 15 * 60_000;
+/** Sensoren, deren Ausfall Abschaltungen/Sperren auslöst */
+export const SAFETY_SENSORS: Metric[] = [
+  "airTemp",
+  "airRh",
+  "co2",
+  "leak",
+  "waterLevel",
+];
 
 /** Minuten seit Mitternacht in der Zeitzone des Zelts. */
 export function localMinutes(now: number, timeZone: string): number {
@@ -182,6 +192,9 @@ export function decide(input: ControllerInput): ControllerOutput {
     lastPumpAt: input.lastPumpAt,
     dosedToday: input.dosedToday,
     now,
+    missing: (input.sensors ?? []).filter(
+      (m) => values[m] === undefined && SAFETY_SENSORS.includes(m),
+    ),
   };
   const has = (a: Actuator) => caps.some((c) => c.type === a);
   const decisions: Decision[] = [];
@@ -195,7 +208,8 @@ export function decide(input: ControllerInput): ControllerOutput {
     decisions.push({ ...e, safety: true });
     if (e.cmd.kind === "set") planned[e.cmd.actuator] = e.cmd.value;
   }
-  const locked = new Set(Object.keys(planned));
+  // vom Notfall bestimmte Aktoren sperren – auch wenn gerade kein neuer Befehl nötig war
+  const locked = new Set<string>([...Object.keys(planned), ...em.owned]);
 
   const propose = (cmd: Command, reason: string) => {
     if (cmd.kind === "set" && locked.has(cmd.actuator)) return;
@@ -500,6 +514,91 @@ export function decide(input: ControllerInput): ControllerOutput {
       kind: "soil-ph",
       message: `pH im Substrat ${values.soilPh.toFixed(1)} – Gießwasser-pH prüfen.`,
     });
+  }
+
+  // --- 6. Wasser: Zulauf, Kühlung, Sauerstoff
+  if (has("waterValve") && values.waterLevel !== undefined) {
+    if (values.waterLevel < 30)
+      propose(
+        { actuator: "waterValve", kind: "set", value: 100 },
+        `Tank ${Math.round(values.waterLevel)} % – nachfüllen`,
+      );
+    else if (values.waterLevel >= 90 && (state.waterValve ?? 0) > 0)
+      propose(
+        { actuator: "waterValve", kind: "set", value: 0 },
+        `Tank ${Math.round(values.waterLevel)} % – Zulauf zu`,
+      );
+  }
+  if (has("chiller") && values.waterTemp !== undefined) {
+    if (values.waterTemp > 22)
+      propose(
+        { actuator: "chiller", kind: "set", value: 100 },
+        `Wasser ${r1(values.waterTemp)} °C – kühlen`,
+      );
+    else if (values.waterTemp < 20 && (state.chiller ?? 0) > 0)
+      propose(
+        { actuator: "chiller", kind: "set", value: 0 },
+        `Wasser ${r1(values.waterTemp)} °C – Kühler aus`,
+      );
+  }
+  if (has("airPump") && (state.airPump ?? 0) === 0) {
+    propose(
+      { actuator: "airPump", kind: "set", value: 100 },
+      "Luftpumpe dauerhaft an (Sauerstoff für die Wurzeln)",
+    );
+  }
+  if (values.dissolvedOxygen !== undefined && values.dissolvedOxygen < 6) {
+    alerts.push({
+      level: "warn",
+      kind: "low-oxygen",
+      message: `Nur ${values.dissolvedOxygen.toFixed(1)} mg/l Sauerstoff im Wasser – Luftpumpe/Sprudelstein prüfen, Wasser kühlen.`,
+    });
+  }
+  // --- 7. Drainwasser: Salzstau und pH im Substrat
+  if (
+    values.runoffEc !== undefined &&
+    values.waterEc !== undefined &&
+    values.runoffEc > values.waterEc + 0.8
+  ) {
+    alerts.push({
+      level: "warn",
+      kind: "runoff-ec",
+      message: `Drainwasser-EC ${values.runoffEc.toFixed(2)} deutlich über Gießwasser (${values.waterEc.toFixed(2)}) – Salze sammeln sich. Einmal kräftig mit pH-angepasstem Wasser durchspülen.`,
+    });
+  } else if (
+    values.runoffEc !== undefined &&
+    targets.ec.max > 0 &&
+    values.runoffEc > targets.ec.max + 1
+  ) {
+    alerts.push({
+      level: "warn",
+      kind: "runoff-ec",
+      message: `Drainwasser-EC ${values.runoffEc.toFixed(2)} hoch – Düngermenge senken oder spülen.`,
+    });
+  }
+  if (
+    values.runoffPh !== undefined &&
+    (values.runoffPh < targets.ph.min - 0.5 ||
+      values.runoffPh > targets.ph.max + 0.5)
+  ) {
+    alerts.push({
+      level: "warn",
+      kind: "runoff-ph",
+      message: `Drainwasser-pH ${values.runoffPh.toFixed(1)} außerhalb ${targets.ph.min}–${targets.ph.max} – Nährstoffe werden schlechter aufgenommen.`,
+    });
+  }
+  // --- 8. Sonden-Kalibrierung (pH/EC driften)
+  if (
+    (values.waterPh !== undefined || values.waterEc !== undefined) &&
+    settings.probesCalibratedAt
+  ) {
+    const days = (now - Date.parse(settings.probesCalibratedAt)) / 86_400_000;
+    if (days > 30)
+      alerts.push({
+        level: "info",
+        kind: "calibrate",
+        message: `pH-/EC-Sonden vor ${Math.floor(days)} Tagen kalibriert – bitte neu kalibrieren (pH 4/7, EC 1,413).`,
+      });
   }
 
   const v =

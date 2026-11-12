@@ -7,7 +7,7 @@
  * 4. Alarme protokollieren und per Push melden (je Art höchstens einmal pro Stunde)
  */
 import { createHash, randomBytes } from "node:crypto";
-import { and, desc, eq, gte, inArray, lt } from "drizzle-orm";
+import { and, eq, gte, inArray, isNull, lt, or, sql } from "drizzle-orm";
 import { getDb } from "../db";
 import {
   growCommands,
@@ -26,6 +26,7 @@ import {
   type AutomationConfig,
   type ControllerOutput,
   type Decision,
+  SAFETY_SENSORS,
 } from "../../shared/smartgrow/controller";
 import type {
   Adjustments,
@@ -34,6 +35,7 @@ import type {
 import {
   sanitizeLimits,
   type Alert,
+  type GuardContext,
   type SafetyLimits,
 } from "../../shared/smartgrow/safety";
 import {
@@ -134,24 +136,21 @@ export async function latestReadings(
   tentId: number,
   now: number,
 ): Promise<Partial<Record<Metric, Reading>>> {
-  const rows = await db
-    .select()
-    .from(growReadings)
-    .where(
-      and(
-        eq(growReadings.tentId, tentId),
-        gte(growReadings.ts, now - 60 * 60_000),
-      ),
-    )
-    .orderBy(desc(growReadings.ts))
-    .limit(400);
+  // je Messgröße der neueste Wert (eine Flut einer Größe verdrängt keine anderen)
+  const [rows] = (await db.execute(sql`
+    SELECT r.metric, r.value, r.ts FROM growReadings r
+    JOIN (SELECT metric, MAX(ts) AS mts FROM growReadings WHERE tentId = ${tentId} AND ts >= ${now - 60 * 60_000} AND ts <= ${now + 60_000} GROUP BY metric) m
+      ON r.metric = m.metric AND r.ts = m.mts
+    WHERE r.tentId = ${tentId}`)) as unknown as [
+    { metric: string; value: number; ts: number | string }[],
+  ];
   const out: Partial<Record<Metric, Reading>> = {};
-  for (const r of rows)
+  for (const r of rows ?? [])
     if (!out[r.metric as Metric])
       out[r.metric as Metric] = {
         metric: r.metric as Metric,
-        value: r.value,
-        ts: r.ts,
+        value: Number(r.value),
+        ts: Number(r.ts),
       };
   return out;
 }
@@ -182,8 +181,14 @@ export async function usage(
     .where(
       and(
         eq(growCommands.tentId, tentId),
-        gte(growCommands.createdAt, Math.min(since, now - COMMAND_TTL_MS)),
-        inArray(growCommands.status, ["pending", "sent", "done"]),
+        gte(growCommands.createdAt, Math.min(since, now - 26 * 3_600_000)),
+        inArray(growCommands.status, [
+          "pending",
+          "sent",
+          "done",
+          "failed",
+          "expired",
+        ]),
       ),
     )
     .orderBy(growCommands.createdAt);
@@ -196,6 +201,9 @@ export async function usage(
   };
   for (const r of rows) {
     const c = r.payload as Command;
+    // Gießen/Dosieren zählt, sobald es ausgegeben bzw. ausgeliefert wurde – egal ob/ wann die Bestätigung kommt
+    const issued = r.status === "pending" || r.sentAt != null;
+    if ((c.kind === "run" || c.kind === "dose") && !issued) continue;
     if (c.kind === "run" && c.seconds > 0) {
       if (r.createdAt >= since) u.pumpSecondsToday += c.seconds;
       u.lastPumpAt = Math.max(u.lastPumpAt ?? 0, r.createdAt);
@@ -415,18 +423,28 @@ async function pollHa(
   try {
     await pumpOffIfDue(db, d.id, now);
     const r = await ha.readAll(cfg);
-    if (r.readings.length)
+    const prevState = (d.state as Record<string, number> | null) ?? {};
+    // nur neue Messungen speichern (gleicher HA-Zeitstempel = derselbe Wert wie beim letzten Abruf)
+    const fresh = r.readings.filter(
+      (x) => x.ts > (prevState.lastHaPoll ?? 0) - 1000 || !prevState.lastHaPoll,
+    );
+    if (fresh.length)
       await db.insert(growReadings).values(
-        r.readings.map((x) => ({
+        fresh.map((x) => ({
           tentId: tent.id,
           deviceId: d.id,
           metric: x.metric,
           value: x.value,
-          ts: now,
+          ts: x.ts, // echter Messzeitpunkt aus HA – alte Werte werden so als veraltet erkannt
         })),
       );
     const prev = (d.state as Record<string, number> | null) ?? {};
-    const state = { ...prev, ...r.state, pumpUntil: prev.pumpUntil ?? 0 };
+    const state = {
+      ...prev,
+      ...r.state,
+      pumpUntil: prev.pumpUntil ?? 0,
+      lastHaPoll: now,
+    };
     d.state = state;
     d.lastSeenAt = now;
     await db
@@ -482,10 +500,51 @@ async function completeSimCommand(
 }
 
 /** Ein Zelt einen Takt weiterrechnen. Gibt die Entscheidung zurück (für Tests/Anzeige). */
+const ticking = new Set<number>();
+/** Mindestabstand zwischen zwei Takten eines Zelts (Scheduler, „Jetzt rechnen“, mehrere Server-Instanzen). */
+export const MIN_TICK_GAP_MS = 20_000;
+const TICK_CONCURRENCY = 5;
+const TICK_TIMEOUT_MS = 45_000;
+
+/**
+ * Ein Zelt einen Takt weiterrechnen – nie zweimal gleichzeitig: Sperre im Prozess plus atomarer
+ * Anspruch in der Datenbank (wirkt auch über mehrere Server-Instanzen).
+ */
 export async function tickTent(
   db: Db,
   tent: GrowTent,
   now = Date.now(),
+): Promise<ControllerOutput | null> {
+  if (ticking.has(tent.id)) return null;
+  ticking.add(tent.id);
+  try {
+    const prev = tent.lastTickAt;
+    const [res] = await db
+      .update(growTents)
+      .set({ lastTickAt: now })
+      .where(
+        and(
+          eq(growTents.id, tent.id),
+          or(
+            isNull(growTents.lastTickAt),
+            lt(growTents.lastTickAt, now - MIN_TICK_GAP_MS),
+          ),
+        ),
+      );
+    if (!(res as { affectedRows?: number }).affectedRows) return null;
+    tent.lastTickAt = prev; // für die Simulator-Zeitspanne
+    const out = await tickTentInner(db, tent, now);
+    tent.lastTickAt = now;
+    return out;
+  } finally {
+    ticking.delete(tent.id);
+  }
+}
+
+async function tickTentInner(
+  db: Db,
+  tent: GrowTent,
+  now: number,
 ): Promise<ControllerOutput | null> {
   const devices = await db
     .select()
@@ -518,7 +577,7 @@ export async function tickTent(
           tentId: tent.id,
           deviceId: sim.id,
           metric: m,
-          value: Math.round(s[m] * 100) / 100,
+          value: Math.round((s[m] ?? 0) * 100) / 100,
           ts: now,
         })),
       );
@@ -560,7 +619,7 @@ export async function tickTent(
     );
 
   // 2. Regler
-  const { caps, owner } = mergeCaps(devices);
+  const { caps, owner, sensors } = mergeCaps(devices);
   const state: Partial<Record<Actuator, number>> = {};
   for (const d of devices)
     Object.assign(state, (d.state as Record<string, number> | null) ?? {});
@@ -580,6 +639,7 @@ export async function tickTent(
     dosedToday: u.dosedToday,
     lastDoseAt: u.lastDoseAt,
     now,
+    sensors: [...sensors],
   });
 
   const alerts = [...out.alerts, ...haAlerts];
@@ -623,7 +683,7 @@ export async function tickTent(
   }
 
   // 3. Ausführen je nach Modus
-  if (cfg.mode !== "off") {
+  {
     const pendingProposals =
       cfg.mode === "assist"
         ? await db
@@ -640,7 +700,9 @@ export async function tickTent(
       const devId = owner.get(d.cmd.actuator);
       const device = devices.find((x) => x.id === devId);
       if (!device) continue;
+      // Notabschaltungen laufen in jedem Modus – auch bei „Aus“
       const execute = cfg.mode === "auto" || d.safety;
+      if (!execute && cfg.mode === "off") continue;
       if (execute) {
         await issueCommand(
           db,
@@ -652,7 +714,18 @@ export async function tickTent(
           "pending",
           now,
         );
-        if (logworthy(d))
+        if (
+          logworthy(d) &&
+          !(
+            d.safety &&
+            (await loggedRecently(
+              db,
+              tent.id,
+              `${describeCommand(d.cmd)} – ${d.reason}`,
+              now,
+            ))
+          )
+        )
           await logEvent(
             db,
             tent.id,
@@ -686,6 +759,77 @@ export async function tickTent(
   return out;
 }
 
+/**
+ * Sicherheitskontext für Hand- und Freigabe-Befehle: Stellungen ALLER Geräte + unterwegs befindliche Befehle,
+ * nur gültige (frische, plausible) Messwerte und ausgefallene Sicherheitssensoren – wie im Regeltakt.
+ */
+export async function guardContextFor(db: Db, tent: GrowTent, now: number) {
+  const cfg = tentConfig(tent);
+  const devices = await db
+    .select()
+    .from(growDevices)
+    .where(eq(growDevices.tentId, tent.id));
+  const { caps, owner, sensors } = mergeCaps(devices);
+  const state: Partial<Record<Actuator, number>> = {};
+  for (const d of devices)
+    Object.assign(state, (d.state as Record<string, number> | null) ?? {});
+  const u = await usage(db, tent.id, now, cfg.settings.timeZone);
+  Object.assign(state, u.inFlight);
+  const readings = await latestReadings(db, tent.id, now);
+  const out = decide({
+    settings: cfg.settings,
+    adjustments: cfg.adjustments,
+    limits: cfg.limits,
+    automation: cfg.automation,
+    readings,
+    caps,
+    state,
+    pumpSecondsToday: u.pumpSecondsToday,
+    lastPumpAt: u.lastPumpAt,
+    dosedToday: u.dosedToday,
+    lastDoseAt: u.lastDoseAt,
+    now,
+    sensors: [...sensors],
+  });
+  const g: GuardContext = {
+    limits: cfg.limits,
+    stage: cfg.settings.stage,
+    isDay: out.isDay,
+    values: out.values,
+    state,
+    caps,
+    pumpSecondsToday: u.pumpSecondsToday,
+    lastPumpAt: u.lastPumpAt,
+    dosedToday: u.dosedToday,
+    now,
+    missing: [...sensors].filter(
+      (m) => out.values[m] === undefined && SAFETY_SENSORS.includes(m),
+    ),
+  };
+  return { g, devices, owner };
+}
+
+/** Gleiche Notfall-Meldung höchstens einmal pro Stunde ins Protokoll. */
+async function loggedRecently(
+  db: Db,
+  tentId: number,
+  message: string,
+  now: number,
+) {
+  const r = await db
+    .select({ id: growEvents.id })
+    .from(growEvents)
+    .where(
+      and(
+        eq(growEvents.tentId, tentId),
+        eq(growEvents.message, message.slice(0, 500)),
+        gte(growEvents.createdAt, now - ALERT_REPEAT_MS),
+      ),
+    )
+    .limit(1);
+  return r.length > 0;
+}
+
 /** Sonnenauf-/untergang erzeugt jede Minute einen kleinen Dimmschritt – der gehört nicht ins Protokoll. */
 const logworthy = (d: Decision) =>
   d.safety || !(d.cmd.actuator === "light" && /Sonnen/.test(d.reason));
@@ -708,13 +852,35 @@ export async function tickAll(now = Date.now()): Promise<number> {
     const db = await getDb();
     if (!db) return 0;
     const tents = await db.select().from(growTents);
-    for (const t of tents) {
-      try {
-        await tickTent(db, t, now);
-      } catch (e) {
-        console.error(`[smartgrow] tent ${t.id} tick failed:`, e);
+    // mehrere Zelte parallel, je Zelt höchstens TICK_TIMEOUT_MS – ein langsames Home Assistant bremst niemanden
+    let next = 0;
+    const worker = async () => {
+      while (next < tents.length) {
+        const t = tents[next++];
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        try {
+          await Promise.race([
+            tickTent(db, t, now),
+            new Promise((_, rej) => {
+              timer = setTimeout(
+                () => rej(new Error("Zeitüberschreitung")),
+                TICK_TIMEOUT_MS,
+              );
+            }),
+          ]);
+        } catch (e) {
+          console.error(
+            `[smartgrow] tent ${t.id} tick failed:`,
+            (e as Error).message,
+          );
+        } finally {
+          clearTimeout(timer);
+        }
       }
-    }
+    };
+    await Promise.all(
+      Array.from({ length: Math.min(TICK_CONCURRENCY, tents.length) }, worker),
+    );
     return tents.length;
   } finally {
     running = false;
@@ -725,9 +891,13 @@ export async function tickAll(now = Date.now()): Promise<number> {
 export async function pruneReadings(now = Date.now()) {
   const db = await getDb();
   if (!db) return;
-  await db
-    .delete(growReadings)
-    .where(lt(growReadings.ts, now - READING_RETENTION_MS));
+  // in Portionen löschen, damit die Tabelle nicht lange gesperrt ist
+  for (let i = 0; i < 200; i++) {
+    const [r] = (await db.execute(
+      sql`DELETE FROM growReadings WHERE ts < ${now - READING_RETENTION_MS} LIMIT 5000`,
+    )) as unknown as [{ affectedRows?: number }];
+    if (!r?.affectedRows) break;
+  }
   await db
     .delete(growEvents)
     .where(lt(growEvents.createdAt, now - 90 * 86_400_000));

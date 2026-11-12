@@ -19,6 +19,12 @@ export const METRICS = [
   "soilTemp", // °C Substrat
   "ppfd", // µmol/m²/s Lichtsensor
   "leak", // 0 = trocken, 1 = Wasser am Boden
+  "runoffEc", // mS/cm Drainwasser (Salzstau erkennen)
+  "runoffPh", // Drainwasser
+  "dissolvedOxygen", // mg/l gelöster Sauerstoff (Hydro)
+  "smoke", // 0/1 Rauchmelder
+  "power", // W Stromverbrauch
+  "door", // 0 = zu, 1 = offen
 ] as const;
 export type Metric = (typeof METRICS)[number];
 
@@ -83,6 +89,30 @@ export const METRIC_INFO: Record<
     decimals: 0,
   },
   leak: { label: "Leck-Sensor", unit: "", min: 0, max: 1, decimals: 0 },
+  runoffEc: {
+    label: "EC Drainwasser",
+    unit: "mS/cm",
+    min: 0,
+    max: 15,
+    decimals: 2,
+  },
+  runoffPh: { label: "pH Drainwasser", unit: "", min: 0, max: 14, decimals: 2 },
+  dissolvedOxygen: {
+    label: "Sauerstoff im Wasser",
+    unit: "mg/l",
+    min: 0,
+    max: 25,
+    decimals: 1,
+  },
+  smoke: { label: "Rauchmelder", unit: "", min: 0, max: 1, decimals: 0 },
+  power: {
+    label: "Stromverbrauch",
+    unit: "W",
+    min: 0,
+    max: 10000,
+    decimals: 0,
+  },
+  door: { label: "Zelt-Tür", unit: "", min: 0, max: 1, decimals: 0 },
 };
 
 export const ACTUATORS = [
@@ -97,6 +127,9 @@ export const ACTUATORS = [
   "co2", // CO₂-Ventil 0/100
   "pump", // Bewässerung: läuft N Sekunden
   "doser", // Dosierpumpen: ml je Kanal
+  "waterValve", // Magnetventil Wasserzulauf zum Tank 0/100
+  "chiller", // Wasserkühler 0/100
+  "airPump", // Luftpumpe/Sprudelstein 0/100
 ] as const;
 export type Actuator = (typeof ACTUATORS)[number];
 
@@ -112,6 +145,9 @@ export const ACTUATOR_LABEL: Record<Actuator, string> = {
   co2: "CO₂-Ventil",
   pump: "Bewässerung",
   doser: "Dosierpumpen",
+  waterValve: "Tank-Zulauf (Ventil)",
+  chiller: "Wasserkühler",
+  airPump: "Luftpumpe",
 };
 
 export const DOSER_CHANNELS = [

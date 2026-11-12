@@ -521,3 +521,151 @@ describe("Smart Grow – Produktempfehlungen", () => {
     }
   });
 });
+
+describe("Smart Grow – Review-Fixes Sicherheit", () => {
+  const g = (over: Partial<GuardContext> = {}): GuardContext => ({
+    limits: DEFAULT_LIMITS,
+    stage: "veg",
+    isDay: true,
+    values: { airTemp: 25 },
+    state: {},
+    caps: ALL,
+    pumpSecondsToday: 0,
+    dosedToday: {},
+    now: NOW,
+    ...over,
+  });
+  it("Pumpen-Stopp geht immer durch – auch bei Leck, Tageslimit, kurzem Abstand", () => {
+    for (const over of [
+      { values: { leak: 1 } },
+      { pumpSecondsToday: 99999 },
+      { lastPumpAt: NOW - 1000 },
+      { values: { waterLevel: 1 } },
+    ]) {
+      const r = guard({ actuator: "pump", kind: "run", seconds: 0 }, g(over));
+      expect(r).toEqual({
+        ok: true,
+        cmd: { actuator: "pump", kind: "run", seconds: 0 },
+      });
+    }
+  });
+  it("ausgefallener Leck-/Füllstandsensor sperrt Gießen und Dosieren", () => {
+    expect(
+      guard(
+        { actuator: "pump", kind: "run", seconds: 30 },
+        g({ missing: ["leak"] }),
+      ).ok,
+    ).toBe(false);
+    expect(
+      guard(
+        { actuator: "doser", kind: "dose", channel: "phDown", ml: 1 },
+        g({ missing: ["waterLevel"] }),
+      ).ok,
+    ).toBe(false);
+  });
+  it("Temperatursensor fällt aus: Heizung aus (Notfall), Regler kann sie nicht wieder einschalten", () => {
+    const out = decide(
+      input({
+        readings: rd({ airRh: 60 }),
+        state: { heater: 100, exhaust: 20 },
+        sensors: ["airTemp", "airRh"],
+      }),
+    );
+    expect(find(out, "heater")[0]).toMatchObject({
+      cmd: { value: 0 },
+      safety: true,
+    });
+    expect(find(out, "exhaust")[0]).toMatchObject({
+      cmd: { value: 30 },
+      safety: true,
+    });
+    expect(
+      out.alerts.some(
+        (a) => a.kind === "sensor-airTemp" && a.level === "alarm",
+      ),
+    ).toBe(true);
+  });
+  it("Notfall-Stellung bleibt gesperrt, auch wenn sie schon anliegt (kein Flattern)", () => {
+    const out = decide(
+      input({
+        readings: rd({ airTemp: 25, airRh: 60, co2: 3000 }),
+        state: { co2: 0, exhaust: 100, intake: 100 },
+      }),
+    );
+    expect(find(out, "exhaust")).toHaveLength(0); // keine Rücknahme auf ~30 %
+    expect(find(out, "intake")).toHaveLength(0);
+  });
+  it("Leck: Pumpen-Stopp nur, wenn die Pumpe laufen könnte (nicht jede Minute)", () => {
+    const idle = decide(
+      input({
+        readings: rd({ airTemp: 25, airRh: 60, leak: 1 }),
+        state: { pump: 0 },
+        lastPumpAt: NOW - 5 * 3_600_000,
+      }),
+    );
+    expect(find(idle, "pump")).toHaveLength(0);
+    const busy = decide(
+      input({
+        readings: rd({ airTemp: 25, airRh: 60, leak: 1 }),
+        state: { pump: 0 },
+        lastPumpAt: NOW - 30_000,
+      }),
+    );
+    expect(find(busy, "pump")[0]?.cmd).toMatchObject({ seconds: 0 });
+  });
+  it("Rauchmelder: alles aus, keine Notlüftung, nichts darf wieder an", () => {
+    const out = decide(
+      input({
+        readings: rd({ airTemp: 40, airRh: 50, smoke: 1 }),
+        state: { light: 65, heater: 100, exhaust: 30 },
+      }),
+    );
+    expect(out.alerts.some((a) => a.kind === "smoke")).toBe(true);
+    expect(
+      out.decisions
+        .filter((d) => d.cmd.kind === "set")
+        .every((d) => d.cmd.kind === "set" && d.cmd.value === 0),
+    ).toBe(true);
+    expect(
+      guard(
+        { actuator: "heater", kind: "set", value: 100 },
+        g({ values: { airTemp: 15, smoke: 1 } }),
+      ).ok,
+    ).toBe(false);
+  });
+  it("Wasser: Zulauf bei leerem Tank, zu bei Leck; Drainwasser-EC warnt; Kalibrier-Erinnerung", () => {
+    const caps = [
+      ...ALL,
+      { type: "waterValve" as const },
+      { type: "chiller" as const },
+    ];
+    const low = decide(
+      input({
+        caps,
+        readings: rd({ airTemp: 25, airRh: 60, waterLevel: 20, waterTemp: 24 }),
+      }),
+    );
+    expect(find(low, "waterValve")[0]?.cmd).toMatchObject({ value: 100 });
+    expect(find(low, "chiller")[0]?.cmd).toMatchObject({ value: 100 });
+    const leak = decide(
+      input({
+        caps,
+        readings: rd({ airTemp: 25, airRh: 60, waterLevel: 20, leak: 1 }),
+        state: { waterValve: 100 },
+      }),
+    );
+    expect(find(leak, "waterValve")[0]).toMatchObject({
+      cmd: { value: 0 },
+      safety: true,
+    });
+    const runoff = decide(
+      input({
+        readings: rd({ airTemp: 25, airRh: 60, waterEc: 1.2, runoffEc: 2.5 }),
+        settings: tent({ probesCalibratedAt: "2026-09-01" }),
+      }),
+    );
+    expect(runoff.alerts.map((a) => a.kind)).toEqual(
+      expect.arrayContaining(["runoff-ec", "calibrate"]),
+    );
+  });
+});

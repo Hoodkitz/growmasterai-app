@@ -250,11 +250,20 @@ async function haRequest(
   }
 }
 
-type HaState = {
+export type HaState = {
   entity_id: string;
   state: string;
   attributes?: Record<string, unknown>;
+  /** Zeitpunkt der letzten Meldung des Geräts (ISO) – ein toter Sensor behält in HA seinen alten Wert */
+  last_updated?: string;
+  last_reported?: string;
 };
+
+/** Messzeitpunkt aus HA: last_reported/last_updated, sonst "jetzt". */
+export function haTimestamp(s: HaState, now: number): number {
+  const t = Date.parse(s.last_reported ?? s.last_updated ?? "");
+  return Number.isFinite(t) && t <= now + 60_000 ? t : now;
+}
 
 /** Verbindung testen und passende Entitäten auflisten (für die Zuordnung in der App). */
 export async function listEntities(
@@ -321,7 +330,7 @@ export async function readAll(
   cfg: HaConfig,
   f?: HaFetch,
 ): Promise<{
-  readings: { metric: Metric; value: number }[];
+  readings: { metric: Metric; value: number; ts: number }[];
   state: Record<string, number>;
 }> {
   const token = decryptToken(cfg.tokenEnc);
@@ -333,11 +342,13 @@ export async function readAll(
     f,
   )) as HaState[];
   const byId = new Map(states.map((s) => [s.entity_id, s]));
-  const readings: { metric: Metric; value: number }[] = [];
+  const readings: { metric: Metric; value: number; ts: number }[] = [];
+  const now = Date.now();
   for (const [m, id] of Object.entries(cfg.sensors) as [Metric, string][]) {
     const s = byId.get(id);
     const v = s ? parseHaValue(m, s) : null;
-    if (v !== null) readings.push({ metric: m, value: v });
+    if (v !== null && s)
+      readings.push({ metric: m, value: v, ts: haTimestamp(s, now) });
   }
   const state: Record<string, number> = {};
   for (const [a, id] of Object.entries(cfg.actuators)) {

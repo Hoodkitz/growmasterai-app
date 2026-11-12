@@ -14,7 +14,8 @@
  */
 import type { Express, Request, Response } from "express";
 import express from "express";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, gt, inArray, sql } from "drizzle-orm";
+import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { getDb } from "../db";
 import { growCommands, growDevices, growReadings } from "../../drizzle/schema";
@@ -26,7 +27,7 @@ import {
   type Command,
   type DeviceCaps,
 } from "../../shared/smartgrow/types";
-import { hashToken } from "./engine";
+import { COMMAND_TTL_MS, hashToken } from "./engine";
 import {
   handleDeviceSnapshot,
   isJpeg,
@@ -148,10 +149,19 @@ export async function handleReport(
       deviceId: device.id,
       metric: r.metric,
       value: r.value,
-      ts: r.ts && Math.abs(r.ts - now) < 10 * 60_000 ? r.ts : now,
+      // Zeitstempel nur aus der jüngeren Vergangenheit (max. 10 min alt, max. 60 s in der Zukunft)
+      ts:
+        r.ts && r.ts >= now - 10 * 60_000 && r.ts <= now + 60_000 ? r.ts : now,
     }));
-  const ignored = list.length - rows.length;
-  if (rows.length) await db.insert(growReadings).values(rows);
+  // höchstens ein Wert je Messgröße und Meldung (der neueste) – gegen Datenfluten
+  const newest = new Map<string, (typeof rows)[number]>();
+  for (const r of rows) {
+    const o = newest.get(r.metric);
+    if (!o || r.ts >= o.ts) newest.set(r.metric, r);
+  }
+  const ignored = list.length - newest.size;
+  const kept = [...newest.values()];
+  if (kept.length) await db.insert(growReadings).values(kept);
 
   // Bestätigungen: Befehl erledigt -> Stellung merken
   let state = { ...((device.state as Record<string, number> | null) ?? {}) };
@@ -173,7 +183,8 @@ export async function handleReport(
       );
     for (const a of b.acks) {
       const c = own.find((o) => o.id === a.id);
-      if (!c || (c.status !== "sent" && c.status !== "pending")) continue;
+      // auch späte Bestätigungen annehmen (bereits als abgelaufen markierte Befehle)
+      if (!c || !["sent", "pending", "expired"].includes(c.status)) continue;
       await db
         .update(growCommands)
         .set({
@@ -183,8 +194,22 @@ export async function handleReport(
         })
         .where(eq(growCommands.id, c.id));
       const p = c.payload as Command;
-      if (a.ok && p.kind === "set" && !b.state?.[p.actuator])
-        state = { ...state, [p.actuator]: p.value };
+      // gemeldete Stellung hat Vorrang; sonst nur übernehmen, wenn kein neuerer Befehl für den Aktor existiert
+      if (a.ok && p.kind === "set" && b.state?.[p.actuator] === undefined) {
+        const newer = await db
+          .select({ id: growCommands.id })
+          .from(growCommands)
+          .where(
+            and(
+              eq(growCommands.deviceId, device.id),
+              eq(growCommands.actuator, p.actuator),
+              gt(growCommands.id, c.id),
+              inArray(growCommands.status, ["sent", "done"]),
+            ),
+          )
+          .limit(1);
+        if (!newer.length) state = { ...state, [p.actuator]: p.value };
+      }
     }
   }
   await db
@@ -192,35 +217,30 @@ export async function handleReport(
     .set({ lastSeenAt: now, state, firmware: b.firmware ?? device.firmware })
     .where(eq(growDevices.id, device.id));
 
-  // offene Befehle ausliefern
+  // offene Befehle ausliefern: erst atomar beanspruchen (Markierung), dann genau diese lesen –
+  // zwei gleichzeitige Meldungen bekommen so nie denselben Befehl; zu alte Befehle werden nicht mehr ausgeliefert
+  const claim = `claim:${randomBytes(8).toString("hex")}`;
+  await db.execute(sql`UPDATE growCommands SET status = 'sent', sentAt = ${now}, result = ${claim}
+    WHERE deviceId = ${device.id} AND status = 'pending' AND createdAt >= ${now - COMMAND_TTL_MS} ORDER BY id LIMIT 20`);
   const pending = await db
     .select()
     .from(growCommands)
     .where(
-      and(
-        eq(growCommands.deviceId, device.id),
-        eq(growCommands.status, "pending"),
-      ),
+      and(eq(growCommands.deviceId, device.id), eq(growCommands.result, claim)),
     )
-    .orderBy(growCommands.id)
-    .limit(20);
+    .orderBy(growCommands.id);
   if (pending.length)
     await db
       .update(growCommands)
-      .set({ status: "sent", sentAt: now })
-      .where(
-        inArray(
-          growCommands.id,
-          pending.map((p) => p.id),
-        ),
-      );
+      .set({ result: null })
+      .where(eq(growCommands.result, claim));
   return {
     status: 200,
     json: {
       ok: true,
       serverTime: now,
       pollSeconds: POLL_SECONDS,
-      accepted: rows.length,
+      accepted: kept.length,
       ignored,
       commands: pending.map((p) => ({ id: p.id, ...(p.payload as Command) })),
       failsafe: FAILSAFE,

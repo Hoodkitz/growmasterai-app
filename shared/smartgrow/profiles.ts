@@ -130,6 +130,8 @@ export type TentSettings = {
   purpleFinish: boolean;
   /** geplantes Erntedatum (ISO) – für Lila-Finish */
   harvestDate?: string | null;
+  /** letzte Kalibrierung der pH-/EC-Sonden (ISO) – für Erinnerungen */
+  probesCalibratedAt?: string | null;
   /** IANA-Zeitzone, z. B. Europe/Berlin */
   timeZone: string;
 };

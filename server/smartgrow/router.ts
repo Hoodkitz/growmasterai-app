@@ -21,7 +21,6 @@ import {
   DEFAULT_AUTOMATION,
   lightPlan,
 } from "../../shared/smartgrow/controller";
-import { targetsFor, type TentSettings } from "../../shared/smartgrow/profiles";
 import {
   clampAdjustments,
   DEFAULT_LIMITS,
@@ -50,6 +49,7 @@ import {
   tentConfig,
   tickTent,
   usage,
+  guardContextFor,
 } from "./engine";
 import { POLL_SECONDS } from "./device-api";
 import { reviewTent, describeAdjustments, type AiSummary } from "./ai";
@@ -100,6 +100,11 @@ const settingsInput = z.object({
   reservoirLiters: z.number().min(1).max(1000),
   purpleFinish: z.boolean(),
   harvestDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable()
+    .optional(),
+  probesCalibratedAt: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
     .nullable()
@@ -672,48 +677,20 @@ export const smartGrowRouter = router({
       const t = await ownTent(ctx.user.id, input.tentId);
       const d = await db();
       const now = Date.now();
-      const cfg = tentConfig(t);
-      const devices = await d
-        .select()
-        .from(growDevices)
-        .where(eq(growDevices.tentId, t.id));
-      const { caps, owner } = mergeCaps(devices);
-      const state: Record<string, number> = {};
-      for (const dev of devices)
-        Object.assign(
-          state,
-          (dev.state as Record<string, number> | null) ?? {},
-        );
-      const u = await usage(d, t.id, now, cfg.settings.timeZone);
-      const readings = await latestReadings(d, t.id, now);
-      const values = Object.fromEntries(
-        Object.entries(readings).map(([k, r]) => [k, r!.value]),
-      );
-      const targets = targetsFor(
-        cfg.settings as TentSettings,
-        cfg.adjustments,
-        now,
-      );
-      const isDay = lightPlan(cfg.settings, targets, now).isDay;
       const cmd = input.cmd as Command;
-      const g = guard(cmd, {
-        limits: cfg.limits,
-        stage: cfg.settings.stage,
-        isDay,
-        values,
-        state: { ...state, ...u.inFlight },
-        caps,
-        pumpSecondsToday: u.pumpSecondsToday,
-        lastPumpAt: u.lastPumpAt,
-        dosedToday: u.dosedToday,
-        now,
-      });
+      const { g: ctxG, devices, owner } = await guardContextFor(d, t, now);
+      const g = guard(cmd, ctxG);
       if (!g.ok)
         throw new TRPCError({
           code: "PRECONDITION_FAILED",
           message: `Sicherheitsprüfung: ${g.reason}`,
         });
-      const device = devices.find((x) => x.id === owner.get(cmd.actuator))!;
+      const device = devices.find((x) => x.id === owner.get(cmd.actuator));
+      if (!device)
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "Kein Gerät für diesen Aktor verbunden.",
+        });
       const id = await issueCommand(
         d,
         t,
@@ -761,62 +738,41 @@ export const smartGrowRouter = router({
           code: "CONFLICT",
           message: "Vorschlag ist nicht mehr aktuell.",
         });
-      await d
+      const now = Date.now();
+      let g: ReturnType<typeof guard> | null = null;
+      let device: typeof growDevices.$inferSelect | undefined;
+      if (input.approve) {
+        // erst prüfen (Lage kann sich geändert haben) – bei Ablehnung bleibt der Vorschlag bestehen
+        const ctxAll = await guardContextFor(d, t, now);
+        device = ctxAll.devices.find((x) => x.id === c.deviceId);
+        if (!device)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Gerät nicht mehr vorhanden",
+          });
+        g = guard(c.payload as Command, ctxAll.g);
+        if (!g.ok)
+          throw new TRPCError({
+            code: "PRECONDITION_FAILED",
+            message: `Sicherheitsprüfung: ${g.reason}`,
+          });
+      }
+      // atomar beanspruchen: doppelte Bestätigung führt nicht zu zwei Befehlen
+      const [res] = await d
         .update(growCommands)
         .set({
           status: input.approve ? "expired" : "rejected",
           result: input.approve ? "bestätigt" : "abgelehnt",
         })
-        .where(eq(growCommands.id, c.id));
-      if (!input.approve) return { ok: true as const };
-      const [device] = await d
-        .select()
-        .from(growDevices)
-        .where(eq(growDevices.id, c.deviceId))
-        .limit(1);
-      if (!device)
+        .where(
+          and(eq(growCommands.id, c.id), eq(growCommands.status, "proposed")),
+        );
+      if (!(res as { affectedRows?: number }).affectedRows)
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Gerät nicht mehr vorhanden",
+          code: "CONFLICT",
+          message: "Vorschlag wurde schon bearbeitet.",
         });
-      // erneut prüfen – die Lage kann sich seit dem Vorschlag geändert haben
-      const now = Date.now();
-      const cfg = tentConfig(t);
-      const devices = await d
-        .select()
-        .from(growDevices)
-        .where(eq(growDevices.tentId, t.id));
-      const { caps } = mergeCaps(devices);
-      const u = await usage(d, t.id, now, cfg.settings.timeZone);
-      const readings = await latestReadings(d, t.id, now);
-      const values = Object.fromEntries(
-        Object.entries(readings).map(([k, r]) => [k, r!.value]),
-      );
-      const isDay = lightPlan(
-        cfg.settings,
-        targetsFor(cfg.settings, cfg.adjustments, now),
-        now,
-      ).isDay;
-      const g = guard(c.payload as Command, {
-        limits: cfg.limits,
-        stage: cfg.settings.stage,
-        isDay,
-        values,
-        state: {
-          ...((device.state as Record<string, number> | null) ?? {}),
-          ...u.inFlight,
-        },
-        caps,
-        pumpSecondsToday: u.pumpSecondsToday,
-        lastPumpAt: u.lastPumpAt,
-        dosedToday: u.dosedToday,
-        now,
-      });
-      if (!g.ok)
-        throw new TRPCError({
-          code: "PRECONDITION_FAILED",
-          message: `Sicherheitsprüfung: ${g.reason}`,
-        });
+      if (!input.approve || !g?.ok || !device) return { ok: true as const };
       await issueCommand(
         d,
         t,
@@ -844,9 +800,7 @@ export const smartGrowRouter = router({
     .mutation(async ({ ctx, input }) => {
       const t = await ownTent(ctx.user.id, input.id);
       const d = await db();
-      if (t.lastTickAt && Date.now() - t.lastTickAt < 10_000)
-        return { ok: true as const };
-      await tickTent(d, t);
+      await tickTent(d, t); // tickTent verhindert selbst doppelte/zu schnelle Takte
       return { ok: true as const };
     }),
 

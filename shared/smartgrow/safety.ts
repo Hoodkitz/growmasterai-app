@@ -130,6 +130,8 @@ export type GuardContext = {
   lastPumpAt?: number | null;
   dosedToday: Partial<Record<DoserChannel, number>>;
   now: number;
+  /** angemeldete Sensoren, die gerade keinen gültigen Wert liefern (veraltet/unplausibel/fehlend) */
+  missing?: Metric[];
 };
 
 export type GuardResult =
@@ -150,8 +152,16 @@ export function guard(cmd: Command, g: GuardContext): GuardResult {
     return { ok: false, reason: "Kein Gerät für diesen Aktor verbunden." };
   const v = g.values;
   const L = g.limits;
-  const leak = (v.leak ?? 0) >= 1;
-  const tankLow = v.waterLevel !== undefined && v.waterLevel < L.waterLevelMin;
+  const missing = new Set(g.missing ?? []);
+  // ausgefallener Leck-/Füllstandsensor zählt wie "Leck" bzw. "Tank leer" (sicher statt blind)
+  const leak = (v.leak ?? 0) >= 1 || missing.has("leak");
+  const tankLow =
+    (v.waterLevel !== undefined && v.waterLevel < L.waterLevelMin) ||
+    missing.has("waterLevel");
+
+  // Stoppen ist immer erlaubt – gerade bei Leck oder Tageslimit
+  if (cmd.kind === "run" && cmd.seconds <= 0)
+    return { ok: true, cmd: { ...cmd, seconds: 0 } };
 
   if (cmd.kind === "set") {
     let value = clamp(Math.round(cmd.value), 0, 100);
@@ -164,10 +174,27 @@ export function guard(cmd: Command, g: GuardContext): GuardResult {
         "humidifier",
         "dehumidifier",
         "co2",
+        "waterValve",
+        "chiller",
+        "airPump",
       ].includes(cmd.actuator)
     )
       value = value > 0 ? 100 : 0;
     if (value > 0) {
+      if ((v.smoke ?? 0) >= 1 && cmd.actuator !== "waterValve")
+        return {
+          ok: false,
+          reason: "Rauchmelder ausgelöst – alles bleibt aus.",
+        };
+      if (cmd.actuator === "waterValve") {
+        if (leak)
+          return { ok: false, reason: "Leck erkannt – Wasserzulauf gesperrt." };
+        if (v.waterLevel === undefined)
+          return { ok: false, reason: "Wasserzulauf nur mit Füllstandsensor." };
+        if (v.waterLevel >= 95) return { ok: false, reason: "Tank ist voll." };
+      }
+      if (cmd.actuator === "co2" && (v.door ?? 0) >= 1)
+        return { ok: false, reason: "Zelt-Tür offen – kein CO₂." };
       if (cmd.actuator === "co2") {
         if (!g.isDay) return { ok: false, reason: "CO₂ nur bei Licht an." };
         if (v.co2 === undefined)
@@ -262,9 +289,13 @@ export type Alert = {
 export function emergency(g: GuardContext): {
   commands: { cmd: Command; reason: string }[];
   alerts: Alert[];
+  /** Aktoren, die der Notfall gerade bestimmt – der Regler darf sie in diesem Takt nicht ändern */
+  owned: Actuator[];
 } {
   const commands: { cmd: Command; reason: string }[] = [];
   const alerts: Alert[] = [];
+  const owned = new Set<Actuator>();
+  const missing = new Set(g.missing ?? []);
   const has = (a: Actuator) => g.caps.some((c) => c.type === a);
   const on = (a: Actuator) => (g.state[a] ?? 0) > 0;
   const v = g.values;
@@ -274,9 +305,34 @@ export function emergency(g: GuardContext): {
     value: number,
     reason: string,
   ) => {
-    if (has(actuator) && (g.state[actuator] ?? -1) !== value)
+    if (!has(actuator)) return;
+    owned.add(actuator);
+    if ((g.state[actuator] ?? -1) !== value)
       commands.push({ cmd: { actuator, kind: "set", value }, reason });
   };
+
+  // Ausgefallene Sensoren: alles abschalten, was ohne Messung gefährlich wäre
+  if (missing.has("airTemp")) {
+    alerts.push({
+      level: "alarm",
+      kind: "sensor-airTemp",
+      message:
+        "Temperatursensor liefert keine Werte – Heizung aus, Grundlüftung an. Sensor/WLAN prüfen!",
+    });
+    set("heater", 0, "Temperatursensor ausgefallen");
+    if (has("exhaust") && (g.state.exhaust ?? 0) < 30)
+      set("exhaust", 30, "Temperatursensor ausgefallen: Grundlüftung");
+    else if (has("exhaust")) owned.add("exhaust");
+  }
+  if (missing.has("airRh")) set("humidifier", 0, "Feuchtesensor ausgefallen");
+  if (missing.has("co2")) set("co2", 0, "CO₂-Sensor ausgefallen");
+  if (missing.has("leak") || missing.has("waterLevel")) {
+    alerts.push({
+      level: "warn",
+      kind: "sensor-water",
+      message: `${missing.has("leak") ? "Leck-Sensor" : "Füllstandsensor"} liefert keine Werte – Bewässerung und Dosierung sind gesperrt.`,
+    });
+  }
 
   if (v.co2 !== undefined && v.co2 >= L.co2Alarm) {
     alerts.push({
@@ -335,7 +391,12 @@ export function emergency(g: GuardContext): {
       message:
         "Wasser am Boden erkannt! Bewässerung und Dosierung sind gesperrt – bitte nachsehen.",
     });
-    if (has("pump"))
+    // Stopp nur, wenn die Pumpe läuft oder gerade ein Gießbefehl unterwegs sein kann (nicht jede Minute neu)
+    const maybeRunning =
+      (g.state.pump ?? 0) > 0 ||
+      (!!g.lastPumpAt &&
+        g.now - g.lastPumpAt < L.pumpMaxSeconds * 1000 + 3 * 60_000);
+    if (has("pump") && maybeRunning)
       commands.push({
         cmd: { actuator: "pump", kind: "run", seconds: 0 },
         reason: "Leck: Pumpe stoppen",
@@ -362,5 +423,59 @@ export function emergency(g: GuardContext): {
       message: `Blätter ${v.leafTemp.toFixed(1)} °C – Licht zu nah oder zu stark?`,
     });
   }
-  return { commands, alerts };
+  // Rauch: alles abschalten, was Wärme/Luft liefert – Strom am besten ganz trennen
+  if ((v.smoke ?? 0) >= 1) {
+    alerts.push({
+      level: "alarm",
+      kind: "smoke",
+      message:
+        "RAUCHMELDER im Zelt ausgelöst! Licht, Heizung, Lüfter und CO₂ werden abgeschaltet. Sofort nachsehen, Strom trennen, im Notfall 112.",
+    });
+    for (const a of [
+      "light",
+      "heater",
+      "co2",
+      "humidifier",
+      "dehumidifier",
+      "cooler",
+      "exhaust",
+      "intake",
+      "circulation",
+      "chiller",
+      "airPump",
+    ] as const) {
+      if (has(a) && (g.state[a] ?? 1) !== 0)
+        commands.push({
+          cmd: { actuator: a, kind: "set", value: 0 },
+          reason: "Rauchmelder: Notabschaltung",
+        });
+    }
+  }
+  if ((v.leak ?? 0) >= 1 && has("waterValve") && on("waterValve")) {
+    commands.push({
+      cmd: { actuator: "waterValve", kind: "set", value: 0 },
+      reason: "Leck: Wasserzulauf zu",
+    });
+  }
+  if (
+    v.waterLevel !== undefined &&
+    v.waterLevel >= 95 &&
+    has("waterValve") &&
+    on("waterValve")
+  ) {
+    commands.push({
+      cmd: { actuator: "waterValve", kind: "set", value: 0 },
+      reason: "Tank voll: Zulauf zu",
+    });
+  }
+  if ((v.door ?? 0) >= 1 && on("co2"))
+    set("co2", 0, "Zelt-Tür offen – CO₂ aus");
+  // bei Rauch zählen nur die Abschaltungen (z. B. keine Notlüftung wegen Hitze, die Feuer anfacht)
+  if ((v.smoke ?? 0) >= 1) {
+    const off = commands.filter(
+      (c) => c.cmd.kind !== "set" || c.cmd.value === 0,
+    );
+    return { commands: off, alerts, owned: [...owned] };
+  }
+  return { commands, alerts, owned: [...owned] };
 }

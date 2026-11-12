@@ -38,7 +38,7 @@ import {
 } from "@/shared/smartgrow/types";
 
 const MODE_HELP: Record<Mode, string> = {
-  off: "Nur Überwachung und Alarme – nichts wird geschaltet.",
+  off: "Nur Überwachung und Alarme. Nur Notabschaltungen (Rauch, CO₂-Alarm, Überhitzung, Leck, Sensor-Ausfall) laufen weiter automatisch.",
   assist:
     "Die KI schlägt vor, du bestätigst. Notabschaltungen (CO₂-Alarm, Überhitzung, Leck) laufen trotzdem automatisch.",
   auto: "Die KI regelt selbst – innerhalb der Sicherheitsgrenzen. Ideal, wenn du unterwegs oder im Urlaub bist.",

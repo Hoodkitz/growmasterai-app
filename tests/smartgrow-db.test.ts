@@ -145,7 +145,9 @@ d("Smart Grow (Datenbank)", () => {
     // Autopilot: direkt ausführen
     await c.smartGrow.setMode({ id, mode: "auto" });
     await mod.api.handleReport(auth, { readings: { airTemp: 22, airRh: 50 } });
-    await mod.engine.tickTent(db, await tent());
+    // zweiter Takt direkt danach wird abgewiesen (Mindestabstand), eine Minute später läuft er
+    expect(await mod.engine.tickTent(db, await tent())).toBeNull();
+    await mod.engine.tickTent(db, await tent(), Date.now() + 60_000);
     const r3 = await mod.api.handleReport(auth, {});
     expect((r3.json as { commands: unknown[] }).commands.length).toBe(1);
 
@@ -474,5 +476,93 @@ d("Smart Grow – Home Assistant im Takt (Datenbank, HA gemockt)", () => {
       setHaFetchForTests(null);
       await c.smartGrow.delete({ id });
     }
+  }, 60_000);
+});
+
+d("Smart Grow – Rennen und Zählung (Review-Fixes)", () => {
+  it("Befehl wird nie doppelt ausgeliefert, Doppel-Bestätigung erzeugt keinen zweiten Befehl, ausgelieferte Gießbefehle zählen", async () => {
+    process.env.DATABASE_URL = URL;
+    const { appRouter } = await import("../server/routers");
+    const api = await import("../server/smartgrow/device-api");
+    const { tickTent, usage } = await import("../server/smartgrow/engine");
+    const { getDb } = await import("../server/db");
+    const schema = await import("../drizzle/schema");
+    const { eq } = await import("drizzle-orm");
+    const c = appRouter.createCaller({
+      req: { headers: {} } as never,
+      res: {} as never,
+      user: { id: 9301, role: "user" } as never,
+    });
+    const { id } = await c.smartGrow.create({
+      name: "Race",
+      settings: {
+        stage: "veg",
+        medium: "soil",
+        lightsOn: "00:00",
+        rampMinutes: 0,
+        reservoirLiters: 20,
+        purpleFinish: false,
+        harvestDate: null,
+        timeZone: "Europe/Berlin",
+      },
+    });
+    const dev = await c.smartGrow.addDevice({
+      tentId: id,
+      name: "E",
+      caps: {
+        sensors: ["airTemp", "airRh", "soilMoisture"],
+        actuators: [{ type: "exhaust" }, { type: "pump" }],
+      },
+    });
+    const auth = `Bearer ${dev.token}`;
+    await api.handleReport(auth, {
+      readings: { airTemp: 31, airRh: 75, soilMoisture: 20 },
+      state: { exhaust: 30 },
+    });
+    const db = (await getDb())!;
+    const tent = async () =>
+      (
+        await db
+          .select()
+          .from(schema.growTents)
+          .where(eq(schema.growTents.id, id))
+      )[0];
+    await tickTent(db, await tent());
+    let g = await c.smartGrow.get({ id });
+    const prop = g.proposals.find((p) => /Abluft/.test(p.text))!;
+    const results = await Promise.allSettled([
+      c.smartGrow.decide({ commandId: prop.id, approve: true }),
+      c.smartGrow.decide({ commandId: prop.id, approve: true }),
+    ]);
+    expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1);
+    // zwei gleichzeitige Meldungen: der Befehl kommt nur bei einer an
+    await c.smartGrow.command({
+      tentId: id,
+      cmd: { kind: "run", actuator: "pump", seconds: 20 },
+    });
+    const [a, b] = await Promise.all([
+      api.handleReport(auth, {}),
+      api.handleReport(auth, {}),
+    ]);
+    const all = [
+      ...(a.json as { commands: { id: number }[] }).commands,
+      ...(b.json as { commands: { id: number }[] }).commands,
+    ];
+    expect(new Set(all.map((x) => x.id)).size).toBe(all.length);
+    expect(
+      all.filter(
+        (x) => (x as unknown as { actuator: string }).actuator === "pump",
+      ),
+    ).toHaveLength(1);
+    // ohne Bestätigung abgelaufen – zählt trotzdem gegen Tageslimit/Abstand
+    await db
+      .update(schema.growCommands)
+      .set({ status: "expired" })
+      .where(eq(schema.growCommands.actuator, "pump"));
+    const u = await usage(db, id, Date.now(), "Europe/Berlin");
+    expect(u.pumpSecondsToday).toBe(20);
+    expect(u.lastPumpAt).not.toBeNull();
+    g = await c.smartGrow.get({ id });
+    await c.smartGrow.delete({ id });
   }, 60_000);
 });
