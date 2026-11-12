@@ -13,6 +13,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { Chips } from "@/components/smartgrow/chips";
+import { HaSetup } from "@/components/smartgrow/ha-setup";
 import { useColors } from "@/hooks/use-colors";
 import { trpc } from "@/lib/trpc";
 import { getApiBaseUrl } from "@/constants/oauth";
@@ -110,6 +111,7 @@ export default function DeviceScreen() {
     "phDown",
   ]);
   const [token, setToken] = useState<string | null>(null);
+  const [via, setVia] = useState<"own" | "ha">("own");
   const existing = deviceId
     ? tent.data?.devices.find((d) => d.id === Number(deviceId))
     : undefined;
@@ -326,87 +328,116 @@ export default function DeviceScreen() {
         <Text className="text-2xl font-bold text-foreground">
           Gerät verbinden
         </Text>
-        <Text className="text-sm text-muted">
-          Wähle, was dein Gerät misst und schaltet. Ein Gerät kann ein
-          Sensor-Modul, eine Steckdosenleiste, ein Licht-Dimmer oder deine
-          eigene Steuerung sein.
-        </Text>
-        <Text className="text-xs font-semibold text-muted">Name</Text>
-        <TextInput
-          value={name}
-          onChangeText={setName}
-          maxLength={80}
-          className="bg-surface rounded-xl p-3 text-foreground border border-border"
-        />
-        <Text className="text-xs font-semibold text-muted">Vorlage</Text>
         <Chips
-          options={PRESETS.map((p) => ({ id: p.id, label: p.label }))}
-          value=""
-          onChange={(id) => {
-            const p = PRESETS.find((x) => x.id === id)!;
-            setSensors(p.sensors);
-            setActuators(p.actuators);
-          }}
+          options={[
+            { id: "own", label: "Eigene Hardware (ESP32 …)" },
+            { id: "ha", label: "Home Assistant" },
+          ]}
+          value={via}
+          onChange={(v) => setVia(v as "own" | "ha")}
+          testIDPrefix="via"
         />
-        <Text className="text-xs font-semibold text-muted">
-          Sensoren (misst)
-        </Text>
-        <Chips
-          options={METRICS.map((m) => ({ id: m, label: METRIC_INFO[m].label }))}
-          value={sensors}
-          onChange={(m) => setSensors(toggle(sensors, m as Metric))}
-          testIDPrefix="sensor"
-        />
-        <Text className="text-xs font-semibold text-muted">
-          Geräte (schaltet)
-        </Text>
-        <Chips
-          options={ACTUATORS.map((a) => ({ id: a, label: ACTUATOR_LABEL[a] }))}
-          value={actuators}
-          onChange={(a) => setActuators(toggle(actuators, a as Actuator))}
-          testIDPrefix="act"
-        />
-        {actuators.includes("light") ? (
-          <View className="flex-row items-center justify-between">
-            <Text className="text-sm text-foreground flex-1">
-              Licht ist dimmbar (für Sonnenauf-/untergang)
-            </Text>
-            <Switch value={dimmable} onValueChange={setDimmable} />
-          </View>
-        ) : null}
-        {actuators.includes("doser") ? (
+        {via === "ha" ? (
+          <HaSetup
+            tentId={Number(tentId)}
+            onDone={async () => {
+              await utils.smartGrow.get.invalidate({ id: Number(tentId) });
+              router.back();
+            }}
+          />
+        ) : (
           <>
+            <Text className="text-sm text-muted">
+              Wähle, was dein Gerät misst und schaltet. Ein Gerät kann ein
+              Sensor-Modul, eine Steckdosenleiste, ein Licht-Dimmer oder deine
+              eigene Steuerung sein.
+            </Text>
+            <Text className="text-xs font-semibold text-muted">Name</Text>
+            <TextInput
+              value={name}
+              onChangeText={setName}
+              maxLength={80}
+              className="bg-surface rounded-xl p-3 text-foreground border border-border"
+            />
+            <Text className="text-xs font-semibold text-muted">Vorlage</Text>
+            <Chips
+              options={PRESETS.map((p) => ({ id: p.id, label: p.label }))}
+              value=""
+              onChange={(id) => {
+                const p = PRESETS.find((x) => x.id === id)!;
+                setSensors(p.sensors);
+                setActuators(p.actuators);
+              }}
+            />
             <Text className="text-xs font-semibold text-muted">
-              Dosierkanäle
+              Sensoren (misst)
             </Text>
             <Chips
-              options={DOSER_CHANNELS.map((c) => ({
-                id: c,
-                label: DOSER_LABEL[c],
+              options={METRICS.map((m) => ({
+                id: m,
+                label: METRIC_INFO[m].label,
               }))}
-              value={channels}
-              onChange={(c) => setChannels(toggle(channels, c as DoserChannel))}
+              value={sensors}
+              onChange={(m) => setSensors(toggle(sensors, m as Metric))}
+              testIDPrefix="sensor"
             />
-          </>
-        ) : null}
-        <TouchableOpacity
-          testID="device-create"
-          className="bg-primary rounded-xl p-4 items-center mt-2"
-          onPress={create}
-          disabled={add.isPending}
-        >
-          {add.isPending ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text className="text-white font-bold">
-              Gerät anlegen & Zugang erzeugen
+            <Text className="text-xs font-semibold text-muted">
+              Geräte (schaltet)
             </Text>
-          )}
-        </TouchableOpacity>
-        <Text className="text-xs text-muted">
-          Fertige Geräte (Shelly, Tuya, AC Infinity …) lassen sich über eine
-          Home-Assistant-Brücke anbinden – die kommt als Nächstes.
-        </Text>
+            <Chips
+              options={ACTUATORS.map((a) => ({
+                id: a,
+                label: ACTUATOR_LABEL[a],
+              }))}
+              value={actuators}
+              onChange={(a) => setActuators(toggle(actuators, a as Actuator))}
+              testIDPrefix="act"
+            />
+            {actuators.includes("light") ? (
+              <View className="flex-row items-center justify-between">
+                <Text className="text-sm text-foreground flex-1">
+                  Licht ist dimmbar (für Sonnenauf-/untergang)
+                </Text>
+                <Switch value={dimmable} onValueChange={setDimmable} />
+              </View>
+            ) : null}
+            {actuators.includes("doser") ? (
+              <>
+                <Text className="text-xs font-semibold text-muted">
+                  Dosierkanäle
+                </Text>
+                <Chips
+                  options={DOSER_CHANNELS.map((c) => ({
+                    id: c,
+                    label: DOSER_LABEL[c],
+                  }))}
+                  value={channels}
+                  onChange={(c) =>
+                    setChannels(toggle(channels, c as DoserChannel))
+                  }
+                />
+              </>
+            ) : null}
+            <TouchableOpacity
+              testID="device-create"
+              className="bg-primary rounded-xl p-4 items-center mt-2"
+              onPress={create}
+              disabled={add.isPending}
+            >
+              {add.isPending ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text className="text-white font-bold">
+                  Gerät anlegen & Zugang erzeugen
+                </Text>
+              )}
+            </TouchableOpacity>
+            <Text className="text-xs text-muted">
+              Fertige Geräte (Shelly, Tuya, AC Infinity …) verbindest du über
+              „Home Assistant“ oben.
+            </Text>
+          </>
+        )}
       </ScrollView>
     </ScreenContainer>
   );

@@ -270,6 +270,19 @@ export default function SmartGrowList() {
             </TouchableOpacity>
           </View>
         )}
+        <TouchableOpacity
+          testID="sg-hardware"
+          className="bg-surface rounded-2xl p-4 border border-border"
+          onPress={() => router.push("/smartgrow/hardware")}
+        >
+          <Text className="text-foreground font-bold">
+            🛒 Welche Hardware brauche ich?
+          </Text>
+          <Text className="text-xs text-muted">
+            Fertige Geräte, ESP32 selbst bauen, Kamera – mit Einkaufsliste und
+            Anleitung
+          </Text>
+        </TouchableOpacity>
         <Text className="text-xs text-muted">
           Tipp: Mit dem Simulator siehst du, wie der Autopilot arbeitet, bevor
           du echte Geräte anschließt. Eigene Hardware (z. B. ESP32) verbindest

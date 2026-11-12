@@ -168,15 +168,32 @@ export function AiCard({
   );
 }
 
+type Observation = {
+  stage?: Stage | null;
+  stageConfidence?: number;
+  flowerWeek?: number | null;
+  heightCm?: number | null;
+  canopy?: "sparse" | "medium" | "dense" | null;
+  colors?: string[];
+  purple?: boolean;
+  buds?: string | null;
+  trainingTip?: string | null;
+};
 type Leaf = {
   healthy: boolean;
   severity: "none" | "low" | "medium" | "high";
   summary: string;
   issues: string[];
   actions: string[];
+  observation?: Observation;
 } | null;
+const CANOPY: Record<string, string> = {
+  sparse: "licht",
+  medium: "mittel",
+  dense: "dicht",
+};
 
-/** Blattkontrolle: letztes Kamerabild + KI-Befund, eigenes Foto prüfen lassen. */
+/** Kamera-Beobachtung: letztes Bild, Blattbefund, Phase/Größe/Farben und Verlauf; eigenes Foto prüfen lassen. */
 export function LeafCard({
   tentId,
   last,
@@ -192,8 +209,13 @@ export function LeafCard({
     { id: last?.id ?? 0 },
     { enabled: !!last },
   );
+  const hist = trpc.smartGrow.observations.useQuery(
+    { tentId },
+    { enabled: !!last },
+  );
   const [busy, setBusy] = useState(false);
   const a = (last?.analysis ?? null) as Leaf;
+  const o = a?.observation ?? {};
   const color = !a
     ? colors.muted
     : a.severity === "high"
@@ -201,6 +223,13 @@ export function LeafCard({
       : a.severity === "medium"
         ? colors.warning
         : colors.success;
+  const fmt = (t: number) =>
+    new Date(t).toLocaleString("de-DE", {
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
   const shoot = async (camera: boolean) => {
     try {
@@ -242,13 +271,28 @@ export function LeafCard({
     }
   };
 
+  const facts = [
+    o.stage
+      ? `Phase: ${STAGE_LABEL[o.stage]}${o.flowerWeek ? ` (ca. Blütewoche ${o.flowerWeek})` : ""}`
+      : null,
+    o.heightCm ? `Höhe: ca. ${Math.round(o.heightCm)} cm` : null,
+    o.canopy ? `Blätterdach: ${CANOPY[o.canopy]}` : null,
+    o.colors?.length
+      ? `Farben: ${o.colors.join(", ")}${o.purple ? " 💜" : ""}`
+      : null,
+    o.buds ? `Blüten: ${o.buds}` : null,
+  ].filter(Boolean) as string[];
+  const history = (hist.data ?? [])
+    .filter((h) => h.analysis && h.id !== last?.id)
+    .slice(0, 6);
+
   return (
     <View
       className="bg-surface rounded-2xl p-4 border border-border gap-2"
       testID="leaf-card"
     >
       <Text className="text-base font-bold text-foreground">
-        🔍 Blattkontrolle
+        📷 Kamera-Beobachtung
       </Text>
       {img.data ? (
         <Image
@@ -257,16 +301,7 @@ export function LeafCard({
           resizeMode="cover"
         />
       ) : null}
-      {last ? (
-        <Text className="text-xs text-muted">
-          {new Date(last.at).toLocaleString("de-DE", {
-            day: "2-digit",
-            month: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </Text>
-      ) : null}
+      {last ? <Text className="text-xs text-muted">{fmt(last.at)}</Text> : null}
       {a ? (
         <>
           <Text className="text-sm font-semibold" style={{ color }}>
@@ -282,14 +317,48 @@ export function LeafCard({
               → {x}
             </Text>
           ))}
+          {facts.length ? (
+            <View className="gap-0.5 mt-1">
+              {facts.map((f) => (
+                <Text key={f} className="text-sm text-foreground">
+                  • {f}
+                </Text>
+              ))}
+            </View>
+          ) : null}
+          {o.trainingTip ? (
+            <Text className="text-sm text-foreground">✂️ {o.trainingTip}</Text>
+          ) : null}
         </>
       ) : (
         <Text className="text-sm text-muted">
           {last
-            ? "Noch nicht geprüft."
-            : "Eine Zelt-Kamera schickt regelmäßig Bilder – oder du prüfst ein Foto vom Handy."}
+            ? "Noch nicht ausgewertet."
+            : "Eine Zelt-Kamera (ESP32-CAM oder Home Assistant) schickt regelmäßig Bilder – oder du prüfst ein Foto vom Handy. Die KI erkennt Blattprobleme, Phase, Größe und Farben."}
         </Text>
       )}
+      {history.length ? (
+        <View className="gap-1 mt-1">
+          <Text className="text-xs font-semibold text-muted">Verlauf</Text>
+          {history.map((h) => {
+            const x = h.analysis as Leaf;
+            const ob = x?.observation ?? {};
+            return (
+              <Text key={h.id} className="text-xs text-foreground">
+                {fmt(h.at)} ·{" "}
+                {x?.healthy
+                  ? "gesund"
+                  : x?.severity === "high"
+                    ? "ernst"
+                    : "auffällig"}
+                {ob.heightCm ? ` · ${Math.round(ob.heightCm)} cm` : ""}
+                {ob.stage ? ` · ${STAGE_LABEL[ob.stage]}` : ""}
+                {ob.purple ? " · lila" : ""}
+              </Text>
+            );
+          })}
+        </View>
+      ) : null}
       <View className="flex-row gap-2">
         <TouchableOpacity
           className="flex-1 bg-primary rounded-xl p-3 items-center"

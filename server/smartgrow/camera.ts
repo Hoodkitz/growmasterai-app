@@ -29,6 +29,31 @@ export const leafAnalysis = z.object({
   summary: z.string().min(1).max(600),
   issues: z.array(z.string().max(200)).max(6).default([]),
   actions: z.array(z.string().max(250)).max(5).default([]),
+  /** Pflanzenbeobachtung: Phase, Größe, Farben, Blütenentwicklung (alles Schätzungen aus dem Bild) */
+  observation: z
+    .object({
+      stage: z
+        .enum([
+          "seedling",
+          "veg",
+          "earlyFlower",
+          "lateFlower",
+          "flush",
+          "drying",
+        ])
+        .nullable()
+        .default(null),
+      stageConfidence: z.number().min(0).max(1).default(0),
+      flowerWeek: z.number().int().min(1).max(16).nullable().default(null),
+      heightCm: z.number().min(1).max(400).nullable().default(null),
+      canopy: z.enum(["sparse", "medium", "dense"]).nullable().default(null),
+      colors: z.array(z.string().max(40)).max(5).default([]),
+      purple: z.boolean().default(false),
+      buds: z.string().max(200).nullable().default(null),
+      trainingTip: z.string().max(200).nullable().default(null),
+    })
+    .partial()
+    .default({}),
 });
 export type LeafAnalysis = z.infer<typeof leafAnalysis>;
 
@@ -50,15 +75,13 @@ export async function saveSnapshot(
   if (!isJpeg(jpeg)) throw new Error("Nur JPEG-Bilder");
   if (jpeg.length > MAX_IMAGE_BYTES)
     throw new Error("Bild zu groß (max. 1,5 MB)");
-  const [res] = await db
-    .insert(growSnapshots)
-    .values({
-      tentId: tent.id,
-      deviceId,
-      image: jpeg.toString("base64"),
-      source,
-      createdAt: now,
-    });
+  const [res] = await db.insert(growSnapshots).values({
+    tentId: tent.id,
+    deviceId,
+    image: jpeg.toString("base64"),
+    source,
+    createdAt: now,
+  });
   const id = Number((res as { insertId?: number }).insertId);
   // nur die letzten Bilder behalten
   const keep = await db
@@ -116,7 +139,11 @@ const SYSTEM = `Du prüfst als Pflanzen-Experte Bilder aus einem Cannabis-Growze
 Nährstoffmangel/-überschuss (z. B. Stickstoff-, Kalium-, Calcium-/Magnesiummangel, Nährstoffbrand), pH-Probleme, Hitze- oder Lichtstress (Bleaching, eingerollte Blätter),
 Überwässerung, Schädlinge (Spinnmilben, Thripse, Trauermücken, Blattläuse), Schimmel/Mehltau/Budrot. Sei vorsichtig: Nur melden, was im Bild wirklich zu sehen ist.
 Ist das Bild unbrauchbar (dunkel, unscharf, keine Pflanze), sage das in summary und setze severity "none".
-Antworte NUR als JSON: {"healthy": bool, "severity": "none|low|medium|high", "summary": "1-3 Sätze auf Deutsch", "issues": ["…"], "actions": ["konkrete Maßnahme"]}`;
+Beobachte außerdem die Pflanzen: Wachstumsphase (Keimling/Wachstum/frühe/späte Blüte – Blüte erkennst du an weißen Stempeln/Blütenständen), grobe Blütewoche,
+geschätzte Höhe (nur wenn ein Maßstab wie Topf oder Zeltstange erkennbar ist, sonst null), Dichte des Blätterdachs, Blattfarben (z. B. "sattgrün", "hellgrün", "gelblich", "lila"),
+ob sich Blüten/Blätter lila färben, Zustand der Blüten (z. B. "Stempel weiß", "Stempel zu 50 % braun") und ob Training sinnvoll wäre (z. B. Entlauben, LST).
+Antworte NUR als JSON: {"healthy": bool, "severity": "none|low|medium|high", "summary": "1-3 Sätze auf Deutsch", "issues": ["…"], "actions": ["konkrete Maßnahme"],
+"observation": {"stage": "seedling|veg|earlyFlower|lateFlower|null", "stageConfidence": 0-1, "flowerWeek": n|null, "heightCm": n|null, "canopy": "sparse|medium|dense|null", "colors": ["…"], "purple": bool, "buds": "…"|null, "trainingTip": "…"|null}}`;
 
 export async function analyzeSnapshot(
   db: Db,
@@ -159,6 +186,31 @@ export async function analyzeSnapshot(
     `Blattkontrolle: ${a.summary}${a.actions[0] ? ` → ${a.actions[0]}` : ""}`,
     now,
   );
+  // Kamera erkennt eine andere Phase als eingestellt -> Hinweis (Phase wechselt der Nutzer selbst)
+  const o = a.observation ?? {};
+  if (
+    o.stage &&
+    o.stage !== cfg.settings.stage &&
+    (o.stageConfidence ?? 0) >= 0.7
+  ) {
+    await logEvent(
+      db,
+      tent.id,
+      "info",
+      "cam-stage",
+      `Kamera: Die Pflanzen sehen nach „${STAGE_LABEL[o.stage]}“ aus${o.flowerWeek ? ` (ca. Blütewoche ${o.flowerWeek})` : ""} – eingestellt ist „${STAGE_LABEL[cfg.settings.stage]}“. Phase prüfen?`,
+      now,
+    );
+  }
+  if (o.trainingTip)
+    await logEvent(
+      db,
+      tent.id,
+      "info",
+      "cam-training",
+      `Kamera-Tipp: ${o.trainingTip}`,
+      now,
+    );
   if (a.severity === "high" || a.severity === "medium") {
     // Push ist "best effort": ein Fehler dort darf die Blattkontrolle nicht verwerfen
     try {

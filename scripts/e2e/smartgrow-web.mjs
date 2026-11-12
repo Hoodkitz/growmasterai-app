@@ -47,7 +47,7 @@ await step("Handsteuerung: Abluft 60 %", async () => {
 });
 await step("KI-Einschätzung und Blattkontrolle sichtbar", async () => {
   await see("🤖 KI-Einschätzung");
-  await see("🔍 Blattkontrolle");
+  await see("📷 Kamera-Beobachtung");
   await see("Foto prüfen");
 });
 await step("Verlauf-Diagramm", async () => { await see(/letzte 24 h/); });
@@ -81,6 +81,15 @@ await step("Zelt-Liste", async () => {
   await see(/Simulator-Zelt/);
   await see("Vorschläge"); // Modus aus dem Dashboard übernommen
   await see(/Wachstum · \d+\.\d °C/);
+});
+await step("Hardware-Ratgeber mit Einkaufsliste und Anleitung", async () => {
+  await vis("sg-hardware").click();
+  await see("Hardware für Smart Grow");
+  await see("Shelly Plus Plug S");
+  await see("Installation Schritt für Schritt");
+  await vis("hw-diy").click();
+  await see("ESP32-DevKit");
+  await p.getByText("‹ Zurück").locator("visible=true").first().click();
 });
 await step("Keine JS-Laufzeitfehler", async () => { if (errs.length) throw new Error(errs.slice(0, 3).join(" | ")); });
 await p.screenshot({ path: `${D}/end.png`, fullPage: true });

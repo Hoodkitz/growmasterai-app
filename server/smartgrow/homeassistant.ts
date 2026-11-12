@@ -23,10 +23,14 @@ export type HaConfig = {
   tokenEnc: string;
   sensors: Partial<Record<Metric, string>>;
   actuators: HaActuatorMap;
+  /** optionale Zelt-Kamera (camera.*) für die KI-Beobachtung */
+  camera?: string | null;
 };
 
 const ENTITY =
-  /^(sensor|binary_sensor|switch|fan|light|number|input_number|climate|humidifier|input_boolean)\.[a-z0-9_]{1,80}$/;
+  /^(sensor|binary_sensor|switch|fan|light|number|input_number|climate|humidifier|input_boolean|camera)\.[a-z0-9_]{1,80}$/;
+export const isCameraEntity = (e: string) =>
+  /^camera\.[a-z0-9_]{1,80}$/.test(e);
 export const isEntityId = (e: string) => ENTITY.test(e);
 
 // ---------- Verschlüsselung des HA-Tokens ----------
@@ -410,4 +414,33 @@ export async function execute(
     { method: "POST", body: JSON.stringify(body) },
     f,
   );
+}
+
+/** Aktuelles Kamerabild über den HA-Kamera-Proxy (JPEG, max. 1,5 MB). */
+export async function cameraSnapshot(
+  cfg: HaConfig,
+  f: HaFetch = haFetchImpl,
+): Promise<Buffer> {
+  if (!cfg.camera || !isCameraEntity(cfg.camera))
+    throw new Error("Keine Kamera zugeordnet");
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), 15000);
+  try {
+    const res = await f(`${cfg.baseUrl}/api/camera_proxy/${cfg.camera}`, {
+      redirect: "manual",
+      signal: ctl.signal,
+      headers: { Authorization: `Bearer ${decryptToken(cfg.tokenEnc)}` },
+    });
+    if (res.status >= 300 && res.status < 400)
+      throw new Error("Weiterleitung nicht erlaubt");
+    if (!res.ok) throw new Error(`Kamera: HTTP ${res.status}`);
+    const buf = Buffer.from(await res.arrayBuffer());
+    if (buf.length > 1_500_000)
+      throw new Error(
+        "Kamerabild zu groß (max. 1,5 MB) – in HA eine kleinere Auflösung wählen",
+      );
+    return buf;
+  } finally {
+    clearTimeout(t);
+  }
 }

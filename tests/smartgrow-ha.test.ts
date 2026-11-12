@@ -209,4 +209,30 @@ describe("Home-Assistant-Brücke", () => {
       /https/,
     );
   });
+
+  it("holt Kamerabilder über den HA-Kamera-Proxy", async () => {
+    const { cameraSnapshot } =
+      await import("../server/smartgrow/homeassistant");
+    const jpeg = Buffer.concat([
+      Buffer.from([0xff, 0xd8, 0xff]),
+      Buffer.alloc(300),
+    ]);
+    let called = "";
+    const f = async (url: string) => {
+      called = url;
+      return new Response(jpeg, { status: 200 });
+    };
+    const cfg = {
+      baseUrl: "https://ha.example",
+      tokenEnc: encryptToken("tok-1234567890-abcdefghij"),
+      sensors: {},
+      actuators: {},
+      camera: "camera.zelt",
+    };
+    expect((await cameraSnapshot(cfg, f)).length).toBe(303);
+    expect(called).toBe("https://ha.example/api/camera_proxy/camera.zelt");
+    await expect(
+      cameraSnapshot({ ...cfg, camera: "camera.../x" }, f),
+    ).rejects.toThrow(/Keine Kamera/);
+  });
 });

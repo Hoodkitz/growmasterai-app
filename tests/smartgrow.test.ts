@@ -471,3 +471,37 @@ describe("Smart Grow – Licht-Feinregelung", () => {
     ).toBe(true);
   });
 });
+
+describe("Smart Grow – Hardware-Ratgeber", () => {
+  it("nur gültige Messgrößen/Aktoren, jede Position mit Suchbegriff, Preis und Anleitung", async () => {
+    const { HARDWARE_PATHS } = await import("../shared/smartgrow/hardware");
+    const { isActuator, isMetric } = await import("../shared/smartgrow/types");
+    expect(HARDWARE_PATHS.map((p) => p.id)).toEqual(["ha", "diy", "camera"]);
+    for (const p of HARDWARE_PATHS) {
+      expect(p.steps.length).toBeGreaterThanOrEqual(3);
+      expect(p.safety.length).toBeGreaterThanOrEqual(1);
+      for (const it of p.items) {
+        expect(it.searchTerm.length).toBeGreaterThan(3);
+        expect(it.price).toMatch(/€/);
+        expect((it.metrics ?? []).every(isMetric)).toBe(true);
+        expect((it.actuators ?? []).every(isActuator)).toBe(true);
+        expect(`${it.name} ${it.searchTerm}`).not.toMatch(/samen|seed/i);
+      }
+    }
+    // jede Messgröße und jeder Aktor ist über mindestens einen Weg abgedeckt (außer Exoten)
+    const metrics = new Set(
+      HARDWARE_PATHS.flatMap((p) => p.items.flatMap((i) => i.metrics ?? [])),
+    );
+    for (const m of [
+      "airTemp",
+      "airRh",
+      "co2",
+      "waterPh",
+      "waterEc",
+      "soilMoisture",
+      "leak",
+      "waterLevel",
+    ])
+      expect(metrics.has(m as never)).toBe(true);
+  });
+});

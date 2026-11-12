@@ -1038,6 +1038,11 @@ export const smartGrowRouter = router({
           z.string().refine(ha.isEntityId, "Ungültige Entität"),
         ),
         dimmableLight: z.boolean().default(false),
+        camera: z
+          .string()
+          .refine(ha.isCameraEntity, "Ungültige Kamera")
+          .nullable()
+          .optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -1067,6 +1072,7 @@ export const smartGrowRouter = router({
         tokenEnc: ha.encryptToken(input.token.trim()),
         sensors: input.sensors,
         actuators: input.actuators as ha.HaActuatorMap,
+        camera: input.camera ?? null,
       };
       const caps: DeviceCaps = {
         sensors: Object.keys(input.sensors) as DeviceCaps["sensors"],
@@ -1079,17 +1085,15 @@ export const smartGrowRouter = router({
           ...(a === "light" ? { dimmable: input.dimmableLight } : {}),
         })),
       };
-      const [res] = await d
-        .insert(growDevices)
-        .values({
-          tentId: t.id,
-          userId: ctx.user.id,
-          name: input.name,
-          kind: "homeassistant",
-          caps,
-          state: {},
-          config: cfg,
-        });
+      const [res] = await d.insert(growDevices).values({
+        tentId: t.id,
+        userId: ctx.user.id,
+        name: input.name,
+        kind: "homeassistant",
+        caps,
+        state: {},
+        config: cfg,
+      });
       await logEvent(
         d,
         t.id,
@@ -1098,5 +1102,25 @@ export const smartGrowRouter = router({
         `Home Assistant „${input.name}“ verbunden (${caps.sensors.length} Sensoren, ${caps.actuators.length} Geräte).`,
       );
       return { id: Number((res as { insertId?: number }).insertId) };
+    }),
+
+  /** Kamera-Verlauf: die letzten Beobachtungen (ohne Bilddaten) für Trends wie Höhe, Farben, Phase. */
+  observations: protectedProcedure
+    .input(z.object({ tentId: z.number().int() }))
+    .query(async ({ ctx, input }) => {
+      await ownTent(ctx.user.id, input.tentId);
+      const d = await db();
+      const rows = await d
+        .select({
+          id: growSnapshots.id,
+          at: growSnapshots.createdAt,
+          source: growSnapshots.source,
+          analysis: growSnapshots.analysis,
+        })
+        .from(growSnapshots)
+        .where(eq(growSnapshots.tentId, input.tentId))
+        .orderBy(desc(growSnapshots.createdAt))
+        .limit(12);
+      return rows;
     }),
 });

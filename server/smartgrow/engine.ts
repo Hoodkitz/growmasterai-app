@@ -64,6 +64,7 @@ export const COMMAND_TTL_MS = 3 * 60_000;
 export const PROPOSAL_TTL_MS = 30 * 60_000;
 export const ALERT_REPEAT_MS = 60 * 60_000;
 export const DEVICE_OFFLINE_MS = 10 * 60_000;
+export const HA_CAMERA_INTERVAL_MS = 30 * 60_000;
 export const READING_RETENTION_MS = 30 * 86_400_000;
 
 export const hashToken = (t: string) =>
@@ -415,17 +416,15 @@ async function pollHa(
     await pumpOffIfDue(db, d.id, now);
     const r = await ha.readAll(cfg);
     if (r.readings.length)
-      await db
-        .insert(growReadings)
-        .values(
-          r.readings.map((x) => ({
-            tentId: tent.id,
-            deviceId: d.id,
-            metric: x.metric,
-            value: x.value,
-            ts: now,
-          })),
-        );
+      await db.insert(growReadings).values(
+        r.readings.map((x) => ({
+          tentId: tent.id,
+          deviceId: d.id,
+          metric: x.metric,
+          value: x.value,
+          ts: now,
+        })),
+      );
     const prev = (d.state as Record<string, number> | null) ?? {};
     const state = { ...prev, ...r.state, pumpUntil: prev.pumpUntil ?? 0 };
     d.state = state;
@@ -584,6 +583,31 @@ export async function tickTent(
   });
 
   const alerts = [...out.alerts, ...haAlerts];
+  // Home-Assistant-Kamera: bei Licht an alle 30 Minuten ein Bild für die KI-Beobachtung
+  for (const d of devices) {
+    const hc = d.config as HaConfig | null;
+    if (d.kind !== "homeassistant" || !hc?.camera || !out.isDay) continue;
+    const st = (d.state as Record<string, number> | null) ?? {};
+    if (st.lastCameraAt && now - st.lastCameraAt < HA_CAMERA_INTERVAL_MS)
+      continue;
+    try {
+      const jpeg = await ha.cameraSnapshot(hc);
+      const { handleDeviceSnapshot } = await import("./camera");
+      await handleDeviceSnapshot(db, tent.id, d.id, jpeg, now);
+    } catch (e) {
+      alerts.push({
+        level: "warn",
+        kind: `ha-cam-${d.id}`,
+        message: `Kamera über Home Assistant: ${(e as Error).message}`,
+      });
+    }
+    const next = { ...st, lastCameraAt: now };
+    d.state = next;
+    await db
+      .update(growDevices)
+      .set({ state: next })
+      .where(eq(growDevices.id, d.id));
+  }
   for (const d of devices) {
     if (
       d.kind === "http" &&

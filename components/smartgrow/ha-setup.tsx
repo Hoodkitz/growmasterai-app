@@ -97,6 +97,14 @@ export function HaSetup({
   const [sensors, setSensors] = useState<Partial<Record<Metric, string>>>({});
   const [acts, setActs] = useState<Partial<Record<Actuator, string>>>({});
   const [dimmable, setDimmable] = useState(true);
+  const [camera, setCamera] = useState<string | null>(null);
+  const cameras = useMemo(
+    () =>
+      (entities ?? [])
+        .filter((e) => e.entity_id.startsWith("camera."))
+        .slice(0, 8),
+    [entities],
+  );
   const metricRows = useMemo(
     () =>
       entities
@@ -129,7 +137,7 @@ export function HaSetup({
     }
   };
   const save = async () => {
-    if (!Object.keys(sensors).length && !Object.keys(acts).length)
+    if (!Object.keys(sensors).length && !Object.keys(acts).length && !camera)
       return Alert.alert(
         "Bitte mindestens einen Sensor oder ein Gerät zuordnen.",
       );
@@ -142,6 +150,7 @@ export function HaSetup({
         sensors: sensors as Record<string, string>,
         actuators: acts as Record<string, string>,
         dimmableLight: dimmable,
+        camera,
       });
       onDone();
     } catch (e) {
@@ -270,6 +279,24 @@ export function HaSetup({
               </View>
             </View>
           ))}
+          {cameras.length ? (
+            <View className="gap-1">
+              <Text className="text-sm text-foreground">
+                📷 Zelt-Kamera (KI-Beobachtung){camera ? " ✓" : ""}
+              </Text>
+              <View className="flex-row flex-wrap gap-2">
+                {cameras.map((e) =>
+                  chip(
+                    e.name,
+                    camera === e.entity_id,
+                    () =>
+                      setCamera(camera === e.entity_id ? null : e.entity_id),
+                    e.entity_id,
+                  ),
+                )}
+              </View>
+            </View>
+          ) : null}
           {acts.light ? (
             <View className="flex-row items-center justify-between">
               <Text className="text-sm text-foreground flex-1">

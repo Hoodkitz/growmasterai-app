@@ -298,6 +298,17 @@ d("Smart Grow – KI und Kamera (Datenbank, KI gemockt)", () => {
         summary: "Grauschimmel an einer Blüte.",
         issues: ["Botrytis"],
         actions: ["Befallene Blüte sofort entfernen"],
+        observation: {
+          stage: "flush",
+          stageConfidence: 0.8,
+          flowerWeek: 9,
+          heightCm: 85,
+          canopy: "dense",
+          colors: ["dunkelgrün", "lila"],
+          purple: true,
+          buds: "Stempel zu 70 % braun",
+          trainingTip: "Untere Blätter entfernen",
+        },
       });
     expect(
       (
@@ -331,6 +342,19 @@ d("Smart Grow – KI und Kamera (Datenbank, KI gemockt)", () => {
         (e) => e.level === "alarm" && /Grauschimmel/.test(e.message),
       ),
     ).toBe(true);
+    expect(
+      g.events.some((e) =>
+        /Kamera: Die Pflanzen sehen nach „Spülen/.test(e.message),
+      ),
+    ).toBe(true);
+    expect(
+      g.events.some((e) => /Kamera-Tipp: Untere Blätter/.test(e.message)),
+    ).toBe(true);
+    const obs = await c.smartGrow.observations({ tentId: id });
+    expect(
+      (obs[obs.length - 1].analysis as { observation: { heightCm: number } })
+        .observation.heightCm,
+    ).toBe(85);
     const img = await c.smartGrow.snapshotImage({
       id: (r.json as { id: number }).id,
     });
