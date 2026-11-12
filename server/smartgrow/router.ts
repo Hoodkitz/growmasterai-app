@@ -1,0 +1,846 @@
+/**
+ * Smart Grow – App-Schnittstelle: Zelte, Geräte, Live-Status, Verlauf, Vorschläge, Handsteuerung.
+ * Jede Abfrage prüft, dass Zelt/Gerät dem angemeldeten Nutzer gehört.
+ */
+import { TRPCError } from "@trpc/server";
+import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
+import { z } from "zod";
+import { protectedProcedure, router } from "../_core/trpc";
+import { getDb } from "../db";
+import {
+  growCommands,
+  growDevices,
+  growEvents,
+  growReadings,
+  growSnapshots,
+  growTents,
+  type GrowTent,
+} from "../../drizzle/schema";
+import {
+  decide,
+  DEFAULT_AUTOMATION,
+  lightPlan,
+} from "../../shared/smartgrow/controller";
+import { targetsFor, type TentSettings } from "../../shared/smartgrow/profiles";
+import {
+  DEFAULT_LIMITS,
+  guard,
+  HARD_LIMITS,
+  sanitizeLimits,
+} from "../../shared/smartgrow/safety";
+import { SIM_START } from "../../shared/smartgrow/simulator";
+import {
+  ACTUATORS,
+  DOSER_CHANNELS,
+  MEDIA,
+  METRICS,
+  MODES,
+  STAGES,
+  type Command,
+  type DeviceCaps,
+} from "../../shared/smartgrow/types";
+import {
+  describeCommand,
+  issueCommand,
+  latestReadings,
+  logEvent,
+  mergeCaps,
+  newDeviceToken,
+  tentConfig,
+  tickTent,
+  usage,
+} from "./engine";
+import { POLL_SECONDS } from "./device-api";
+
+const MAX_TENTS = 10;
+const MAX_DEVICES = 12;
+
+async function db() {
+  const d = await getDb();
+  if (!d)
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Datenbank nicht verfügbar",
+    });
+  return d;
+}
+
+async function ownTent(userId: number, tentId: number): Promise<GrowTent> {
+  const d = await db();
+  const [t] = await d
+    .select()
+    .from(growTents)
+    .where(and(eq(growTents.id, tentId), eq(growTents.userId, userId)))
+    .limit(1);
+  if (!t)
+    throw new TRPCError({ code: "NOT_FOUND", message: "Zelt nicht gefunden" });
+  return t;
+}
+
+const hhmm = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Uhrzeit als HH:MM");
+const settingsInput = z.object({
+  stage: z.enum(STAGES),
+  medium: z.enum(MEDIA),
+  lightsOn: hhmm,
+  lightHoursOverride: z.number().min(0).max(24).nullable().optional(),
+  rampMinutes: z.number().int().min(0).max(120),
+  reservoirLiters: z.number().min(1).max(1000),
+  purpleFinish: z.boolean(),
+  harvestDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable()
+    .optional(),
+  timeZone: z
+    .string()
+    .min(3)
+    .max(60)
+    .refine((tz) => {
+      try {
+        new Intl.DateTimeFormat("en", { timeZone: tz });
+        return true;
+      } catch {
+        return false;
+      }
+    }, "Unbekannte Zeitzone"),
+});
+const capsInput = z.object({
+  sensors: z.array(z.enum(METRICS)).max(METRICS.length),
+  actuators: z
+    .array(
+      z.object({
+        type: z.enum(ACTUATORS),
+        dimmable: z.boolean().optional(),
+        channels: z.array(z.enum(DOSER_CHANNELS)).max(6).optional(),
+      }),
+    )
+    .max(ACTUATORS.length),
+});
+const commandInput = z.discriminatedUnion("kind", [
+  z.object({
+    kind: z.literal("set"),
+    actuator: z.enum(ACTUATORS).refine((a) => a !== "pump" && a !== "doser"),
+    value: z.number().min(0).max(100),
+  }),
+  z.object({
+    kind: z.literal("run"),
+    actuator: z.literal("pump"),
+    seconds: z.number().min(0).max(600),
+  }),
+  z.object({
+    kind: z.literal("dose"),
+    actuator: z.literal("doser"),
+    channel: z.enum(DOSER_CHANNELS),
+    ml: z.number().min(0.1).max(50),
+  }),
+]);
+
+/** Simulator-Zelt mit allen Sensoren und Aktoren. */
+const SIM_CAPS: DeviceCaps = {
+  sensors: [
+    "airTemp",
+    "airRh",
+    "co2",
+    "leafTemp",
+    "waterTemp",
+    "waterEc",
+    "waterPh",
+    "waterLevel",
+    "soilMoisture",
+    "soilEc",
+    "soilPh",
+    "ppfd",
+  ],
+  actuators: [
+    { type: "light", dimmable: true },
+    { type: "exhaust" },
+    { type: "intake" },
+    { type: "circulation" },
+    { type: "heater" },
+    { type: "humidifier" },
+    { type: "dehumidifier" },
+    { type: "co2" },
+    { type: "pump" },
+    { type: "doser", channels: ["nutrientA", "nutrientB", "phDown", "phUp"] },
+  ],
+};
+
+export const smartGrowRouter = router({
+  list: protectedProcedure.query(async ({ ctx }) => {
+    const d = await db();
+    const tents = await d
+      .select()
+      .from(growTents)
+      .where(eq(growTents.userId, ctx.user.id))
+      .orderBy(growTents.id);
+    const now = Date.now();
+    return Promise.all(
+      tents.map(async (t) => {
+        const cfg = tentConfig(t);
+        const r = await latestReadings(d, t.id, now);
+        const alarms = await d
+          .select({ c: sql<number>`count(*)` })
+          .from(growEvents)
+          .where(
+            and(
+              eq(growEvents.tentId, t.id),
+              inArray(growEvents.level, ["warn", "alarm"]),
+              gte(growEvents.createdAt, now - 3_600_000),
+            ),
+          );
+        return {
+          id: t.id,
+          name: t.name,
+          mode: t.mode,
+          stage: cfg.settings.stage,
+          simulated: !!t.simState,
+          airTemp: r.airTemp?.value ?? null,
+          airRh: r.airRh?.value ?? null,
+          lastValueAt: Math.max(0, ...Object.values(r).map((x) => x!.ts)),
+          recentAlerts: Number(alarms[0]?.c ?? 0),
+        };
+      }),
+    );
+  }),
+
+  /** Alles für das Zelt-Dashboard: Werte, Ziele, was der Regler gerade tun würde, Geräte, Protokoll, Vorschläge. */
+  get: protectedProcedure
+    .input(z.object({ id: z.number().int() }))
+    .query(async ({ ctx, input }) => {
+      const t = await ownTent(ctx.user.id, input.id);
+      const d = await db();
+      const now = Date.now();
+      const cfg = tentConfig(t);
+      const devices = await d
+        .select()
+        .from(growDevices)
+        .where(eq(growDevices.tentId, t.id));
+      const { caps, sensors } = mergeCaps(devices);
+      const state: Record<string, number> = {};
+      for (const dev of devices)
+        Object.assign(
+          state,
+          (dev.state as Record<string, number> | null) ?? {},
+        );
+      const u = await usage(d, t.id, now, cfg.settings.timeZone);
+      const readings = await latestReadings(d, t.id, now);
+      const preview = decide({
+        settings: cfg.settings,
+        adjustments: cfg.adjustments,
+        limits: cfg.limits,
+        automation: cfg.automation,
+        readings,
+        caps,
+        state: { ...state, ...u.inFlight },
+        pumpSecondsToday: u.pumpSecondsToday,
+        lastPumpAt: u.lastPumpAt,
+        dosedToday: u.dosedToday,
+        lastDoseAt: u.lastDoseAt,
+        now,
+      });
+      const events = await d
+        .select()
+        .from(growEvents)
+        .where(eq(growEvents.tentId, t.id))
+        .orderBy(desc(growEvents.createdAt))
+        .limit(40);
+      const proposals = await d
+        .select()
+        .from(growCommands)
+        .where(
+          and(
+            eq(growCommands.tentId, t.id),
+            eq(growCommands.status, "proposed"),
+          ),
+        )
+        .orderBy(desc(growCommands.createdAt))
+        .limit(20);
+      const snap = await d
+        .select()
+        .from(growSnapshots)
+        .where(eq(growSnapshots.tentId, t.id))
+        .orderBy(desc(growSnapshots.createdAt))
+        .limit(1);
+      return {
+        id: t.id,
+        name: t.name,
+        mode: t.mode,
+        settings: cfg.settings,
+        limits: cfg.limits,
+        automation: cfg.automation,
+        adjustments: cfg.adjustments,
+        simulated: !!t.simState,
+        aiSummary: t.aiSummary as {
+          text: string;
+          at: number;
+          tips?: string[];
+        } | null,
+        readings,
+        sensors: [...sensors],
+        caps,
+        state,
+        usage: {
+          pumpSecondsToday: u.pumpSecondsToday,
+          dosedToday: u.dosedToday,
+        },
+        targets: preview.targets,
+        isDay: preview.isDay,
+        dayProgress: preview.dayProgress,
+        vpd: preview.vpd,
+        light: lightPlan(cfg.settings, preview.targets, now),
+        alerts: preview.alerts,
+        next: preview.decisions.map((x) => ({
+          text: describeCommand(x.cmd),
+          reason: x.reason,
+          safety: !!x.safety,
+        })),
+        blocked: preview.blocked.map((b) => ({
+          text: describeCommand(b.cmd),
+          reason: b.reason,
+        })),
+        devices: devices.map((dev) => ({
+          id: dev.id,
+          name: dev.name,
+          kind: dev.kind,
+          caps: dev.caps as DeviceCaps,
+          lastSeenAt: dev.lastSeenAt,
+          firmware: dev.firmware,
+          tokenHint: dev.tokenHint,
+          online:
+            dev.kind === "simulator" ||
+            (!!dev.lastSeenAt && now - dev.lastSeenAt < 5 * 60_000),
+        })),
+        events: events.map((e) => ({
+          id: e.id,
+          level: e.level,
+          kind: e.kind,
+          message: e.message,
+          at: e.createdAt,
+        })),
+        proposals: proposals.map((p) => ({
+          id: p.id,
+          text: describeCommand(p.payload as Command),
+          reason: p.reason,
+          at: p.createdAt,
+        })),
+        lastSnapshot: snap[0]
+          ? {
+              id: snap[0].id,
+              at: snap[0].createdAt,
+              analysis: snap[0].analysis,
+            }
+          : null,
+        hardLimits: HARD_LIMITS,
+      };
+    }),
+
+  create: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().trim().min(1).max(80),
+        settings: settingsInput,
+        simulator: z.boolean().default(false),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const d = await db();
+      const n = await d
+        .select({ c: sql<number>`count(*)` })
+        .from(growTents)
+        .where(eq(growTents.userId, ctx.user.id));
+      if (Number(n[0]?.c ?? 0) >= MAX_TENTS)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Höchstens ${MAX_TENTS} Zelte.`,
+        });
+      const [res] = await d.insert(growTents).values({
+        userId: ctx.user.id,
+        name: input.name,
+        settings: input.settings,
+        limits: DEFAULT_LIMITS,
+        automation: DEFAULT_AUTOMATION,
+        adjustments: {},
+        mode: input.simulator ? "auto" : "assist",
+        simState: input.simulator ? SIM_START : null,
+      });
+      const id = Number((res as { insertId?: number }).insertId);
+      if (input.simulator) {
+        await d
+          .insert(growDevices)
+          .values({
+            tentId: id,
+            userId: ctx.user.id,
+            name: "Simulator",
+            kind: "simulator",
+            caps: SIM_CAPS,
+            state: { light: 0, exhaust: 30, intake: 24, circulation: 50 },
+          });
+        await logEvent(
+          d,
+          id,
+          "info",
+          "created",
+          "Simulator-Zelt angelegt – der Autopilot regelt ein virtuelles Zelt, damit du alles ohne Hardware testen kannst.",
+        );
+      } else {
+        await logEvent(
+          d,
+          id,
+          "info",
+          "created",
+          "Zelt angelegt. Verbinde jetzt deine Sensoren und Geräte.",
+        );
+      }
+      return { id };
+    }),
+
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.number().int(),
+        name: z.string().trim().min(1).max(80).optional(),
+        settings: settingsInput.optional(),
+        limits: z.record(z.string(), z.number()).optional(),
+        automation: z
+          .object({
+            shotSeconds: z.number().int().min(1).max(600),
+            scheduleEveryHours: z.number().min(0).max(72),
+            nutrientMlPerLiterPer01Ec: z.number().min(0.01).max(2),
+            phMlPerLiterPer01: z.number().min(0.001).max(1),
+            mixMinutes: z.number().int().min(5).max(240),
+          })
+          .partial()
+          .optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const t = await ownTent(ctx.user.id, input.id);
+      const d = await db();
+      const cfg = tentConfig(t);
+      const set: Partial<typeof growTents.$inferInsert> = {};
+      if (input.name) set.name = input.name;
+      if (input.settings) {
+        set.settings = input.settings;
+        if (input.settings.stage !== cfg.settings.stage) set.adjustments = {}; // neue Phase: KI-Anpassungen zurücksetzen
+      }
+      if (input.limits)
+        set.limits = sanitizeLimits({ ...cfg.limits, ...input.limits });
+      if (input.automation)
+        set.automation = { ...cfg.automation, ...input.automation };
+      await d.update(growTents).set(set).where(eq(growTents.id, t.id));
+      const changes = [
+        input.settings && input.settings.stage !== cfg.settings.stage
+          ? `Phase: ${input.settings.stage}`
+          : null,
+        input.limits ? "Sicherheitsgrenzen geändert" : null,
+      ].filter(Boolean);
+      if (changes.length)
+        await logEvent(d, t.id, "info", "settings", changes.join(", "));
+      return { ok: true as const };
+    }),
+
+  setMode: protectedProcedure
+    .input(z.object({ id: z.number().int(), mode: z.enum(MODES) }))
+    .mutation(async ({ ctx, input }) => {
+      const t = await ownTent(ctx.user.id, input.id);
+      const d = await db();
+      await d
+        .update(growTents)
+        .set({ mode: input.mode })
+        .where(eq(growTents.id, t.id));
+      if (input.mode !== "assist")
+        await d
+          .update(growCommands)
+          .set({ status: "expired", result: "Modus geändert" })
+          .where(
+            and(
+              eq(growCommands.tentId, t.id),
+              eq(growCommands.status, "proposed"),
+            ),
+          );
+      await logEvent(
+        d,
+        t.id,
+        "info",
+        "mode",
+        input.mode === "auto"
+          ? "Autopilot an: Die KI regelt innerhalb der Sicherheitsgrenzen selbst."
+          : input.mode === "assist"
+            ? "Vorschlags-Modus: Die KI schlägt vor, du bestätigst. Notabschaltungen laufen automatisch."
+            : "Autopilot aus: nur Überwachung und Alarme.",
+      );
+      return { ok: true as const };
+    }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.number().int() }))
+    .mutation(async ({ ctx, input }) => {
+      const t = await ownTent(ctx.user.id, input.id);
+      const d = await db();
+      await d.transaction(async (tx) => {
+        for (const tbl of [
+          growReadings,
+          growCommands,
+          growEvents,
+          growSnapshots,
+          growDevices,
+        ] as const)
+          await tx.delete(tbl).where(eq(tbl.tentId, t.id));
+        await tx.delete(growTents).where(eq(growTents.id, t.id));
+      });
+      return { ok: true as const };
+    }),
+
+  /** Neues Gerät: das Token wird nur jetzt im Klartext gezeigt. */
+  addDevice: protectedProcedure
+    .input(
+      z.object({
+        tentId: z.number().int(),
+        name: z.string().trim().min(1).max(80),
+        caps: capsInput,
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const t = await ownTent(ctx.user.id, input.tentId);
+      const d = await db();
+      const n = await d
+        .select({ c: sql<number>`count(*)` })
+        .from(growDevices)
+        .where(eq(growDevices.tentId, t.id));
+      if (Number(n[0]?.c ?? 0) >= MAX_DEVICES)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Höchstens ${MAX_DEVICES} Geräte je Zelt.`,
+        });
+      const tok = newDeviceToken();
+      const caps: DeviceCaps = {
+        sensors: [...new Set(input.caps.sensors)],
+        actuators: input.caps.actuators.filter(
+          (a, i, arr) => arr.findIndex((b) => b.type === a.type) === i,
+        ),
+      };
+      const [res] = await d
+        .insert(growDevices)
+        .values({
+          tentId: t.id,
+          userId: ctx.user.id,
+          name: input.name,
+          kind: "http",
+          tokenHash: tok.hash,
+          tokenHint: tok.hint,
+          caps,
+          state: {},
+        });
+      await logEvent(
+        d,
+        t.id,
+        "info",
+        "device",
+        `Gerät „${input.name}“ hinzugefügt.`,
+      );
+      return {
+        id: Number((res as { insertId?: number }).insertId),
+        token: tok.token,
+        endpoint: "/api/device/v1/report",
+        pollSeconds: POLL_SECONDS,
+      };
+    }),
+
+  rotateDeviceToken: protectedProcedure
+    .input(z.object({ deviceId: z.number().int() }))
+    .mutation(async ({ ctx, input }) => {
+      const d = await db();
+      const [dev] = await d
+        .select()
+        .from(growDevices)
+        .where(
+          and(
+            eq(growDevices.id, input.deviceId),
+            eq(growDevices.userId, ctx.user.id),
+          ),
+        )
+        .limit(1);
+      if (!dev || dev.kind !== "http")
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Gerät nicht gefunden",
+        });
+      const tok = newDeviceToken();
+      await d
+        .update(growDevices)
+        .set({ tokenHash: tok.hash, tokenHint: tok.hint })
+        .where(eq(growDevices.id, dev.id));
+      return { token: tok.token };
+    }),
+
+  removeDevice: protectedProcedure
+    .input(z.object({ deviceId: z.number().int() }))
+    .mutation(async ({ ctx, input }) => {
+      const d = await db();
+      const [dev] = await d
+        .select()
+        .from(growDevices)
+        .where(
+          and(
+            eq(growDevices.id, input.deviceId),
+            eq(growDevices.userId, ctx.user.id),
+          ),
+        )
+        .limit(1);
+      if (!dev)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Gerät nicht gefunden",
+        });
+      await d
+        .update(growCommands)
+        .set({ status: "expired", result: "Gerät entfernt" })
+        .where(
+          and(
+            eq(growCommands.deviceId, dev.id),
+            inArray(growCommands.status, ["pending", "sent", "proposed"]),
+          ),
+        );
+      await d.delete(growDevices).where(eq(growDevices.id, dev.id));
+      await logEvent(
+        d,
+        dev.tentId,
+        "info",
+        "device",
+        `Gerät „${dev.name}“ entfernt.`,
+      );
+      return { ok: true as const };
+    }),
+
+  /** Verlauf einer Messgröße, auf höchstens ~200 Punkte verdichtet. */
+  history: protectedProcedure
+    .input(
+      z.object({
+        tentId: z.number().int(),
+        metric: z.enum(METRICS),
+        hours: z
+          .number()
+          .int()
+          .min(1)
+          .max(24 * 30)
+          .default(24),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      await ownTent(ctx.user.id, input.tentId);
+      const d = await db();
+      const since = Date.now() - input.hours * 3_600_000;
+      const bucket = Math.max(
+        60_000,
+        Math.round((input.hours * 3_600_000) / 200),
+      );
+      const rows = await d
+        .select({
+          b: sql<number>`floor(${growReadings.ts} / ${bucket})`,
+          v: sql<number>`avg(${growReadings.value})`,
+          lo: sql<number>`min(${growReadings.value})`,
+          hi: sql<number>`max(${growReadings.value})`,
+        })
+        .from(growReadings)
+        .where(
+          and(
+            eq(growReadings.tentId, input.tentId),
+            eq(growReadings.metric, input.metric),
+            gte(growReadings.ts, since),
+          ),
+        )
+        .groupBy(sql`floor(${growReadings.ts} / ${bucket})`)
+        .orderBy(sql`floor(${growReadings.ts} / ${bucket})`);
+      return rows.map((r) => ({
+        t: Number(r.b) * bucket,
+        v: Math.round(Number(r.v) * 100) / 100,
+        lo: Number(r.lo),
+        hi: Number(r.hi),
+      }));
+    }),
+
+  /** Handsteuerung: läuft durch dieselbe Sicherheitsprüfung wie der Autopilot. */
+  command: protectedProcedure
+    .input(z.object({ tentId: z.number().int(), cmd: commandInput }))
+    .mutation(async ({ ctx, input }) => {
+      const t = await ownTent(ctx.user.id, input.tentId);
+      const d = await db();
+      const now = Date.now();
+      const cfg = tentConfig(t);
+      const devices = await d
+        .select()
+        .from(growDevices)
+        .where(eq(growDevices.tentId, t.id));
+      const { caps, owner } = mergeCaps(devices);
+      const state: Record<string, number> = {};
+      for (const dev of devices)
+        Object.assign(
+          state,
+          (dev.state as Record<string, number> | null) ?? {},
+        );
+      const u = await usage(d, t.id, now, cfg.settings.timeZone);
+      const readings = await latestReadings(d, t.id, now);
+      const values = Object.fromEntries(
+        Object.entries(readings).map(([k, r]) => [k, r!.value]),
+      );
+      const targets = targetsFor(
+        cfg.settings as TentSettings,
+        cfg.adjustments,
+        now,
+      );
+      const isDay = lightPlan(cfg.settings, targets, now).isDay;
+      const cmd = input.cmd as Command;
+      const g = guard(cmd, {
+        limits: cfg.limits,
+        stage: cfg.settings.stage,
+        isDay,
+        values,
+        state: { ...state, ...u.inFlight },
+        caps,
+        pumpSecondsToday: u.pumpSecondsToday,
+        lastPumpAt: u.lastPumpAt,
+        dosedToday: u.dosedToday,
+        now,
+      });
+      if (!g.ok)
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: `Sicherheitsprüfung: ${g.reason}`,
+        });
+      const device = devices.find((x) => x.id === owner.get(cmd.actuator))!;
+      const id = await issueCommand(
+        d,
+        t,
+        device,
+        g.cmd,
+        "von Hand",
+        "user",
+        "pending",
+        now,
+      );
+      await logEvent(
+        d,
+        t.id,
+        "info",
+        "manual",
+        `${describeCommand(g.cmd)} – von Hand${g.note ? ` (${g.note})` : ""}`,
+        now,
+      );
+      if (t.mode === "auto")
+        await logEvent(
+          d,
+          t.id,
+          "info",
+          "manual-hint",
+          "Hinweis: Im Autopilot kann der Regler die Stellung beim nächsten Takt wieder anpassen.",
+          now,
+        );
+      return { id, cmd: g.cmd };
+    }),
+
+  /** Vorschlag bestätigen oder ablehnen (Modus „Vorschläge“). */
+  decide: protectedProcedure
+    .input(z.object({ commandId: z.number().int(), approve: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const d = await db();
+      const [c] = await d
+        .select()
+        .from(growCommands)
+        .where(eq(growCommands.id, input.commandId))
+        .limit(1);
+      if (!c) throw new TRPCError({ code: "NOT_FOUND" });
+      const t = await ownTent(ctx.user.id, c.tentId);
+      if (c.status !== "proposed")
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Vorschlag ist nicht mehr aktuell.",
+        });
+      await d
+        .update(growCommands)
+        .set({
+          status: input.approve ? "expired" : "rejected",
+          result: input.approve ? "bestätigt" : "abgelehnt",
+        })
+        .where(eq(growCommands.id, c.id));
+      if (!input.approve) return { ok: true as const };
+      const [device] = await d
+        .select()
+        .from(growDevices)
+        .where(eq(growDevices.id, c.deviceId))
+        .limit(1);
+      if (!device)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Gerät nicht mehr vorhanden",
+        });
+      // erneut prüfen – die Lage kann sich seit dem Vorschlag geändert haben
+      const now = Date.now();
+      const cfg = tentConfig(t);
+      const devices = await d
+        .select()
+        .from(growDevices)
+        .where(eq(growDevices.tentId, t.id));
+      const { caps } = mergeCaps(devices);
+      const u = await usage(d, t.id, now, cfg.settings.timeZone);
+      const readings = await latestReadings(d, t.id, now);
+      const values = Object.fromEntries(
+        Object.entries(readings).map(([k, r]) => [k, r!.value]),
+      );
+      const isDay = lightPlan(
+        cfg.settings,
+        targetsFor(cfg.settings, cfg.adjustments, now),
+        now,
+      ).isDay;
+      const g = guard(c.payload as Command, {
+        limits: cfg.limits,
+        stage: cfg.settings.stage,
+        isDay,
+        values,
+        state: {
+          ...((device.state as Record<string, number> | null) ?? {}),
+          ...u.inFlight,
+        },
+        caps,
+        pumpSecondsToday: u.pumpSecondsToday,
+        lastPumpAt: u.lastPumpAt,
+        dosedToday: u.dosedToday,
+        now,
+      });
+      if (!g.ok)
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: `Sicherheitsprüfung: ${g.reason}`,
+        });
+      await issueCommand(
+        d,
+        t,
+        device,
+        g.cmd,
+        `${c.reason} (bestätigt)`,
+        "controller",
+        "pending",
+        now,
+      );
+      await logEvent(
+        d,
+        t.id,
+        "info",
+        "approved",
+        `${describeCommand(g.cmd)} – bestätigt: ${c.reason}`,
+        now,
+      );
+      return { ok: true as const };
+    }),
+
+  /** Einen Takt sofort rechnen (z. B. nach dem Anlegen, statt auf die nächste Minute zu warten). */
+  tick: protectedProcedure
+    .input(z.object({ id: z.number().int() }))
+    .mutation(async ({ ctx, input }) => {
+      const t = await ownTent(ctx.user.id, input.id);
+      const d = await db();
+      if (t.lastTickAt && Date.now() - t.lastTickAt < 10_000)
+        return { ok: true as const };
+      await tickTent(d, t);
+      return { ok: true as const };
+    }),
+});

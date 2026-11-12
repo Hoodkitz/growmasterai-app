@@ -22,6 +22,7 @@ import {
   toTeaser,
 } from "./knowledge/access";
 import { z } from "zod";
+import { smartGrowRouter } from "./smartgrow/router";
 import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { getDb, setUserTierByEmail } from "./db";
@@ -201,6 +202,7 @@ async function loadHiddenUsers(
 
 export const appRouter = router({
   system: systemRouter,
+  smartGrow: smartGrowRouter,
   auth: router({
     me: publicProcedure.query((opts) => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

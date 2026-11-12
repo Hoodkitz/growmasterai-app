@@ -9,6 +9,12 @@ import {
   contentReports,
   diagnoses,
   giveawayEntries,
+  growCommands,
+  growDevices,
+  growEvents,
+  growReadings,
+  growSnapshots,
+  growTents,
   journalEntries,
   leaderboardEntries,
   messages,
@@ -105,6 +111,20 @@ export async function deleteAccountData(
   await db
     .delete(userBlocks)
     .where(or(eq(userBlocks.blockerId, uid), eq(userBlocks.blockedId, uid)));
+
+  // Smart Grow: Zelte samt Messwerten, Befehlen, Protokoll, Kamerabildern und Geräten
+  const tentRows = await db
+    .select({ id: growTents.id })
+    .from(growTents)
+    .where(eq(growTents.userId, uid));
+  const tentIds = tentRows.map((t) => t.id as number);
+  if (tentIds.length > 0) {
+    for (const tbl of [growReadings, growCommands, growEvents, growSnapshots]) {
+      await db.delete(tbl).where(inArray(tbl.tentId, tentIds));
+    }
+  }
+  await db.delete(growDevices).where(eq(growDevices.userId, uid));
+  await db.delete(growTents).where(eq(growTents.userId, uid));
 
   await db.delete(plants).where(eq(plants.userId, uid));
   await db.delete(journalEntries).where(eq(journalEntries.userId, uid));

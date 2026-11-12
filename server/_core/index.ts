@@ -1,5 +1,8 @@
 import "dotenv/config";
-import { ensureModerationSchema } from "../schema-bootstrap";
+import {
+  ensureModerationSchema,
+  ensureSmartGrowSchema,
+} from "../schema-bootstrap";
 import express from "express";
 import { createServer } from "http";
 import net from "net";
@@ -7,6 +10,8 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { registerGoogleOAuthRoutes } from "./googleOAuth";
 import { registerRevenueCatRoutes } from "./revenuecat";
+import { registerDeviceRoutes } from "../smartgrow/device-api";
+import { startSmartGrowScheduler } from "../smartgrow/engine";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { csrfOriginGuard } from "./security";
@@ -33,6 +38,7 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 
 async function startServer() {
   await ensureModerationSchema();
+  await ensureSmartGrowSchema();
   const app = express();
   // Railway terminates TLS in one proxy hop. Without this req.ip is the proxy address, so every
   // client would share one rate-limit bucket (global lockout after 10 logins) and logs show no real IPs.
@@ -129,6 +135,7 @@ async function startServer() {
   registerOAuthRoutes(app);
   registerGoogleOAuthRoutes(app);
   registerRevenueCatRoutes(app);
+  registerDeviceRoutes(app);
 
   // Apply rate limiting to OAuth callback routes
   app.use("/oauth/callback", rateLimitMiddleware(oauthCallbackLimiter));
@@ -155,6 +162,7 @@ async function startServer() {
 
   server.listen(port, () => {
     console.log(`[api] server listening on port ${port}`);
+    startSmartGrowScheduler();
   });
 }
 

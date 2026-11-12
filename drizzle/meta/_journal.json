@@ -43,6 +43,13 @@
       "when": 1793301413676,
       "tag": "0005_omniscient_romulus",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1794476410659,
+      "tag": "0006_smart_grow",
+      "breakpoints": true
     }
   ]
 }
