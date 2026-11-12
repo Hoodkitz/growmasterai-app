@@ -90,20 +90,25 @@ export default function CoachScreen() {
       .then((saved) => {
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) setMessages(parsed);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            const validMessages = parsed.filter(
+              (m: Message) => m && m.role !== "error",
+            );
+            if (validMessages.length > 0) setMessages(validMessages);
+          }
         }
       })
       .catch((e) => console.error("Failed to load coach history:", e))
       .finally(() => setHistoryLoaded(true));
   }, []);
 
-  // Persist conversation (last 100 messages)
+  // Persist conversation (last 100 non-error messages)
   useEffect(() => {
     if (!historyLoaded) return;
-    AsyncStorage.setItem(
-      COACH_STORAGE_KEY,
-      JSON.stringify(messages.slice(-100)),
-    ).catch((e) => console.error("Failed to save coach history:", e));
+    const persistable = messages.filter((m) => m.role !== "error").slice(-100);
+    AsyncStorage.setItem(COACH_STORAGE_KEY, JSON.stringify(persistable)).catch(
+      (e) => console.error("Failed to save coach history:", e),
+    );
   }, [messages, historyLoaded]);
 
   const {
@@ -257,30 +262,41 @@ export default function CoachScreen() {
               key={message.id}
               className={`max-w-[85%] ${message.role === "user" ? "self-end" : "self-start"}`}
             >
-              <View
-                className={`rounded-2xl p-4 ${
-                  message.role === "user"
-                    ? "bg-primary rounded-br-sm"
-                    : "bg-surface border border-border rounded-bl-sm"
-                }`}
-              >
-                {message.role === "assistant" &&
-                message.remedies &&
-                message.remedies.length > 0 ? (
-                  <LinkedAnswer
-                    answer={message.content}
-                    remedies={message.remedies}
-                    linkColor={colors.primary}
-                    className="text-base text-foreground"
-                  />
-                ) : (
-                  <Text
-                    className={`text-base ${message.role === "user" ? "text-background" : "text-foreground"}`}
-                  >
-                    {message.content.replace(/\[\[([^\]]+)\]\]/g, "$1")}
-                  </Text>
-                )}
-              </View>
+              {message.role === "error" ? (
+                <InlineError
+                  message={message.content}
+                  onRetry={
+                    message.retryQuestion && (message.error?.retryable ?? true)
+                      ? () => retryMessage(message.id, message.retryQuestion!)
+                      : undefined
+                  }
+                />
+              ) : (
+                <View
+                  className={`rounded-2xl p-4 ${
+                    message.role === "user"
+                      ? "bg-primary rounded-br-sm"
+                      : "bg-surface border border-border rounded-bl-sm"
+                  }`}
+                >
+                  {message.role === "assistant" &&
+                  message.remedies &&
+                  message.remedies.length > 0 ? (
+                    <LinkedAnswer
+                      answer={message.content}
+                      remedies={message.remedies}
+                      linkColor={colors.primary}
+                      className="text-base text-foreground"
+                    />
+                  ) : (
+                    <Text
+                      className={`text-base ${message.role === "user" ? "text-background" : "text-foreground"}`}
+                    >
+                      {message.content.replace(/\[\[([^\]]+)\]\]/g, "$1")}
+                    </Text>
+                  )}
+                </View>
+              )}
 
               {message.tips && message.tips.length > 0 && (
                 <View className="mt-2 bg-primary/10 rounded-xl p-3 gap-2">

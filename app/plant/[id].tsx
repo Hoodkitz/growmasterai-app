@@ -19,7 +19,6 @@ import { PlantStrainInfo } from "@/components/plant-strain-info";
 import { PlantReminderSettings } from "@/components/plant-reminder-settings";
 import {
   loadPlantMeta,
-  savePlantMeta,
   syncPlantNotifications,
   type PlantMeta,
 } from "@/lib/plant-reminders";
@@ -123,9 +122,20 @@ export default function PlantCardScreen() {
   };
 
   const removeCare = async (entryId: string) => {
+    const removed = log.find((e) => e.id === entryId);
     const next = log.filter((e) => e.id !== entryId);
     setLog(next);
     await AsyncStorage.setItem(careKey(String(id)), JSON.stringify(next));
+    if (plant && removed) {
+      const latestRemaining = next.find((e) => e.kind === removed.kind)?.date;
+      const nextMeta: PlantMeta = {
+        ...meta,
+        ...(removed.kind === "water"
+          ? { lastWatered: latestRemaining }
+          : { lastFed: latestRemaining }),
+      };
+      await applyMeta(nextMeta, plant);
+    }
   };
 
   /** Stores the device-local data and re-plans this plant's notifications. */

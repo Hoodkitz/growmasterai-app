@@ -67,7 +67,10 @@ export async function syncPlantNotifications(
   plant: PlantLike,
   meta: PlantMeta,
 ): Promise<boolean> {
-  if (Platform.OS === "web") return true;
+  if (Platform.OS === "web") {
+    await savePlantMeta(plant.id, meta);
+    return true;
+  }
   await cancelIds(meta.notificationIds);
   meta.notificationIds = [];
 
