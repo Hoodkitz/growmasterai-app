@@ -34,7 +34,7 @@ export function Chips({
           <Text
             className={selected(o.id) ? undefined : "text-foreground"}
             style={{
-              color: selected(o.id) ? "#fff" : undefined,
+              color: selected(o.id) ? "#fff" : colors.foreground,
               fontSize: 13,
               fontWeight: "600",
             }}

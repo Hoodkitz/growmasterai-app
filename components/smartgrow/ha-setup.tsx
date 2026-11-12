@@ -176,7 +176,7 @@ export function HaSetup({
     >
       <Text
         className={active ? undefined : "text-foreground"}
-        style={{ color: active ? "#fff" : undefined, fontSize: 12 }}
+        style={{ color: active ? "#fff" : colors.foreground, fontSize: 12 }}
       >
         {label}
       </Text>
