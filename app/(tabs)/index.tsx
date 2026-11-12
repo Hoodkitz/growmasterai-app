@@ -416,6 +416,22 @@ export default function HomeScreen() {
           </View>
 
           <TouchableOpacity
+            testID="home-smartgrow"
+            className="bg-surface rounded-2xl p-4 mt-3 flex-row items-center gap-3 border border-border"
+            onPress={() => router.push("/smartgrow")}
+          >
+            <Text className="text-2xl">🤖</Text>
+            <View className="flex-1">
+              <Text className="text-base font-bold text-foreground">
+                Smart Grow
+              </Text>
+              <Text className="text-xs text-muted">
+                Sensoren verbinden – KI-Autopilot für dein Zelt
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
             className="bg-surface rounded-2xl p-4 mt-3 flex-row items-center gap-3 border border-border"
             onPress={() => router.push("/wissen")}
           >

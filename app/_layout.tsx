@@ -170,6 +170,9 @@ export default function RootLayout() {
                         name="wissen"
                         options={{ presentation: "modal" }}
                       />
+                      <Stack.Screen name="smartgrow/index" />
+                      <Stack.Screen name="smartgrow/[id]" />
+                      <Stack.Screen name="smartgrow/device" />
                       <Stack.Screen
                         name="messages"
                         options={{ presentation: "modal" }}
