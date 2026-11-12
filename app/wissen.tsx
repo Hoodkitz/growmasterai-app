@@ -76,9 +76,10 @@ export default function WissenScreen() {
   // Falls back to the teaser when the server refuses the full list (e.g. owner without admin role).
   const full = paid && !all.isError;
 
-  const entries = full
-    ? ((all.data as WissenEntry[] | undefined) ?? cached)
-    : [];
+  const entries = useMemo(
+    () => (full ? ((all.data as WissenEntry[] | undefined) ?? cached) : []),
+    [full, all.data, cached],
+  );
   const offline = full && !all.data && cached.length > 0;
   const results: Hit[] = useMemo(
     () =>
@@ -87,7 +88,6 @@ export default function WissenScreen() {
         : (teaser.data?.entries ?? []),
     [full, entries, query, phase, teaser.data],
   );
-  const total = full ? entries.length : (teaser.data?.total ?? 0);
   const loading = full
     ? all.isLoading && cached.length === 0
     : teaser.isLoading;

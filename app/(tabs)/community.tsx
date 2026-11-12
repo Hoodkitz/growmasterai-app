@@ -9,7 +9,6 @@ import {
   RefreshControl,
   TextInput,
   Linking,
-  Dimensions,
   ActivityIndicator,
   Alert,
   Image,
@@ -41,7 +40,6 @@ import {
   TUTORIAL_VIDEOS,
   getTutorialThumbnailUrl,
   getTutorialUrl,
-  getCategoryLabel as getTutorialCategory,
   fetchNearbyShops,
   type NearbyShopsResult,
 } from "@/lib/locations-data";
@@ -61,15 +59,13 @@ import { ErrorDisplay } from "@/components/error-display";
 import { PhaseTipsForPhase } from "@/components/phase-tips-list";
 import { TIP_PHASE_LABEL, TipPhase } from "@/lib/phase-tips";
 
-const { width } = Dimensions.get("window");
-
 type TabType = "feed" | "news" | "radar" | "tutorials" | "strains" | "contests";
 
 export default function CommunityScreen() {
   const router = useRouter();
   const colors = useColors();
   const { tier } = useSubscription();
-  const { level, points } = useGamification();
+  const { level } = useGamification();
 
   const [activeTab, setActiveTab] = useState<TabType>(
     STORE_MODE ? "news" : "radar",

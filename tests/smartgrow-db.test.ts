@@ -4,8 +4,40 @@
  */
 import { beforeAll, describe, expect, it } from "vitest";
 
-const URL = process.env.SMARTGROW_TEST_DB;
+const DEFAULT_LOCAL_TEST_DB = "mysql://root@127.0.0.1:3307/growmaster_sg_test";
+
+async function resolveSmartGrowTestDb(): Promise<string | undefined> {
+  if (process.env.SMARTGROW_TEST_DB) {
+    return process.env.SMARTGROW_TEST_DB;
+  }
+  try {
+    const mysql = await import("mysql2/promise");
+    const conn = await mysql.createConnection({
+      host: "127.0.0.1",
+      port: 3307,
+      user: "root",
+      connectTimeout: 500,
+    });
+    await conn.query("CREATE DATABASE IF NOT EXISTS `growmaster_sg_test`");
+    await conn.end();
+    return DEFAULT_LOCAL_TEST_DB;
+  } catch {
+    return undefined;
+  }
+}
+
+const URL = await resolveSmartGrowTestDb();
 const d = URL ? describe : describe.skip;
+
+const currentBerlinHour =
+  Number(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: "Europe/Berlin",
+      hour: "2-digit",
+      hour12: false,
+    }).format(new Date()),
+  ) % 24;
+const activeLightsOn = `${String((currentBerlinHour + 22) % 24).padStart(2, "0")}:00`;
 
 d("Smart Grow (Datenbank)", () => {
   let mod: {
@@ -34,7 +66,7 @@ d("Smart Grow (Datenbank)", () => {
   const settings = {
     stage: "veg" as const,
     medium: "soil" as const,
-    lightsOn: "00:00",
+    lightsOn: activeLightsOn,
     rampMinutes: 0,
     reservoirLiters: 20,
     purpleFinish: false,
