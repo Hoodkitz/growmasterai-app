@@ -505,3 +505,19 @@ describe("Smart Grow – Hardware-Ratgeber", () => {
       expect(metrics.has(m as never)).toBe(true);
   });
 });
+
+describe("Smart Grow – Produktempfehlungen", () => {
+  it("Kategorien mit Marke, Preis, Suchbegriff; keine Samen/Konsumartikel", async () => {
+    const { GROW_PRODUCTS, PRODUCT_CATEGORIES } =
+      await import("../shared/smartgrow/products");
+    expect(GROW_PRODUCTS.length).toBeGreaterThan(40);
+    expect(PRODUCT_CATEGORIES.length).toBeGreaterThan(10);
+    for (const p of GROW_PRODUCTS) {
+      expect(p.searchTerm.length).toBeGreaterThan(3);
+      expect(p.priceRange).toMatch(/€/);
+      expect(`${p.name} ${p.searchTerm}`).not.toMatch(
+        /samen|seed|bong|grinder|papers/i,
+      );
+    }
+  });
+});

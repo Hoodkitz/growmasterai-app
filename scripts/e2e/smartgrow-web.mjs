@@ -89,6 +89,8 @@ await step("Hardware-Ratgeber mit Einkaufsliste und Anleitung", async () => {
   await see("Installation Schritt für Schritt");
   await vis("hw-diy").click();
   await see("ESP32-DevKit");
+  await vis("hw-shop").click();
+  await see(/BioBizz/);
   await p.getByText("‹ Zurück").locator("visible=true").first().click();
 });
 await step("Keine JS-Laufzeitfehler", async () => { if (errs.length) throw new Error(errs.slice(0, 3).join(" | ")); });
