@@ -641,6 +641,23 @@ d("Smart Grow – Add-on (Aufpreis)", () => {
     await expect(free.smartGrow.aiReview({ id: sim.id })).rejects.toThrow(
       /Add-on/,
     );
+    // auch mit Add-on: keine echten Geräte in ein Simulator-Zelt (sonst Gratis-Autopilot nach Ablauf)
+    const paidSim = appRouter.createCaller({
+      req: { headers: {} } as never,
+      res: {} as never,
+      user: {
+        id: 9050,
+        role: "user",
+        smartGrowUntil: new Date("2037-12-31"),
+      } as never,
+    });
+    await expect(
+      paidSim.smartGrow.addDevice({
+        tentId: sim.id,
+        name: "X",
+        caps: { sensors: ["airTemp"], actuators: [] },
+      }),
+    ).rejects.toThrow(/Simulator-Zelt/);
     // Simulator-Autopilot läuft kostenlos
     const db = (await getDb())!;
     const out = await tickTent(
