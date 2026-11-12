@@ -92,6 +92,17 @@ Die folgende Tabelle zeigt die Standard-Pinbelegung aus [`src/config.example.h`]
 
 ---
 
+### TLS-Zertifikat (Pflicht)
+
+Die Firmware prüft das https-Zertifikat des Servers. Trage in `config.h` unter `ROOT_CA_PEM` das Root-Zertifikat ein:
+
+```bash
+openssl s_client -connect <dein-server>:443 -showcerts </dev/null
+```
+
+Das **letzte** Zertifikat der Kette (Root-CA) inkl. `-----BEGIN/END CERTIFICATE-----` übernehmen (jede Zeile als `"…\n"`).
+Ohne Prüfung könnte jemand im WLAN den Server vortäuschen und Heizung, Pumpe oder CO₂ schalten. `WIFI_TLS_INSECURE 1` geht nur zusammen mit `ALLOW_INSECURE_TLS 1` – ausschließlich zum Testen.
+
 ## 5. Kompilieren & Flashen mit PlatformIO
 
 Stelle sicher, dass [PlatformIO Core (CLI)](https://docs.platformio.org/en/latest/core/installation/index.html) oder die VS Code PlatformIO IDE installiert ist.

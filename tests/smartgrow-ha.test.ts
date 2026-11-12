@@ -46,6 +46,25 @@ describe("Home-Assistant-Brücke", () => {
     expect(isPrivateAddress("100.64.1.1")).toBe(true);
     expect(isPrivateAddress("::ffff:127.0.0.1")).toBe(true);
     expect(isPrivateAddress("8.8.8.8")).toBe(false);
+    // Umgehungsversuche: gemappte/übersetzte IPv6-Formen und Sonderbereiche
+    for (const ip of [
+      "::ffff:7f00:1",
+      "::ffff:a9fe:a9fe",
+      "64:ff9b::a00:1",
+      "2002:a00:1::",
+      "::7f00:1",
+      "198.18.0.1",
+      "192.0.0.10",
+      "fd00::1",
+      "fe80::1%eth0",
+      "kaputt",
+    ]) {
+      expect(isPrivateAddress(ip), ip).toBe(true);
+    }
+    expect(isPrivateAddress("2606:4700:4700::1111")).toBe(false);
+    await expect(
+      validateBaseUrl("https://[::ffff:7f00:1]/", pub),
+    ).rejects.toThrow(/Interne/);
   });
 
   it("verschlüsselt den Token (AES-GCM, manipulationssicher)", () => {
@@ -176,5 +195,18 @@ describe("Home-Assistant-Brücke", () => {
           }),
       ),
     ).rejects.toThrow(/Weiterleitung/);
+  });
+
+  it("gesicherte Verbindung lehnt interne Ziele beim Verbinden ab (auch bei späterem DNS-Wechsel)", async () => {
+    const { pinnedFetch } = await import("../server/smartgrow/homeassistant");
+    await expect(
+      pinnedFetch("https://localhost:9/api/states", {}),
+    ).rejects.toThrow(/Interne/);
+    await expect(
+      pinnedFetch("https://127.0.0.1:9/api/states", {}),
+    ).rejects.toThrow(/Interne/);
+    await expect(pinnedFetch("http://example.com/", {})).rejects.toThrow(
+      /https/,
+    );
   });
 });

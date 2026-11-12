@@ -350,7 +350,6 @@ d("Smart Grow – KI und Kamera (Datenbank, KI gemockt)", () => {
 
 d("Smart Grow – Home Assistant im Takt (Datenbank, HA gemockt)", () => {
   it("liest Sensoren, schaltet über HA, meldet Ausfall", async () => {
-    const { vi } = await import("vitest");
     process.env.DATABASE_URL = URL;
     const { appRouter } = await import("../server/routers");
     const { tickTent } = await import("../server/smartgrow/engine");
@@ -397,7 +396,9 @@ d("Smart Grow – Home Assistant im Takt (Datenbank, HA gemockt)", () => {
     });
     const posts: string[] = [];
     let down = false;
-    vi.stubGlobal("fetch", async (url: string, init: RequestInit) => {
+    const { setHaFetchForTests } =
+      await import("../server/smartgrow/homeassistant");
+    setHaFetchForTests(async (url: string, init: RequestInit) => {
       if (down) return new Response("", { status: 502 });
       if (url.endsWith("/api/states"))
         return new Response(
@@ -446,7 +447,7 @@ d("Smart Grow – Home Assistant im Takt (Datenbank, HA gemockt)", () => {
         ),
       ).toBe(true);
     } finally {
-      vi.unstubAllGlobals();
+      setHaFetchForTests(null);
       await c.smartGrow.delete({ id });
     }
   }, 60_000);

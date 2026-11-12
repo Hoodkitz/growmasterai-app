@@ -14,6 +14,7 @@ import {
 } from "node:crypto";
 import { lookup } from "node:dns/promises";
 import net from "node:net";
+import https from "node:https";
 import type { Actuator, Command, Metric } from "../../shared/smartgrow/types";
 
 export type HaActuatorMap = Partial<Record<Exclude<Actuator, "doser">, string>>;
@@ -54,30 +55,121 @@ export function decryptToken(blob: string): string {
 }
 
 // ---------- SSRF-Schutz ----------
+/** Alles, was nicht öffentliches Unicast ist (IPv4 + IPv6 inkl. gemappter/übersetzter Formen). */
+// getrennte Listen: Node prüft IPv4 sonst auch gegen ::ffff:0:0/96 (würde jede IPv4 sperren)
+const BLOCKED4 = new net.BlockList();
+const BLOCKED6 = new net.BlockList();
+for (const [a, p] of [
+  ["0.0.0.0", 8],
+  ["10.0.0.0", 8],
+  ["100.64.0.0", 10],
+  ["127.0.0.0", 8],
+  ["169.254.0.0", 16],
+  ["172.16.0.0", 12],
+  ["192.0.0.0", 24],
+  ["192.0.2.0", 24],
+  ["192.88.99.0", 24],
+  ["192.168.0.0", 16],
+  ["198.18.0.0", 15],
+  ["198.51.100.0", 24],
+  ["203.0.113.0", 24],
+  ["224.0.0.0", 4],
+  ["240.0.0.0", 4],
+] as const)
+  BLOCKED4.addSubnet(a, p, "ipv4");
+for (const [a, p] of [
+  ["::", 128],
+  ["::1", 128],
+  ["::", 96] /* IPv4-kompatibel */,
+  ["::ffff:0:0", 96] /* IPv4-gemappt */,
+  ["64:ff9b::", 96] /* NAT64 */,
+  ["64:ff9b:1::", 48],
+  ["100::", 64],
+  ["2001::", 32] /* Teredo */,
+  ["2001:db8::", 32],
+  ["2002::", 16] /* 6to4 */,
+  ["fc00::", 7],
+  ["fe80::", 10],
+  ["fec0::", 10],
+  ["ff00::", 8],
+] as const)
+  BLOCKED6.addSubnet(a, p, "ipv6");
+
 export function isPrivateAddress(ip: string): boolean {
-  if (net.isIPv4(ip)) {
-    const [a, b] = ip.split(".").map(Number);
-    return (
-      a === 10 ||
-      a === 127 ||
-      a === 0 ||
-      (a === 169 && b === 254) ||
-      (a === 172 && b >= 16 && b <= 31) ||
-      (a === 192 && b === 168) ||
-      (a === 100 && b >= 64 && b <= 127) ||
-      a >= 224
-    );
-  }
-  const x = ip.toLowerCase();
-  if (x === "::1" || x === "::") return true;
-  if (x.startsWith("::ffff:")) return isPrivateAddress(x.slice(7));
-  return (
-    x.startsWith("fc") ||
-    x.startsWith("fd") ||
-    x.startsWith("fe80") ||
-    x.startsWith("ff")
+  const addr = ip.replace(/^\[|\]$/g, "").split("%")[0];
+  if (net.isIPv4(addr)) return BLOCKED4.check(addr, "ipv4");
+  if (net.isIPv6(addr)) return BLOCKED6.check(addr, "ipv6");
+  return true; // Unbekanntes Format: sicherheitshalber sperren
+}
+
+/** DNS-Auflösung, bei der JEDE Adresse geprüft wird – wird bei jeder Verbindung benutzt (gegen DNS-Rebinding). */
+function safeLookup(
+  hostname: string,
+  options: object,
+  cb: (
+    err: Error | null,
+    address: string | { address: string; family: number }[],
+    family?: number,
+  ) => void,
+) {
+  lookup(hostname, { all: true }).then(
+    (addrs) => {
+      if (!addrs.length || addrs.some((a) => isPrivateAddress(a.address)))
+        return cb(new Error("Interne Adressen sind nicht erlaubt"), "");
+      if ((options as { all?: boolean }).all) return cb(null, addrs);
+      cb(null, addrs[0].address, addrs[0].family);
+    },
+    (e) => cb(e as Error, ""),
   );
 }
+
+/** fetch-Ersatz über https.request mit geprüfter, festgenagelter IP; keine Weiterleitungen, max. 2 MB. */
+export const pinnedFetch: HaFetch = (url, init) =>
+  new Promise((resolve, reject) => {
+    const u = new URL(url);
+    if (u.protocol !== "https:") return reject(new Error("Nur https"));
+    if (
+      net.isIP(u.hostname.replace(/^\[|\]$/g, "")) &&
+      isPrivateAddress(u.hostname)
+    )
+      return reject(new Error("Interne Adressen sind nicht erlaubt"));
+    const req = https.request(
+      u,
+      {
+        method: init.method ?? "GET",
+        headers: init.headers as Record<string, string>,
+        lookup: safeLookup as never,
+        timeout: 8000,
+      },
+      (res) => {
+        const chunks: Buffer[] = [];
+        let size = 0;
+        res.on("data", (c: Buffer) => {
+          size += c.length;
+          if (size > 2_000_000) {
+            req.destroy(new Error("Antwort zu groß"));
+            return;
+          }
+          chunks.push(c);
+        });
+        res.on("end", () =>
+          resolve(
+            new Response(Buffer.concat(chunks), {
+              status: res.statusCode ?? 500,
+            }),
+          ),
+        );
+        res.on("error", reject);
+      },
+    );
+    req.on("timeout", () => req.destroy(new Error("Zeitüberschreitung")));
+    req.on("error", reject);
+    init.signal?.addEventListener("abort", () =>
+      req.destroy(new Error("Abgebrochen")),
+    );
+    if (init.body) req.write(init.body as string);
+    req.end();
+  });
 
 export type Resolver = (host: string) => Promise<string[]>;
 const defaultResolver: Resolver = async (host) =>
@@ -116,13 +208,18 @@ export async function validateBaseUrl(
 }
 
 export type HaFetch = (url: string, init: RequestInit) => Promise<Response>;
+let haFetchImpl: HaFetch = pinnedFetch;
+/** Nur für Tests: HA-Aufrufe umleiten (null = wieder die gesicherte Standard-Verbindung). */
+export function setHaFetchForTests(f: HaFetch | null) {
+  haFetchImpl = f ?? pinnedFetch;
+}
 
 async function haRequest(
   base: string,
   token: string,
   path: string,
   init: RequestInit = {},
-  f: HaFetch = fetch,
+  f: HaFetch = haFetchImpl,
 ): Promise<unknown> {
   const ctl = new AbortController();
   const t = setTimeout(() => ctl.abort(), 8000);

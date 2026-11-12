@@ -19,10 +19,17 @@
 // Geräte-Token aus der GrowMaster-App (beginnt mit "gmd_", nur einmal bei Erstellung sichtbar)
 #define DEVICE_TOKEN     "gmd_hier_dein_geraete_token_aus_der_app_eintragen"
 
-// TLS-Zertifikatsprüfung:
-// Für produktive Umgebungen eigenes Root-CA-Zertifikat hinterlegen und WIFI_TLS_INSECURE auf 0 setzen.
-// Für lokale Tests / selbstsignierte Zertifikate kann WIFI_TLS_INSECURE = 1 genutzt werden.
-#define WIFI_TLS_INSECURE 1
+// TLS-Zertifikatsprüfung (Standard: AN). Das Root-Zertifikat deines Servers hier eintragen.
+// So bekommst du es:  openssl s_client -connect <server>:443 -showcerts </dev/null
+//   -> das LETZTE Zertifikat der Kette (Root-CA) inkl. BEGIN/END-Zeilen kopieren.
+// Ohne Prüfung könnte jemand im WLAN den Server vortäuschen und deine Geräte (Heizung, Pumpe, CO2) schalten.
+#define WIFI_TLS_INSECURE 0
+#define ROOT_CA_PEM \
+  "-----BEGIN CERTIFICATE-----\n" \
+  "HIER_DAS_ROOT_ZERTIFIKAT_EINTRAGEN\n" \
+  "-----END CERTIFICATE-----\n"
+// Nur zum Testen mit selbstsignierten Zertifikaten: WIFI_TLS_INSECURE 1 UND ALLOW_INSECURE_TLS 1 setzen.
+#define ALLOW_INSECURE_TLS 0
 
 // Firmware-Kennung, die bei jedem Report mitgesendet wird
 #define FIRMWARE_VERSION "gm-esp32 0.1"

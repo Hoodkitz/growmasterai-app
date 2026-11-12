@@ -33,12 +33,18 @@
 #include <time.h>
 #include <esp_task_wdt.h>
 
-// Konfiguration laden: config.h bevorzugen, sonst Rückfall auf config.example.h
+// Konfiguration: src/config.example.h nach src/config.h kopieren und ausfüllen (WLAN, Server, Token, Zertifikat)
 #if __has_include("config.h")
   #include "config.h"
 #else
-  #warning "src/config.h nicht gefunden – verwende src/config.example.h! Bitte für den Produktivbetrieb kopieren."
-  #include "config.example.h"
+  #error "src/config.h fehlt: config.example.h nach config.h kopieren und ausfüllen."
+#endif
+
+#if WIFI_TLS_INSECURE && !ALLOW_INSECURE_TLS
+  #error "WIFI_TLS_INSECURE ist nur mit ALLOW_INSECURE_TLS 1 erlaubt (nur zum Testen!)."
+#endif
+#if WIFI_TLS_INSECURE
+  #warning "TLS-Zertifikatsprüfung ist AUS – nur zum Testen verwenden!"
 #endif
 
 // Optionale Sensor-Bibliotheken je nach Konfiguration einbinden
@@ -830,6 +836,8 @@ static void sendReportToServer() {
   WiFiClientSecure client;
 #if WIFI_TLS_INSECURE
   client.setInsecure();
+#else
+  client.setCACert(ROOT_CA_PEM);
 #endif
   client.setTimeout(5); // Kurzer Socket-Timeout in Sekunden für Watchdog-Sicherheit
 
