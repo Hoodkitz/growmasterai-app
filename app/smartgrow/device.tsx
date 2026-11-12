@@ -14,6 +14,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { Chips } from "@/components/smartgrow/chips";
 import { HaSetup } from "@/components/smartgrow/ha-setup";
+import { AddonPaywall } from "@/components/smartgrow/addon-paywall";
 import { useColors } from "@/hooks/use-colors";
 import { trpc } from "@/lib/trpc";
 import { getApiBaseUrl } from "@/constants/oauth";
@@ -112,6 +113,7 @@ export default function DeviceScreen() {
   ]);
   const [token, setToken] = useState<string | null>(null);
   const [via, setVia] = useState<"own" | "ha">("own");
+  const access = trpc.smartGrow.access.useQuery();
   const existing = deviceId
     ? tent.data?.devices.find((d) => d.id === Number(deviceId))
     : undefined;
@@ -312,6 +314,19 @@ export default function DeviceScreen() {
           >
             <Text style={{ color: colors.error }}>Gerät entfernen</Text>
           </TouchableOpacity>
+        </ScrollView>
+      </ScreenContainer>
+    );
+  }
+
+  if (access.data && !access.data.active) {
+    return (
+      <ScreenContainer>
+        <ScrollView contentContainerStyle={{ padding: 16, gap: 12 }}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Text className="text-primary">‹ Zurück</Text>
+          </TouchableOpacity>
+          <AddonPaywall />
         </ScrollView>
       </ScreenContainer>
     );

@@ -59,6 +59,8 @@ export const users = mysqlTable("users", {
     .default("free")
     .notNull(),
   subscriptionExpiresAt: timestamp("subscriptionExpiresAt"),
+  /** Smart-Grow-Add-on (Aufpreis) aktiv bis; null = nicht gebucht */
+  smartGrowUntil: timestamp("smartGrowUntil"),
   revenuecatId: varchar("revenuecatId", { length: 64 }),
 
   // Stats

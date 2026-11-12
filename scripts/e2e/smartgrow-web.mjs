@@ -1,5 +1,9 @@
 const pw = await import(process.env.PLAYWRIGHT_CORE); const chromium = pw.chromium ?? pw.default.chromium;
-const D = process.argv[2]; const WEB = "http://localhost:8099"; const API = "http://localhost:3100";
+const D = process.argv[2];
+const EMAIL = `sg${Date.now()}@test.de`;
+const { execSync } = await import("node:child_process");
+/** Add-on per Testdatenbank freischalten (wie der RevenueCat-Webhook) */
+const grantAddon = () => execSync(`docker exec mpu-test-mysql mysql -uroot ${process.env.E2E_DB ?? "growmaster_e2e"} -e "UPDATE users SET smartGrowUntil='2037-12-31' WHERE email='${EMAIL}'"`); const WEB = "http://localhost:8099"; const API = "http://localhost:3100";
 const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 400, height: 860 } });
 const errs = []; p.on("pageerror", (e) => errs.push(e.message));
 let ok = 0, fail = 0;
@@ -9,7 +13,7 @@ const vis = (id) => p.getByTestId(id).locator("visible=true").first();
 
 await step("Anmelden + Altersabfrage + Onboarding", async () => {
   await p.goto(WEB + "/"); await p.waitForTimeout(3000);
-  const r = await p.evaluate(async (API) => (await fetch(API + "/api/auth/register", { method: "POST", credentials: "include", headers: { "content-type": "application/json" }, body: JSON.stringify({ email: `sg${Date.now()}@test.de`, password: "Sicher!Passwort123", name: "SG" }) })).status, API);
+  const r = await p.evaluate(async ([API, EMAIL]) => (await fetch(API + "/api/auth/register", { method: "POST", credentials: "include", headers: { "content-type": "application/json" }, body: JSON.stringify({ email: EMAIL, password: "Sicher!Passwort123", name: "SG" }) })).status, [API, EMAIL]);
   if (r !== 200) throw new Error("register " + r);
   await p.goto(WEB + "/"); await p.waitForTimeout(3000);
   const age = p.getByText("Ja, ich bin 18 oder älter"); if (await age.count()) await age.click();
@@ -21,6 +25,7 @@ await step("Startseite zeigt Smart Grow", async () => { await see("Smart Grow");
 await step("Smart Grow öffnen, Simulator anlegen", async () => {
   await vis("home-smartgrow").click();
   await see("Simulator ausprobieren");
+  await see("🔓 Add-on „Smart Grow“"); // Paywall-Hinweis ohne Add-on
   await vis("sg-sim").click();
   await vis("sg-create").click();
   await see("KI-Autopilot");
@@ -55,6 +60,13 @@ await step("Einstellungen: Lila-Finish sichtbar", async () => {
   await p.getByText("Phase & Einstellungen").locator("visible=true").first().click();
   await see("💜 Lila-Finish");
   await see("Sicherheitsgrenzen");
+});
+await step("Ohne Add-on: Paywall statt Geräte-Anbindung", async () => {
+  await vis("add-device").scrollIntoViewIfNeeded();
+  await vis("add-device").click();
+  await vis("addon-paywall").waitFor({ timeout: 15000 });
+  await p.getByText("‹ Zurück").locator("visible=true").first().click();
+  grantAddon(); // Geräte-Seite lädt den Add-on-Status beim nächsten Öffnen neu
 });
 let token = "";
 await step("Gerät verbinden → Token", async () => {

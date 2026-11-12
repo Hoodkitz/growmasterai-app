@@ -139,4 +139,18 @@ export async function ensureSmartGrowSchema(): Promise<void> {
   } catch (error) {
     console.error("[db] smart grow schema bootstrap failed:", error);
   }
+  // Add-on-Spalte am Nutzer (nur anlegen, wenn sie fehlt) – eigener Block, damit ein Fehler hier die Tabellen nicht verhindert
+  try {
+    // Add-on-Spalte am Nutzer (nur anlegen, wenn sie fehlt)
+    const [cols] = (await db.execute(
+      sql`SELECT COUNT(*) AS c FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND COLUMN_NAME = 'smartGrowUntil'`,
+    )) as unknown as [{ c: number | string }[]];
+    if (Number(cols?.[0]?.c ?? 0) === 0)
+      await db.execute(
+        sql`ALTER TABLE \`users\` ADD \`smartGrowUntil\` timestamp NULL`,
+      );
+    console.log("[db] smart grow add-on column ready");
+  } catch (error) {
+    console.error("[db] smart grow schema bootstrap failed:", error);
+  }
 }

@@ -14,6 +14,7 @@ import Svg, { Polyline } from "react-native-svg";
 import { ScreenContainer } from "@/components/screen-container";
 import { Chips } from "@/components/smartgrow/chips";
 import { AiCard, LeafCard } from "@/components/smartgrow/ai-cards";
+import { AddonPaywall } from "@/components/smartgrow/addon-paywall";
 import { useColors } from "@/hooks/use-colors";
 import { trpc } from "@/lib/trpc";
 import type { inferRouterOutputs } from "@trpc/server";
@@ -60,6 +61,7 @@ export default function TentScreen() {
   const decideM = trpc.smartGrow.decide.useMutation();
   const command = trpc.smartGrow.command.useMutation();
   const del = trpc.smartGrow.delete.useMutation();
+  const access = trpc.smartGrow.access.useQuery();
   const [chart, setChart] = useState<Metric>("airTemp");
   const [showSettings, setShowSettings] = useState(false);
   const [showLog, setShowLog] = useState(false);
@@ -179,7 +181,12 @@ export default function TentScreen() {
         contentContainerStyle={{ padding: 16, gap: 14, paddingBottom: 60 }}
       >
         <View className="flex-row items-center justify-between">
-          <TouchableOpacity onPress={() => router.back()} className="py-2 pr-3">
+          <TouchableOpacity
+            onPress={() =>
+              router.canGoBack() ? router.back() : router.replace("/smartgrow")
+            }
+            className="py-2 pr-3"
+          >
             <Text className="text-primary">‹ Zelte</Text>
           </TouchableOpacity>
           <Text className="text-xs text-muted">
@@ -193,6 +200,9 @@ export default function TentScreen() {
           {t.settings.purpleFinish ? " · 💜 Lila-Finish" : ""}
         </Text>
 
+        {access.data && !access.data.active && !t.simulated ? (
+          <AddonPaywall compact />
+        ) : null}
         {/* Autopilot */}
         <View className="bg-surface rounded-2xl p-4 border border-border gap-2">
           <Text className="text-base font-bold text-foreground">

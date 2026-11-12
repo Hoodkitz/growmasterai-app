@@ -24,6 +24,7 @@ import {
   type Stage,
 } from "@/shared/smartgrow/types";
 import { Chips } from "@/components/smartgrow/chips";
+import { AddonPaywall } from "@/components/smartgrow/addon-paywall";
 
 const deviceTimeZone = () => {
   try {
@@ -44,6 +45,10 @@ export default function SmartGrowList() {
     refetchInterval: 30_000,
   });
   const create = trpc.smartGrow.create.useMutation();
+  const access = trpc.smartGrow.access.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+  const addon = !!access.data?.active;
   // beim Zurückkommen vom Dashboard frische Werte/Modus zeigen
   const refetchList = list.refetch;
   useFocusEffect(
@@ -170,12 +175,20 @@ export default function SmartGrowList() {
           </TouchableOpacity>
         ))}
 
+        {access.data && !addon ? <AddonPaywall /> : null}
         {!form ? (
           <View className="gap-3">
             <TouchableOpacity
               testID="sg-new"
               className="bg-primary rounded-2xl p-4 items-center"
               onPress={() => {
+                if (!addon) {
+                  Alert.alert(
+                    "Add-on „Smart Grow“",
+                    "Echte Geräte verbindest du mit dem Add-on. Probier vorher kostenlos den Simulator aus.",
+                  );
+                  return;
+                }
                 setSim(false);
                 setForm(true);
               }}
@@ -248,12 +261,16 @@ export default function SmartGrowList() {
               <Text className="text-sm text-foreground flex-1">
                 Simulator (virtuelles Zelt zum Testen)
               </Text>
-              <Switch value={sim} onValueChange={setSim} />
+              <Switch
+                value={sim || !addon}
+                disabled={!addon}
+                onValueChange={setSim}
+              />
             </View>
             <TouchableOpacity
               testID="sg-create"
               className="bg-primary rounded-xl p-4 items-center"
-              onPress={() => submit(sim)}
+              onPress={() => submit(sim || !addon)}
               disabled={create.isPending}
             >
               {create.isPending ? (

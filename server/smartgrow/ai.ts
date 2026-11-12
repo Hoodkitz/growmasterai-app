@@ -15,6 +15,7 @@ import {
   growReadings,
   growSnapshots,
   growTents,
+  users,
   type GrowTent,
 } from "../../drizzle/schema";
 import { targetsFor, type Adjustments } from "../../shared/smartgrow/profiles";
@@ -28,6 +29,7 @@ import {
   type Stage,
 } from "../../shared/smartgrow/types";
 import { logEvent, tentConfig } from "./engine";
+import { hasSmartGrow } from "../../shared/smartgrow/access";
 
 type Db = NonNullable<Awaited<ReturnType<typeof getDb>>>;
 
@@ -315,6 +317,12 @@ export async function reviewDue(now = Date.now()) {
       (t.aiReviewAt && now - t.aiReviewAt < AI_INTERVAL_MS)
     )
       continue;
+    const [u] = await db
+      .select({ role: users.role, smartGrowUntil: users.smartGrowUntil })
+      .from(users)
+      .where(eq(users.id, t.userId))
+      .limit(1);
+    if (!hasSmartGrow(u)) continue; // KI-Einschätzung gehört zum Add-on
     try {
       await reviewTent(db, t, now);
     } catch (e) {

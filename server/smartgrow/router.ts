@@ -5,8 +5,8 @@
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
-import { protectedProcedure, router } from "../_core/trpc";
-import { getDb } from "../db";
+import { protectedProcedure, router, adminProcedure } from "../_core/trpc";
+import { getDb, setUserSmartGrowByEmail } from "../db";
 import {
   growCommands,
   growDevices,
@@ -60,6 +60,10 @@ import {
   saveSnapshot,
 } from "./camera";
 import { createRateLimiter } from "../_core/rateLimit";
+import {
+  ADDON_REQUIRED_MESSAGE,
+  hasSmartGrow,
+} from "../../shared/smartgrow/access";
 import * as ha from "./homeassistant";
 
 const snapshotLimiter = createRateLimiter({ windowMs: 86_400_000, max: 20 });
@@ -76,6 +80,14 @@ async function db() {
       message: "Datenbank nicht verfügbar",
     });
   return d;
+}
+
+function requireAddon(user: {
+  role?: string | null;
+  smartGrowUntil?: Date | null;
+}) {
+  if (!hasSmartGrow(user))
+    throw new TRPCError({ code: "FORBIDDEN", message: ADDON_REQUIRED_MESSAGE });
 }
 
 async function ownTent(userId: number, tentId: number): Promise<GrowTent> {
@@ -358,6 +370,7 @@ export const smartGrowRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      if (!input.simulator) requireAddon(ctx.user); // Simulator ist kostenlos
       const d = await db();
       const n = await d
         .select({ c: sql<number>`count(*)` })
@@ -456,6 +469,7 @@ export const smartGrowRouter = router({
     .input(z.object({ id: z.number().int(), mode: z.enum(MODES) }))
     .mutation(async ({ ctx, input }) => {
       const t = await ownTent(ctx.user.id, input.id);
+      if (!t.simState && input.mode !== "off") requireAddon(ctx.user);
       const d = await db();
       await d
         .update(growTents)
@@ -514,6 +528,7 @@ export const smartGrowRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      requireAddon(ctx.user);
       const t = await ownTent(ctx.user.id, input.tentId);
       const d = await db();
       const n = await d
@@ -560,6 +575,7 @@ export const smartGrowRouter = router({
   rotateDeviceToken: protectedProcedure
     .input(z.object({ deviceId: z.number().int() }))
     .mutation(async ({ ctx, input }) => {
+      requireAddon(ctx.user);
       const d = await db();
       const [dev] = await d
         .select()
@@ -808,6 +824,7 @@ export const smartGrowRouter = router({
   aiReview: protectedProcedure
     .input(z.object({ id: z.number().int() }))
     .mutation(async ({ ctx, input }) => {
+      requireAddon(ctx.user);
       const t = await ownTent(ctx.user.id, input.id);
       if (t.aiReviewAt && Date.now() - t.aiReviewAt < 10 * 60_000) {
         throw new TRPCError({
@@ -895,6 +912,7 @@ export const smartGrowRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      requireAddon(ctx.user);
       const t = await ownTent(ctx.user.id, input.tentId);
       if (!snapshotLimiter.check(`u:${ctx.user.id}`).allowed)
         throw new TRPCError({
@@ -953,6 +971,7 @@ export const smartGrowRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      requireAddon(ctx.user);
       if (!haLimiter.check(`u:${ctx.user.id}`).allowed)
         throw new TRPCError({
           code: "TOO_MANY_REQUESTS",
@@ -1000,6 +1019,7 @@ export const smartGrowRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      requireAddon(ctx.user);
       const t = await ownTent(ctx.user.id, input.tentId);
       const d = await db();
       const n = await d
@@ -1076,5 +1096,43 @@ export const smartGrowRouter = router({
         .orderBy(desc(growSnapshots.createdAt))
         .limit(12);
       return rows;
+    }),
+
+  /** Status des Add-ons für die App (Paywall-Hinweis). */
+  access: protectedProcedure.query(({ ctx }) => {
+    const u = ctx.user as {
+      role?: string | null;
+      smartGrowUntil?: Date | null;
+    };
+    return {
+      active: hasSmartGrow(u),
+      until: u.smartGrowUntil ? new Date(u.smartGrowUntil).getTime() : null,
+      admin: u.role === "admin",
+    };
+  }),
+
+  /** Admin: Add-on per E-Mail freischalten (Monate) oder entziehen (months = 0). */
+  adminGrant: adminProcedure
+    .input(
+      z.object({
+        email: z.string().email().max(320),
+        months: z.number().int().min(0).max(120),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const until =
+        input.months > 0
+          ? new Date(Date.now() + input.months * 30 * 86_400_000)
+          : null;
+      const r = await setUserSmartGrowByEmail(input.email, until);
+      if (r !== "ok")
+        throw new TRPCError({
+          code: r === "not_found" ? "NOT_FOUND" : "CONFLICT",
+          message:
+            r === "not_found"
+              ? "Nutzer nicht gefunden"
+              : "E-Mail nicht eindeutig",
+        });
+      return { ok: true as const, until: until?.getTime() ?? null };
     }),
 });

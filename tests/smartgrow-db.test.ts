@@ -22,6 +22,7 @@ d("Smart Grow (Datenbank)", () => {
       name: "T",
       email: null,
       role: "user",
+      smartGrowUntil: new Date("2037-12-31"),
       subscriptionTier: "pro",
     }) as never;
   const caller = (id: number) =>
@@ -53,6 +54,17 @@ d("Smart Grow (Datenbank)", () => {
       schema: await import("../drizzle/schema"),
     };
     await ensureSmartGrowSchema();
+    // Testnutzer mit gebuchtem Add-on (9050 ohne Add-on)
+    const { sql } = await import("drizzle-orm");
+    const dbx = (await mod.getDb())!;
+    for (const id of [9001, 9002, 9003, 9004, 9101, 9102, 9103, 9201, 9301]) {
+      await dbx.execute(
+        sql`INSERT IGNORE INTO users (id, openId, name, role, smartGrowUntil) VALUES (${id}, ${`sg-${id}`}, 'T', 'user', '2037-12-31 00:00:00')`,
+      );
+    }
+    await dbx.execute(
+      sql`INSERT IGNORE INTO users (id, openId, name, role, smartGrowUntil) VALUES (9050, 'sg-9050', 'Free', 'user', NULL)`,
+    );
   }, 30_000);
 
   it("Simulator-Zelt: Autopilot regelt, Werte und Protokoll entstehen", async () => {
@@ -189,7 +201,11 @@ d("Smart Grow – KI und Kamera (Datenbank, KI gemockt)", () => {
     const c = appRouter.createCaller({
       req: { headers: {} } as never,
       res: {} as never,
-      user: { id: 9101, role: "user" } as never,
+      user: {
+        id: 9101,
+        role: "user",
+        smartGrowUntil: new Date("2037-12-31"),
+      } as never,
     });
     const { id } = await c.smartGrow.create({
       name: "KI",
@@ -269,7 +285,11 @@ d("Smart Grow – KI und Kamera (Datenbank, KI gemockt)", () => {
     const c = appRouter.createCaller({
       req: { headers: {} } as never,
       res: {} as never,
-      user: { id: 9102, role: "user" } as never,
+      user: {
+        id: 9102,
+        role: "user",
+        smartGrowUntil: new Date("2037-12-31"),
+      } as never,
     });
     const { id } = await c.smartGrow.create({
       name: "Cam",
@@ -366,7 +386,11 @@ d("Smart Grow – KI und Kamera (Datenbank, KI gemockt)", () => {
         .createCaller({
           req: { headers: {} } as never,
           res: {} as never,
-          user: { id: 9103, role: "user" } as never,
+          user: {
+            id: 9103,
+            role: "user",
+            smartGrowUntil: new Date("2037-12-31"),
+          } as never,
         })
         .smartGrow.snapshotImage({ id: img.id }),
     ).rejects.toThrow();
@@ -386,7 +410,11 @@ d("Smart Grow – Home Assistant im Takt (Datenbank, HA gemockt)", () => {
     const c = appRouter.createCaller({
       req: { headers: {} } as never,
       res: {} as never,
-      user: { id: 9201, role: "user" } as never,
+      user: {
+        id: 9201,
+        role: "user",
+        smartGrowUntil: new Date("2037-12-31"),
+      } as never,
     });
     const { id } = await c.smartGrow.create({
       name: "HA",
@@ -491,7 +519,11 @@ d("Smart Grow – Rennen und Zählung (Review-Fixes)", () => {
     const c = appRouter.createCaller({
       req: { headers: {} } as never,
       res: {} as never,
-      user: { id: 9301, role: "user" } as never,
+      user: {
+        id: 9301,
+        role: "user",
+        smartGrowUntil: new Date("2037-12-31"),
+      } as never,
     });
     const { id } = await c.smartGrow.create({
       name: "Race",
@@ -564,5 +596,102 @@ d("Smart Grow – Rennen und Zählung (Review-Fixes)", () => {
     expect(u.lastPumpAt).not.toBeNull();
     g = await c.smartGrow.get({ id });
     await c.smartGrow.delete({ id });
+  }, 60_000);
+});
+
+d("Smart Grow – Add-on (Aufpreis)", () => {
+  it("ohne Add-on: nur Simulator, keine Geräte/KI; Engine regelt echte Zelte nicht", async () => {
+    process.env.DATABASE_URL = URL;
+    const { appRouter } = await import("../server/routers");
+    const { tickTent } = await import("../server/smartgrow/engine");
+    const { getDb } = await import("../server/db");
+    const schema = await import("../drizzle/schema");
+    const { eq } = await import("drizzle-orm");
+    const free = appRouter.createCaller({
+      req: { headers: {} } as never,
+      res: {} as never,
+      user: { id: 9050, role: "user", smartGrowUntil: null } as never,
+    });
+    const settings = {
+      stage: "veg" as const,
+      medium: "soil" as const,
+      lightsOn: "00:00",
+      rampMinutes: 0,
+      reservoirLiters: 20,
+      purpleFinish: false,
+      harvestDate: null,
+      timeZone: "Europe/Berlin",
+    };
+    expect((await free.smartGrow.access()).active).toBe(false);
+    await expect(
+      free.smartGrow.create({ name: "Echt", settings }),
+    ).rejects.toThrow(/Add-on/);
+    const sim = await free.smartGrow.create({
+      name: "Sim",
+      settings,
+      simulator: true,
+    });
+    await expect(
+      free.smartGrow.addDevice({
+        tentId: sim.id,
+        name: "X",
+        caps: { sensors: ["airTemp"], actuators: [] },
+      }),
+    ).rejects.toThrow(/Add-on/);
+    await expect(free.smartGrow.aiReview({ id: sim.id })).rejects.toThrow(
+      /Add-on/,
+    );
+    // Simulator-Autopilot läuft kostenlos
+    const db = (await getDb())!;
+    const out = await tickTent(
+      db,
+      (
+        await db
+          .select()
+          .from(schema.growTents)
+          .where(eq(schema.growTents.id, sim.id))
+      )[0],
+    );
+    expect(out).not.toBeNull();
+    const g = await free.smartGrow.get({ id: sim.id });
+    expect(g.devices[0].online).toBe(true);
+    // Add-on abgelaufen: echtes Zelt wird nur überwacht (keine Befehle außer Notabschaltung)
+    const paid = appRouter.createCaller({
+      req: { headers: {} } as never,
+      res: {} as never,
+      user: {
+        id: 9050,
+        role: "user",
+        smartGrowUntil: new Date("2037-12-31"),
+      } as never,
+    });
+    const real = await paid.smartGrow.create({ name: "Echt", settings });
+    const dev = await paid.smartGrow.addDevice({
+      tentId: real.id,
+      name: "E",
+      caps: { sensors: ["airTemp", "airRh"], actuators: [{ type: "exhaust" }] },
+    });
+    await paid.smartGrow.setMode({ id: real.id, mode: "auto" });
+    const api = await import("../server/smartgrow/device-api");
+    await api.handleReport(`Bearer ${dev.token}`, {
+      readings: { airTemp: 31, airRh: 75 },
+      state: { exhaust: 30 },
+    });
+    await tickTent(
+      db,
+      (
+        await db
+          .select()
+          .from(schema.growTents)
+          .where(eq(schema.growTents.id, real.id))
+      )[0],
+    );
+    const cmds = await db
+      .select()
+      .from(schema.growCommands)
+      .where(eq(schema.growCommands.tentId, real.id));
+    expect(cmds).toHaveLength(0); // Nutzer 9050 hat in der DB kein Add-on -> keine Regelung
+    await free.smartGrow.delete({ id: sim.id });
+    await paid.smartGrow.delete({ id: real.id });
   }, 60_000);
 });

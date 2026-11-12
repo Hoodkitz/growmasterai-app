@@ -16,6 +16,7 @@ import {
   growReadings,
   growTents,
   pushTokens,
+  users,
   type GrowDevice,
   type GrowTent,
 } from "../../drizzle/schema";
@@ -57,6 +58,7 @@ import {
   type Reading,
 } from "../../shared/smartgrow/types";
 import { sendExpoPush } from "../push";
+import { hasSmartGrow } from "../../shared/smartgrow/access";
 import * as ha from "./homeassistant";
 import type { HaConfig } from "./homeassistant";
 
@@ -552,6 +554,13 @@ async function tickTentInner(
     .where(eq(growDevices.tentId, tent.id));
   if (!devices.length) return null;
   const cfg = tentConfig(tent);
+  // ohne Add-on (außer Simulator): nur Überwachung, Alarme und Notabschaltungen – keine Regelung
+  const [ownerRow] = await db
+    .select({ role: users.role, smartGrowUntil: users.smartGrowUntil })
+    .from(users)
+    .where(eq(users.id, tent.userId))
+    .limit(1);
+  if (!tent.simState && !hasSmartGrow(ownerRow)) cfg.mode = "off";
 
   // 1. Simulator: Physik weiterrechnen und Messwerte schreiben
   const sim = devices.find((d) => d.kind === "simulator");

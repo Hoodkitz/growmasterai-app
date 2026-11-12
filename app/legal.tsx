@@ -202,6 +202,15 @@ function TermsContent() {
           <Text className="font-semibold">Pro (9,99€/Monat):</Text>
           {"\n"}• Unbegrenzte Pflanzen{"\n"}• Unbegrenzte Diagnosen{"\n"}•
           Live-Kamera-Analyse{"\n"}• Direktnachrichten{"\n"}• Prioritäts-Support
+          {"\n\n"}
+          <Text className="font-semibold">
+            Add-on Smart Grow (4,99€/Monat oder 39,99€/Jahr, zusätzlich zu jeder
+            Stufe):
+          </Text>
+          {"\n"}• Eigene Sensoren und Geräte verbinden (ESP32, Home Assistant)
+          {"\n"}• KI-Autopilot für Licht, Klima, CO₂, Bewässerung und Dünger
+          {"\n"}• KI-Einschätzung und Kamera-Beobachtung{"\n"}• Der Simulator
+          ist kostenlos
         </Text>
       </Section>
 
