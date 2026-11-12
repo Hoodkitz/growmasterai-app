@@ -12,17 +12,38 @@ export interface RevenueCatConfig {
   entitlementPro: string;
   /** Leer = Premium nicht konfiguriert. */
   entitlementPremium: string;
+  /** Add-on „Smart Grow“ (Aufpreis, zusätzlich zur Stufe) */
+  entitlementSmartGrow?: string;
 }
 
-export function getRevenueCatConfig(env: NodeJS.ProcessEnv = process.env): RevenueCatConfig {
+export function getRevenueCatConfig(
+  env: NodeJS.ProcessEnv = process.env,
+): RevenueCatConfig {
   return {
     entitlementPro:
-      (env.REVENUECAT_ENTITLEMENT_PRO || env.EXPO_PUBLIC_RC_ENTITLEMENT_PRO || "").trim() || "GrowMaster AI Pro",
-    entitlementPremium: (env.REVENUECAT_ENTITLEMENT_PREMIUM || env.EXPO_PUBLIC_RC_ENTITLEMENT_PREMIUM || "").trim(),
+      (
+        env.REVENUECAT_ENTITLEMENT_PRO ||
+        env.EXPO_PUBLIC_RC_ENTITLEMENT_PRO ||
+        ""
+      ).trim() || "GrowMaster AI Pro",
+    entitlementPremium: (
+      env.REVENUECAT_ENTITLEMENT_PREMIUM ||
+      env.EXPO_PUBLIC_RC_ENTITLEMENT_PREMIUM ||
+      ""
+    ).trim(),
+    entitlementSmartGrow:
+      (
+        env.REVENUECAT_ENTITLEMENT_SMARTGROW ||
+        env.EXPO_PUBLIC_RC_ENTITLEMENT_SMARTGROW ||
+        ""
+      ).trim() || "GrowMaster Smart Grow",
   };
 }
 
-export function verifyWebhookAuth(header: string | undefined, secret: string | undefined): boolean {
+export function verifyWebhookAuth(
+  header: string | undefined,
+  secret: string | undefined,
+): boolean {
   if (!secret || !header) return false;
   const norm = (v: string) => v.replace(/^Bearer\s+/i, "").trim();
   const a = Buffer.from(norm(header));
@@ -30,40 +51,105 @@ export function verifyWebhookAuth(header: string | undefined, secret: string | u
   return a.length === b.length && timingSafeEqual(a, b);
 }
 
-const SET_EVENTS = new Set(["INITIAL_PURCHASE", "RENEWAL", "PRODUCT_CHANGE", "UNCANCELLATION", "NON_RENEWING_PURCHASE"]);
+const SET_EVENTS = new Set([
+  "INITIAL_PURCHASE",
+  "RENEWAL",
+  "PRODUCT_CHANGE",
+  "UNCANCELLATION",
+  "NON_RENEWING_PURCHASE",
+]);
 
 export type WebhookAction =
-  | { kind: "set"; appUserIds: string[]; tier: Tier; expiresAt: Date | null; eventType: string }
+  | {
+      kind: "set";
+      appUserIds: string[];
+      tier: Tier;
+      expiresAt: Date | null;
+      eventType: string;
+    }
+  | {
+      kind: "addon";
+      appUserIds: string[];
+      until: Date | null;
+      eventType: string;
+    }
   | { kind: "ignore"; reason: string };
 
-function tierFromEntitlements(ids: string[] | null | undefined, cfg: RevenueCatConfig): Tier | null {
+function tierFromEntitlements(
+  ids: string[] | null | undefined,
+  cfg: RevenueCatConfig,
+): Tier | null {
   if (!ids || ids.length === 0) {
     // Legacy-Setup mit nur einem Entitlement: ohne Angabe gilt Pro
     return cfg.entitlementPremium ? null : "pro";
   }
   if (ids.includes(cfg.entitlementPro)) return "pro";
-  if (cfg.entitlementPremium && ids.includes(cfg.entitlementPremium)) return "premium";
+  if (cfg.entitlementPremium && ids.includes(cfg.entitlementPremium))
+    return "premium";
   return null;
 }
 
 /** Reine Logik: Webhook-Body → Aktion auf users.subscriptionTier / subscriptionExpiresAt. */
-export function parseRevenueCatEvent(body: unknown, cfg: RevenueCatConfig, now: Date = new Date()): WebhookAction {
+export function parseRevenueCatEvent(
+  body: unknown,
+  cfg: RevenueCatConfig,
+  now: Date = new Date(),
+): WebhookAction {
   const ev = (body as { event?: Record<string, any> } | null)?.event;
-  if (!ev || typeof ev.type !== "string") return { kind: "ignore", reason: "no event" };
+  if (!ev || typeof ev.type !== "string")
+    return { kind: "ignore", reason: "no event" };
 
-  const candidates = [ev.app_user_id, ev.original_app_user_id, ...(Array.isArray(ev.aliases) ? ev.aliases : [])]
-    .filter((v): v is string => typeof v === "string" && v.length > 0 && !v.startsWith("$RCAnonymousID:"));
+  const candidates = [
+    ev.app_user_id,
+    ev.original_app_user_id,
+    ...(Array.isArray(ev.aliases) ? ev.aliases : []),
+  ].filter(
+    (v): v is string =>
+      typeof v === "string" && v.length > 0 && !v.startsWith("$RCAnonymousID:"),
+  );
   const appUserIds = Array.from(new Set(candidates));
-  if (appUserIds.length === 0) return { kind: "ignore", reason: "no identified app_user_id" };
+  if (appUserIds.length === 0)
+    return { kind: "ignore", reason: "no identified app_user_id" };
 
   const expiresAt =
-    typeof ev.expiration_at_ms === "number" && Number.isFinite(ev.expiration_at_ms)
+    typeof ev.expiration_at_ms === "number" &&
+    Number.isFinite(ev.expiration_at_ms)
       ? new Date(ev.expiration_at_ms)
       : null;
   const type: string = ev.type;
 
+  // Add-on Smart Grow: eigenes Entitlement, ändert die Stufe (Pro/Premium) NIE
+  const ids: string[] = Array.isArray(ev.entitlement_ids)
+    ? ev.entitlement_ids
+    : [];
+  if (cfg.entitlementSmartGrow && ids.includes(cfg.entitlementSmartGrow)) {
+    const active =
+      type !== "EXPIRATION" &&
+      (!expiresAt || expiresAt.getTime() > now.getTime());
+    if (
+      SET_EVENTS.has(type) ||
+      type === "CANCELLATION" ||
+      type === "EXPIRATION"
+    ) {
+      // ohne Ablaufdatum (Einmalkauf) gilt es dauerhaft
+      return {
+        kind: "addon",
+        appUserIds,
+        until: active ? (expiresAt ?? new Date("2037-12-31T00:00:00Z")) : null,
+        eventType: type,
+      };
+    }
+    return { kind: "ignore", reason: `event ${type} not handled` };
+  }
+
   if (type === "EXPIRATION") {
-    return { kind: "set", appUserIds, tier: "free", expiresAt, eventType: type };
+    return {
+      kind: "set",
+      appUserIds,
+      tier: "free",
+      expiresAt,
+      eventType: type,
+    };
   }
 
   const tier = tierFromEntitlements(ev.entitlement_ids, cfg);
@@ -72,7 +158,13 @@ export function parseRevenueCatEvent(body: unknown, cfg: RevenueCatConfig, now: 
   if (SET_EVENTS.has(type)) {
     // Abgelaufenes Datum bei Kaufereignis → kein Zugriff
     if (expiresAt && expiresAt.getTime() <= now.getTime()) {
-      return { kind: "set", appUserIds, tier: "free", expiresAt, eventType: type };
+      return {
+        kind: "set",
+        appUserIds,
+        tier: "free",
+        expiresAt,
+        eventType: type,
+      };
     }
     return { kind: "set", appUserIds, tier, expiresAt, eventType: type };
   }
@@ -80,7 +172,13 @@ export function parseRevenueCatEvent(body: unknown, cfg: RevenueCatConfig, now: 
   if (type === "CANCELLATION") {
     // Kündigung = Auto-Renew aus; Zugriff bleibt bis Laufzeitende (danach kommt EXPIRATION).
     const stillActive = !expiresAt || expiresAt.getTime() > now.getTime();
-    return { kind: "set", appUserIds, tier: stillActive ? tier : "free", expiresAt, eventType: type };
+    return {
+      kind: "set",
+      appUserIds,
+      tier: stillActive ? tier : "free",
+      expiresAt,
+      eventType: type,
+    };
   }
 
   return { kind: "ignore", reason: `event ${type} not handled` };
@@ -104,9 +202,20 @@ export function registerRevenueCatRoutes(app: Express) {
         res.json({ ok: true, ignored: action.reason });
         return;
       }
-      const { setUserSubscriptionByOpenIds } = await import("../db");
-      const updated = await setUserSubscriptionByOpenIds(action.appUserIds, action.tier, action.expiresAt);
-      if (!updated) console.warn(`[RevenueCat] no user found for ${action.appUserIds.join(",")} (${action.eventType})`);
+      const { setUserSubscriptionByOpenIds, setUserSmartGrowByOpenIds } =
+        await import("../db");
+      const updated =
+        action.kind === "addon"
+          ? await setUserSmartGrowByOpenIds(action.appUserIds, action.until)
+          : await setUserSubscriptionByOpenIds(
+              action.appUserIds,
+              action.tier,
+              action.expiresAt,
+            );
+      if (!updated)
+        console.warn(
+          `[RevenueCat] no user found for ${action.appUserIds.join(",")} (${action.eventType})`,
+        );
       res.json({ ok: true, updated });
     } catch (error) {
       console.error("[RevenueCat] webhook error:", error);

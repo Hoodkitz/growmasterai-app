@@ -39,6 +39,7 @@ function createMockUser(): AuthenticatedUser {
     createdAt: new Date(),
     updatedAt: new Date(),
     lastSignedIn: new Date(),
+    smartGrowUntil: null,
   };
 }
 

@@ -8,10 +8,14 @@ export interface WissenEntry {
   phases: string[];
   tags: string[];
   text: string;
-  videoId: string;
-  videoTitle: string;
-  channel: string;
-  start: number;
+  source?: "video" | "praxis";
+  expert?: string;
+  city?: string;
+  sourceUrl?: string;
+  videoId?: string;
+  videoTitle?: string;
+  channel?: string;
+  start?: number;
 }
 
 export async function loadCachedKnowledge(): Promise<WissenEntry[]> {

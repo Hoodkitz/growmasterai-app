@@ -121,6 +121,41 @@ export async function setUserSubscriptionByOpenIds(
   return header.affectedRows > 0;
 }
 
+/** Add-on Smart Grow setzen/entziehen (RevenueCat-Webhook). */
+export async function setUserSmartGrowByOpenIds(
+  openIds: string[],
+  until: Date | null,
+): Promise<boolean> {
+  const db = await getDb();
+  if (!db) throw new Error("database not available");
+  const [header] = await db
+    .update(users)
+    .set({ smartGrowUntil: until })
+    .where(sql`${users.openId} IN ${openIds}`);
+  return header.affectedRows > 0;
+}
+
+/** Admin: Add-on per E-Mail freischalten (until = null entzieht es). */
+export async function setUserSmartGrowByEmail(
+  email: string,
+  until: Date | null,
+): Promise<"ok" | "not_found" | "ambiguous"> {
+  const db = await getDb();
+  if (!db) throw new Error("database not available");
+  const matches = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(sql`LOWER(${users.email}) = ${email.trim().toLowerCase()}`)
+    .limit(2);
+  if (matches.length === 0) return "not_found";
+  if (matches.length > 1) return "ambiguous";
+  await db
+    .update(users)
+    .set({ smartGrowUntil: until })
+    .where(eq(users.id, matches[0].id));
+  return "ok";
+}
+
 export type SetTierResult =
   | { status: "ok"; emailVerified: boolean }
   | { status: "not_found" }

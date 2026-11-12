@@ -10,6 +10,9 @@ import {
   decimal,
   json,
   uniqueIndex,
+  index,
+  double,
+  mediumtext,
 } from "drizzle-orm/mysql-core";
 
 /**
@@ -56,6 +59,8 @@ export const users = mysqlTable("users", {
     .default("free")
     .notNull(),
   subscriptionExpiresAt: timestamp("subscriptionExpiresAt"),
+  /** Smart-Grow-Add-on (Aufpreis) aktiv bis; null = nicht gebucht */
+  smartGrowUntil: timestamp("smartGrowUntil"),
   revenuecatId: varchar("revenuecatId", { length: 64 }),
 
   // Stats
@@ -755,3 +760,149 @@ export const userBlocks = mysqlTable(
 );
 
 export type UserBlock = typeof userBlocks.$inferSelect;
+
+// ==================== SMART GROW (Sensoren, Steuerung, KI-Autopilot) ====================
+export const growTents = mysqlTable(
+  "growTents",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    userId: int("userId").notNull(),
+    name: varchar("name", { length: 80 }).notNull(),
+    /** TentSettings (shared/smartgrow/profiles.ts) */
+    settings: json("settings").notNull(),
+    /** SafetyLimits, AutomationConfig, KI-Adjustments */
+    limits: json("limits"),
+    automation: json("automation"),
+    adjustments: json("adjustments"),
+    mode: mysqlEnum("mode", ["off", "assist", "auto"])
+      .default("assist")
+      .notNull(),
+    /** Simulator-Zustand (nur Simulator-Zelte) */
+    simState: json("simState"),
+    lastTickAt: bigint("lastTickAt", { mode: "number" }),
+    aiReviewAt: bigint("aiReviewAt", { mode: "number" }),
+    /** letzte KI-Einschätzung (Text + Hinweise) */
+    aiSummary: json("aiSummary"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  (t) => ({ userIdx: index("growTents_user_idx").on(t.userId) }),
+);
+
+export const growDevices = mysqlTable(
+  "growDevices",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    tentId: int("tentId").notNull(),
+    userId: int("userId").notNull(),
+    name: varchar("name", { length: 80 }).notNull(),
+    kind: mysqlEnum("kind", ["http", "simulator", "homeassistant"]).notNull(),
+    /** SHA-256 des Geräte-Tokens; Klartext sieht der Nutzer nur einmal */
+    tokenHash: varchar("tokenHash", { length: 64 }),
+    tokenHint: varchar("tokenHint", { length: 16 }),
+    /** DeviceCaps: Sensoren + Aktoren */
+    caps: json("caps").notNull(),
+    /** zuletzt bekannte Aktor-Stellungen */
+    state: json("state"),
+    lastSeenAt: bigint("lastSeenAt", { mode: "number" }),
+    firmware: varchar("firmware", { length: 40 }),
+    /** Brücken-Konfiguration (Home Assistant: Adresse, verschlüsselter Token, Zuordnung) */
+    config: json("config"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  (t) => ({
+    tokenUnique: uniqueIndex("growDevices_token_unique").on(t.tokenHash),
+    tentIdx: index("growDevices_tent_idx").on(t.tentId),
+  }),
+);
+
+export const growReadings = mysqlTable(
+  "growReadings",
+  {
+    id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+    tentId: int("tentId").notNull(),
+    deviceId: int("deviceId").notNull(),
+    metric: varchar("metric", { length: 20 }).notNull(),
+    value: double("value").notNull(),
+    ts: bigint("ts", { mode: "number" }).notNull(),
+  },
+  (t) => ({
+    tentMetricTs: index("growReadings_tent_metric_ts").on(
+      t.tentId,
+      t.metric,
+      t.ts,
+    ),
+  }),
+);
+
+export const growCommands = mysqlTable(
+  "growCommands",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    tentId: int("tentId").notNull(),
+    deviceId: int("deviceId").notNull(),
+    actuator: varchar("actuator", { length: 20 }).notNull(),
+    /** Command (shared/smartgrow/types.ts) */
+    payload: json("payload").notNull(),
+    reason: varchar("reason", { length: 300 }).notNull(),
+    source: mysqlEnum("source", [
+      "controller",
+      "ai",
+      "user",
+      "safety",
+    ]).notNull(),
+    status: mysqlEnum("status", [
+      "proposed",
+      "pending",
+      "sent",
+      "done",
+      "failed",
+      "expired",
+      "rejected",
+    ]).notNull(),
+    result: varchar("result", { length: 200 }),
+    createdAt: bigint("createdAt", { mode: "number" }).notNull(),
+    sentAt: bigint("sentAt", { mode: "number" }),
+    doneAt: bigint("doneAt", { mode: "number" }),
+  },
+  (t) => ({
+    deviceStatus: index("growCommands_device_status").on(t.deviceId, t.status),
+    tentCreated: index("growCommands_tent_created").on(t.tentId, t.createdAt),
+  }),
+);
+
+export const growEvents = mysqlTable(
+  "growEvents",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    tentId: int("tentId").notNull(),
+    level: mysqlEnum("level", ["info", "warn", "alarm"]).notNull(),
+    kind: varchar("kind", { length: 40 }).notNull(),
+    message: varchar("message", { length: 500 }).notNull(),
+    createdAt: bigint("createdAt", { mode: "number" }).notNull(),
+  },
+  (t) => ({
+    tentCreated: index("growEvents_tent_created").on(t.tentId, t.createdAt),
+  }),
+);
+
+export const growSnapshots = mysqlTable(
+  "growSnapshots",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    tentId: int("tentId").notNull(),
+    deviceId: int("deviceId").notNull(),
+    /** JPEG als Base64 (klein skaliert, max. ~1,5 MB); je Zelt werden nur die letzten Bilder behalten */
+    image: mediumtext("image").notNull(),
+    source: mysqlEnum("source", ["device", "app"]).default("device").notNull(),
+    /** Ergebnis der KI-Blattkontrolle */
+    analysis: json("analysis"),
+    createdAt: bigint("createdAt", { mode: "number" }).notNull(),
+  },
+  (t) => ({
+    tentCreated: index("growSnapshots_tent_created").on(t.tentId, t.createdAt),
+  }),
+);
+
+export type GrowTent = typeof growTents.$inferSelect;
+export type GrowDevice = typeof growDevices.$inferSelect;

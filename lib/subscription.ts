@@ -305,3 +305,11 @@ export function getRemainingMessages(
   if (limit === -1) return null;
   return Math.max(0, limit - currentCount);
 }
+
+/** Add-on „Smart Grow“ (zusätzlich zu jeder Stufe; echte Preise kommen aus dem Store). */
+export const SMART_GROW_ADDON_PRICING: TierPricing = {
+  monthly: 4.99,
+  yearly: 39.99,
+  yearlyMonthly: 3.33,
+  savings: 33,
+};

@@ -22,6 +22,7 @@ import {
   toTeaser,
 } from "./knowledge/access";
 import { z } from "zod";
+import { smartGrowRouter } from "./smartgrow/router";
 import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { getDb, setUserTierByEmail } from "./db";
@@ -158,12 +159,13 @@ function dedupeSources(entries: KnowledgeEntry[]) {
     start: number;
   }[] = [];
   for (const e of entries) {
+    if (!e.videoId || e.start === undefined) continue; // Praxis-Tipps haben kein Video
     const key = `${e.videoId}:${e.start}`;
     if (seen.has(key)) continue;
     seen.add(key);
     out.push({
-      title: e.videoTitle,
-      channel: e.channel,
+      title: e.videoTitle ?? "",
+      channel: e.channel ?? "",
       videoId: e.videoId,
       start: e.start,
     });
@@ -201,6 +203,7 @@ async function loadHiddenUsers(
 
 export const appRouter = router({
   system: systemRouter,
+  smartGrow: smartGrowRouter,
   auth: router({
     me: publicProcedure.query((opts) => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

@@ -186,6 +186,22 @@ export async function getTierOfferings(): Promise<
   }
 }
 
+/** Offering-ID des Add-ons „Smart Grow“ (in RevenueCat anlegen). */
+export const OFFERING_SMARTGROW =
+  (process.env.EXPO_PUBLIC_RC_OFFERING_SMARTGROW ?? "").trim() || "smartgrow";
+
+/** Pakete des Smart-Grow-Add-ons (leer, wenn in RevenueCat noch nicht eingerichtet). */
+export async function getSmartGrowPackages(): Promise<any[]> {
+  if (!loadNativeModule() || !_initialized) return [];
+  try {
+    const offerings = await RCPurchases.getOfferings();
+    return offerings.all?.[OFFERING_SMARTGROW]?.availablePackages ?? [];
+  } catch (error) {
+    console.error("[Purchases] Failed to get Smart Grow offering:", error);
+    return [];
+  }
+}
+
 /**
  * Führt einen Kauf durch
  */

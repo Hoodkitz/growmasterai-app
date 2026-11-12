@@ -52,4 +52,34 @@ describe("knowledge base", () => {
       knowledgeForPhase("harvest").every((e) => e.phases.includes("harvest")),
     ).toBe(true);
   });
+
+  it("finds praxis tips without a video (purple buds, ice cubes)", () => {
+    const ids = (q: string) =>
+      searchKnowledge(q, { limit: 5 }).map((h) => h.entry.id);
+    expect(ids("Wie bekomme ich lila Buds?")).toContain(
+      "praxis-purple-cold-nights-01",
+    );
+    expect(ids("Eiswürfel beim Spülen vor der Ernte")).toContain(
+      "praxis-ice-cubes-flush-01",
+    );
+    expect(isValidEntry({ ...KNOWLEDGE[0], source: "praxis" })).toBe(false); // Praxis-Tipps tragen kein Video
+  });
+});
+
+describe("Profi-Wissen (Recherche Hermes)", () => {
+  it("jeder Profi-Tipp hat Experte und https-Quelle und ist gültig", () => {
+    const profis = KNOWLEDGE.filter((e) => e.id.startsWith("profi-"));
+    expect(profis.length).toBeGreaterThanOrEqual(20);
+    for (const e of profis) {
+      expect(e.source).toBe("praxis");
+      expect(e.expert?.length).toBeGreaterThan(2);
+      expect(e.sourceUrl).toMatch(/^https:\/\//);
+      expect(isValidEntry(e)).toBe(true);
+    }
+    expect(
+      searchKnowledge("Wie trockne ich richtig, 60/60 Regel?", {
+        limit: 5,
+      }).some((h) => h.entry.id.startsWith("profi-")),
+    ).toBe(true);
+  });
 });
