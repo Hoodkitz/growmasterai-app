@@ -134,7 +134,7 @@ export const pinnedFetch: HaFetch = (url, init) =>
     )
       return reject(new Error("Interne Adressen sind nicht erlaubt"));
     const req = https.request(
-      u,
+      u.href,
       {
         method: init.method ?? "GET",
         headers: init.headers as Record<string, string>,
