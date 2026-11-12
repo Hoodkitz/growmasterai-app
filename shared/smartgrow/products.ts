@@ -17,6 +17,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "Dünger Erde",
     name: "BioBizz Indoor Try-Pack (Bio-Grow, Bio-Bloom, Top-Max)",
+    asin: "B00GOI3ULI",
     purpose:
       "Organisches Grunddünger-Set für die Wachstums- und Blütephase auf Erde, das das Bodenleben aktiviert und das Aroma fördert.",
     searchTerm: "BioBizz Indoor Pack Dünger Set 3x250ml",
@@ -26,6 +27,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "Dünger Erde",
     name: "Canna Terra Vega & Terra Flores",
+    asin: "B003XDJI3Q",
     purpose:
       "Mineralischer Komplettdünger speziell für vorgedüngte und nährstoffarme Erden zur direkten Nährstoffaufnahme in Wuchs und Blüte.",
     searchTerm: "Canna Terra Vega Terra Flores 1L Set",
@@ -35,6 +37,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "Dünger Erde",
     name: "Plagron Alga Grow & Alga Bloom",
+    asin: "B00ARH3Z3U",
     purpose:
       "Auf Meeresalgen basierender organischer Grunddünger für den Erdanbau, der gesunde Pflanzen und kompakte Blüten unterstützt.",
     searchTerm: "Plagron Alga Grow Alga Bloom 1L",
@@ -44,6 +47,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "Dünger Coco/Hydro",
     name: "Canna Coco A & B",
+    asin: "B01L4Q9RO8",
     purpose:
       "Zweikomponenten-Mineraldünger mit optimal abgestimmten Huminsäuren und Fulvinsäuren für den Anbau auf Kokossubstraten.",
     searchTerm: "Canna Coco A und B 2x1L",
@@ -53,6 +57,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "Dünger Coco/Hydro",
     name: "Advanced Nutrients pH Perfect Sensi Coco Grow & Bloom",
+    asin: "B0116VEHGE",
     purpose:
       "Hochpräziser Zweikomponenten-Dünger für Kokos und Hydroponik, der den pH-Wert der Nährlösung automatisch im Idealbereich stabilisiert.",
     searchTerm: "Advanced Nutrients pH Perfect Sensi Coco A+B 1L",
@@ -71,6 +76,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "Cal-Mag",
     name: "BioBizz CalMag",
+    asin: "B08F22PGHH",
     purpose:
       "Organisch zertifiziertes Calcium-Magnesium-Präparat zum Ausgleich von weichem Leitungswasser und erhöhtem Bedarf unter LED-Beleuchtung.",
     searchTerm: "BioBizz CalMag 1L",
@@ -80,6 +86,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "Cal-Mag",
     name: "Canna CalMag Agent",
+    asin: "B0FQQTD42R",
     purpose:
       "Konzentrierter Zusatz zur Anhebung des EC-Grundwerts von weichem Wasser und zur Vorbeugung von Calcium- und Magnesiummangel.",
     searchTerm: "Canna CalMag Agent 1L",
@@ -89,6 +96,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "Cal-Mag",
     name: "Advanced Nutrients Sensi Cal-Mag Xtra",
+    asin: "B0153FHDUG",
     purpose:
       "Ergänzungsdünger mit chelatisiertem Calcium, Magnesium, Eisen und Aminosäuren zur schnellen Behebung von Mangelerscheinungen.",
     searchTerm: "Advanced Nutrients Sensi Cal Mag Xtra 1L",
@@ -98,6 +106,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "pH-Regulatoren",
     name: "BioBizz Bio pH- & Bio pH+",
+    asin: "B08294FW85",
     purpose:
       "Organische pH-Korrektoren auf Zitronensäure- bzw. Huminsäurebasis, die das mikrobielle Bodenleben im Gießwasser nicht schädigen.",
     searchTerm: "BioBizz Bio pH Minus Plus 500ml",
@@ -116,6 +125,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "pH-Regulatoren",
     name: "Plagron Lemon Kick & Calcium Kick",
+    asin: "B07F8TT3VR",
     purpose:
       "Biologischer pH-Senker und Bodenkalk-Regulator zur natürlichen Einstellung des Säuregehalts in Wasser und Substrat.",
     searchTerm: "Plagron Lemon Kick 500ml",
@@ -125,6 +135,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "Wurzelstimulator",
     name: "Canna Rhizotonic",
+    asin: "B004WY17HU",
     purpose:
       "Kraftvoller, algenbasierter Wurzelstimulator für explosionsartiges Wurzelwachstum bei Stecklingen und nach dem Umtopfen.",
     searchTerm: "Canna Rhizotonic 1L",
@@ -134,6 +145,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "Wurzelstimulator",
     name: "BioBizz Root-Juice",
+    asin: "B005AXU2DW",
     purpose:
       "Rein pflanzlicher Wurzelbooster aus Huminsäuren und Meeresalgen für eine kräftige Wurzelzone im biologischen Anbau.",
     searchTerm: "BioBizz Root Juice 500ml",
@@ -143,6 +155,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "Wurzelstimulator",
     name: "Plagron Power Roots",
+    asin: "B0090HNOAC",
     purpose:
       "Organischer Wurzelstimulator zur Förderung verzweigter Feinwurzeln und höherer Widerstandskraft in den ersten Lebenswochen.",
     searchTerm: "Plagron Power Roots 500ml",
@@ -161,6 +174,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "pH-Messgerät",
     name: "Bluelab pH Pen",
+    asin: "B005POOJHG",
     purpose:
       "Wasserdichtes Premium-pH-Handmessgerät mit Doppel-Referenzelektrode und Temperaturkompensation für präzise Nährlösungskontrolle.",
     searchTerm: "Bluelab pH Pen Messgerät",
@@ -170,6 +184,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "pH-Messgerät",
     name: "Apera Instruments PH20 / PH60",
+    asin: "B0BR9VWXH1",
     purpose:
       "Zuverlässiges digitales pH-Taschenmessgerät mit hoher Genauigkeit und wechselbarer Sonde (PH60) für den täglichen Gießeinsatz.",
     searchTerm: "Apera Instruments PH20 pH Messgerät",
@@ -179,6 +194,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "pH-Messgerät",
     name: "Milwaukee pH600 / pH55 Pro",
+    asin: "B01FGE08BK",
     purpose:
       "Robustes Einsteiger- und Fortgeschrittenen-Messgerät zur schnellen Überprüfung des Säuregrads im Gießwasser.",
     searchTerm: "Milwaukee pH55 Pro pH Messgerät",
@@ -188,6 +204,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "EC-Messgerät",
     name: "Bluelab Truncheon Nutrient Meter",
+    asin: "B003VN930G",
     purpose:
       "Legendärer, nahezu unverwüstlicher EC-Messstab mit LED-Skala, der ohne Kalibrierung den Salzgehalt beim Umrühren anzeigt.",
     searchTerm: "Bluelab Truncheon EC Messstab",
@@ -197,6 +214,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "EC-Messgerät",
     name: "Apera Instruments EC20 / EC60",
+    asin: "B09N8Z3Z8N",
     purpose:
       "Präzises Leitfähigkeitsmessgerät mit Platin-Elektrode zur exakten Bestimmung der Düngerkonzentration im Gießwasser.",
     searchTerm: "Apera Instruments EC20 EC Messgerät",
@@ -206,6 +224,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "EC-Messgerät",
     name: "Hanna Instruments HI98304 DiST 4",
+    asin: "B003A5XYM8",
     purpose:
       "Kompakter EC-Tester in Laborqualität mit automatischer Temperaturkompensation für Hydroponik und Düngerlösungen.",
     searchTerm: "Hanna Instruments HI98304 EC Messgerät",
@@ -215,6 +234,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "Kombi-Messgerät",
     name: "Apera Instruments PC60 (pH/EC/TDS/Salinität/Temp)",
+    asin: "B0B6NWGPF2",
     purpose:
       "Multifunktions-Taschenmessgerät zur gleichzeitigen Messung von pH-Wert, Leitfähigkeit und Temperatur mit austauschbarer Sonde.",
     searchTerm: "Apera Instruments PC60 Multi Parameter",
@@ -224,6 +244,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "Kombi-Messgerät",
     name: "Bluelab Combo Meter / Guardian Monitor",
+    asin: "B003PD2N8Q",
     purpose:
       "Professionelles Messsystem mit separaten pH- und EC/Temperatur-Sonden für mobile oder kontinuierliche Tanküberwachung.",
     searchTerm: "Bluelab Combo Meter pH EC Temperatur",
@@ -242,6 +263,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "Thermo-Hygrometer/Datenlogger",
     name: "Inkbird IBS-TH2 / IBS-TH3 Bluetooth/WiFi Thermo-Hygrometer",
+    asin: "B08XZCGBRS",
     purpose:
       "Smarter Klimadatenlogger mit App-Anbindung und VPD-Diagrammen zur lückenlosen Überwachung von Temperatur und Luftfeuchte im Zelt.",
     searchTerm: "Inkbird IBS-TH2 Plus Bluetooth Thermometer Hygrometer",
@@ -251,6 +273,7 @@ export const GROW_PRODUCTS: GrowProduct[] = [
   {
     category: "Thermo-Hygrometer/Datenlogger",
     name: "Garden Highpro Prohygro Medium / Premium (mit Fernfühler)",
+    asin: "B07DVT494F",
     purpose:
       "Digitales Min/Max-Thermo-Hygrometer mit externer Kabelsonde zum Ablesen der Klimawerte auf Pflanzenspitzenhöhe von außen.",
     searchTerm: "Garden Highpro Prohygro Thermometer Hygrometer Sonde",

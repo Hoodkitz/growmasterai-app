@@ -669,3 +669,21 @@ describe("Smart Grow – Review-Fixes Sicherheit", () => {
     );
   });
 });
+
+describe("Smart Grow – direkte Produktlinks", () => {
+  it("ASINs haben das richtige Format und erzeugen Produktlinks mit Partner-ID", async () => {
+    const { HARDWARE_PATHS } = await import("../shared/smartgrow/hardware");
+    const { GROW_PRODUCTS } = await import("../shared/smartgrow/products");
+    const { buildRemedyLink } = await import("../lib/affiliates");
+    const asins = [
+      ...HARDWARE_PATHS.flatMap((p) => p.items.map((i) => i.asin)),
+      ...GROW_PRODUCTS.map((p) => p.asin),
+    ].filter(Boolean) as string[];
+    expect(asins.length).toBeGreaterThan(30);
+    for (const a of asins) expect(a).toMatch(/^[A-Z0-9]{10}$/);
+    const link = buildRemedyLink("x", "growmaster-21", asins[0]);
+    expect(link.url).toBe(
+      `https://www.amazon.de/dp/${asins[0]}?tag=growmaster-21`,
+    );
+  });
+});

@@ -47,6 +47,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "homeassistant",
         price: "ca. 110–130 €",
         searchTerm: "Home Assistant Green",
+        asin: "B0CXVKSG19",
       },
       {
         id: "zigbee",
@@ -55,6 +56,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "homeassistant",
         price: "ca. 25–40 €",
         searchTerm: "Zigbee USB Stick Home Assistant",
+        asin: "B09KXTCMSC",
       },
       {
         id: "aqara-th",
@@ -64,6 +66,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "homeassistant",
         price: "ca. 15–20 €",
         searchTerm: "Aqara Temperatur Luftfeuchtigkeit Sensor Zigbee",
+        asin: "B09WRB33KM",
       },
       {
         id: "co2",
@@ -73,6 +76,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "homeassistant",
         price: "ca. 70–180 €",
         searchTerm: "SwitchBot Meter Pro CO2",
+        asin: "B0DBVDWB6G",
       },
       {
         id: "shelly-plug",
@@ -82,6 +86,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "homeassistant",
         price: "ca. 20–25 € je Stück",
         searchTerm: "Shelly Plus Plug S",
+        asin: "B0CK4KRMH5",
         note: "Max. 2500 W je Stecker – Heizlüfter-Leistung prüfen.",
       },
       {
@@ -93,6 +98,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "homeassistant",
         price: "ca. 150–300 €",
         searchTerm: "AC Infinity Cloudline Controller 69",
+        asin: "B09456J5CC",
         note: "Einbindung in Home Assistant über die Community-Integration „AC Infinity“ (HACS).",
       },
       {
@@ -103,6 +109,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "homeassistant",
         price: "ca. 30–35 €",
         searchTerm: "Shelly Plus 0-10V Dimmer",
+        asin: "B0H339J251",
         note: "Nur für Lampen mit 0–10-V-Dimmeingang (z. B. viele Spider Farmer, Mars Hydro, Lumatek). Einbau durch Elektrofachkraft.",
       },
       {
@@ -113,6 +120,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "homeassistant",
         price: "ca. 20–35 €",
         searchTerm: "Shelly Flood Wassermelder",
+        asin: "B07XX9LWKW",
       },
       {
         id: "soil",
@@ -122,6 +130,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "homeassistant",
         price: "ca. 15–25 €",
         searchTerm: "Zigbee Bodenfeuchtesensor Pflanze",
+        asin: "B0FKLZCQRG",
       },
     ],
     steps: [
@@ -154,6 +163,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "esp32",
         price: "ca. 8–12 €",
         searchTerm: "ESP32 DevKit WROOM 32",
+        asin: "B084KWNMM4",
       },
       {
         id: "sht",
@@ -163,6 +173,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "esp32",
         price: "ca. 8–15 €",
         searchTerm: "SHT31 Sensor I2C",
+        asin: "B0FCF7928F",
       },
       {
         id: "scd40",
@@ -172,6 +183,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "esp32",
         price: "ca. 30–50 €",
         searchTerm: "SCD40 CO2 Sensor",
+        asin: "B0DH2QRJMJ",
       },
       {
         id: "mlx",
@@ -181,6 +193,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "esp32",
         price: "ca. 10–15 €",
         searchTerm: "MLX90614 Infrarot Sensor",
+        asin: "B07YKNQQ7P",
       },
       {
         id: "ph-ec",
@@ -190,6 +203,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "esp32",
         price: "ca. 60–90 €",
         searchTerm: "DFRobot Gravity pH Sensor",
+        asin: "B07L2RSHYN",
         note: "Laborgenauer, aber teurer: Atlas Scientific EZO (Firmware-Anpassung nötig).",
       },
       {
@@ -200,6 +214,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "esp32",
         price: "ca. 8–12 €",
         searchTerm: "JSN-SR04T wasserdicht",
+        asin: "B07MKQ7VQF",
       },
       {
         id: "soil-cap",
@@ -209,6 +224,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "esp32",
         price: "ca. 3–6 € je Stück",
         searchTerm: "kapazitiver Bodenfeuchtesensor v2.0",
+        asin: "B07DDFZ3MD",
       },
       {
         id: "relay",
@@ -218,6 +234,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "esp32",
         price: "ca. 10–15 €",
         searchTerm: "8 Kanal Relais Modul Optokoppler",
+        asin: "B09DK63247",
         note: "230-V-Seite nur durch Elektrofachkraft, in einem geschlossenen Gehäuse.",
       },
       {
@@ -237,6 +254,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "esp32",
         price: "ca. 5–10 € je Kanal",
         searchTerm: "PWM 0-10V Wandler Modul",
+        asin: "B0789738RC",
       },
       {
         id: "psu",
@@ -245,6 +263,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "esp32",
         price: "ca. 15–25 €",
         searchTerm: "12V 5A Netzteil Hutschiene",
+        asin: "B0BRPXSGHP",
       },
     ],
     steps: [
@@ -276,6 +295,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "esp32",
         price: "ca. 10–15 €",
         searchTerm: "ESP32-CAM MB Programmer",
+        asin: "B093GSCBWJ",
         note: "Mit 160°-Weitwinkelobjektiv für kleine Zelte.",
       },
       {
@@ -285,6 +305,7 @@ export const HARDWARE_PATHS: HwPath[] = [
         via: "homeassistant",
         price: "ca. 30–60 €",
         searchTerm: "Reolink WLAN Kamera Innen",
+        asin: "B0F835G7MS",
       },
     ],
     steps: [
