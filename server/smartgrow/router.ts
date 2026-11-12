@@ -469,7 +469,14 @@ export const smartGrowRouter = router({
     .input(z.object({ id: z.number().int(), mode: z.enum(MODES) }))
     .mutation(async ({ ctx, input }) => {
       const t = await ownTent(ctx.user.id, input.id);
-      if (!t.simState && input.mode !== "off") requireAddon(ctx.user);
+      if (input.mode !== "off") {
+        // kostenlos nur für Zelte, die ausschließlich Simulator-Geräte haben
+        const devs = await (await db())
+          .select({ kind: growDevices.kind })
+          .from(growDevices)
+          .where(eq(growDevices.tentId, t.id));
+        if (devs.some((d) => d.kind !== "simulator")) requireAddon(ctx.user);
+      }
       const d = await db();
       await d
         .update(growTents)
@@ -530,6 +537,12 @@ export const smartGrowRouter = router({
     .mutation(async ({ ctx, input }) => {
       requireAddon(ctx.user);
       const t = await ownTent(ctx.user.id, input.tentId);
+      if (t.simState)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "In ein Simulator-Zelt kommen keine echten Geräte – lege dafür ein eigenes Zelt an.",
+        });
       const d = await db();
       const n = await d
         .select({ c: sql<number>`count(*)` })
@@ -1021,6 +1034,12 @@ export const smartGrowRouter = router({
     .mutation(async ({ ctx, input }) => {
       requireAddon(ctx.user);
       const t = await ownTent(ctx.user.id, input.tentId);
+      if (t.simState)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "In ein Simulator-Zelt kommen keine echten Geräte – lege dafür ein eigenes Zelt an.",
+        });
       const d = await db();
       const n = await d
         .select({ c: sql<number>`count(*)` })

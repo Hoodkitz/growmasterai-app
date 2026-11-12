@@ -560,7 +560,9 @@ async function tickTentInner(
     .from(users)
     .where(eq(users.id, tent.userId))
     .limit(1);
-  if (!tent.simState && !hasSmartGrow(ownerRow)) cfg.mode = "off";
+  // kostenlos ist nur ein reines Simulator-Zelt (nach Gerätetyp, nicht nach Zelt-Flag)
+  const onlySimulator = devices.every((d) => d.kind === "simulator");
+  if (!onlySimulator && !hasSmartGrow(ownerRow)) cfg.mode = "off";
 
   // 1. Simulator: Physik weiterrechnen und Messwerte schreiben
   const sim = devices.find((d) => d.kind === "simulator");
