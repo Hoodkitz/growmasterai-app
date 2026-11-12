@@ -434,7 +434,7 @@ export default function TentScreen() {
               return (
                 <Row
                   key={a}
-                  label={`${ACTUATOR_LABEL[a]}${cur !== undefined ? ` · ${cur === 0 ? "aus" : `${cur} %`}` : ""}`}
+                  label={`${ACTUATOR_LABEL[a]}${cur !== undefined ? ` · ${cur === 0 ? "aus" : steps.length === 2 ? "an" : `${cur} %`}` : ""}`}
                 >
                   {steps.map((v) => (
                     <Btn
