@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AdminSmartGrowGrant } from "@/components/smartgrow/admin-grant";
 import {
   ScrollView,
   Text,
@@ -528,6 +529,7 @@ export default function AdminScreen() {
             </View>
 
             {/* Tier vergeben */}
+            <AdminSmartGrowGrant />
             <View className="bg-surface rounded-xl p-4 border border-border mt-4 gap-3">
               <Text className="text-base font-semibold text-foreground">
                 Abo-Stufe vergeben
