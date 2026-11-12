@@ -239,12 +239,21 @@ export function decide(input: ControllerInput): ControllerOutput {
       light.phase === "day" &&
       values.ppfd !== undefined
     ) {
-      const cur = state.light ?? level;
+      // Feinregelung um die Phasen-Stufe herum (war das Licht aus, zuerst auf die Phasen-Stufe)
+      const base = level;
+      const lo = Math.max(10, base - 30);
+      const hi = Math.min(100, base + 20);
+      const cur =
+        state.light && state.light >= lo ? Math.min(hi, state.light) : base;
       if (values.ppfd > targets.ppfd.max) {
-        level = Math.max(10, cur - 3);
+        level = Math.max(lo, cur - 3);
         why = `PPFD ${Math.round(values.ppfd)} über Ziel – etwas dunkler`;
-      } else if (values.ppfd < targets.ppfd.min) {
-        level = Math.min(100, cur + 3);
+      } else if (
+        values.ppfd < targets.ppfd.min &&
+        state.light &&
+        state.light >= lo
+      ) {
+        level = Math.min(hi, cur + 3);
         why = `PPFD ${Math.round(values.ppfd)} unter Ziel – etwas heller`;
       } else level = cur;
     }

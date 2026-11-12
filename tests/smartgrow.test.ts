@@ -441,3 +441,33 @@ describe("Smart Grow – Simulator mit Regler", () => {
     expect(s.waterPh).toBeLessThan(6.9);
   });
 });
+
+describe("Smart Grow – Licht-Feinregelung", () => {
+  it("startet nach Licht aus auf der Phasen-Stufe statt bei 3 %", () => {
+    const out = decide(
+      input({
+        readings: rd({ airTemp: 25, airRh: 62, ppfd: 0 }),
+        state: { light: 0, exhaust: 30 },
+      }),
+    );
+    expect(find(out, "light")[0]?.cmd).toMatchObject({ value: 65 });
+    const tooBright = decide(
+      input({
+        readings: rd({ airTemp: 25, airRh: 62, ppfd: 900 }),
+        state: { light: 65, exhaust: 30 },
+      }),
+    );
+    expect(find(tooBright, "light")[0]?.cmd).toMatchObject({ value: 62 });
+    const floor = decide(
+      input({
+        readings: rd({ airTemp: 25, airRh: 62, ppfd: 900 }),
+        state: { light: 35, exhaust: 30 },
+      }),
+    );
+    expect(
+      find(floor, "light").every(
+        (d) => d.cmd.kind === "set" && d.cmd.value >= 35,
+      ),
+    ).toBe(true);
+  });
+});
