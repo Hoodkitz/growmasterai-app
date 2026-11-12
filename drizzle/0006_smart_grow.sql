@@ -26,6 +26,7 @@ CREATE TABLE `growDevices` (
 	`state` json,
 	`lastSeenAt` bigint,
 	`firmware` varchar(40),
+	`config` json,
 	`createdAt` timestamp NOT NULL DEFAULT (now()),
 	CONSTRAINT `growDevices_id` PRIMARY KEY(`id`),
 	CONSTRAINT `growDevices_token_unique` UNIQUE(`tokenHash`)
@@ -55,7 +56,8 @@ CREATE TABLE `growSnapshots` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`tentId` int NOT NULL,
 	`deviceId` int NOT NULL,
-	`storageKey` varchar(300) NOT NULL,
+	`image` mediumtext NOT NULL,
+	`source` enum('device','app') NOT NULL DEFAULT 'device',
 	`analysis` json,
 	`createdAt` bigint NOT NULL,
 	CONSTRAINT `growSnapshots_id` PRIMARY KEY(`id`)

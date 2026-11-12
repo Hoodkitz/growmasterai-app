@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "a446bfbf-daa9-4d62-9b46-8fceea32b090",
+  "id": "8697eb6b-4c56-48cc-bd71-be77a3f96a35",
   "prevId": "9bbfc3e7-8d6b-469f-a59e-7e138fe54023",
   "tables": {
     "adBanners": {
@@ -1096,6 +1096,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "config": {
+          "name": "config",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp",
@@ -1277,12 +1284,20 @@
           "notNull": true,
           "autoincrement": false
         },
-        "storageKey": {
-          "name": "storageKey",
-          "type": "varchar(300)",
+        "image": {
+          "name": "image",
+          "type": "mediumtext",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "source": {
+          "name": "source",
+          "type": "enum('device','app')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'device'"
         },
         "analysis": {
           "name": "analysis",

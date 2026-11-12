@@ -45,11 +45,12 @@ export default function SmartGrowList() {
   });
   const create = trpc.smartGrow.create.useMutation();
   // beim Zurückkommen vom Dashboard frische Werte/Modus zeigen
+  const refetchList = list.refetch;
   useFocusEffect(
     useCallback(() => {
-      if (isAuthenticated) list.refetch();
-    }, [isAuthenticated]),
-  ); // eslint-disable-line react-hooks/exhaustive-deps
+      if (isAuthenticated) refetchList();
+    }, [isAuthenticated, refetchList]),
+  );
   const [form, setForm] = useState(false);
   const [name, setName] = useState("Mein Zelt");
   const [stage, setStage] = useState<Stage>("veg");

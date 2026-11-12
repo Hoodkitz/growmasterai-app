@@ -13,6 +13,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import Svg, { Polyline } from "react-native-svg";
 import { ScreenContainer } from "@/components/screen-container";
 import { Chips } from "@/components/smartgrow/chips";
+import { AiCard, LeafCard } from "@/components/smartgrow/ai-cards";
 import { useColors } from "@/hooks/use-colors";
 import { trpc } from "@/lib/trpc";
 import type { inferRouterOutputs } from "@trpc/server";
@@ -347,19 +348,14 @@ export default function TentScreen() {
           </View>
         ) : null}
 
-        {t.aiSummary ? (
-          <View className="bg-surface rounded-2xl p-4 border border-border gap-1">
-            <Text className="text-base font-bold text-foreground">
-              🤖 KI-Einschätzung
-            </Text>
-            <Text className="text-sm text-foreground">{t.aiSummary.text}</Text>
-            {(t.aiSummary.tips ?? []).map((tip, i) => (
-              <Text key={i} className="text-sm text-foreground">
-                • {tip}
-              </Text>
-            ))}
-          </View>
-        ) : null}
+        <AiCard
+          tentId={tentId}
+          summary={t.aiSummary}
+          adjustments={t.adjustments}
+          aiEnabled={t.aiEnabled}
+          onChanged={refresh}
+        />
+        <LeafCard tentId={tentId} last={t.lastSnapshot} onChanged={refresh} />
 
         {/* Handsteuerung */}
         {t.caps.length > 0 ? (

@@ -27,6 +27,12 @@ import {
   type DeviceCaps,
 } from "../../shared/smartgrow/types";
 import { hashToken } from "./engine";
+import {
+  handleDeviceSnapshot,
+  isJpeg,
+  MAX_IMAGE_BYTES,
+  type CameraDeps,
+} from "./camera";
 
 export const POLL_SECONDS = 30;
 export const FAILSAFE = {
@@ -238,4 +244,68 @@ export function registerDeviceRoutes(app: Express) {
       }
     },
   );
+
+  /**
+   * Kamerabild (JPEG, max. 1,5 MB) für die KI-Blattkontrolle, z. B. von einer ESP32-CAM:
+   *   POST /api/device/v1/snapshot   Content-Type: image/jpeg   Authorization: Bearer gmd_…
+   */
+  app.post(
+    "/api/device/v1/snapshot",
+    express.raw({
+      type: ["image/jpeg", "application/octet-stream"],
+      limit: "1600kb",
+    }),
+    async (req: Request, res: Response) => {
+      try {
+        const r = await handleSnapshot(req.headers.authorization, req.body);
+        res.status(r.status).json(r.json);
+      } catch (e) {
+        console.error("[smartgrow] snapshot failed:", e);
+        res.status(500).json({ error: "Interner Fehler" });
+      }
+    },
+  );
+}
+
+const snapLimiter = createRateLimiter({ windowMs: 60 * 60_000, max: 12 });
+
+export async function handleSnapshot(
+  deviceToken: string | undefined,
+  body: unknown,
+  now = Date.now(),
+  deps: CameraDeps = {},
+): Promise<{ status: number; json: unknown }> {
+  const db = await getDb();
+  if (!db) return { status: 503, json: { error: "Datenbank nicht verfügbar" } };
+  const m = /^Bearer (gmd_[A-Za-z0-9_-]{20,80})$/.exec(deviceToken ?? "");
+  if (!m) return { status: 401, json: { error: "Geräte-Token fehlt" } };
+  const [device] = await db
+    .select()
+    .from(growDevices)
+    .where(eq(growDevices.tokenHash, hashToken(m[1])))
+    .limit(1);
+  if (!device || device.kind !== "http")
+    return { status: 401, json: { error: "Unbekanntes Gerät" } };
+  if (!snapLimiter.check(`snap:${device.id}`).allowed)
+    return { status: 429, json: { error: "Höchstens 12 Bilder pro Stunde" } };
+  if (!Buffer.isBuffer(body) || !isJpeg(body))
+    return {
+      status: 415,
+      json: { error: "Bitte ein JPEG senden (Content-Type: image/jpeg)" },
+    };
+  if (body.length > MAX_IMAGE_BYTES)
+    return { status: 413, json: { error: "Bild zu groß (max. 1,5 MB)" } };
+  const r = await handleDeviceSnapshot(
+    db,
+    device.tentId,
+    device.id,
+    body,
+    now,
+    deps,
+  );
+  await db
+    .update(growDevices)
+    .set({ lastSeenAt: now })
+    .where(eq(growDevices.id, device.id));
+  return { status: 200, json: { ok: true, id: r.id, analyzed: r.analyzed } };
 }

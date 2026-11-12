@@ -45,6 +45,11 @@ await step("Handsteuerung: Abluft 60 %", async () => {
   await p.waitForTimeout(2500);
   await see(/Abluft 60 % – von Hand/);
 });
+await step("KI-Einschätzung und Blattkontrolle sichtbar", async () => {
+  await see("🤖 KI-Einschätzung");
+  await see("🔍 Blattkontrolle");
+  await see("Foto prüfen");
+});
 await step("Verlauf-Diagramm", async () => { await see(/letzte 24 h/); });
 await step("Einstellungen: Lila-Finish sichtbar", async () => {
   await p.getByText("Phase & Einstellungen").locator("visible=true").first().click();

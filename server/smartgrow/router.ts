@@ -23,6 +23,7 @@ import {
 } from "../../shared/smartgrow/controller";
 import { targetsFor, type TentSettings } from "../../shared/smartgrow/profiles";
 import {
+  clampAdjustments,
   DEFAULT_LIMITS,
   guard,
   HARD_LIMITS,
@@ -51,6 +52,18 @@ import {
   usage,
 } from "./engine";
 import { POLL_SECONDS } from "./device-api";
+import { reviewTent, describeAdjustments, type AiSummary } from "./ai";
+import {
+  analyzeSnapshot,
+  isJpeg,
+  MAX_IMAGE_BYTES,
+  saveSnapshot,
+} from "./camera";
+import { createRateLimiter } from "../_core/rateLimit";
+import * as ha from "./homeassistant";
+
+const snapshotLimiter = createRateLimiter({ windowMs: 86_400_000, max: 20 });
+const haLimiter = createRateLimiter({ windowMs: 10 * 60_000, max: 15 });
 
 const MAX_TENTS = 10;
 const MAX_DEVICES = 12;
@@ -270,11 +283,8 @@ export const smartGrowRouter = router({
         automation: cfg.automation,
         adjustments: cfg.adjustments,
         simulated: !!t.simState,
-        aiSummary: t.aiSummary as {
-          text: string;
-          at: number;
-          tips?: string[];
-        } | null,
+        aiSummary: t.aiSummary as AiSummary | null,
+        aiEnabled: !!process.env.GEMINI_API_KEY,
         readings,
         sensors: [...sensors],
         caps,
@@ -365,16 +375,14 @@ export const smartGrowRouter = router({
       });
       const id = Number((res as { insertId?: number }).insertId);
       if (input.simulator) {
-        await d
-          .insert(growDevices)
-          .values({
-            tentId: id,
-            userId: ctx.user.id,
-            name: "Simulator",
-            kind: "simulator",
-            caps: SIM_CAPS,
-            state: { light: 0, exhaust: 30, intake: 24, circulation: 50 },
-          });
+        await d.insert(growDevices).values({
+          tentId: id,
+          userId: ctx.user.id,
+          name: "Simulator",
+          kind: "simulator",
+          caps: SIM_CAPS,
+          state: { light: 0, exhaust: 30, intake: 24, circulation: 50 },
+        });
         await logEvent(
           d,
           id,
@@ -519,18 +527,16 @@ export const smartGrowRouter = router({
           (a, i, arr) => arr.findIndex((b) => b.type === a.type) === i,
         ),
       };
-      const [res] = await d
-        .insert(growDevices)
-        .values({
-          tentId: t.id,
-          userId: ctx.user.id,
-          name: input.name,
-          kind: "http",
-          tokenHash: tok.hash,
-          tokenHint: tok.hint,
-          caps,
-          state: {},
-        });
+      const [res] = await d.insert(growDevices).values({
+        tentId: t.id,
+        userId: ctx.user.id,
+        name: input.name,
+        kind: "http",
+        tokenHash: tok.hash,
+        tokenHint: tok.hint,
+        caps,
+        state: {},
+      });
       await logEvent(
         d,
         t.id,
@@ -842,5 +848,255 @@ export const smartGrowRouter = router({
         return { ok: true as const };
       await tickTent(d, t);
       return { ok: true as const };
+    }),
+
+  /** KI-Einschätzung jetzt anfordern (höchstens alle 10 Minuten). */
+  aiReview: protectedProcedure
+    .input(z.object({ id: z.number().int() }))
+    .mutation(async ({ ctx, input }) => {
+      const t = await ownTent(ctx.user.id, input.id);
+      if (t.aiReviewAt && Date.now() - t.aiReviewAt < 10 * 60_000) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "Die letzte Einschätzung ist keine 10 Minuten alt.",
+        });
+      }
+      if (!process.env.GEMINI_API_KEY)
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "KI ist auf dem Server nicht eingerichtet.",
+        });
+      const d = await db();
+      const r = await reviewTent(d, t);
+      if (!r)
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "Noch zu wenige Messwerte für eine Einschätzung.",
+        });
+      return r;
+    }),
+
+  /** Vorgeschlagene KI-Anpassung übernehmen oder verwerfen (Modus „Vorschläge“). */
+  aiDecide: protectedProcedure
+    .input(z.object({ id: z.number().int(), apply: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const t = await ownTent(ctx.user.id, input.id);
+      const d = await db();
+      const cfg = tentConfig(t);
+      const summary = t.aiSummary as AiSummary | null;
+      if (!summary?.pending)
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Kein offener KI-Vorschlag.",
+        });
+      const next: AiSummary = { ...summary, pending: null };
+      const set: Partial<typeof growTents.$inferInsert> = { aiSummary: next };
+      if (input.apply) {
+        // erneut begrenzen (Phase/Grenzen können sich geändert haben)
+        const adj = clampAdjustments(
+          summary.pending.adjustments,
+          cfg.settings.stage,
+          cfg.limits,
+        );
+        set.adjustments = { ...cfg.adjustments, ...adj };
+        next.applied = adj;
+        await logEvent(
+          d,
+          t.id,
+          "info",
+          "ai-adjust",
+          `KI-Vorschlag übernommen: ${describeAdjustments(adj)}`,
+        );
+      }
+      await d.update(growTents).set(set).where(eq(growTents.id, t.id));
+      return { ok: true as const };
+    }),
+
+  /** Alle KI-Anpassungen zurücksetzen (zurück auf die Richtwerte der Phase). */
+  resetAdjustments: protectedProcedure
+    .input(z.object({ id: z.number().int() }))
+    .mutation(async ({ ctx, input }) => {
+      const t = await ownTent(ctx.user.id, input.id);
+      const d = await db();
+      await d
+        .update(growTents)
+        .set({ adjustments: {} })
+        .where(eq(growTents.id, t.id));
+      await logEvent(
+        d,
+        t.id,
+        "info",
+        "ai-reset",
+        "KI-Anpassungen zurückgesetzt – es gelten die Richtwerte der Phase.",
+      );
+      return { ok: true as const };
+    }),
+
+  /** Foto vom Handy für die Blattkontrolle (JPEG, Base64). */
+  uploadSnapshot: protectedProcedure
+    .input(
+      z.object({
+        tentId: z.number().int(),
+        jpegBase64: z.string().min(200).max(2_100_000),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const t = await ownTent(ctx.user.id, input.tentId);
+      if (!snapshotLimiter.check(`u:${ctx.user.id}`).allowed)
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "Höchstens 20 Fotos pro Tag.",
+        });
+      const buf = Buffer.from(
+        input.jpegBase64.replace(/^data:image\/jpeg;base64,/, ""),
+        "base64",
+      );
+      if (!isJpeg(buf))
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Bitte ein JPEG-Foto.",
+        });
+      if (buf.length > MAX_IMAGE_BYTES)
+        throw new TRPCError({
+          code: "PAYLOAD_TOO_LARGE",
+          message: "Foto zu groß (max. 1,5 MB).",
+        });
+      const d = await db();
+      const id = await saveSnapshot(d, t, 0, buf, "app");
+      const analysis = process.env.GEMINI_API_KEY
+        ? await analyzeSnapshot(d, t, id)
+        : null;
+      return { id, analysis };
+    }),
+
+  /** Ein gespeichertes Bild (für die Anzeige). */
+  snapshotImage: protectedProcedure
+    .input(z.object({ id: z.number().int() }))
+    .query(async ({ ctx, input }) => {
+      const d = await db();
+      const [s] = await d
+        .select()
+        .from(growSnapshots)
+        .where(eq(growSnapshots.id, input.id))
+        .limit(1);
+      if (!s) throw new TRPCError({ code: "NOT_FOUND" });
+      await ownTent(ctx.user.id, s.tentId);
+      return {
+        id: s.id,
+        at: s.createdAt,
+        source: s.source,
+        dataUri: `data:image/jpeg;base64,${s.image}`,
+        analysis: s.analysis,
+      };
+    }),
+
+  /** Home Assistant: Verbindung testen und Entitäten für die Zuordnung liefern. */
+  haEntities: protectedProcedure
+    .input(
+      z.object({
+        baseUrl: z.string().max(300),
+        token: z.string().min(20).max(400),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (!haLimiter.check(`u:${ctx.user.id}`).allowed)
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "Zu viele Versuche – bitte kurz warten.",
+        });
+      try {
+        const base = await ha.validateBaseUrl(input.baseUrl);
+        const entities = await ha.listEntities(base, input.token.trim());
+        return { baseUrl: base, entities };
+      } catch (e) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: (e as Error).message,
+        });
+      }
+    }),
+
+  /** Home-Assistant-Gerät anlegen: Sensoren/Aktoren ihren HA-Entitäten zuordnen. */
+  addHaDevice: protectedProcedure
+    .input(
+      z.object({
+        tentId: z.number().int(),
+        name: z.string().trim().min(1).max(80),
+        baseUrl: z.string().max(300),
+        token: z.string().min(20).max(400),
+        sensors: z.record(
+          z.enum(METRICS),
+          z.string().refine(ha.isEntityId, "Ungültige Entität"),
+        ),
+        actuators: z.record(
+          z
+            .enum(ACTUATORS)
+            .refine(
+              (a) => a !== "doser",
+              "Dosierpumpen nicht über Home Assistant",
+            ),
+          z.string().refine(ha.isEntityId, "Ungültige Entität"),
+        ),
+        dimmableLight: z.boolean().default(false),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const t = await ownTent(ctx.user.id, input.tentId);
+      const d = await db();
+      const n = await d
+        .select({ c: sql<number>`count(*)` })
+        .from(growDevices)
+        .where(eq(growDevices.tentId, t.id));
+      if (Number(n[0]?.c ?? 0) >= MAX_DEVICES)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Höchstens ${MAX_DEVICES} Geräte je Zelt.`,
+        });
+      let base: string;
+      try {
+        base = await ha.validateBaseUrl(input.baseUrl);
+        await ha.listEntities(base, input.token.trim()); // Zugang prüfen, bevor gespeichert wird
+      } catch (e) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: (e as Error).message,
+        });
+      }
+      const cfg: ha.HaConfig = {
+        baseUrl: base,
+        tokenEnc: ha.encryptToken(input.token.trim()),
+        sensors: input.sensors,
+        actuators: input.actuators as ha.HaActuatorMap,
+      };
+      const caps: DeviceCaps = {
+        sensors: Object.keys(input.sensors) as DeviceCaps["sensors"],
+        actuators: (
+          Object.keys(
+            input.actuators,
+          ) as DeviceCaps["actuators"][number]["type"][]
+        ).map((a) => ({
+          type: a,
+          ...(a === "light" ? { dimmable: input.dimmableLight } : {}),
+        })),
+      };
+      const [res] = await d
+        .insert(growDevices)
+        .values({
+          tentId: t.id,
+          userId: ctx.user.id,
+          name: input.name,
+          kind: "homeassistant",
+          caps,
+          state: {},
+          config: cfg,
+        });
+      await logEvent(
+        d,
+        t.id,
+        "info",
+        "device",
+        `Home Assistant „${input.name}“ verbunden (${caps.sensors.length} Sensoren, ${caps.actuators.length} Geräte).`,
+      );
+      return { id: Number((res as { insertId?: number }).insertId) };
     }),
 });

@@ -55,6 +55,8 @@ import {
   type Reading,
 } from "../../shared/smartgrow/types";
 import { sendExpoPush } from "../push";
+import * as ha from "./homeassistant";
+import type { HaConfig } from "./homeassistant";
 
 type Db = NonNullable<Awaited<ReturnType<typeof getDb>>>;
 
@@ -216,27 +218,30 @@ export async function logEvent(
   message: string,
   now = Date.now(),
 ) {
-  await db
-    .insert(growEvents)
-    .values({
-      tentId,
-      level,
-      kind: kind.slice(0, 40),
-      message: message.slice(0, 500),
-      createdAt: now,
-    });
+  await db.insert(growEvents).values({
+    tentId,
+    level,
+    kind: kind.slice(0, 40),
+    message: message.slice(0, 500),
+    createdAt: now,
+  });
 }
 
 async function notify(db: Db, userId: number, title: string, body: string) {
-  const rows = await db
-    .select({ token: pushTokens.token })
-    .from(pushTokens)
-    .where(eq(pushTokens.userId, userId));
-  if (rows.length)
-    await sendExpoPush(
-      rows.map((r) => r.token),
-      { title, body },
-    ).catch(() => undefined);
+  // Push ist "best effort": Fehler dürfen den Regeltakt nicht abbrechen
+  try {
+    const rows = await db
+      .select({ token: pushTokens.token })
+      .from(pushTokens)
+      .where(eq(pushTokens.userId, userId));
+    if (rows.length)
+      await sendExpoPush(
+        rows.map((r) => r.token),
+        { title, body },
+      );
+  } catch (e) {
+    console.error("[smartgrow] push failed:", (e as Error).message);
+  }
 }
 
 /** Alarme: protokollieren und pushen, aber dieselbe Art höchstens einmal pro Stunde. */
@@ -301,22 +306,142 @@ export async function issueCommand(
         ),
       );
   }
-  const [res] = await db
-    .insert(growCommands)
-    .values({
-      tentId: tent.id,
-      deviceId: device.id,
-      actuator: cmd.actuator,
-      payload: cmd,
-      reason: reason.slice(0, 300),
-      source,
-      status,
-      createdAt: now,
-    });
+  const [res] = await db.insert(growCommands).values({
+    tentId: tent.id,
+    deviceId: device.id,
+    actuator: cmd.actuator,
+    payload: cmd,
+    reason: reason.slice(0, 300),
+    source,
+    status,
+    createdAt: now,
+  });
   const id = Number((res as { insertId?: number }).insertId);
   if (status === "pending" && device.kind === "simulator")
     await completeSimCommand(db, tent, device, id, cmd, now);
+  if (status === "pending" && device.kind === "homeassistant")
+    await completeHaCommand(db, device, id, cmd, now);
   return id;
+}
+
+/** Home Assistant: Befehl sofort über die HA-API ausführen. Pumpe: an + Zeitgeber fürs Ausschalten. */
+async function completeHaCommand(
+  db: Db,
+  device: GrowDevice,
+  id: number,
+  cmd: Command,
+  now: number,
+) {
+  const cfg = device.config as HaConfig | null;
+  try {
+    if (!cfg) throw new Error("Home Assistant nicht eingerichtet");
+    await ha.execute(cfg, cmd);
+    const state = {
+      ...((device.state as Record<string, number> | null) ?? {}),
+    };
+    if (cmd.kind === "set") state[cmd.actuator] = cmd.value;
+    if (cmd.kind === "run") {
+      state.pump = cmd.seconds > 0 ? 100 : 0;
+      state.pumpUntil = cmd.seconds > 0 ? now + cmd.seconds * 1000 : 0;
+      if (cmd.seconds > 0) schedulePumpOff(db, device.id, cmd.seconds * 1000);
+    }
+    device.state = state;
+    await db
+      .update(growDevices)
+      .set({ state, lastSeenAt: now })
+      .where(eq(growDevices.id, device.id));
+    await db
+      .update(growCommands)
+      .set({
+        status: "done",
+        sentAt: now,
+        doneAt: now,
+        result: "Home Assistant",
+      })
+      .where(eq(growCommands.id, id));
+  } catch (e) {
+    await db
+      .update(growCommands)
+      .set({
+        status: "failed",
+        sentAt: now,
+        doneAt: now,
+        result: (e as Error).message.slice(0, 200),
+      })
+      .where(eq(growCommands.id, id));
+  }
+}
+
+/** Pumpe nach Ablauf ausschalten (zusätzlich prüft jeder Takt pumpUntil, falls der Server neu startet). */
+function schedulePumpOff(db: Db, deviceId: number, ms: number) {
+  setTimeout(() => {
+    void pumpOffIfDue(db, deviceId, Date.now() + 1000);
+  }, ms).unref?.();
+}
+
+async function pumpOffIfDue(db: Db, deviceId: number, now: number) {
+  const [d] = await db
+    .select()
+    .from(growDevices)
+    .where(eq(growDevices.id, deviceId))
+    .limit(1);
+  const st = (d?.state as Record<string, number> | null) ?? {};
+  if (!d || !st.pumpUntil || now < st.pumpUntil) return;
+  try {
+    await ha.execute(d.config as HaConfig, {
+      actuator: "pump",
+      kind: "run",
+      seconds: 0,
+    });
+    await db
+      .update(growDevices)
+      .set({ state: { ...st, pump: 0, pumpUntil: 0 } })
+      .where(eq(growDevices.id, d.id));
+  } catch (e) {
+    console.error("[smartgrow] HA pump off failed:", (e as Error).message);
+  }
+}
+
+/** Home Assistant abfragen: Messwerte speichern, Stellungen übernehmen, abgelaufene Pumpe aus. */
+async function pollHa(
+  db: Db,
+  tent: GrowTent,
+  d: GrowDevice,
+  now: number,
+): Promise<Alert | null> {
+  const cfg = d.config as HaConfig | null;
+  if (!cfg) return null;
+  try {
+    await pumpOffIfDue(db, d.id, now);
+    const r = await ha.readAll(cfg);
+    if (r.readings.length)
+      await db
+        .insert(growReadings)
+        .values(
+          r.readings.map((x) => ({
+            tentId: tent.id,
+            deviceId: d.id,
+            metric: x.metric,
+            value: x.value,
+            ts: now,
+          })),
+        );
+    const prev = (d.state as Record<string, number> | null) ?? {};
+    const state = { ...prev, ...r.state, pumpUntil: prev.pumpUntil ?? 0 };
+    d.state = state;
+    d.lastSeenAt = now;
+    await db
+      .update(growDevices)
+      .set({ state, lastSeenAt: now })
+      .where(eq(growDevices.id, d.id));
+    return null;
+  } catch (e) {
+    return {
+      level: "warn",
+      kind: `ha-${d.id}`,
+      message: `Home Assistant („${d.name}“) nicht erreichbar: ${(e as Error).message}`,
+    };
+  }
 }
 
 async function completeSimCommand(
@@ -389,22 +514,28 @@ export async function tickTent(
       .set({ simState: s })
       .where(eq(growTents.id, tent.id));
     if (caps.sensors.length)
-      await db
-        .insert(growReadings)
-        .values(
-          caps.sensors.map((m) => ({
-            tentId: tent.id,
-            deviceId: sim.id,
-            metric: m,
-            value: Math.round(s[m] * 100) / 100,
-            ts: now,
-          })),
-        );
+      await db.insert(growReadings).values(
+        caps.sensors.map((m) => ({
+          tentId: tent.id,
+          deviceId: sim.id,
+          metric: m,
+          value: Math.round(s[m] * 100) / 100,
+          ts: now,
+        })),
+      );
     await db
       .update(growDevices)
       .set({ lastSeenAt: now })
       .where(eq(growDevices.id, sim.id));
     sim.lastSeenAt = now;
+  }
+
+  // Home-Assistant-Geräte abfragen (Messwerte + Stellungen)
+  const haAlerts: Alert[] = [];
+  for (const d of devices) {
+    if (d.kind !== "homeassistant") continue;
+    const al = await pollHa(db, tent, d, now);
+    if (al) haAlerts.push(al);
   }
 
   // abgelaufene Befehle/Vorschläge aufräumen
@@ -452,10 +583,10 @@ export async function tickTent(
     now,
   });
 
-  const alerts = [...out.alerts];
+  const alerts = [...out.alerts, ...haAlerts];
   for (const d of devices) {
     if (
-      d.kind !== "simulator" &&
+      d.kind === "http" &&
       d.lastSeenAt &&
       now - d.lastSeenAt > DEVICE_OFFLINE_MS
     ) {
@@ -589,5 +720,11 @@ export function startSmartGrowScheduler() {
   setInterval(() => {
     pruneReadings().catch(() => undefined);
   }, 6 * 3_600_000).unref();
+  // KI-Einschätzung: alle 15 Minuten prüfen, welche Zelte fällig sind (je Zelt alle 6 h)
+  setInterval(() => {
+    import("./ai")
+      .then((m) => m.reviewDue())
+      .catch((e) => console.error("[smartgrow] ai review failed:", e));
+  }, 15 * 60_000).unref();
   console.log("[smartgrow] scheduler started");
 }

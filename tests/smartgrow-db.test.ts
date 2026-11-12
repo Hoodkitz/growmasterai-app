@@ -174,3 +174,280 @@ d("Smart Grow (Datenbank)", () => {
     await c.smartGrow.delete({ id });
   }, 60_000);
 });
+
+d("Smart Grow – KI und Kamera (Datenbank, KI gemockt)", () => {
+  it("KI-Einschätzung: begrenzt, im Vorschlags-Modus nur Vorschlag, im Autopilot übernommen", async () => {
+    process.env.DATABASE_URL = URL;
+    const { appRouter } = await import("../server/routers");
+    const { reviewTent } = await import("../server/smartgrow/ai");
+    const { tickTent } = await import("../server/smartgrow/engine");
+    const { getDb } = await import("../server/db");
+    const schema = await import("../drizzle/schema");
+    const { eq } = await import("drizzle-orm");
+    const c = appRouter.createCaller({
+      req: { headers: {} } as never,
+      res: {} as never,
+      user: { id: 9101, role: "user" } as never,
+    });
+    const { id } = await c.smartGrow.create({
+      name: "KI",
+      settings: {
+        stage: "veg",
+        medium: "soil",
+        lightsOn: "00:00",
+        rampMinutes: 0,
+        reservoirLiters: 20,
+        purpleFinish: false,
+        harvestDate: null,
+        timeZone: "Europe/Berlin",
+      },
+      simulator: true,
+    });
+    const db = (await getDb())!;
+    const tent = async () =>
+      (
+        await db
+          .select()
+          .from(schema.growTents)
+          .where(eq(schema.growTents.id, id))
+      )[0];
+    await tickTent(db, await tent());
+    await c.smartGrow.setMode({ id, mode: "assist" });
+    let prompt = "";
+    const llm = async (_s: string, u: string) => {
+      prompt = u;
+      return JSON.stringify({
+        summary: "Etwas zu feucht.",
+        tips: ["Abluft prüfen"],
+        adjustments: { rhOffset: -30, tempOffset: 0.5 },
+        adjustmentReason: "Schimmelgefahr senken",
+        stageSuggestion: {
+          stage: "earlyFlower",
+          reason: "Pflanzen sind groß genug",
+        },
+      });
+    };
+    const r1 = await reviewTent(db, await tent(), Date.now(), { llm });
+    expect(prompt).toMatch(/Messwerte letzte 24 h/);
+    expect(r1?.pending?.adjustments).toEqual({ rhOffset: -8, tempOffset: 0.5 }); // auf −8 begrenzt
+    expect((await tent()).adjustments).toEqual({});
+    let g = await c.smartGrow.get({ id });
+    expect(g.aiSummary?.stageSuggestion?.stage).toBe("earlyFlower");
+    await c.smartGrow.aiDecide({ id, apply: true });
+    expect((await tent()).adjustments).toEqual({
+      rhOffset: -8,
+      tempOffset: 0.5,
+    });
+    g = await c.smartGrow.get({ id });
+    expect(g.targets.rh.max).toBe(62); // 70 − 8
+    await c.smartGrow.resetAdjustments({ id });
+    expect((await tent()).adjustments).toEqual({});
+    // Autopilot: direkt übernehmen; kaputte KI-Antwort ändert nichts
+    await c.smartGrow.setMode({ id, mode: "auto" });
+    await reviewTent(db, await tent(), Date.now(), {
+      llm: async () =>
+        JSON.stringify({
+          summary: "Licht etwas runter.",
+          adjustments: { lightLevelOffset: -10 },
+          adjustmentReason: "Blätter warm",
+        }),
+    });
+    expect((await tent()).adjustments).toEqual({ lightLevelOffset: -10 });
+    await reviewTent(db, await tent(), Date.now(), {
+      llm: async () => "kein json",
+    });
+    expect((await tent()).adjustments).toEqual({ lightLevelOffset: -10 });
+    await c.smartGrow.delete({ id });
+  }, 60_000);
+
+  it("Kamera: Gerät schickt JPEG, KI prüft, ernster Befund wird Alarm; nur JPEG, alte Bilder werden aufgeräumt", async () => {
+    process.env.DATABASE_URL = URL;
+    const { appRouter } = await import("../server/routers");
+    const api = await import("../server/smartgrow/device-api");
+    const c = appRouter.createCaller({
+      req: { headers: {} } as never,
+      res: {} as never,
+      user: { id: 9102, role: "user" } as never,
+    });
+    const { id } = await c.smartGrow.create({
+      name: "Cam",
+      settings: {
+        stage: "lateFlower",
+        medium: "coco",
+        lightsOn: "06:00",
+        rampMinutes: 30,
+        reservoirLiters: 20,
+        purpleFinish: false,
+        harvestDate: null,
+        timeZone: "Europe/Berlin",
+      },
+    });
+    const dev = await c.smartGrow.addDevice({
+      tentId: id,
+      name: "Cam",
+      caps: { sensors: [], actuators: [] },
+    });
+    const jpeg = Buffer.concat([
+      Buffer.from([0xff, 0xd8, 0xff, 0xe0]),
+      Buffer.alloc(500, 1),
+    ]);
+    const vision = async () =>
+      JSON.stringify({
+        healthy: false,
+        severity: "high",
+        summary: "Grauschimmel an einer Blüte.",
+        issues: ["Botrytis"],
+        actions: ["Befallene Blüte sofort entfernen"],
+      });
+    expect(
+      (
+        await api.handleSnapshot(
+          `Bearer ${dev.token}`,
+          Buffer.from("nicht jpeg"),
+          Date.now(),
+          { vision },
+        )
+      ).status,
+    ).toBe(415);
+    const r = await api.handleSnapshot(
+      `Bearer ${dev.token}`,
+      jpeg,
+      Date.now(),
+      { vision },
+    );
+    expect(r.status).toBe(200);
+    expect((r.json as { analyzed: boolean }).analyzed).toBe(true);
+    // zweites Bild kurz danach: gespeichert, aber nicht erneut geprüft
+    const r2 = await api.handleSnapshot(
+      `Bearer ${dev.token}`,
+      jpeg,
+      Date.now() + 1000,
+      { vision },
+    );
+    expect((r2.json as { analyzed: boolean }).analyzed).toBe(false);
+    const g = await c.smartGrow.get({ id });
+    expect(
+      g.events.some(
+        (e) => e.level === "alarm" && /Grauschimmel/.test(e.message),
+      ),
+    ).toBe(true);
+    const img = await c.smartGrow.snapshotImage({
+      id: (r.json as { id: number }).id,
+    });
+    expect(img.dataUri).toMatch(/^data:image\/jpeg;base64,/);
+    await expect(
+      appRouter
+        .createCaller({
+          req: { headers: {} } as never,
+          res: {} as never,
+          user: { id: 9103, role: "user" } as never,
+        })
+        .smartGrow.snapshotImage({ id: img.id }),
+    ).rejects.toThrow();
+    await c.smartGrow.delete({ id });
+  }, 60_000);
+});
+
+d("Smart Grow – Home Assistant im Takt (Datenbank, HA gemockt)", () => {
+  it("liest Sensoren, schaltet über HA, meldet Ausfall", async () => {
+    const { vi } = await import("vitest");
+    process.env.DATABASE_URL = URL;
+    const { appRouter } = await import("../server/routers");
+    const { tickTent } = await import("../server/smartgrow/engine");
+    const { encryptToken } = await import("../server/smartgrow/homeassistant");
+    const { getDb } = await import("../server/db");
+    const schema = await import("../drizzle/schema");
+    const { eq } = await import("drizzle-orm");
+    const c = appRouter.createCaller({
+      req: { headers: {} } as never,
+      res: {} as never,
+      user: { id: 9201, role: "user" } as never,
+    });
+    const { id } = await c.smartGrow.create({
+      name: "HA",
+      settings: {
+        stage: "veg",
+        medium: "soil",
+        lightsOn: "00:00",
+        rampMinutes: 0,
+        reservoirLiters: 20,
+        purpleFinish: false,
+        harvestDate: null,
+        timeZone: "Europe/Berlin",
+      },
+    });
+    await c.smartGrow.setMode({ id, mode: "auto" });
+    const db = (await getDb())!;
+    await db.insert(schema.growDevices).values({
+      tentId: id,
+      userId: 9201,
+      name: "HA",
+      kind: "homeassistant",
+      state: {},
+      caps: {
+        sensors: ["airTemp", "airRh"],
+        actuators: [{ type: "exhaust" }, { type: "dehumidifier" }],
+      },
+      config: {
+        baseUrl: "https://ha.example",
+        tokenEnc: encryptToken("tok-1234567890-abcdefghij"),
+        sensors: { airTemp: "sensor.t", airRh: "sensor.h" },
+        actuators: { exhaust: "fan.abluft", dehumidifier: "switch.entf" },
+      },
+    });
+    const posts: string[] = [];
+    let down = false;
+    vi.stubGlobal("fetch", async (url: string, init: RequestInit) => {
+      if (down) return new Response("", { status: 502 });
+      if (url.endsWith("/api/states"))
+        return new Response(
+          JSON.stringify([
+            {
+              entity_id: "sensor.t",
+              state: "29.5",
+              attributes: { unit_of_measurement: "°C" },
+            },
+            { entity_id: "sensor.h", state: "78", attributes: {} },
+            {
+              entity_id: "fan.abluft",
+              state: "on",
+              attributes: { percentage: 30 },
+            },
+            { entity_id: "switch.entf", state: "off" },
+          ]),
+        );
+      posts.push(`${init.method} ${url}`);
+      return new Response("[]");
+    });
+    try {
+      const tent = async () =>
+        (
+          await db
+            .select()
+            .from(schema.growTents)
+            .where(eq(schema.growTents.id, id))
+        )[0];
+      await tickTent(db, await tent());
+      const g = await c.smartGrow.get({ id });
+      expect(g.readings.airTemp?.value).toBe(29.5);
+      expect(
+        posts.some((p) => p.includes("/api/services/fan/set_percentage")),
+      ).toBe(true);
+      expect(
+        posts.some((p) => p.includes("/api/services/switch/turn_on")),
+      ).toBe(true);
+      expect(g.devices[0].online).toBe(true); // HA hat geantwortet
+      down = true;
+      await tickTent(db, await tent(), Date.now() + 120_000);
+      const g2 = await c.smartGrow.get({ id });
+      expect(
+        g2.events.some((e) =>
+          /Home Assistant .* nicht erreichbar/.test(e.message),
+        ),
+      ).toBe(true);
+    } finally {
+      vi.unstubAllGlobals();
+      await c.smartGrow.delete({ id });
+    }
+  }, 60_000);
+});

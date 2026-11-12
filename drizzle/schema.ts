@@ -12,6 +12,7 @@ import {
   uniqueIndex,
   index,
   double,
+  mediumtext,
 } from "drizzle-orm/mysql-core";
 
 /**
@@ -803,6 +804,8 @@ export const growDevices = mysqlTable(
     state: json("state"),
     lastSeenAt: bigint("lastSeenAt", { mode: "number" }),
     firmware: varchar("firmware", { length: 40 }),
+    /** Brücken-Konfiguration (Home Assistant: Adresse, verschlüsselter Token, Zuordnung) */
+    config: json("config"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
   },
   (t) => ({
@@ -887,7 +890,9 @@ export const growSnapshots = mysqlTable(
     id: int("id").autoincrement().primaryKey(),
     tentId: int("tentId").notNull(),
     deviceId: int("deviceId").notNull(),
-    storageKey: varchar("storageKey", { length: 300 }).notNull(),
+    /** JPEG als Base64 (klein skaliert, max. ~1,5 MB); je Zelt werden nur die letzten Bilder behalten */
+    image: mediumtext("image").notNull(),
+    source: mysqlEnum("source", ["device", "app"]).default("device").notNull(),
     /** Ergebnis der KI-Blattkontrolle */
     analysis: json("analysis"),
     createdAt: bigint("createdAt", { mode: "number" }).notNull(),
