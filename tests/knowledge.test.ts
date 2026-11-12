@@ -52,4 +52,16 @@ describe("knowledge base", () => {
       knowledgeForPhase("harvest").every((e) => e.phases.includes("harvest")),
     ).toBe(true);
   });
+
+  it("finds praxis tips without a video (purple buds, ice cubes)", () => {
+    const ids = (q: string) =>
+      searchKnowledge(q, { limit: 5 }).map((h) => h.entry.id);
+    expect(ids("Wie bekomme ich lila Buds?")).toContain(
+      "praxis-purple-cold-nights-01",
+    );
+    expect(ids("Eiswürfel beim Spülen vor der Ernte")).toContain(
+      "praxis-ice-cubes-flush-01",
+    );
+    expect(isValidEntry({ ...KNOWLEDGE[0], source: "praxis" })).toBe(false); // Praxis-Tipps tragen kein Video
+  });
 });

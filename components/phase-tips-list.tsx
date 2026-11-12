@@ -52,15 +52,22 @@ export function PhaseTipsForPhase({ phase }: { phase: TipPhase }) {
     { phase },
     { staleTime: 10 * 60 * 1000 },
   );
-  const fromServer: PhaseTip[] = (query.data ?? []).map((e) => ({
-    id: e.id,
-    phases: e.phases as TipPhase[],
-    topic: e.topic,
-    text: e.text,
-    videoId: e.videoId,
-    start: e.start,
-    channel: e.channel,
-  }));
+  // Phasen-Tipps zeigen nur videobelegte Einträge (Praxis-Tipps stehen im Wissen und beim Coach)
+  const fromServer: PhaseTip[] = (query.data ?? []).flatMap((e) =>
+    e.videoId && e.start !== undefined
+      ? [
+          {
+            id: e.id,
+            phases: e.phases as TipPhase[],
+            topic: e.topic,
+            text: e.text,
+            videoId: e.videoId,
+            start: e.start,
+            channel: e.channel,
+          },
+        ]
+      : [],
+  );
   return (
     <PhaseTipsList
       tips={fromServer.length > 0 ? fromServer : tipsForPhase(phase)}

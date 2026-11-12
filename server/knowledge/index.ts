@@ -17,6 +17,7 @@ import lightingIntensity from "./entries/lighting-intensity.json";
 import climateGrow from "./entries/climate-grow.json";
 import lightingDistance from "./entries/lighting-distance.json";
 import lightingCycle from "./entries/lighting-cycle.json";
+import praxis from "./entries/praxis.json";
 
 const VIDEO_ID = /^[A-Za-z0-9_-]{11}$/;
 
@@ -38,6 +39,12 @@ export function isValidEntry(e: unknown): e is KnowledgeEntry {
     x.tags.every((t) => typeof t === "string") &&
     typeof x.text === "string" &&
     x.text.length >= 20 &&
+    (x.source === "praxis" ? x.videoId === undefined : isVideoBacked(x))
+  );
+}
+
+function isVideoBacked(x: Record<string, unknown>): boolean {
+  return (
     typeof x.videoId === "string" &&
     VIDEO_ID.test(x.videoId) &&
     typeof x.videoTitle === "string" &&
@@ -80,6 +87,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = collect(
   climateGrow,
   lightingDistance,
   lightingCycle,
+  praxis,
 );
 
 export function searchKnowledge(query: string, options?: SearchOptions) {

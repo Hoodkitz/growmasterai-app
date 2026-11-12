@@ -1,0 +1,44 @@
+[
+  {
+    "id": "praxis-purple-cold-nights-01",
+    "topic": "Lila Blüten: kalte Nächte vor der Ernte",
+    "source": "praxis",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "lila",
+      "purple",
+      "violett",
+      "farbe",
+      "anthocyane",
+      "temperatur",
+      "nacht",
+      "kalt",
+      "ernte",
+      "buds",
+      "blüten",
+      "lila buds",
+      "lila-finish"
+    ],
+    "text": "Praxis-Tipp: Willst du die Buds eher lila, lass die Temperatur in den letzten 1–2 Wochen vor der Ernte nachts (Licht aus) unter 15 °C fallen; tagsüber bleibt es normal. Das wirkt nur bei Sorten mit Veranlagung zu Anthocyanen (z. B. Purple-Genetik) – andere Sorten färben sich nicht. Nicht unter etwa 10 °C gehen, sonst stockt die Pflanze. Im Smart-Grow-Autopiloten heißt diese Option „Lila-Finish“."
+  },
+  {
+    "id": "praxis-ice-cubes-flush-01",
+    "topic": "Eiswürfel beim Spülen in den letzten Wochen",
+    "source": "praxis",
+    "phases": ["flowering", "harvest"],
+    "tags": [
+      "eiswürfel",
+      "eis",
+      "spülen",
+      "flush",
+      "flushing",
+      "ohne dünger",
+      "lila",
+      "kalt",
+      "wurzeln",
+      "ernte",
+      "letzte wochen"
+    ],
+    "text": "Praxis-Tipp aus der Grow-Community: Gießt du in den letzten Wochen ohne Dünger (Spülen), verteile zusätzlich Eiswürfel auf der Erde. Das kühlt die Wurzelzone und soll zusammen mit kalten Nächten die lila Färbung fördern. Wissenschaftlich belegt ist das nicht – probier es vorsichtig: Eis nur auf die Erde, nicht an den Stamm, und nur bei kräftigen Pflanzen in der späten Blüte."
+  }
+]

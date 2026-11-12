@@ -159,12 +159,13 @@ function dedupeSources(entries: KnowledgeEntry[]) {
     start: number;
   }[] = [];
   for (const e of entries) {
+    if (!e.videoId || e.start === undefined) continue; // Praxis-Tipps haben kein Video
     const key = `${e.videoId}:${e.start}`;
     if (seen.has(key)) continue;
     seen.add(key);
     out.push({
-      title: e.videoTitle,
-      channel: e.channel,
+      title: e.videoTitle ?? "",
+      channel: e.channel ?? "",
       videoId: e.videoId,
       start: e.start,
     });

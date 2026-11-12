@@ -170,6 +170,10 @@ export default function WissenScreen() {
                     ▶ {item.channel}, ab {formatTimestamp(item.start)}
                   </Text>
                 </TouchableOpacity>
+              ) : (item as { source?: string }).source === "praxis" ? (
+                <Text className="text-xs text-muted">
+                  💡 Praxis-Tipp (ohne Video)
+                </Text>
               ) : null}
               <TouchableOpacity onPress={() => router.push("/(tabs)/coach")}>
                 <Text className="text-xs text-muted">

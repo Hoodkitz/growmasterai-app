@@ -25,11 +25,13 @@ export interface KnowledgeEntry {
   /** Lower-case German search keywords, e.g. ["gießen", "überwässerung", "topf"]. */
   tags: string[];
   text: string;
-  /** 11-character YouTube id; the video must exist (checked via oEmbed). */
-  videoId: string;
+  /** "video" (Standard): belegte Aussage aus einem Video. "praxis": Praxis-Tipp ohne Video, im Text als solcher gekennzeichnet. */
+  source?: "video" | "praxis";
+  /** 11-character YouTube id; the video must exist (checked via oEmbed). Pflicht außer bei Praxis-Tipps. */
+  videoId?: string;
   /** Title of the video, as YouTube's oEmbed reports it. */
-  videoTitle: string;
-  channel: string;
+  videoTitle?: string;
+  channel?: string;
   /** Start of the statement in seconds. */
-  start: number;
+  start?: number;
 }
