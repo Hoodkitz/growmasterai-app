@@ -10,13 +10,127 @@ import { useState, useEffect } from "react";
 const OFFLINE_QUEUE_KEY = "@growmaster_offline_queue";
 const OFFLINE_DATA_KEY = "@growmaster_offline_data";
 
+export type OfflineEntityType = "plant" | "journal" | "diagnosis" | "expense";
+
 export interface OfflineAction {
   id: string;
   type: "create" | "update" | "delete";
-  entity: "plant" | "journal" | "diagnosis" | "expense";
+  entity: OfflineEntityType;
   data: any;
   timestamp: number;
   synced: boolean;
+}
+
+export type OfflineSyncHandler = (action: OfflineAction) => Promise<void>;
+
+const entitySyncHandlers: Partial<
+  Record<OfflineEntityType, OfflineSyncHandler>
+> = {};
+
+/**
+ * Register or clear a backend sync handler for a specific entity type
+ */
+export function registerOfflineSyncHandler(
+  entity: OfflineEntityType,
+  handler: OfflineSyncHandler | null,
+): void {
+  if (handler) {
+    entitySyncHandlers[entity] = handler;
+  } else {
+    delete entitySyncHandlers[entity];
+  }
+}
+
+function getOfflineEntityKey(entity: OfflineEntityType): string {
+  return `@growmaster_offline_entity_${entity}`;
+}
+
+/**
+ * Get locally synced/reconciled records for an entity type
+ */
+export async function getOfflineEntityItems<T = Record<string, any>>(
+  entity: OfflineEntityType,
+): Promise<T[]> {
+  try {
+    const raw = await AsyncStorage.getItem(getOfflineEntityKey(entity));
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.error(`Error reading offline ${entity} items:`, error);
+    return [];
+  }
+}
+
+async function applyOfflineActionLocally(action: OfflineAction): Promise<void> {
+  if (
+    !action.data ||
+    typeof action.data !== "object" ||
+    Array.isArray(action.data)
+  ) {
+    throw new Error(`Invalid offline action payload for ${action.entity}`);
+  }
+
+  const items = await getOfflineEntityItems<Record<string, any>>(action.entity);
+  const recordId = String(action.data.id ?? action.id);
+  const updatedIso =
+    typeof action.data.updatedAt === "string"
+      ? action.data.updatedAt
+      : new Date(action.timestamp).toISOString();
+
+  let nextItems: Record<string, any>[];
+  switch (action.type) {
+    case "create": {
+      const record = {
+        ...action.data,
+        id: recordId,
+        updatedAt: updatedIso,
+      };
+      const existingIdx = items.findIndex(
+        (item) => String(item.id) === recordId,
+      );
+      if (existingIdx >= 0) {
+        nextItems = [...items];
+        nextItems[existingIdx] = { ...nextItems[existingIdx], ...record };
+      } else {
+        nextItems = [...items, record];
+      }
+      break;
+    }
+    case "update": {
+      const existingIdx = items.findIndex(
+        (item) => String(item.id) === recordId,
+      );
+      if (existingIdx >= 0) {
+        nextItems = [...items];
+        nextItems[existingIdx] = {
+          ...nextItems[existingIdx],
+          ...action.data,
+          id: recordId,
+          updatedAt: updatedIso,
+        };
+      } else {
+        nextItems = [
+          ...items,
+          { ...action.data, id: recordId, updatedAt: updatedIso },
+        ];
+      }
+      break;
+    }
+    case "delete": {
+      nextItems = items.filter((item) => String(item.id) !== recordId);
+      break;
+    }
+    default:
+      throw new Error(
+        `Unsupported offline action type: ${String(action.type)}`,
+      );
+  }
+
+  await AsyncStorage.setItem(
+    getOfflineEntityKey(action.entity),
+    JSON.stringify(nextItems),
+  );
+  await cacheOfflineData(`entity:${action.entity}`, nextItems);
 }
 
 /**
@@ -83,7 +197,9 @@ export async function getOfflineQueue(): Promise<OfflineAction[]> {
 /**
  * Sync offline actions when back online
  */
-export async function syncOfflineActions(): Promise<{
+export async function syncOfflineActions(
+  customHandler?: OfflineSyncHandler,
+): Promise<{
   success: number;
   failed: number;
 }> {
@@ -100,9 +216,11 @@ export async function syncOfflineActions(): Promise<{
 
   for (const action of unsynced) {
     try {
-      // Sync with backend based on action type
-      // TODO: Implement actual sync logic per entity type
-      // For now, mark as synced to prevent infinite retry loops
+      await applyOfflineActionLocally(action);
+      const handler = customHandler ?? entitySyncHandlers[action.entity];
+      if (handler) {
+        await handler(action);
+      }
       action.synced = true;
       success++;
     } catch (error) {

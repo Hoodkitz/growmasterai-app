@@ -4,14 +4,12 @@ import {
   View,
   TouchableOpacity,
   StyleSheet,
-  Platform,
   ActivityIndicator,
   Animated,
   Dimensions,
   ScrollView,
   Image,
   TextInput,
-  Linking,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
@@ -24,7 +22,7 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useSubscription } from "@/lib/subscription-context";
 import { UpgradePrompt, UsageIndicator } from "@/components/upgrade-prompt";
-import { TIER_LIMITS, canUseDiagnosis } from "@/lib/subscription";
+import { TIER_LIMITS } from "@/lib/subscription";
 import { trpc } from "@/lib/trpc";
 import { ErrorDisplay } from "@/components/error-display";
 import { AIProcessingIndicator } from "@/components/loading-state";
@@ -169,10 +167,11 @@ export default function DiagnoseScreen() {
       pulseAnim.setValue(1);
       scanLineAnim.setValue(0);
     }
-  }, [liveAnalysisActive]);
+  }, [liveAnalysisActive, pulseAnim, scanLineAnim]);
 
   // Real live analysis: periodically grab a frame and let the AI mark spots
   const liveScanMutation = trpc.liveScan.analyze.useMutation();
+  const liveScanMutateAsync = liveScanMutation.mutateAsync;
   const liveBusyRef = useRef(false);
 
   useEffect(() => {
@@ -204,7 +203,7 @@ export default function DiagnoseScreen() {
           skipProcessing: true,
         });
         if (!photo?.base64 || cancelled) return;
-        const found = await liveScanMutation.mutateAsync({
+        const found = await liveScanMutateAsync({
           image: `data:image/jpeg;base64,${photo.base64}`,
         });
         if (cancelled) return;
@@ -232,7 +231,7 @@ export default function DiagnoseScreen() {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [liveAnalysisActive, mode]);
+  }, [liveAnalysisActive, liveScanMutateAsync, mode]);
 
   const canStartDiagnosis = canDiagnose();
 

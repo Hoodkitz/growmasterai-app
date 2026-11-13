@@ -14,6 +14,8 @@ import {
   cacheOfflineData,
   getCachedData,
   getOfflineCache,
+  getOfflineEntityItems,
+  registerOfflineSyncHandler,
 } from "@/lib/offline-storage";
 
 // ─── Mocks ───────────────────────────────────────────────────────────────────
@@ -106,6 +108,10 @@ async function runHookLogic() {
 describe("useOfflineMode", () => {
   beforeEach(async () => {
     Object.keys(mockStorage).forEach((k) => delete mockStorage[k]);
+    registerOfflineSyncHandler("plant", null);
+    registerOfflineSyncHandler("journal", null);
+    registerOfflineSyncHandler("diagnosis", null);
+    registerOfflineSyncHandler("expense", null);
     mockNetInfoState = {
       isConnected: true,
       isInternetReachable: true,
@@ -291,7 +297,7 @@ describe("useOfflineMode", () => {
     expect(ids).toContain("recent");
   });
 
-  it("keeps unsynced actions even if old (no data loss)", async () => {
+  it("keeps unsynced actions even if old when sync fails (no data loss)", async () => {
     const oldTimestamp = Date.now() - 8 * 24 * 60 * 60 * 1000; // 8 days ago
 
     mockStorage["@growmaster_offline_queue"] = JSON.stringify([
@@ -299,22 +305,67 @@ describe("useOfflineMode", () => {
         id: "unsynced-old",
         type: "create",
         entity: "plant",
-        data: {},
+        data: { name: "Saved Plant" },
         timestamp: oldTimestamp,
         synced: false,
       },
     ]);
 
     mockNetInfoState.isConnected = true;
-    await syncOfflineActions();
+    const result = await syncOfflineActions(async () => {
+      throw new Error("Backend temporarily unreachable");
+    });
+    expect(result).toEqual({ success: 0, failed: 1 });
 
     const queue = await getOfflineQueue();
-    // After sync attempt, the action is marked synced (current behavior)
-    // but should NOT be cleaned up if it failed
     const ids = queue.map((a) => a.id);
-    // The action was synced successfully, so it may be cleaned up if old
-    // This test documents current behavior
-    expect(ids.length).toBeLessThanOrEqual(1);
+    expect(ids).toContain("unsynced-old");
+    expect(queue[0].synced).toBe(false);
+  });
+
+  it("applies create, update, and delete actions per entity type and invokes registered handler", async () => {
+    const syncedEntities: string[] = [];
+    registerOfflineSyncHandler("plant", async (action) => {
+      syncedEntities.push(`${action.type}:${action.data.id}`);
+    });
+
+    await queueOfflineAction({
+      type: "create",
+      entity: "plant",
+      data: { id: "p-1", name: "Northern Lights", phase: "seedling" },
+    });
+    await queueOfflineAction({
+      type: "create",
+      entity: "plant",
+      data: { id: "p-2", name: "White Widow", phase: "vegetative" },
+    });
+    await queueOfflineAction({
+      type: "update",
+      entity: "plant",
+      data: { id: "p-1", phase: "flowering" },
+    });
+    await queueOfflineAction({
+      type: "delete",
+      entity: "plant",
+      data: { id: "p-2" },
+    });
+
+    const result = await syncOfflineActions();
+    expect(result).toEqual({ success: 4, failed: 0 });
+    expect(syncedEntities).toEqual([
+      "create:p-1",
+      "create:p-2",
+      "update:p-1",
+      "delete:p-2",
+    ]);
+
+    const plants = await getOfflineEntityItems("plant");
+    expect(plants).toHaveLength(1);
+    expect(plants[0]).toMatchObject({
+      id: "p-1",
+      name: "Northern Lights",
+      phase: "flowering",
+    });
   });
 
   it("network status subscription fires on change", async () => {

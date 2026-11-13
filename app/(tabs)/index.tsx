@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { STORE_MODE } from "@/lib/store-mode";
 import {
   ScrollView,
@@ -19,7 +19,6 @@ import { TIER_INFO, TIER_LIMITS } from "@/lib/subscription";
 import { AdBanner, type Ad } from "@/components/ad-banner";
 import { trpc } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getOnboardingStatus } from "@/components/onboarding/onboarding-flow";
 import { useAppAuth } from "@/lib/auth-context";
 import { useGamification } from "@/lib/gamification-context";
 import { getMoonAge, getMoonPhase } from "@/lib/grow-tools";
@@ -46,13 +45,7 @@ const DIAL = Math.min(width - 48, 280);
 export default function HomeScreen() {
   const router = useRouter();
   const colors = useColors();
-  const {
-    tier,
-    dailyDiagnoses,
-    dailyMessages,
-    remainingDiagnoses,
-    remainingMessages,
-  } = useSubscription();
+  const { tier, dailyDiagnoses, dailyMessages } = useSubscription();
 
   // Echte Anzeige aus adBanners (nur für nicht-werbefreie Tiers laden)
   const adsQuery = trpc.ads.active.useQuery(
