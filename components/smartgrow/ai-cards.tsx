@@ -304,7 +304,10 @@ export function LeafCard({
       {last ? <Text className="text-xs text-muted">{fmt(last.at)}</Text> : null}
       {a ? (
         <>
-          <Text className="text-sm font-semibold" style={{ color }}>
+          <Text
+            className="text-sm font-semibold"
+            style={color ? { color } : undefined}
+          >
             {a.healthy
               ? "✅ Sieht gesund aus"
               : a.severity === "high"

@@ -376,7 +376,7 @@ export default function DiagnoseScreen() {
           className="bg-primary px-6 py-3 rounded-full"
           onPress={requestPermission}
         >
-          <Text className="text-base font-semibold text-white">
+          <Text className="text-base font-semibold text-foreground">
             Zugriff erlauben
           </Text>
         </TouchableOpacity>
@@ -712,7 +712,7 @@ export default function DiagnoseScreen() {
                     <IconSymbol
                       name="xmark.circle.fill"
                       size={16}
-                      color="#fff"
+                      color={colors.foreground}
                     />
                   </TouchableOpacity>
                 </View>
@@ -834,23 +834,31 @@ export default function DiagnoseScreen() {
               ]}
             >
               {overlay.type === "cut" && (
-                <IconSymbol name="scissors" size={16} color="#fff" />
+                <IconSymbol
+                  name="scissors"
+                  size={16}
+                  color={colors.foreground}
+                />
               )}
               {overlay.type === "healthy" && (
                 <IconSymbol
                   name="checkmark.circle.fill"
                   size={16}
-                  color="#fff"
+                  color={colors.foreground}
                 />
               )}
               {overlay.type === "tip" && (
-                <IconSymbol name="sparkles" size={16} color="#fff" />
+                <IconSymbol
+                  name="sparkles"
+                  size={16}
+                  color={colors.foreground}
+                />
               )}
               {overlay.type === "issue" && (
                 <IconSymbol
                   name="exclamationmark.triangle.fill"
                   size={16}
-                  color="#fff"
+                  color={colors.foreground}
                 />
               )}
             </Animated.View>
@@ -869,20 +877,28 @@ export default function DiagnoseScreen() {
                 style={{ backgroundColor: selectedOverlay.color }}
               >
                 {selectedOverlay.type === "cut" && (
-                  <IconSymbol name="scissors" size={16} color="#fff" />
+                  <IconSymbol
+                    name="scissors"
+                    size={16}
+                    color={colors.foreground}
+                  />
                 )}
                 {selectedOverlay.type === "healthy" && (
                   <IconSymbol
                     name="checkmark.circle.fill"
                     size={16}
-                    color="#fff"
+                    color={colors.foreground}
                   />
                 )}
                 {selectedOverlay.type === "tip" && (
-                  <IconSymbol name="sparkles" size={16} color="#fff" />
+                  <IconSymbol
+                    name="sparkles"
+                    size={16}
+                    color={colors.foreground}
+                  />
                 )}
               </View>
-              <Text className="text-base font-bold text-white flex-1">
+              <Text className="text-base font-bold text-foreground flex-1">
                 {selectedOverlay.label}
               </Text>
               <TouchableOpacity onPress={() => setSelectedOverlay(null)}>
@@ -893,7 +909,7 @@ export default function DiagnoseScreen() {
                 />
               </TouchableOpacity>
             </View>
-            <Text className="text-sm text-white/80 leading-5">
+            <Text className="text-sm text-foreground/80 leading-5">
               {selectedOverlay.description}
             </Text>
           </View>
@@ -941,7 +957,7 @@ export default function DiagnoseScreen() {
           className="w-10 h-10 rounded-full bg-black/50 items-center justify-center"
           onPress={() => router.push("/(tabs)")}
         >
-          <IconSymbol name="chevron.left" size={24} color="#fff" />
+          <IconSymbol name="chevron.left" size={24} color={colors.foreground} />
         </TouchableOpacity>
 
         <View className="flex-row items-center gap-2 bg-black/50 px-3 py-1.5 rounded-full">
@@ -950,7 +966,7 @@ export default function DiagnoseScreen() {
               <View className="w-2 h-2 rounded-full bg-error" />
             </Animated.View>
           )}
-          <Text className="text-sm font-medium text-white">
+          <Text className="text-sm font-medium text-foreground">
             {liveAnalysisActive ? "Live-Analyse aktiv" : "Kamera bereit"}
           </Text>
         </View>
@@ -962,7 +978,7 @@ export default function DiagnoseScreen() {
           <IconSymbol
             name="arrow.triangle.2.circlepath"
             size={22}
-            color="#fff"
+            color={colors.foreground}
           />
         </TouchableOpacity>
       </View>
@@ -992,8 +1008,12 @@ export default function DiagnoseScreen() {
                 disabled={!canStartDiagnosis}
                 style={{ opacity: canStartDiagnosis ? 1 : 0.5 }}
               >
-                <IconSymbol name="viewfinder" size={18} color="#fff" />
-                <Text className="text-sm font-medium text-white">
+                <IconSymbol
+                  name="viewfinder"
+                  size={18}
+                  color={colors.foreground}
+                />
+                <Text className="text-sm font-medium text-foreground">
                   {liveAnalysisActive
                     ? "Live-Analyse stoppen"
                     : "Live-Analyse starten"}
@@ -1010,7 +1030,11 @@ export default function DiagnoseScreen() {
               disabled={!canStartDiagnosis}
               style={{ opacity: canStartDiagnosis ? 1 : 0.5 }}
             >
-              <IconSymbol name="photo.fill" size={26} color="#fff" />
+              <IconSymbol
+                name="photo.fill"
+                size={26}
+                color={colors.foreground}
+              />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -1032,7 +1056,7 @@ export default function DiagnoseScreen() {
           {/* Usage Info */}
           {limits.diagnosesPerDay !== -1 && (
             <View className="mt-4 items-center">
-              <Text className="text-sm text-white/60">
+              <Text className="text-sm text-foreground/60">
                 {remainingDiagnoses} von {limits.diagnosesPerDay} Scans übrig
               </Text>
             </View>

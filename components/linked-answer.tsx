@@ -51,7 +51,10 @@ export function LinkedAnswer({
           <Text
             key={i}
             accessibilityRole="link"
-            style={{ color: linkColor, textDecorationLine: "underline" }}
+            style={[
+              { textDecorationLine: "underline" },
+              linkColor ? { color: linkColor } : undefined,
+            ]}
             onPress={() => {
               trackAffiliateClick({
                 partnerId: "amazon",

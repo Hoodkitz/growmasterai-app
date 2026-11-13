@@ -234,11 +234,18 @@ export default function SettingsScreen() {
             </Text>
             <View
               className="px-3 py-1 rounded-full"
-              style={{ backgroundColor: tierInfo.color + "20" }}
+              style={
+                tierInfo.color
+                  ? { backgroundColor: tierInfo.color + "20" }
+                  : undefined
+              }
             >
               <Text
                 className="text-sm font-medium"
-                style={{ color: tierInfo.color }}
+                style={[
+                  {},
+                  tierInfo.color ? { color: tierInfo.color } : undefined,
+                ]}
               >
                 {tierInfo.name}
               </Text>

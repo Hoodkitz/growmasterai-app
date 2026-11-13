@@ -169,14 +169,22 @@ export function HaSetup({
       key={key}
       onPress={onPress}
       className="rounded-full px-3 py-2 border"
-      style={{
-        borderColor: active ? colors.primary : colors.border,
-        backgroundColor: active ? colors.primary : "transparent",
-      }}
+      style={[
+        {},
+        { borderColor: active ? colors.primary : colors.border },
+        active ? { backgroundColor: colors.primary } : undefined,
+      ]}
     >
       <Text
         className={active ? undefined : "text-foreground"}
-        style={{ color: active ? colors.foreground : undefined, fontSize: 12 }}
+        style={[
+          { fontSize: 12 },
+          active
+            ? colors.foreground
+              ? { color: colors.foreground }
+              : undefined
+            : undefined,
+        ]}
       >
         {label}
       </Text>
@@ -220,9 +228,9 @@ export function HaSetup({
         disabled={test.isPending}
       >
         {test.isPending ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color={colors.foreground} />
         ) : (
-          <Text className="text-white font-bold">Verbindung testen</Text>
+          <Text className="text-foreground font-bold">Verbindung testen</Text>
         )}
       </TouchableOpacity>
 
@@ -312,9 +320,9 @@ export function HaSetup({
             disabled={add.isPending}
           >
             {add.isPending ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.foreground} />
             ) : (
-              <Text className="text-white font-bold">
+              <Text className="text-foreground font-bold">
                 Home Assistant verbinden
               </Text>
             )}

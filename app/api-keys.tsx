@@ -87,7 +87,11 @@ export default function ApiKeysScreen() {
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ color: colors.foreground }}>Lade API-Keys...</Text>
+        <Text
+          style={colors.foreground ? { color: colors.foreground } : undefined}
+        >
+          Lade API-Keys...
+        </Text>
       </View>
     );
   }
@@ -107,7 +111,10 @@ export default function ApiKeysScreen() {
           <IconSymbol name="chevron-left" size={24} color={colors.foreground} />
         </TouchableOpacity>
         <Text
-          style={{ fontSize: 22, fontWeight: "700", color: colors.foreground }}
+          style={[
+            { fontSize: 22, fontWeight: "700" },
+            colors.foreground ? { color: colors.foreground } : undefined,
+          ]}
         >
           API-Keys
         </Text>
@@ -140,11 +147,10 @@ export default function ApiKeysScreen() {
           }}
         >
           <Text
-            style={{
-              fontWeight: "600",
-              marginBottom: 8,
-              color: colors.foreground,
-            }}
+            style={[
+              { fontWeight: "600", marginBottom: 8 },
+              colors.foreground ? { color: colors.foreground } : undefined,
+            ]}
           >
             Neuen API-Key erstellen
           </Text>
@@ -158,7 +164,6 @@ export default function ApiKeysScreen() {
               padding: 10,
               borderRadius: 8,
               marginBottom: 12,
-              color: colors.foreground,
               borderWidth: 1,
               borderColor: colors.border,
             }}
@@ -184,12 +189,14 @@ export default function ApiKeysScreen() {
                 }}
               >
                 <Text
-                  style={{
-                    color: newKeyPerms.includes(perm)
-                      ? "#fff"
-                      : colors.foreground,
-                    fontSize: 13,
-                  }}
+                  style={[
+                    { fontSize: 13 },
+                    newKeyPerms.includes(perm)
+                      ? { color: "#fff" }
+                      : colors.foreground
+                        ? { color: colors.foreground }
+                        : undefined,
+                  ]}
                 >
                   {perm}
                 </Text>

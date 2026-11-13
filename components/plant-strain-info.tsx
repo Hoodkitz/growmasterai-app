@@ -30,7 +30,12 @@ export function PlantStrainInfo({ strain }: { strain: Strain }) {
         {strain.type ? (
           <Text
             className="text-xs font-semibold"
-            style={{ color: getTypeColor(strain.type) }}
+            style={[
+              {},
+              getTypeColor(strain.type)
+                ? { color: getTypeColor(strain.type) }
+                : undefined,
+            ]}
           >
             {getTypeLabel(strain.type)}
           </Text>
@@ -64,7 +69,10 @@ export function PlantStrainInfo({ strain }: { strain: Strain }) {
       <TouchableOpacity
         onPress={() => Linking.openURL(strain.source).catch(() => {})}
       >
-        <Text className="text-xs font-medium" style={{ color: colors.primary }}>
+        <Text
+          className="text-xs font-medium"
+          style={[{}, colors.primary ? { color: colors.primary } : undefined]}
+        >
           Angaben laut {strain.breeder} (Quelle öffnen)
         </Text>
       </TouchableOpacity>

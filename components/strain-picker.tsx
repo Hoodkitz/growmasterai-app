@@ -115,7 +115,12 @@ export function StrainPicker({
                 {item.type ? (
                   <Text
                     className="text-xs"
-                    style={{ color: getTypeColor(item.type) }}
+                    style={[
+                      {},
+                      getTypeColor(item.type)
+                        ? { color: getTypeColor(item.type) }
+                        : undefined,
+                    ]}
                   >
                     {getTypeLabel(item.type)}
                   </Text>
