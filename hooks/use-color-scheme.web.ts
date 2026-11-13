@@ -1,21 +1,12 @@
-import { useEffect, useState } from "react";
-import { useColorScheme as useRNColorScheme } from "react-native";
+import { useThemeContext } from "@/lib/theme-provider";
 
 /**
- * To support static rendering, this value needs to be re-calculated on the client side for web
+ * Web: use the app's ThemeProvider scheme (same as native), NOT the RN-web /
+ * prefers-color-scheme value. Otherwise inline colors from useColors() (e.g.
+ * chip text) follow the system theme while the app background follows the
+ * ThemeProvider (default: dark), giving dark text on dark background when the
+ * system is in light mode.
  */
 export function useColorScheme() {
-  const [hasHydrated, setHasHydrated] = useState(false);
-
-  useEffect(() => {
-    setHasHydrated(true);
-  }, []);
-
-  const colorScheme = useRNColorScheme();
-
-  if (hasHydrated) {
-    return colorScheme;
-  }
-
-  return "light";
+  return useThemeContext().colorScheme;
 }
